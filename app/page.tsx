@@ -74,6 +74,44 @@ export default function Page() {
       {/* DASHBOARD */}
       <DashboardSection />
 
+      {/* TRUSTED BY / PARTNERS */}
+      <section className="mx-auto max-w-container px-7 py-16">
+        <div className="text-center">
+          <div className="text-xs font-semibold tracking-[0.18em] text-muted uppercase">
+            Trusted By
+          </div>
+        </div>
+        
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-8 opacity-60 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-500">
+          {[
+            { name: "Organization 1", file: "org-logo-1" },
+            { name: "Organization 2", file: "org-logo-2" },
+          ].map((org) => (
+            <div
+              key={org.name}
+              className="flex h-16 w-32 items-center justify-center"
+            >
+              <picture>
+                <source
+                  srcSet={`/logos/${org.file}.webp 1x, /logos/${org.file}@2x.webp 2x`}
+                  type="image/webp"
+                />
+                <source
+                  srcSet={`/logos/${org.file}-optimized.png 1x, /logos/${org.file}@2x.png 2x`}
+                  type="image/png"
+                />
+                <img
+                  src={`/logos/${org.file}-optimized.png`}
+                  alt={org.name}
+                  className="max-h-full max-w-full object-contain"
+                  loading="lazy"
+                />
+              </picture>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* CTA */}
       <section id="contact" className="mx-auto max-w-container px-7 py-24 text-center">
         <SectionHeading
