@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background: #06070b;
+}
+
+/* Webflow/DashDark-style type rhythm */
+.h1 {
+  @apply text-[42px] leading-[1.05] tracking-tight2 font-extrabold sm:text-[56px] lg:text-[72px];
+}
+.h2 {
+  @apply text-[28px] leading-[1.1] tracking-tight2 font-extrabold sm:text-[34px] lg:text-[40px];
+}
+.p-lead {
+  @apply text-[16px] leading-[1.7] text-muted sm:text-[18px];
+}
+
+/* Glass surface primitives */
+.glass {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  backdrop-filter: blur(14px);
+}
