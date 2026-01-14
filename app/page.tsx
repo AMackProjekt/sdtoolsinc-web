@@ -201,29 +201,46 @@ export default function Page() {
             Loading…
           </iframe>
         </GlowCard>
+
+        {/* Contact Information */}
+        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <GlowCard className="p-6 text-center">
+            <div className="text-2xl mb-3">📧</div>
+            <div className="text-sm font-semibold text-brand2 uppercase tracking-wider mb-2">
+              For More Information
+            </div>
+            <a href="mailto:info@sdtoolsinc.org" className="text-text hover:text-brand transition-colors">
+              info@sdtoolsinc.org
+            </a>
+          </GlowCard>
+
+          <GlowCard className="p-6 text-center">
+            <div className="text-2xl mb-3">📰</div>
+            <div className="text-sm font-semibold text-brand2 uppercase tracking-wider mb-2">
+              Subscribe to Newsletter
+            </div>
+            <a href="mailto:news@sdtoolsinc.org" className="text-text hover:text-brand transition-colors">
+              news@sdtoolsinc.org
+            </a>
+          </GlowCard>
+
+          <GlowCard className="p-6 text-center">
+            <div className="text-2xl mb-3">🤝</div>
+            <div className="text-sm font-semibold text-brand2 uppercase tracking-wider mb-2">
+              Partnership
+            </div>
+            <a href="mailto:partner@sdtoolsinc.org" className="text-text hover:text-brand transition-colors">
+              partner@sdtoolsinc.org
+            </a>
+          </GlowCard>
+        </div>
       </section>
 
       {/* FOOTER CTA */}
       <section className="mx-auto max-w-container px-7 py-16 text-center">
-        <div className="flex flex-col md:flex-row items-center justify-center gap-8">
-          <a href="#">
-            <Button variant="primary">Back to Top</Button>
-          </a>
-          
-          <div className="flex flex-col items-center gap-3">
-            <div className="text-sm font-semibold text-text">Submit Referral</div>
-            <div className="rounded-xl bg-panel border border-border p-4 shadow-glow">
-              <div className="rounded-lg bg-white p-3">
-                <img
-                  src="/referral-qr.png"
-                  alt="Scan to Submit Referral"
-                  className="h-32 w-32 object-contain"
-                />
-              </div>
-            </div>
-            <p className="text-xs text-muted">Scan to access referral form</p>
-          </div>
-        </div>
+        <a href="#">
+          <Button variant="primary">Back to Top</Button>
+        </a>
 
         <div className="mt-10 text-xs text-muted">
           © {new Date().getFullYear()} T.O.O.L.S Inc · Empowering individuals To Step Inito Their Purpose
