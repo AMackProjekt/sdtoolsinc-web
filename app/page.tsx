@@ -3,6 +3,9 @@ import { GlowCard } from "@/components/ui/GlowCard";
 import { Button } from "@/components/ui/Button";
 import { DashboardSection } from "@/components/ui/DashboardSection";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { InteractiveTiles } from "@/components/ui/InteractiveTiles";
+import { ChatBot } from "@/components/ui/ChatBot";
+import { CookieConsent } from "@/components/ui/CookieConsent";
 
 export default function Page() {
   return (
@@ -15,16 +18,16 @@ export default function Page() {
       {/* HERO */}
       <section className="mx-auto max-w-container px-7 pt-24 pb-16 text-center">
         <h1 className="h1">
-          Modern Systems.
+          Empowering Individuals.
           <br />
           <span className="bg-gradient-to-r from-brand to-brand2 bg-clip-text text-transparent">
-            Real-World Impact.
+            Unlocking Potential.
           </span>
         </h1>
 
         <p className="mx-auto mt-6 max-w-[760px] p-lead">
-          TOOLS Inc builds operational platforms, case-flow systems, and digital infrastructure designed
-          for clarity, compliance, and scale.
+          At T.O.O.L.S Inc, we provide support and opportunities for individuals looking to start over. 
+          Through comprehensive programs and lived experience, we help people unlock their full potential.
         </p>
 
         <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
@@ -35,10 +38,10 @@ export default function Page() {
         {/* KPI band */}
         <div className="mt-14 grid grid-cols-1 gap-4 md:grid-cols-4">
           {[
-            ["99.9%", "System reliability"],
-            ["10x", "Workflow efficiency"],
-            ["100%", "Audit-ready logs"],
-            ["∞", "Modular scaling"]
+            ["Support", "Comprehensive Programs"],
+            ["Growth", "Job Readiness Training"],
+            ["Empathy", "Lived Experience Team"],
+            ["Access", "Continued Education"]
           ].map(([v, t]) => (
             <GlowCard key={t} className="p-5 text-left">
               <div className="text-2xl font-extrabold tracking-tight">{v}</div>
@@ -51,17 +54,17 @@ export default function Page() {
       {/* FEATURES */}
       <section id="platform" className="mx-auto max-w-container px-7 pt-8 pb-20">
         <SectionHeading
-          eyebrow="What you get"
-          title="DashDark-style UI with Fluent micro-motion"
-          subtitle="Glass surfaces, sharp spacing, conversion-focused sections, and components you can evolve into a full product."
+          eyebrow="How We Help"
+          title="Comprehensive Support Programs"
+          subtitle="We recognize and address the diverse challenges individuals face, providing the tools and support necessary to unlock their full potential."
         />
 
         <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           {[
-            ["CaseFlow-Command", "Structured, compliant case management with real-time insights."],
-            ["Automation First", "Pipelines that eliminate friction across ops and reporting."],
-            ["Security-Driven", "Audit trails, role separation, and least-privilege defaults."],
-            ["Modular by Design", "A clean base that scales from nonprofit to enterprise."]
+            ["Job Readiness", "Professional development programs including resume building, mock interviews, and career planning to prepare for success."],
+            ["Continued Education", "Access to educational resources and training programs that open doors to new opportunities and skill development."],
+            ["Lived Experience", "Our team shares lived experiences with the challenges our clients face, creating genuine understanding and effective support."],
+            ["Personal Growth", "Holistic programs addressing both immediate needs and long-term goals for sustainable personal and professional growth."]
           ].map(([h, p]) => (
             <GlowCard key={h}>
               <div className="text-lg font-extrabold tracking-tight">{h}</div>
@@ -71,63 +74,164 @@ export default function Page() {
         </div>
       </section>
 
+      {/* INTERACTIVE TILES */}
+      <InteractiveTiles />
+
+      {/* FOUNDER STORY */}
+      <section className="mx-auto max-w-container px-7 py-20">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 items-center">
+          <div>
+            <div className="text-xs font-semibold tracking-[0.18em] text-brand2 uppercase">
+              Leadership
+            </div>
+            <h2 className="h2 mt-4">
+              Donyale "DThree" Mack
+            </h2>
+            <div className="mt-2 text-lg font-semibold text-muted">
+              Owner/Founder
+            </div>
+            
+            <div className="mt-6 space-y-4 text-text/90 leading-relaxed">
+              <p>
+                A compassionate advocate and the driving force behind T.O.O.L.S Inc, Donyale Mack is dedicated to 
+                providing support and opportunities to those seeking a second chance in life.
+              </p>
+              <p>
+                Born out of lived experience and personal challenges, Donyale's journey is marked by resilience, 
+                overcoming adversity, and an unwavering passion to help others facing similar struggles.
+              </p>
+              <p className="text-brand font-semibold">
+                "Every individual deserves the opportunity to unlock their full potential."
+              </p>
+            </div>
+          </div>
+          
+          <GlowCard className="p-8 lg:p-10">
+            <div className="space-y-6">
+              <div>
+                <div className="text-sm font-semibold text-brand2 uppercase tracking-wider">Mission</div>
+                <p className="mt-2 text-text/90">
+                  Creating pathways for individuals to transform their lives through empathy, 
+                  understanding, and comprehensive support programs.
+                </p>
+              </div>
+              <div>
+                <div className="text-sm font-semibold text-brand2 uppercase tracking-wider">Vision</div>
+                <p className="mt-2 text-text/90">
+                  Building a community where lived experience becomes the foundation for 
+                  genuine connection and lasting change.
+                </p>
+              </div>
+              <div>
+                <div className="text-sm font-semibold text-brand2 uppercase tracking-wider">Approach</div>
+                <p className="mt-2 text-text/90">
+                  Combining personal understanding with professional expertise to provide 
+                  support that goes beyond sympathy to true empowerment.
+                </p>
+              </div>
+            </div>
+          </GlowCard>
+        </div>
+      </section>
+
       {/* DASHBOARD */}
       <DashboardSection />
 
-      {/* TRUSTED BY / PARTNERS */}
-      <section className="mx-auto max-w-container px-7 py-16">
-        <div className="text-center">
-          <div className="text-xs font-semibold tracking-[0.18em] text-muted uppercase">
-            Trusted By
+      {/* BOOK / SUPPORT SECTION */}
+      <section className="mx-auto max-w-container px-7 py-20">
+        <GlowCard className="p-10 text-center">
+          <div className="text-xs font-semibold tracking-[0.18em] text-brand2 uppercase">
+            Support Our Mission
           </div>
-        </div>
-        
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-8 opacity-60 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-500">
-          {[
-            { name: "Organization 1", file: "org-logo-1" },
-            { name: "Organization 2", file: "org-logo-2" },
-          ].map((org) => (
-            <div
-              key={org.name}
-              className="flex h-16 w-32 items-center justify-center"
-            >
-              <picture>
-                <source
-                  srcSet={`/logos/${org.file}.webp 1x, /logos/${org.file}@2x.webp 2x`}
-                  type="image/webp"
-                />
-                <source
-                  srcSet={`/logos/${org.file}-optimized.png 1x, /logos/${org.file}@2x.png 2x`}
-                  type="image/png"
-                />
-                <img
-                  src={`/logos/${org.file}-optimized.png`}
-                  alt={org.name}
-                  className="max-h-full max-w-full object-contain"
-                  loading="lazy"
-                />
-              </picture>
-            </div>
-          ))}
-        </div>
+          <h2 className="h2 mt-4">
+            Go Check It Out
+          </h2>
+          <div className="mt-2 text-lg font-semibold text-brand">
+            Available Now On Amazon Platform
+          </div>
+          
+          <div className="mx-auto mt-6 max-w-[680px] space-y-4 text-text/90 leading-relaxed">
+            <p>
+              A portion of the proceeds go to helping program participants with immediate needs such as 
+              but not limited to: bus/transit passes, gas cards, work boots and clothing for work.
+            </p>
+            <p className="text-base font-semibold text-brand2">
+              We appreciate Your Support
+            </p>
+          </div>
+
+          <div className="mt-8">
+            <Button variant="primary">View on Amazon</Button>
+          </div>
+
+          <div className="mt-6 text-sm text-muted">
+            <strong className="text-text">Donyale Mack</strong>
+            <div className="mt-1">CEO/Author</div>
+          </div>
+        </GlowCard>
       </section>
 
-      {/* CTA */}
-      <section id="contact" className="mx-auto max-w-container px-7 py-24 text-center">
-        <SectionHeading
-          eyebrow="Next step"
-          title="Build smarter. Operate stronger."
-          subtitle="Deploy TOOLS Inc systems in days — not months. Ship workflows with clarity, consistency, and compliance."
-        />
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-          <Button variant="primary">Request Access</Button>
-          <Button variant="ghost">Talk to Us</Button>
+      {/* INTEREST FORM */}
+      <section id="contact" className="mx-auto max-w-container px-7 py-20">
+        <div className="text-center mb-10">
+          <div className="text-xs font-semibold tracking-[0.18em] text-brand2 uppercase">
+            Get Started
+          </div>
+          <h2 className="h2 mt-4">
+            Ready to Start Your Journey?
+          </h2>
+          <p className="mx-auto mt-4 max-w-[680px] text-muted">
+            Let us know how we can support you. Fill out the form below and we'll respond within 48 hours.
+          </p>
+        </div>
+
+        <GlowCard className="p-8">
+          <iframe
+            src="https://forms.cloud.microsoft/r/G0kkRW4F7q"
+            width="100%"
+            height="800"
+            frameBorder="0"
+            marginHeight={0}
+            marginWidth={0}
+            className="rounded-lg"
+          >
+            Loading…
+          </iframe>
+        </GlowCard>
+      </section>
+
+      {/* FOOTER CTA */}
+      <section className="mx-auto max-w-container px-7 py-16 text-center">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-8">
+          <a href="#">
+            <Button variant="primary">Back to Top</Button>
+          </a>
+          
+          <div className="flex flex-col items-center gap-3">
+            <div className="text-sm font-semibold text-text">Submit Referral</div>
+            <div className="rounded-xl bg-panel border border-border p-4 shadow-glow">
+              <div className="rounded-lg bg-white p-3">
+                <img
+                  src="/referral-qr.png"
+                  alt="Scan to Submit Referral"
+                  className="h-32 w-32 object-contain"
+                />
+              </div>
+            </div>
+            <p className="text-xs text-muted">Scan to access referral form</p>
+          </div>
         </div>
 
         <div className="mt-10 text-xs text-muted">
-          © {new Date().getFullYear()} TOOLS Inc · Built with purpose
+          © {new Date().getFullYear()} T.O.O.L.S Inc · Empowering individuals To Step Inito Their Purpose
         </div>
       </section>
+
+      {/* ChatBot */}
+      <ChatBot />
+      
+      {/* Cookie Consent */}
+      <CookieConsent />
     </main>
   );
 }

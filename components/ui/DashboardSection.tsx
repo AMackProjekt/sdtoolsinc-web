@@ -5,13 +5,13 @@ import { SectionHeading } from "./SectionHeading";
 import { ResponsiveContainer, AreaChart, Area, XAxis, Tooltip } from "recharts";
 
 const chartData = [
-  { name: "Mon", value: 22 },
-  { name: "Tue", value: 35 },
-  { name: "Wed", value: 28 },
-  { name: "Thu", value: 46 },
-  { name: "Fri", value: 41 },
-  { name: "Sat", value: 52 },
-  { name: "Sun", value: 48 }
+  { name: "Mon", value: 12 },
+  { name: "Tue", value: 18 },
+  { name: "Wed", value: 15 },
+  { name: "Thu", value: 24 },
+  { name: "Fri", value: 21 },
+  { name: "Sat", value: 8 },
+  { name: "Sun", value: 6 }
 ];
 
 function MiniKpi({ label, value, hint }: { label: string; value: string; hint: string }) {
@@ -28,9 +28,9 @@ export function DashboardSection() {
   return (
     <section id="dashboard" className="pt-20">
       <SectionHeading
-        eyebrow="Platform"
-        title="Real dashboard UI — not a placeholder"
-        subtitle="DashDark-style layout with Fluent micro-motion: sidebar, command bar, KPIs, activity feed, table, and live trend chart."
+        eyebrow="Impact Metrics"
+        title="Real-Time Program Insights"
+        subtitle="Track participant progress, program outcomes, and community impact with comprehensive metrics and reporting."
       />
 
       <div className="mx-auto mt-10 max-w-container">
@@ -39,12 +39,12 @@ export function DashboardSection() {
             {/* Sidebar */}
             <div className="border-b border-border p-5 lg:border-b-0 lg:border-r">
               <div className="mb-5 flex items-center justify-between">
-                <div className="font-extrabold tracking-tight">CaseFlow</div>
+                <div className="font-extrabold tracking-tight">Program Hub</div>
                 <div className="h-2 w-2 rounded-full bg-brand" />
               </div>
 
               <div className="space-y-2">
-                {["Overview", "Participants", "Workflows", "Reports", "Settings"].map((x) => (
+                {["Overview", "Participants", "Programs", "Reports", "Resources"].map((x) => (
                   <div
                     key={x}
                     className="rounded-md px-3 py-2 text-sm text-muted hover:bg-white/5 hover:text-text"
@@ -56,13 +56,13 @@ export function DashboardSection() {
 
               <div className="mt-6 rounded-lg border border-border bg-white/5 p-4">
                 <div className="text-xs font-semibold tracking-[0.18em] text-muted uppercase">
-                  Status
+                  Active Programs
                 </div>
                 <div className="mt-2 text-sm text-text">
-                  Audit trail enabled · Role separation active
+                  Job Readiness · Education · Mentorship
                 </div>
                 <div className="mt-2 text-xs text-muted">
-                  Least privilege defaults, export-ready logs.
+                  Supporting 42 active participants
                 </div>
               </div>
             </div>
@@ -73,7 +73,7 @@ export function DashboardSection() {
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div>
                   <div className="text-sm text-muted">Overview</div>
-                  <div className="text-xl font-extrabold tracking-tight">Operational Snapshot</div>
+                  <div className="text-xl font-extrabold tracking-tight">Program Impact</div>
                 </div>
 
                 <div className="flex items-center gap-3">
@@ -88,9 +88,9 @@ export function DashboardSection() {
 
               {/* KPI row */}
               <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
-                <MiniKpi label="Active workflows" value="18" hint="Running without exceptions" />
-                <MiniKpi label="Pending follow-ups" value="6" hint="Auto reminders ready" />
-                <MiniKpi label="Compliance checks" value="100%" hint="Policy aligned & logged" />
+                <MiniKpi label="Active Participants" value="42" hint="Engaged in programs" />
+                <MiniKpi label="Job Placements" value="18" hint="This quarter" />
+                <MiniKpi label="Success Rate" value="87%" hint="Program completion" />
               </div>
 
               {/* Chart + Activity */}
@@ -99,11 +99,11 @@ export function DashboardSection() {
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="text-xs font-semibold tracking-[0.18em] text-muted uppercase">
-                        Engagement trend
+                        Participant Engagement
                       </div>
-                      <div className="mt-1 text-sm text-muted">Weekly activity index</div>
+                      <div className="mt-1 text-sm text-muted">Weekly activity overview</div>
                     </div>
-                    <div className="text-xs text-muted">Live preview</div>
+                    <div className="text-xs text-muted">Current week</div>
                   </div>
 
                   <div className="mt-4 h-[220px] w-full">
@@ -133,14 +133,14 @@ export function DashboardSection() {
 
                 <GlowCard className="p-5">
                   <div className="text-xs font-semibold tracking-[0.18em] text-muted uppercase">
-                    Activity feed
+                    Recent Activity
                   </div>
                   <div className="mt-3 space-y-3">
                     {[
-                      { t: "2m ago", m: "Follow-up scheduled for A11" },
-                      { t: "18m ago", m: "Document checklist updated for B4" },
-                      { t: "1h ago", m: "New intake added to Row A" },
-                      { t: "3h ago", m: "Audit export generated" }
+                      { t: "10m ago", m: "New participant enrolled in Job Readiness" },
+                      { t: "1h ago", m: "Interview scheduled for John D." },
+                      { t: "2h ago", m: "Resume workshop completed - 8 attendees" },
+                      { t: "4h ago", m: "Job placement confirmed for Sarah M." }
                     ].map((x) => (
                       <div key={x.m} className="rounded-lg border border-border bg-white/5 p-3">
                         <div className="flex items-center justify-between">
@@ -159,30 +159,30 @@ export function DashboardSection() {
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="text-xs font-semibold tracking-[0.18em] text-muted uppercase">
-                      Queue
+                      Upcoming Milestones
                     </div>
-                    <div className="mt-1 text-sm text-muted">Items needing action</div>
+                    <div className="mt-1 text-sm text-muted">Program activities this week</div>
                   </div>
-                  <div className="text-xs text-muted">Auto-sorted</div>
+                  <div className="text-xs text-muted">Auto-scheduled</div>
                 </div>
 
                 <div className="mt-4 overflow-x-auto">
                   <table className="w-full text-left text-sm">
                     <thead className="text-muted">
                       <tr className="border-b border-border">
-                        <th className="py-2 pr-4 font-semibold">UID</th>
-                        <th className="py-2 pr-4 font-semibold">Item</th>
-                        <th className="py-2 pr-4 font-semibold">Priority</th>
-                        <th className="py-2 pr-4 font-semibold">Owner</th>
+                        <th className="py-2 pr-4 font-semibold">Date</th>
+                        <th className="py-2 pr-4 font-semibold">Activity</th>
+                        <th className="py-2 pr-4 font-semibold">Program</th>
+                        <th className="py-2 pr-4 font-semibold">Participants</th>
                         <th className="py-2 pr-2 font-semibold">Status</th>
                       </tr>
                     </thead>
                     <tbody className="text-text">
                       {[
-                        ["A11", "Weekly check-in logged", "Normal", "CM", "Ready"],
-                        ["B4", "Incident statement intake", "High", "CM", "Pending"],
-                        ["A6", "Document verification", "Normal", "CM", "In progress"],
-                        ["B3", "Safety follow-up", "High", "CM", "Pending"]
+                        ["Mon 1/13", "Resume Workshop", "Job Readiness", "12", "Confirmed"],
+                        ["Tue 1/14", "Mock Interviews", "Job Readiness", "6", "Scheduled"],
+                        ["Wed 1/15", "Career Counseling", "Mentorship", "8", "In Progress"],
+                        ["Thu 1/16", "Skills Assessment", "Education", "15", "Pending"]
                       ].map((r) => (
                         <tr key={r[0] + r[1]} className="border-b border-border/60">
                           <td className="py-3 pr-4 font-semibold">{r[0]}</td>
