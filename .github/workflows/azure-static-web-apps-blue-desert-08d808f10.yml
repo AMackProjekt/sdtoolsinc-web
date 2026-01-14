@@ -37,7 +37,8 @@ jobs:
       - name: Prepare deployment directory
         run: |
           mkdir -p deploy
-          cp -r out/* deploy/
+          cp -r out/. deploy/
+          ls -R deploy/ | head -50
       
       - name: Build And Deploy
         id: builddeploy
@@ -48,7 +49,7 @@ jobs:
           action: "upload"
           ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
           # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "/deploy" # Deploy only the out directory contents
+          app_location: "deploy" # Deploy only the out directory contents
           api_location: "" # Api source code path - optional
           output_location: "" # Already built, no additional output
           skip_app_build: true # We already built it above
