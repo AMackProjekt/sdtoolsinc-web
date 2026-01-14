@@ -145,8 +145,8 @@ export default function PartnershipsPage() {
         <GlowCard className="p-12">
           <h2 className="h2">Interested in Partnering?</h2>
           <p className="mt-4 text-muted max-w-[680px] mx-auto">
-            We're always looking for like-minded organizations to collaborate with. 
-            If you share our mission and want to make a difference, let's connect.
+            We&apos;re always looking for like-minded organizations to collaborate with. 
+            If you share our mission and want to make a difference, let&apos;s connect.
           </p>
           <div className="mt-8">
             <a href="/#contact">

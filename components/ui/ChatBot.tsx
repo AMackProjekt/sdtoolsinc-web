@@ -192,9 +192,9 @@ export function ChatBot() {
                 <div className="flex justify-start">
                   <div className="glass rounded-lg px-4 py-2 text-sm">
                     <div className="flex gap-1">
-                      <span className="animate-bounce" style={{ animationDelay: "0ms" }}>●</span>
-                      <span className="animate-bounce" style={{ animationDelay: "150ms" }}>●</span>
-                      <span className="animate-bounce" style={{ animationDelay: "300ms" }}>●</span>
+                      <span className="animate-bounce [animation-delay:0ms]">●</span>
+                      <span className="animate-bounce [animation-delay:150ms]">●</span>
+                      <span className="animate-bounce [animation-delay:300ms]">●</span>
                     </div>
                   </div>
                 </div>

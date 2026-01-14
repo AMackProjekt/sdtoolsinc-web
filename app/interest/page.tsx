@@ -60,6 +60,7 @@ export default function InterestPage() {
                 marginHeight={0}
                 marginWidth={0}
                 className="bg-white"
+                title="T.O.O.L.S Inc Interest Form"
               >
                 Loading form...
               </iframe>
