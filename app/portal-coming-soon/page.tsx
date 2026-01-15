@@ -23,7 +23,7 @@ export default function PortalComingSoon() {
           </h1>
 
           <p className="p-lead max-w-2xl mx-auto mb-8">
-            We're building a powerful new platform to help you access resources, track your progress, 
+            We&apos;re building a powerful new platform to help you access resources, track your progress, 
             and connect with your support team. The T.O.O.L.S Inc Client Portal will provide 
             personalized tools for your journey to success.
           </p>

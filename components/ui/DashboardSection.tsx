@@ -35,7 +35,7 @@ export function DashboardSection() {
 
       <div className="mx-auto mt-6 max-w-container text-center">
         <p className="text-xs text-muted italic">
-          Example Only - We protect our clients' anonymity
+          Example Only - We protect our clients&apos; anonymity
         </p>
       </div>
 
