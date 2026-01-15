@@ -32,3 +32,14 @@ body {
   -webkit-backdrop-filter: blur(14px);
   backdrop-filter: blur(14px);
 }
+
+/* Cyberpunk neon flicker animation */
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+  75% { opacity: 0.9; }
+}
+
+.animate-flicker {
+  animation: flicker 2.5s ease-in-out infinite;
+}

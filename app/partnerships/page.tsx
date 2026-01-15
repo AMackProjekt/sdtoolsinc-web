@@ -22,11 +22,10 @@ export default function PartnershipsPage() {
 
       {/* Partnership Organizations */}
       <section className="mx-auto max-w-container px-7 pb-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {[
-            { name: "Partner 1", logo: "/partnerships/amp-logo.jpg" },
-            { name: "Partner 2", logo: "/partnerships/img-4264.jpg" },
-            { name: "Partner 3", logo: "/partnerships/partner-3.png" },
+            { name: "MPH", logo: "/partnerships/mph-logo.png" },
+            { name: "AMP", logo: "/partnerships/amp-logo.jpeg" },
           ].map((partner) => (
             <GlowCard key={partner.name} className="p-8 flex items-center justify-center">
               <img
@@ -47,21 +46,14 @@ export default function PartnershipsPage() {
           subtitle="Connecting individuals with experienced mentors who provide guidance, support, and real-world insights for personal and professional growth."
         />
 
-        <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[
-            { name: "Mentor Organization 1", logo: "/partnerships/img-0055.png" },
-            { name: "Mentor Organization 2", logo: "/partnerships/img-4264.jpg" },
-            { name: "Mentor Organization 3", logo: "/partnerships/partner-3.png" },
-            { name: "Mentor Organization 4", logo: "/partnerships/amp-logo.jpg" },
-          ].map((mentor) => (
-            <GlowCard key={mentor.name} className="p-6 flex items-center justify-center">
-              <img
-                src={mentor.logo}
-                alt={mentor.name}
-                className="max-h-20 w-auto object-contain"
-              />
-            </GlowCard>
-          ))}
+        <div className="mt-10 flex justify-center">
+          <GlowCard className="p-8 flex items-center justify-center max-w-md w-full">
+            <img
+              src="/partnerships/mentorship-logo.png"
+              alt="Mentorship Program"
+              className="max-h-32 w-auto object-contain"
+            />
+          </GlowCard>
         </div>
       </section>
 

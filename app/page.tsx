@@ -74,6 +74,28 @@ export default function Page() {
         </div>
       </section>
 
+      {/* REENTRY SERVICE PROVIDER HIGHLIGHT */}
+      <section className="mx-auto max-w-container px-7 py-20">
+        <GlowCard className="p-10 text-center overflow-hidden relative">
+          <div className="absolute inset-0 bg-gradient-to-br from-brand/10 via-transparent to-brand2/10" />
+          <div className="relative">
+            <div className="text-xs font-semibold tracking-[0.18em] text-brand2 uppercase">
+              Justice-Involved Support
+            </div>
+            <h2 className="h2 mt-4 mb-4">
+              Reentry Service Provider
+            </h2>
+            <p className="text-muted max-w-2xl mx-auto mb-8 leading-relaxed">
+              Supporting individuals returning to society after incarceration with comprehensive reentry 
+              services, employment assistance, housing support, and a pathway to successful reintegration.
+            </p>
+            <Button variant="primary" href="/reentry">
+              Learn More About Reentry Services
+            </Button>
+          </div>
+        </GlowCard>
+      </section>
+
       {/* INTERACTIVE TILES */}
       <InteractiveTiles />
 
@@ -82,13 +104,13 @@ export default function Page() {
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 items-center">
           <div>
             <div className="text-xs font-semibold tracking-[0.18em] text-brand2 uppercase">
-              Leadership
+              About Us
             </div>
             <h2 className="h2 mt-4">
-              Donyale &quot;DThree&quot; Mack
+              Together Overcoming Obstacles and Limitations
             </h2>
             <div className="mt-2 text-lg font-semibold text-muted">
-              Owner/Founder
+              Leadership: Donyale &quot;DThree&quot; Mack
             </div>
             
             <div className="mt-6 space-y-4 text-text/90 leading-relaxed">

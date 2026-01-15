@@ -26,6 +26,7 @@ export function Navbar() {
 
         <nav className="hidden items-center gap-6 md:flex">
           <a className="text-sm font-medium text-muted hover:text-text" href="/#platform">Programs</a>
+          <a className="text-sm font-medium text-muted hover:text-text" href="/reentry">Reentry</a>
           <a className="text-sm font-medium text-muted hover:text-text" href="/#dashboard">Impact</a>
           <a className="text-sm font-medium text-muted hover:text-text" href="/partnerships">Partnerships</a>
           <a className="text-sm font-medium text-muted hover:text-text" href="/referral">Referral</a>
