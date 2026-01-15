@@ -16,7 +16,7 @@ export default function Page() {
       <Navbar />
 
       {/* HERO */}
-      <section className="mx-auto max-w-container px-7 pt-24 pb-16 text-center">
+      <section className="mx-auto max-w-container px-4 sm:px-7 pt-16 sm:pt-24 pb-12 sm:pb-16 text-center">
         <h1 className="h1">
           Empowering Individuals.
           <br />
@@ -25,67 +25,67 @@ export default function Page() {
           </span>
         </h1>
 
-        <p className="mx-auto mt-6 max-w-[760px] p-lead">
+        <p className="mx-auto mt-4 sm:mt-6 max-w-[760px] p-lead px-4">
           At T.O.O.L.S Inc, we provide support and opportunities for individuals looking to start over. 
           Through comprehensive programs and lived experience, we help people unlock their full potential.
         </p>
 
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-          <Button variant="primary">Get Started</Button>
-          <Button variant="ghost">View Platform</Button>
+        <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 px-4">
+          <Button variant="primary" href="/interest">Get Started</Button>
+          <Button variant="ghost" href="/portal-coming-soon">View Platform</Button>
         </div>
 
         {/* KPI band */}
-        <div className="mt-14 grid grid-cols-1 gap-4 md:grid-cols-4">
+        <div className="mt-10 sm:mt-14 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           {[
             ["Support", "Comprehensive Programs"],
             ["Growth", "Job Readiness Training"],
             ["Empathy", "Lived Experience Team"],
             ["Access", "Continued Education"]
           ].map(([v, t]) => (
-            <GlowCard key={t} className="p-5 text-left">
-              <div className="text-2xl font-extrabold tracking-tight">{v}</div>
-              <div className="mt-2 text-sm text-muted">{t}</div>
+            <GlowCard key={t} className="p-4 sm:p-5 text-left">
+              <div className="text-xl sm:text-2xl font-extrabold tracking-tight">{v}</div>
+              <div className="mt-2 text-xs sm:text-sm text-muted">{t}</div>
             </GlowCard>
           ))}
         </div>
       </section>
 
       {/* FEATURES */}
-      <section id="platform" className="mx-auto max-w-container px-7 pt-8 pb-20">
+      <section id="platform" className="mx-auto max-w-container px-4 sm:px-7 pt-8 pb-16 sm:pb-20">
         <SectionHeading
           eyebrow="How We Help"
           title="Comprehensive Support Programs"
           subtitle="We recognize and address the diverse challenges individuals face, providing the tools and support necessary to unlock their full potential."
         />
 
-        <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-8 sm:mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {[
             ["Job Readiness", "Professional development programs including resume building, mock interviews, and career planning to prepare for success."],
             ["Continued Education", "Access to educational resources and training programs that open doors to new opportunities and skill development."],
             ["Lived Experience", "Our team shares lived experiences with the challenges our clients face, creating genuine understanding and effective support."],
             ["Personal Growth", "Holistic programs addressing both immediate needs and long-term goals for sustainable personal and professional growth."]
           ].map(([h, p]) => (
-            <GlowCard key={h}>
-              <div className="text-lg font-extrabold tracking-tight">{h}</div>
-              <div className="mt-2 text-sm text-muted leading-relaxed">{p}</div>
+            <GlowCard key={h} className="p-4 sm:p-5">
+              <div className="text-base sm:text-lg font-extrabold tracking-tight">{h}</div>
+              <div className="mt-2 text-xs sm:text-sm text-muted leading-relaxed">{p}</div>
             </GlowCard>
           ))}
         </div>
       </section>
 
       {/* REENTRY SERVICE PROVIDER HIGHLIGHT */}
-      <section className="mx-auto max-w-container px-7 py-20">
-        <GlowCard className="p-10 text-center overflow-hidden relative">
+      <section className="mx-auto max-w-container px-4 sm:px-7 py-12 sm:py-20">
+        <GlowCard className="p-6 sm:p-10 text-center overflow-hidden relative">
           <div className="absolute inset-0 bg-gradient-to-br from-brand/10 via-transparent to-brand2/10" />
           <div className="relative">
             <div className="text-xs font-semibold tracking-[0.18em] text-brand2 uppercase">
               Justice-Involved Support
             </div>
-            <h2 className="h2 mt-4 mb-4">
+            <h2 className="h2 mt-4 mb-3 sm:mb-4">
               Reentry Service Provider
             </h2>
-            <p className="text-muted max-w-2xl mx-auto mb-8 leading-relaxed">
+            <p className="text-sm sm:text-base text-muted max-w-2xl mx-auto mb-6 sm:mb-8 leading-relaxed px-4">
               Supporting individuals returning to society after incarceration with comprehensive reentry 
               services, employment assistance, housing support, and a pathway to successful reintegration.
             </p>

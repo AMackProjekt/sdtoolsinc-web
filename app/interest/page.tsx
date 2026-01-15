@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/ui/Navbar";
 import { GlowCard } from "@/components/ui/GlowCard";
 import { Button } from "@/components/ui/Button";
+import Image from "next/image";
 
 export default function InterestPage() {
   return (
@@ -19,24 +20,6 @@ export default function InterestPage() {
         </div>
 
         <div className="mx-auto mt-12 max-w-[900px]">
-          {/* QR Code Section */}
-          <div className="mb-8 text-center">
-            <GlowCard className="inline-block p-6">
-              <div className="rounded-xl bg-white p-6 shadow-lg">
-                {/* QR Code placeholder - replace with actual QR code image */}
-                <div className="flex h-48 w-48 items-center justify-center bg-white text-gray-800">
-                  <div className="text-center text-sm font-semibold">
-                    QR Code
-                    <div className="mt-2 text-xs font-normal">Scan to access form</div>
-                  </div>
-                </div>
-              </div>
-              <p className="mt-4 text-sm text-muted">
-                Scan to fill out the Interest Form
-              </p>
-            </GlowCard>
-          </div>
-
           <GlowCard className="p-8 md:p-10">
             {/* Important Notice */}
             <div className="mb-8 rounded-lg border border-brand/30 bg-brand/5 p-6">
@@ -48,6 +31,38 @@ export default function InterestPage() {
               <p className="mt-3 text-sm font-semibold text-brand2">
                 Thank You for Your Support!
               </p>
+            </div>
+
+            {/* QR Code and Mobile Access - Side by Side */}
+            <div className="mb-8 flex flex-col md:flex-row items-center justify-center gap-8">
+              {/* QR Code */}
+              <div className="flex-shrink-0">
+                <div className="rounded-xl bg-white p-4 shadow-lg">
+                  <Image
+                    src="/qr-interest-form.webp"
+                    alt="QR Code for Interest Form"
+                    width={192}
+                    height={192}
+                    className="h-48 w-48"
+                    unoptimized
+                  />
+                </div>
+              </div>
+
+              {/* Alternative Text */}
+              <div className="flex items-center">
+                <p className="text-sm text-muted text-center md:text-left">
+                  If you are having trouble clicking the link or are on a mobile device{" "}
+                  <a
+                    href="https://forms.cloud.microsoft/r/G0kkRW4F7q"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-brand hover:text-brand2 transition-colors font-semibold underline"
+                  >
+                    click here
+                  </a>
+                </p>
+              </div>
             </div>
 
             {/* Embedded Form */}
@@ -64,22 +79,6 @@ export default function InterestPage() {
               >
                 Loading form...
               </iframe>
-            </div>
-
-            {/* Alternative Access */}
-            <div className="mt-6 text-center">
-              <p className="text-sm text-muted mb-3">
-                Form not displaying? Open in a new window:
-              </p>
-              <a
-                href="https://forms.cloud.microsoft/r/G0kkRW4F7q"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Button variant="ghost">
-                  Open Form in New Tab
-                </Button>
-              </a>
             </div>
           </GlowCard>
 

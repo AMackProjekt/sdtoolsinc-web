@@ -123,7 +123,8 @@ export function ChatBot() {
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full",
+          "fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50",
+          "flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full",
           "bg-gradient-to-br from-brand to-brand2 text-white shadow-glow",
           "hover:shadow-xl transition-shadow"
         )}
@@ -132,11 +133,11 @@ export function ChatBot() {
         aria-label="Open chat"
       >
         {isOpen ? (
-          <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         ) : (
-          <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
           </svg>
         )}
@@ -150,23 +151,29 @@ export function ChatBot() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-24 right-6 z-50 w-[380px] h-[600px] rounded-xl bg-panel border border-border shadow-glow overflow-hidden flex flex-col"
+            className={cn(
+              "fixed z-50 bg-panel border border-border shadow-glow overflow-hidden flex flex-col",
+              "inset-0 rounded-none sm:inset-auto",
+              "sm:bottom-20 sm:right-4 sm:w-[360px] sm:h-[550px] sm:rounded-xl",
+              "md:bottom-24 md:right-6 md:w-[380px] md:h-[600px]",
+              "lg:w-[400px] lg:h-[650px]"
+            )}
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-border bg-bg/50 backdrop-blur-sm">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-brand to-brand2 flex items-center justify-center text-white font-bold">
+            <div className="flex items-center justify-between p-3 sm:p-4 border-b border-border bg-bg/50 backdrop-blur-sm">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-gradient-to-br from-brand to-brand2 flex items-center justify-center text-white font-bold text-xs sm:text-sm">
                   MA
                 </div>
                 <div>
-                  <div className="font-semibold text-text">MackAi</div>
+                  <div className="font-semibold text-text text-sm sm:text-base">MackAi</div>
                   <div className="text-xs text-muted">Always here to help</div>
                 </div>
               </div>
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4">
               {messages.map((msg) => (
                 <div
                   key={msg.id}
@@ -177,7 +184,7 @@ export function ChatBot() {
                 >
                   <div
                     className={cn(
-                      "max-w-[80%] rounded-lg px-4 py-2 text-sm",
+                      "max-w-[85%] sm:max-w-[80%] rounded-lg px-3 py-2 sm:px-4 text-xs sm:text-sm",
                       msg.sender === "user"
                         ? "bg-gradient-to-br from-brand to-brand2 text-white"
                         : "glass text-text"
@@ -190,7 +197,7 @@ export function ChatBot() {
               
               {isTyping && (
                 <div className="flex justify-start">
-                  <div className="glass rounded-lg px-4 py-2 text-sm">
+                  <div className="glass rounded-lg px-3 py-2 sm:px-4 text-xs sm:text-sm">
                     <div className="flex gap-1">
                       <span className="animate-bounce [animation-delay:0ms]">●</span>
                       <span className="animate-bounce [animation-delay:150ms]">●</span>
@@ -205,7 +212,7 @@ export function ChatBot() {
 
             {/* Quick Actions */}
             {messages.length <= 2 && (
-              <div className="px-4 pb-2">
+              <div className="px-3 sm:px-4 pb-2">
                 <div className="text-xs text-muted mb-2">Quick questions:</div>
                 <div className="flex flex-wrap gap-2">
                   {quickActions.map((action) => (
@@ -225,7 +232,7 @@ export function ChatBot() {
             )}
 
             {/* Input */}
-            <div className="p-4 border-t border-border bg-bg/50 backdrop-blur-sm">
+            <div className="p-3 sm:p-4 border-t border-border bg-bg/50 backdrop-blur-sm">
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -233,13 +240,13 @@ export function ChatBot() {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Type your message..."
-                  className="flex-1 rounded-lg bg-panel border border-border px-4 py-2 text-sm text-text placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand/50"
+                  className="flex-1 rounded-lg bg-panel border border-border px-3 py-2 sm:px-4 text-xs sm:text-sm text-text placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand/50"
                 />
                 <button
                   onClick={handleSend}
                   disabled={!input.trim()}
                   className={cn(
-                    "px-4 py-2 rounded-lg font-semibold text-sm transition-all",
+                    "px-3 py-2 sm:px-4 rounded-lg font-semibold text-xs sm:text-sm transition-all",
                     input.trim()
                       ? "bg-gradient-to-br from-brand to-brand2 text-white hover:shadow-glow"
                       : "bg-panel text-muted cursor-not-allowed"
