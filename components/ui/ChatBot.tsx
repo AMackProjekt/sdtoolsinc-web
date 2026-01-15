@@ -3,55 +3,43 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/cn";
+import { getMackAiInstance } from "@/lib/mackai";
+import type { AIModule } from "@/lib/mackai";
 
 type Message = {
   id: string;
   text: string;
   sender: "user" | "bot";
   timestamp: Date;
+  requestId?: string;
+  module?: AIModule;
 };
 
-const botResponses: Record<string, string> = {
-  greeting: "Hello! I'm MackAi, here to help you learn about T.O.O.L.S Inc programs and support services. How can I assist you today?",
-  programs: "We offer four core programs: Job Readiness Training, Continued Education, Lived Experience Support, and Personal Growth Programs. Which would you like to know more about?",
-  "job readiness": "Our Job Readiness program includes resume building, mock interviews, career planning, and professional development to prepare you for success in the workforce.",
-  education: "We provide access to educational resources, training programs, skill development courses, and support for continuing your education journey.",
-  "lived experience": "Our team has lived experience with the challenges our clients face. This creates genuine understanding and more effective, empathetic support.",
-  referral: "You can submit a referral for justice-involved individuals through our Referral Form page. We also have a QR code available for easy access.",
-  support: "To get support, you can fill out our Interest Form or contact us directly. We typically respond within 48 hours.",
-  contact: "You can reach us through our Contact page, submit an Interest Form, or call our office. We're here to help you start your journey.",
-  help: "I can help you with information about our programs, how to get support, referral process, and general questions about T.O.O.L.S Inc. What would you like to know?",
-};
+// Initialize MackAi service
+const mackaiService = getMackAiInstance();
 
-function getBotResponse(userMessage: string): string {
-  const msg = userMessage.toLowerCase();
-  
-  if (msg.includes("hello") || msg.includes("hi") || msg.includes("hey")) {
-    return botResponses.greeting;
+async function getBotResponse(userMessage: string): Promise<{ text: string; requestId: string; module: AIModule }> {
+  try {
+    // Use cascade module for intelligent routing
+    const response = await mackaiService.processRequest({
+      module: 'cascade',
+      input: userMessage,
+      sessionId: typeof window !== 'undefined' ? window.sessionStorage.getItem('mackai_session') || undefined : undefined,
+    });
+
+    return {
+      text: response.output,
+      requestId: response.metadata?.requestId || '',
+      module: response.module,
+    };
+  } catch (error) {
+    console.error('MackAi error:', error);
+    return {
+      text: "I'd be happy to help you with information about our programs, support services, or how to get started. You can also visit our Interest Form page or Contact us directly for personalized assistance.",
+      requestId: '',
+      module: 'chatgpt',
+    };
   }
-  if (msg.includes("program") || msg.includes("service")) {
-    return botResponses.programs;
-  }
-  if (msg.includes("job") || msg.includes("employment") || msg.includes("career")) {
-    return botResponses["job readiness"];
-  }
-  if (msg.includes("education") || msg.includes("training") || msg.includes("learn")) {
-    return botResponses.education;
-  }
-  if (msg.includes("lived experience") || msg.includes("understanding")) {
-    return botResponses["lived experience"];
-  }
-  if (msg.includes("referral") || msg.includes("refer")) {
-    return botResponses.referral;
-  }
-  if (msg.includes("support") || msg.includes("help") || msg.includes("need")) {
-    return botResponses.support;
-  }
-  if (msg.includes("contact") || msg.includes("reach") || msg.includes("call")) {
-    return botResponses.contact;
-  }
-  
-  return "I'd be happy to help you with information about our programs, support services, or how to get started. You can also visit our Interest Form page or Contact us directly for personalized assistance.";
 }
 
 export function ChatBot() {
@@ -76,7 +64,7 @@ export function ChatBot() {
     scrollToBottom();
   }, [messages]);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!input.trim()) return;
 
     const userMessage: Message = {
@@ -87,20 +75,36 @@ export function ChatBot() {
     };
 
     setMessages((prev) => [...prev, userMessage]);
+    const userInput = input;
     setInput("");
     setIsTyping(true);
 
-    // Simulate bot typing delay
-    setTimeout(() => {
+    try {
+      // Get response from MackAi
+      const response = await getBotResponse(userInput);
+      
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: getBotResponse(input),
+        text: response.text,
+        sender: "bot",
+        timestamp: new Date(),
+        requestId: response.requestId,
+        module: response.module,
+      };
+      
+      setMessages((prev) => [...prev, botMessage]);
+    } catch (error) {
+      console.error('Chat error:', error);
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: "I apologize for the inconvenience. Please try again or contact support if the issue persists.",
         sender: "bot",
         timestamp: new Date(),
       };
-      setMessages((prev) => [...prev, botMessage]);
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
       setIsTyping(false);
-    }, 800);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
