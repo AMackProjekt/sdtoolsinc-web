@@ -29,6 +29,7 @@ export function Navbar() {
           <a className="text-sm font-medium text-muted hover:text-text" href="/reentry">Reentry</a>
           <a className="text-sm font-medium text-muted hover:text-text" href="/#dashboard">Impact</a>
           <a className="text-sm font-medium text-muted hover:text-text" href="/partnerships">Partnerships</a>
+          <a className="text-sm font-medium text-muted hover:text-text" href="/api-test">API</a>
           <a className="text-sm font-medium text-muted hover:text-text" href="/referral">Referral</a>
           <a className="text-sm font-medium text-muted hover:text-text" href="/#contact">Contact</a>
         </nav>
