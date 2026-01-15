@@ -49,7 +49,7 @@ export default function PartnershipsPage() {
         <div className="mt-10 flex justify-center">
           <GlowCard className="p-8 flex items-center justify-center max-w-md w-full">
             <img
-              src="/partnerships/mentorship-logo.png"
+              src="/partnerships/kingme-logo.png"
               alt="Mentorship Program"
               className="max-h-32 w-auto object-contain"
             />

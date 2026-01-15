@@ -7,11 +7,7 @@ export function Footer() {
     <footer className="relative mt-20 border-t border-border/50 bg-panel/50 backdrop-blur-xl overflow-hidden">
       {/* Animated background grid */}
       <div className="absolute inset-0 opacity-10">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `linear-gradient(rgba(56,189,248,0.3) 1px, transparent 1px),
-                           linear-gradient(90deg, rgba(56,189,248,0.3) 1px, transparent 1px)`,
-          backgroundSize: '50px 50px',
-        }} />
+        <div className="absolute inset-0 footer-grid-bg" />
       </div>
 
       {/* Glowing top border */}
@@ -49,10 +45,10 @@ export function Footer() {
                 <span className="absolute inset-0 text-xl md:text-2xl font-extrabold tracking-wider blur-sm text-brand animate-pulse">
                   POWERED BY A MACKPROJEKT
                 </span>
-                <span className="absolute inset-0 text-xl md:text-2xl font-extrabold tracking-wider blur-md text-brand2 animate-pulse" style={{ animationDelay: '0.3s' }}>
+                <span className="absolute inset-0 text-xl md:text-2xl font-extrabold tracking-wider blur-md text-brand2 animate-pulse animation-delay-300">
                   POWERED BY A MACKPROJEKT
                 </span>
-                <span className="absolute inset-0 text-xl md:text-2xl font-extrabold tracking-wider blur-lg text-accent animate-pulse" style={{ animationDelay: '0.6s' }}>
+                <span className="absolute inset-0 text-xl md:text-2xl font-extrabold tracking-wider blur-lg text-accent animate-pulse animation-delay-600">
                   POWERED BY A MACKPROJEKT
                 </span>
                 <span className="relative text-xl md:text-2xl font-extrabold tracking-wider bg-gradient-to-r from-brand via-brand2 to-accent bg-clip-text text-transparent animate-flicker">
@@ -80,7 +76,7 @@ export function Footer() {
 
       {/* Animated corner accents */}
       <div className="absolute bottom-0 left-0 w-32 h-32 border-l-2 border-b-2 border-brand/30 animate-pulse" />
-      <div className="absolute bottom-0 right-0 w-32 h-32 border-r-2 border-b-2 border-brand2/30 animate-pulse" style={{ animationDelay: '0.5s' }} />
+      <div className="absolute bottom-0 right-0 w-32 h-32 border-r-2 border-b-2 border-brand2/30 animate-pulse animation-delay-500" />
     </footer>
   );
 }
