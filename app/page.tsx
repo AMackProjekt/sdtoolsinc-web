@@ -38,9 +38,9 @@ export default function Page() {
         {/* KPI band */}
         <div className="mt-10 sm:mt-14 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           {[
-            ["Support", "Comprehensive Programs"],
+            ["Case Mgmnt", "Wrap Around Services"],
             ["Growth", "Job Readiness Training"],
-            ["Empathy", "Lived Experience Team"],
+            ["Resources", "Lived Experience Team"],
             ["Access", "Continued Education"]
           ].map(([v, t]) => (
             <GlowCard key={t} className="p-4 sm:p-5 text-left">

@@ -33,6 +33,12 @@ export function DashboardSection() {
         subtitle="Track participant progress, program outcomes, and community impact with comprehensive metrics and reporting."
       />
 
+      <div className="mx-auto mt-6 max-w-container text-center">
+        <p className="text-xs text-muted italic">
+          Example Only - We protect our clients' anonymity
+        </p>
+      </div>
+
       <div className="mx-auto mt-10 max-w-container">
         <div className="glass overflow-hidden rounded-xl">
           <div className="grid min-h-[520px] grid-cols-1 lg:grid-cols-[280px_1fr]">

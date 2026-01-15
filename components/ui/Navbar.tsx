@@ -37,16 +37,6 @@ export function Navbar() {
           <a className="text-sm font-medium text-muted hover:text-text transition" href="/#contact">Contact</a>
         </nav>
 
-        {/* Desktop Buttons */}
-        <div className="hidden lg:flex items-center gap-3">
-          <Button variant="ghost">
-            <a href="/referral">Submit Referral</a>
-          </Button>
-          <Button variant="primary">
-            <a href="/#contact">Get Support</a>
-          </Button>
-        </div>
-
         {/* Mobile Menu Button */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -80,14 +70,6 @@ export function Navbar() {
             <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/partnerships" onClick={() => setMobileMenuOpen(false)}>Partnerships</a>
             <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/referral" onClick={() => setMobileMenuOpen(false)}>Referral</a>
             <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/#contact" onClick={() => setMobileMenuOpen(false)}>Contact</a>
-            <div className="pt-4 space-y-2 border-t border-border">
-              <Button variant="ghost" className="w-full">
-                <a href="/referral">Submit Referral</a>
-              </Button>
-              <Button variant="primary" className="w-full">
-                <a href="/#contact">Get Support</a>
-              </Button>
-            </div>
           </nav>
         </motion.div>
       )}

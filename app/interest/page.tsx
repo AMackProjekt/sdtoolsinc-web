@@ -65,20 +65,17 @@ export default function InterestPage() {
               </div>
             </div>
 
-            {/* Embedded Form */}
-            <div className="rounded-lg overflow-hidden border border-border">
-              <iframe
-                src="https://forms.cloud.microsoft/r/G0kkRW4F7q"
-                width="100%"
-                height="800"
-                frameBorder="0"
-                marginHeight={0}
-                marginWidth={0}
-                className="bg-white"
-                title="T.O.O.L.S Inc Interest Form"
+            {/* Start Now Button */}
+            <div className="text-center">
+              <a
+                href="https://forms.cloud.microsoft/r/G0kkRW4F7q"
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                Loading form...
-              </iframe>
+                <Button>
+                  Start Now
+                </Button>
+              </a>
             </div>
           </GlowCard>
 
