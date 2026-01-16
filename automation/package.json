@@ -1,0 +1,30 @@
+{
+  "name": "toolsinc-social-automation",
+  "version": "1.0.0",
+  "description": "Social media automation for T.O.O.L.S Inc",
+  "main": "index.js",
+  "scripts": {
+    "generate": "node content-generator.js",
+    "schedule": "node post-scheduler.js",
+    "crawl": "node news-crawler.js",
+    "engage": "node engagement-bot.js",
+    "analytics": "node analytics.js",
+    "setup": "node setup-wizard.js",
+    "daily": "node daily-workflow.js",
+    "test": "node test-connection.js"
+  },
+  "keywords": ["automation", "social-media", "reentry", "nonprofit"],
+  "author": "T.O.O.L.S Inc",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "cheerio": "^1.0.0-rc.12",
+    "dotenv": "^16.3.1",
+    "node-cron": "^3.0.3",
+    "openai": "^4.20.0",
+    "puppeteer": "^21.5.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.54.0"
+  }
+}

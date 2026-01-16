@@ -23,5 +23,5 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules", "api", "data-factory", "portal-app", "apps"]
+  "exclude": ["node_modules", "api", "data-factory", "portal-app", "apps", "automation"]
 }
