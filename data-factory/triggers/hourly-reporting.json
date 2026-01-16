@@ -1,0 +1,23 @@
+{
+  "name": "HourlyReportingTrigger",
+  "properties": {
+    "description": "Hourly data aggregation for reporting",
+    "type": "ScheduleTrigger",
+    "typeProperties": {
+      "recurrence": {
+        "frequency": "Hour",
+        "interval": 1,
+        "startTime": "2026-01-14T00:00:00Z",
+        "timeZone": "UTC"
+      }
+    },
+    "pipelines": [
+      {
+        "pipelineReference": {
+          "referenceName": "ReportingAggregationPipeline",
+          "type": "PipelineReference"
+        }
+      }
+    ]
+  }
+}

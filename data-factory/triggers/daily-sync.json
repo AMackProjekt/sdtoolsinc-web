@@ -1,0 +1,33 @@
+{
+  "name": "DailyDataSyncTrigger",
+  "properties": {
+    "description": "Daily sync at 2 AM UTC",
+    "type": "ScheduleTrigger",
+    "typeProperties": {
+      "recurrence": {
+        "frequency": "Day",
+        "interval": 1,
+        "startTime": "2026-01-14T02:00:00Z",
+        "timeZone": "UTC",
+        "schedule": {
+          "hours": [2],
+          "minutes": [0]
+        }
+      }
+    },
+    "pipelines": [
+      {
+        "pipelineReference": {
+          "referenceName": "UserDataSyncPipeline",
+          "type": "PipelineReference"
+        }
+      },
+      {
+        "pipelineReference": {
+          "referenceName": "ReferralDataSyncPipeline",
+          "type": "PipelineReference"
+        }
+      }
+    ]
+  }
+}

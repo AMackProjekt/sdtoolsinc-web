@@ -1,0 +1,22 @@
+{
+  "name": "AzureSqlLinkedService",
+  "type": "Microsoft.DataFactory/factories/linkedservices",
+  "properties": {
+    "description": "Azure SQL Database connection for T.O.O.L.S Inc data",
+    "type": "AzureSqlDatabase",
+    "typeProperties": {
+      "connectionString": {
+        "type": "AzureKeyVaultSecret",
+        "store": {
+          "referenceName": "AzureKeyVaultLinkedService",
+          "type": "LinkedServiceReference"
+        },
+        "secretName": "SqlConnectionString"
+      }
+    },
+    "connectVia": {
+      "referenceName": "AutoResolveIntegrationRuntime",
+      "type": "IntegrationRuntimeReference"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "ApiDataSourceLinkedService",
+  "type": "Microsoft.DataFactory/factories/linkedservices",
+  "properties": {
+    "description": "REST API connection for T.O.O.L.S Inc backend",
+    "type": "RestService",
+    "typeProperties": {
+      "url": "https://blue-desert-08d808f10.azurestaticapps.net/api",
+      "enableServerCertificateValidation": true,
+      "authenticationType": "Anonymous"
+    },
+    "connectVia": {
+      "referenceName": "AutoResolveIntegrationRuntime",
+      "type": "IntegrationRuntimeReference"
+    }
+  }
+}

@@ -1,0 +1,119 @@
+{
+  "name": "UserDataSyncPipeline",
+  "properties": {
+    "description": "Sync user data from API to Azure SQL Database",
+    "activities": [
+      {
+        "name": "GetUsersFromAPI",
+        "type": "Copy",
+        "dependsOn": [],
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 3,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "userProperties": [],
+        "typeProperties": {
+          "source": {
+            "type": "RestSource",
+            "httpRequestTimeout": "00:01:40",
+            "requestInterval": "00.00:00:00.010",
+            "requestMethod": "GET",
+            "additionalHeaders": {
+              "Accept": "application/json"
+            }
+          },
+          "sink": {
+            "type": "AzureSqlSink",
+            "writeBehavior": "upsert",
+            "upsertSettings": {
+              "useTempDB": true,
+              "keys": ["id"]
+            },
+            "sqlWriterUseTableLock": false,
+            "disableMetricsCollection": false
+          },
+          "enableStaging": false,
+          "translator": {
+            "type": "TabularTranslator",
+            "mappings": [
+              {
+                "source": { "path": "$['id']" },
+                "sink": { "name": "UserId", "type": "String" }
+              },
+              {
+                "source": { "path": "$['email']" },
+                "sink": { "name": "Email", "type": "String" }
+              },
+              {
+                "source": { "path": "$['name']" },
+                "sink": { "name": "FullName", "type": "String" }
+              },
+              {
+                "source": { "path": "$['createdAt']" },
+                "sink": { "name": "CreatedAt", "type": "DateTime" }
+              }
+            ]
+          }
+        },
+        "inputs": [
+          {
+            "referenceName": "ApiUsersDataset",
+            "type": "DatasetReference"
+          }
+        ],
+        "outputs": [
+          {
+            "referenceName": "SqlUsersDataset",
+            "type": "DatasetReference"
+          }
+        ]
+      },
+      {
+        "name": "LogSyncSuccess",
+        "type": "SqlServerStoredProcedure",
+        "dependsOn": [
+          {
+            "activity": "GetUsersFromAPI",
+            "dependencyConditions": ["Succeeded"]
+          }
+        ],
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "storedProcedureName": "[dbo].[LogDataSyncEvent]",
+          "storedProcedureParameters": {
+            "EventType": {
+              "value": "UserSync",
+              "type": "String"
+            },
+            "Status": {
+              "value": "Success",
+              "type": "String"
+            },
+            "RecordCount": {
+              "value": {
+                "value": "@activity('GetUsersFromAPI').output.rowsCopied",
+                "type": "Expression"
+              },
+              "type": "Int32"
+            }
+          }
+        },
+        "linkedServiceName": {
+          "referenceName": "AzureSqlLinkedService",
+          "type": "LinkedServiceReference"
+        }
+      }
+    ],
+    "annotations": [],
+    "lastPublishTime": "2026-01-14T00:00:00Z"
+  }
+}

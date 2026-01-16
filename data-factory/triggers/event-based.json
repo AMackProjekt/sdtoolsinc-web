@@ -1,0 +1,25 @@
+{
+  "name": "EventBasedTrigger",
+  "properties": {
+    "description": "Trigger on blob storage events (new data files)",
+    "type": "BlobEventsTrigger",
+    "typeProperties": {
+      "blobPathBeginsWith": "/data-uploads/blobs/",
+      "blobPathEndsWith": ".json",
+      "ignoreEmptyBlobs": true,
+      "events": ["Microsoft.Storage.BlobCreated"]
+    },
+    "pipelines": [
+      {
+        "pipelineReference": {
+          "referenceName": "ProcessIncomingDataPipeline",
+          "type": "PipelineReference"
+        },
+        "parameters": {
+          "fileName": "@triggerBody().fileName",
+          "folderPath": "@triggerBody().folderPath"
+        }
+      }
+    ]
+  }
+}
