@@ -1,9 +1,29 @@
 import { Navbar } from "@/components/ui/Navbar";
 import { GlowCard } from "@/components/ui/GlowCard";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { ChatBot } from "@/components/ui/ChatBot";
-import { CookieConsent } from "@/components/ui/CookieConsent";
 import Image from "next/image";
+import dynamic from "next/dynamic";
+import type { Metadata } from "next";
+
+// Dynamic imports for non-critical components
+const ChatBot = dynamic(() => import("@/components/ui/ChatBot").then(mod => ({ default: mod.ChatBot })), {
+  ssr: false,
+});
+const CookieConsent = dynamic(() => import("@/components/ui/CookieConsent").then(mod => ({ default: mod.CookieConsent })), {
+  ssr: false,
+});
+
+export const metadata: Metadata = {
+  title: "Partnerships | T.O.O.L.S Inc",
+  description: "Explore our strategic partnerships with organizations that share our mission to empower justice-involved individuals. Together, we're building a stronger community through collaboration.",
+  keywords: ["partnerships", "collaboration", "community support", "strategic alliances", "reentry partnerships"],
+  openGraph: {
+    title: "Partnerships | T.O.O.L.S Inc",
+    description: "Strategic partnerships supporting justice-involved individuals through collaboration and community support.",
+    url: "https://sdtoolsinc.org/partnerships/",
+    type: "website",
+  },
+};
 
 export default function PartnershipsPage() {
   return (

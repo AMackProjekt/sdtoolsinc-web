@@ -2,6 +2,19 @@ import { Navbar } from "@/components/ui/Navbar";
 import { GlowCard } from "@/components/ui/GlowCard";
 import { Button } from "@/components/ui/Button";
 import Image from "next/image";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Referral Form | T.O.O.L.S Inc",
+  description: "Submit a referral for justice-involved individuals who could benefit from our comprehensive reentry programs and support services. Quick QR code access available.",
+  keywords: ["referral form", "justice involved referral", "reentry referral", "program referral", "case management referral"],
+  openGraph: {
+    title: "Referral Form | T.O.O.L.S Inc",
+    description: "Refer justice-involved individuals to our comprehensive reentry programs and support services.",
+    url: "https://sdtoolsinc.org/referral/",
+    type: "website",
+  },
+};
 
 export default function ReferralPage() {
   return (

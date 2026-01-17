@@ -1,6 +1,7 @@
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth";
 import { Footer } from "@/components/ui/Footer";
+import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 
 export const metadata = {
   metadataBase: new URL('https://sdtoolsinc.org'),
@@ -74,10 +75,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="font-sans text-text antialiased">
-        <AuthProvider>
-          {children}
-          <Footer />
-        </AuthProvider>
+        <ErrorBoundary>
+          <AuthProvider>
+            {children}
+            <Footer />
+          </AuthProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );
