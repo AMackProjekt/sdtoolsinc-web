@@ -23,7 +23,6 @@ const nextConfig = {
   
   // Performance optimizations
   experimental: {
-    optimizeCss: true,
     optimizePackageImports: ['recharts', 'framer-motion'],
   },
   

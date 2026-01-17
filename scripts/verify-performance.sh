@@ -186,7 +186,7 @@ echo -e "${GREEN}✅ Passed: $CHECKS_PASSED${NC}"
 if [ $CHECKS_FAILED -gt 0 ]; then
     echo -e "${RED}❌ Failed: $CHECKS_FAILED${NC}"
 else
-    echo -e "${GREEN}❌ Failed: 0${NC}"
+    echo -e "${GREEN}✅ Failed: 0${NC}"
 fi
 echo ""
 
