@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { cn } from "@/lib/cn";
 import { GlowCard } from "./GlowCard";
+import { useCallback, useMemo } from "react";
 
 const tiles = [
   {
@@ -44,7 +45,7 @@ type Props = {
 };
 
 export function InteractiveTiles({ onChatOpen }: Props) {
-  const handleClick = (tile: typeof tiles[0]) => {
+  const handleClick = useCallback((tile: typeof tiles[0]) => {
     if (tile.onClick === "openChat" && onChatOpen) {
       onChatOpen();
     } else if (tile.href) {
@@ -54,7 +55,14 @@ export function InteractiveTiles({ onChatOpen }: Props) {
         window.location.href = tile.href;
       }
     }
-  };
+  }, [onChatOpen]);
+
+  const statsData = useMemo(() => [
+    { value: "< 5min", label: "Average Response Time" },
+    { value: "24/7", label: "MackAi Availability" },
+    { value: "100%", label: "Confidential Support" },
+    { value: "48hrs", label: "Form Response Time" },
+  ], []);
 
   return (
     <section className="mx-auto max-w-container px-7 py-16">
@@ -126,12 +134,7 @@ export function InteractiveTiles({ onChatOpen }: Props) {
         transition={{ delay: 0.4 }}
         className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4"
       >
-        {[
-          { value: "< 5min", label: "Average Response Time" },
-          { value: "24/7", label: "MackAi Availability" },
-          { value: "100%", label: "Confidential Support" },
-          { value: "48hrs", label: "Form Response Time" },
-        ].map((stat) => (
+        {statsData.map((stat) => (
           <div key={stat.label} className="glass rounded-lg p-4 text-center">
             <div className="text-2xl font-extrabold tracking-tight text-brand">
               {stat.value}

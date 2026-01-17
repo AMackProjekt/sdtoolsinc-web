@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 export function Footer() {
   return (
@@ -24,9 +25,11 @@ export function Footer() {
             className="relative"
           >
             <div className="absolute inset-0 blur-2xl bg-brand/30 animate-pulse" />
-            <img
+            <Image
               src="/partnerships/amp-logo.jpeg"
-              alt="A MackProjekt"
+              alt="A MackProjekt Logo"
+              width={120}
+              height={64}
               className="relative h-16 w-auto object-contain"
             />
           </motion.div>

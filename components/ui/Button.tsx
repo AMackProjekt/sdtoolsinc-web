@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { cn } from "@/lib/cn";
+import { memo } from "react";
 
 type Props = {
   className?: string;
@@ -11,7 +12,7 @@ type Props = {
   href?: string;
 };
 
-export function Button({ className, variant = "ghost", children, href, ...props }: Props) {
+export const Button = memo(function Button({ className, variant = "ghost", children, href, ...props }: Props) {
   const base =
     "inline-flex items-center justify-center rounded-md px-5 py-3 text-sm font-semibold transition will-change-transform";
   const ghost =
@@ -33,4 +34,4 @@ export function Button({ className, variant = "ghost", children, href, ...props 
       {children}
     </Component>
   );
-}
+});

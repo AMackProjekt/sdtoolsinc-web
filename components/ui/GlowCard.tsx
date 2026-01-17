@@ -2,14 +2,14 @@
 
 import { motion } from "framer-motion";
 import { cn } from "@/lib/cn";
+import { memo } from "react";
 
-export function GlowCard({
-  className,
-  children
-}: {
+type GlowCardProps = {
   className?: string;
   children: React.ReactNode;
-}) {
+};
+
+export const GlowCard = memo(function GlowCard({ className, children }: GlowCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 14 }}
@@ -37,4 +37,4 @@ export function GlowCard({
       <div className="relative">{children}</div>
     </motion.div>
   );
-}
+});

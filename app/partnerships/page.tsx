@@ -3,6 +3,7 @@ import { GlowCard } from "@/components/ui/GlowCard";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ChatBot } from "@/components/ui/ChatBot";
 import { CookieConsent } from "@/components/ui/CookieConsent";
+import Image from "next/image";
 
 export default function PartnershipsPage() {
   return (
@@ -28,9 +29,11 @@ export default function PartnershipsPage() {
             { name: "AMP", logo: "/partnerships/amp-logo.jpeg" },
           ].map((partner) => (
             <GlowCard key={partner.name} className="p-8 flex items-center justify-center">
-              <img
+              <Image
                 src={partner.logo}
-                alt={partner.name}
+                alt={`${partner.name} Logo`}
+                width={200}
+                height={96}
                 className="max-h-24 w-auto object-contain"
               />
             </GlowCard>
@@ -48,9 +51,11 @@ export default function PartnershipsPage() {
 
         <div className="mt-10 flex justify-center">
           <GlowCard className="p-8 flex items-center justify-center max-w-md w-full">
-            <img
+            <Image
               src="/partnerships/kingme-logo.png"
-              alt="Mentorship Program"
+              alt="Mentorship Program Logo"
+              width={240}
+              height={128}
               className="max-h-32 w-auto object-contain"
             />
           </GlowCard>

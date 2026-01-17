@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { motion } from "framer-motion";
@@ -48,7 +48,6 @@ const courses = [
 export default function CoursesPage() {
   const { user, isAuthenticated, updateProfile, logout } = useAuth();
   const router = useRouter();
-  const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -64,7 +63,6 @@ export default function CoursesPage() {
         enrolledCourses: [...user.enrolledCourses, courseId],
       });
     }
-    setSelectedCourse(courseId);
   };
 
   return (
