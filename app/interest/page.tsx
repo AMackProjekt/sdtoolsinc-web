@@ -2,6 +2,19 @@ import { Navbar } from "@/components/ui/Navbar";
 import { GlowCard } from "@/components/ui/GlowCard";
 import { Button } from "@/components/ui/Button";
 import Image from "next/image";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Interest Form | T.O.O.L.S Inc",
+  description: "Express your interest in T.O.O.L.S Inc programs and services. We provide comprehensive support for individuals seeking reentry assistance, job readiness training, and personal development. 48-hour response time.",
+  keywords: ["interest form", "get started", "apply", "program enrollment", "reentry services", "support services"],
+  openGraph: {
+    title: "Interest Form | T.O.O.L.S Inc",
+    description: "Express your interest in our reentry programs and comprehensive support services. 48-hour response time.",
+    url: "https://sdtoolsinc.org/interest/",
+    type: "website",
+  },
+};
 
 export default function InterestPage() {
   return (

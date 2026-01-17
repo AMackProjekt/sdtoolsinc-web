@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, useMemo, useCallback, ReactNode } from "react";
 
 type User = {
   id: string;
@@ -42,7 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const signup = async (email: string, password: string, name: string): Promise<boolean> => {
+  const signup = useCallback(async (email: string, password: string, name: string): Promise<boolean> => {
     // In production: Call secure backend API with bcrypt/argon2 password hashing
     // This is a mock implementation
     try {
@@ -71,9 +71,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       return false;
     }
-  };
+  }, []);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = useCallback(async (email: string, password: string): Promise<boolean> => {
     // In production: Call secure backend API for authentication
     try {
       const storedPassword = localStorage.getItem(`pwd-${email}`);
@@ -90,14 +90,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       return false;
     }
-  };
+  }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem("user-session");
     setUser(null);
-  };
+  }, []);
 
-  const updateProfile = (updates: Partial<User>) => {
+  const updateProfile = useCallback((updates: Partial<User>) => {
     if (!user) return;
     
     const updatedUser = { ...user, ...updates };
@@ -106,19 +106,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Update encrypted session
     const encryptedSession = btoa(JSON.stringify(updatedUser));
     localStorage.setItem("user-session", encryptedSession);
-  };
+  }, [user]);
+
+  const contextValue = useMemo(
+    () => ({
+      user,
+      login,
+      signup,
+      logout,
+      updateProfile,
+      isAuthenticated: !!user,
+    }),
+    [user, login, signup, logout, updateProfile]
+  );
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        login,
-        signup,
-        logout,
-        updateProfile,
-        isAuthenticated: !!user,
-      }}
-    >
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );

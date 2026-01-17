@@ -2,8 +2,28 @@ import { Navbar } from "@/components/ui/Navbar";
 import { GlowCard } from "@/components/ui/GlowCard";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Button } from "@/components/ui/Button";
-import { ChatBot } from "@/components/ui/ChatBot";
-import { CookieConsent } from "@/components/ui/CookieConsent";
+import dynamic from "next/dynamic";
+import type { Metadata } from "next";
+
+// Dynamic imports for non-critical components
+const ChatBot = dynamic(() => import("@/components/ui/ChatBot").then(mod => ({ default: mod.ChatBot })), {
+  ssr: false,
+});
+const CookieConsent = dynamic(() => import("@/components/ui/CookieConsent").then(mod => ({ default: mod.CookieConsent })), {
+  ssr: false,
+});
+
+export const metadata: Metadata = {
+  title: "Reentry Services | T.O.O.L.S Inc",
+  description: "Comprehensive reentry services for justice-involved individuals transitioning back to society. We provide employment assistance, housing support, case management, and wraparound services across California.",
+  keywords: ["reentry services", "reentry programs", "formerly incarcerated support", "employment assistance", "housing support", "case management", "california reentry"],
+  openGraph: {
+    title: "Reentry Services | T.O.O.L.S Inc",
+    description: "Comprehensive reentry support for justice-involved individuals including employment, housing, and case management services.",
+    url: "https://sdtoolsinc.org/reentry/",
+    type: "website",
+  },
+};
 
 export default function ReentryPage() {
   return (

@@ -1,11 +1,19 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Button } from "./Button";
-import { useState } from "react";
+import Image from "next/image";
+import { useState, useCallback } from "react";
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = useCallback(() => {
+    setMobileMenuOpen((prev) => !prev);
+  }, []);
+
+  const closeMobileMenu = useCallback(() => {
+    setMobileMenuOpen(false);
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-bg/70 backdrop-blur-xl">
@@ -17,10 +25,13 @@ export function Navbar() {
           transition={{ duration: 0.35 }}
           className="flex items-center gap-2 sm:gap-3"
         >
-          <img
+          <Image
             src="/logos/main-logo.png"
-            alt="T.O.O.LS Inc Logo"
+            alt="T.O.O.L.S Inc Logo"
+            width={40}
+            height={40}
             className="h-8 sm:h-10 w-auto object-contain"
+            priority
           />
           <span className="text-sm sm:text-base font-extrabold tracking-tight text-text">
             T.O.O.LS Inc
@@ -39,7 +50,7 @@ export function Navbar() {
 
         {/* Mobile Menu Button */}
         <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          onClick={toggleMobileMenu}
           className="lg:hidden p-2 text-text hover:text-brand transition"
           aria-label="Toggle menu"
         >
@@ -64,12 +75,12 @@ export function Navbar() {
           className="lg:hidden border-t border-border bg-bg/95 backdrop-blur-xl"
         >
           <nav className="flex flex-col px-4 py-4 space-y-3">
-            <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/#platform" onClick={() => setMobileMenuOpen(false)}>Programs</a>
-            <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/reentry" onClick={() => setMobileMenuOpen(false)}>Reentry</a>
-            <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/#dashboard" onClick={() => setMobileMenuOpen(false)}>Impact</a>
-            <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/partnerships" onClick={() => setMobileMenuOpen(false)}>Partnerships</a>
-            <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/referral" onClick={() => setMobileMenuOpen(false)}>Referral</a>
-            <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/#contact" onClick={() => setMobileMenuOpen(false)}>Contact</a>
+            <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/#platform" onClick={closeMobileMenu}>Programs</a>
+            <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/reentry" onClick={closeMobileMenu}>Reentry</a>
+            <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/#dashboard" onClick={closeMobileMenu}>Impact</a>
+            <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/partnerships" onClick={closeMobileMenu}>Partnerships</a>
+            <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/referral" onClick={closeMobileMenu}>Referral</a>
+            <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/#contact" onClick={closeMobileMenu}>Contact</a>
           </nav>
         </motion.div>
       )}

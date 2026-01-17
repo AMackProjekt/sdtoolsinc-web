@@ -4,8 +4,15 @@ import { Button } from "@/components/ui/Button";
 import { DashboardSection } from "@/components/ui/DashboardSection";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { InteractiveTiles } from "@/components/ui/InteractiveTiles";
-import { ChatBot } from "@/components/ui/ChatBot";
-import { CookieConsent } from "@/components/ui/CookieConsent";
+import dynamic from "next/dynamic";
+
+// Dynamic imports for non-critical components
+const ChatBot = dynamic(() => import("@/components/ui/ChatBot").then(mod => ({ default: mod.ChatBot })), {
+  ssr: false,
+});
+const CookieConsent = dynamic(() => import("@/components/ui/CookieConsent").then(mod => ({ default: mod.CookieConsent })), {
+  ssr: false,
+});
 
 export default function Page() {
   return (
