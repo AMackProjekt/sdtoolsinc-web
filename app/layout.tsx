@@ -1,6 +1,7 @@
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth";
 import { Footer } from "@/components/ui/Footer";
+import { GoogleAnalytics } from "@/components/ui/GoogleAnalytics";
 
 export const metadata = {
   metadataBase: new URL('https://sdtoolsinc.org'),
@@ -74,6 +75,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="font-sans text-text antialiased">
+        <GoogleAnalytics />
         <AuthProvider>
           {children}
           <Footer />

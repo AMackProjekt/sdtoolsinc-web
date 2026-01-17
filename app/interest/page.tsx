@@ -1,7 +1,7 @@
 import { Navbar } from "@/components/ui/Navbar";
 import { GlowCard } from "@/components/ui/GlowCard";
 import { Button } from "@/components/ui/Button";
-import Image from "next/image";
+import { QRCodeGenerator } from "@/components/ui/QRCodeGenerator";
 
 export default function InterestPage() {
   return (
@@ -37,16 +37,16 @@ export default function InterestPage() {
             <div className="mb-8 flex flex-col md:flex-row items-center justify-center gap-8">
               {/* QR Code */}
               <div className="flex-shrink-0">
-                <div className="rounded-xl bg-white p-4 shadow-lg">
-                  <Image
-                    src="/qr-interest-form.webp"
-                    alt="QR Code for Interest Form"
-                    width={192}
-                    height={192}
-                    className="h-48 w-48"
-                    unoptimized
-                  />
-                </div>
+                <QRCodeGenerator
+                  url="https://forms.cloud.microsoft/r/G0kkRW4F7q"
+                  name="Interest Form"
+                  utmParams={{
+                    source: "qr_code",
+                    medium: "offline",
+                    campaign: "interest_form"
+                  }}
+                  size={192}
+                />
               </div>
 
               {/* Alternative Text */}
@@ -54,7 +54,7 @@ export default function InterestPage() {
                 <p className="text-sm text-muted text-center md:text-left">
                   If you are having trouble clicking the link or are on a mobile device{" "}
                   <a
-                    href="https://forms.cloud.microsoft/r/G0kkRW4F7q"
+                    href="https://forms.cloud.microsoft/r/G0kkRW4F7q?utm_source=qr_code&utm_medium=offline&utm_campaign=interest_form"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-brand hover:text-brand2 transition-colors font-semibold underline"
@@ -68,7 +68,7 @@ export default function InterestPage() {
             {/* Start Now Button */}
             <div className="text-center">
               <a
-                href="https://forms.cloud.microsoft/r/G0kkRW4F7q"
+                href="https://forms.cloud.microsoft/r/G0kkRW4F7q?utm_source=qr_code&utm_medium=offline&utm_campaign=interest_form"
                 target="_blank"
                 rel="noopener noreferrer"
               >

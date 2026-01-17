@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/ui/Navbar";
 import { GlowCard } from "@/components/ui/GlowCard";
 import { Button } from "@/components/ui/Button";
+import { QRCodeGenerator } from "@/components/ui/QRCodeGenerator";
 
 export default function ReferralPage() {
   return (
@@ -26,15 +27,16 @@ export default function ReferralPage() {
             <div className="space-y-8">
               {/* QR Code Section */}
               <div className="flex flex-col items-center gap-6">
-                <div className="rounded-xl bg-panel border border-border p-8 shadow-glow">
-                  <div className="rounded-lg bg-white p-4">
-                    <img
-                      src="/referral-qr.png"
-                      alt="QR Code for Referral Form"
-                      className="h-48 w-48 object-contain"
-                    />
-                  </div>
-                </div>
+                <QRCodeGenerator
+                  url="https://forms.office.com/r/G0kkRW4F7q"
+                  name="Referral Form"
+                  utmParams={{
+                    source: "qr_code",
+                    medium: "offline",
+                    campaign: "referral_form"
+                  }}
+                  size={192}
+                />
 
                 <div className="text-center">
                   <p className="text-lg font-semibold text-text">
@@ -62,7 +64,7 @@ export default function ReferralPage() {
                   If unable to scan QR code, please visit:
                 </p>
                 <a
-                  href="https://forms.office.com/r/G0kkRW4F7q"
+                  href="https://forms.office.com/r/G0kkRW4F7q?utm_source=qr_code&utm_medium=offline&utm_campaign=referral_form"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-block"
