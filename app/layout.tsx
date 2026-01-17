@@ -69,10 +69,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
+        {/* Structured Data */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />
+        {/* Prefetch critical routes for faster navigation */}
+        <link rel="prefetch" href="/interest/" as="document" />
+        <link rel="prefetch" href="/referral/" as="document" />
+        <link rel="prefetch" href="/reentry/" as="document" />
+        <link rel="prefetch" href="/partnerships/" as="document" />
+        {/* DNS Prefetch for external resources */}
+        <link rel="dns-prefetch" href="https://forms.cloud.microsoft.com" />
+        <link rel="dns-prefetch" href="https://forms.office.com" />
       </head>
       <body className="font-sans text-text antialiased">
         <ErrorBoundary>
