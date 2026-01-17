@@ -1,6 +1,7 @@
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth";
 import { Footer } from "@/components/ui/Footer";
+import { WebVitals } from "@/components/WebVitals";
 
 export const metadata = {
   metadataBase: new URL('https://sdtoolsinc.org'),
@@ -68,12 +69,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap"
+          rel="stylesheet"
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />
       </head>
       <body className="font-sans text-text antialiased">
+        <WebVitals />
         <AuthProvider>
           {children}
           <Footer />

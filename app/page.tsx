@@ -1,11 +1,25 @@
+import dynamic from "next/dynamic";
 import { Navbar } from "@/components/ui/Navbar";
 import { GlowCard } from "@/components/ui/GlowCard";
 import { Button } from "@/components/ui/Button";
-import { DashboardSection } from "@/components/ui/DashboardSection";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { InteractiveTiles } from "@/components/ui/InteractiveTiles";
-import { ChatBot } from "@/components/ui/ChatBot";
-import { CookieConsent } from "@/components/ui/CookieConsent";
+
+// Lazy load heavy components
+const DashboardSection = dynamic(() => import("@/components/ui/DashboardSection").then(mod => ({ default: mod.DashboardSection })), {
+  loading: () => <div className="mx-auto max-w-container px-7 py-20 text-center"><div className="text-muted">Loading dashboard...</div></div>,
+});
+
+const InteractiveTiles = dynamic(() => import("@/components/ui/InteractiveTiles").then(mod => ({ default: mod.InteractiveTiles })), {
+  loading: () => <div className="mx-auto max-w-container px-7 py-16"><div className="text-muted text-center">Loading...</div></div>,
+});
+
+const ChatBot = dynamic(() => import("@/components/ui/ChatBot").then(mod => ({ default: mod.ChatBot })), {
+  loading: () => null,
+});
+
+const CookieConsent = dynamic(() => import("@/components/ui/CookieConsent").then(mod => ({ default: mod.CookieConsent })), {
+  loading: () => null,
+});
 
 export default function Page() {
   return (
