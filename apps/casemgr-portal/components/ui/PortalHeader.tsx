@@ -28,6 +28,7 @@ export function PortalHeader({ user }: PortalHeaderProps) {
   const navItems = [
     { href: '/', label: 'Dashboard', icon: '📊' },
     { href: '/clients', label: 'Clients', icon: '👥' },
+    { href: '/programs', label: '30/60/90', icon: '📋' },
     { href: '/schedule', label: 'Schedule', icon: '📅' },
     { href: '/resources', label: 'Resources', icon: '📚' },
     { href: '/calbenefits', label: 'CalBenefits', icon: '🏥' },
