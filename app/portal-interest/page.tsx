@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/ui/Navbar";
 import { GlowCard } from "@/components/ui/GlowCard";
 import { Button } from "@/components/ui/Button";
+import { Footer } from "@/components/ui/Footer";
 
 export default function PortalInterestPage() {
   return (
@@ -95,15 +96,9 @@ export default function PortalInterestPage() {
 
             {/* Request Access Button */}
             <div className="text-center space-y-4">
-              <a
-                href="https://forms.cloud.microsoft/r/G0kkRW4F7q"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Button variant="primary">
-                  Request Early Access
-                </Button>
-              </a>
+              <Button variant="primary" href="https://forms.cloud.microsoft/r/G0kkRW4F7q">
+                Request Early Access
+              </Button>
               <p className="text-xs text-muted">
                 Please include &quot;Portal Early Access&quot; in your message
               </p>
@@ -119,12 +114,7 @@ export default function PortalInterestPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="mx-auto max-w-container px-7 py-8 text-center">
-        <div className="text-xs text-muted">
-          © {new Date().getFullYear()} T.O.O.L.S Inc · Empowering individuals to start over and unlock their full potential
-        </div>
-      </footer>
+      <Footer />
     </main>
   );
 }
