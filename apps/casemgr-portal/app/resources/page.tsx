@@ -740,7 +740,7 @@ export default function ResourcesPage() {
       try {
         await addResourceToSheets({
           ...newResource,
-          services: formData.services,
+          services: newResource.services.join(', '),
           addedBy: user?.email || 'Portal User',
           dateAdded: new Date().toISOString()
         })
@@ -768,10 +768,32 @@ export default function ResourcesPage() {
     setSyncStatus('Syncing with Google Sheets...')
     
     try {
-      const result = await syncWithGoogleSheets(localResources)
+      // Convert local resources to SheetResource format (services array to string)
+      const sheetResources = localResources.map(r => ({
+        ...r,
+        services: r.services.join(', ')
+      }))
+      
+      const result = await syncWithGoogleSheets(sheetResources)
       
       if (result.success) {
-        setLocalResources(result.merged)
+        // Convert merged SheetResources back to Resource format (services string to array)
+        const convertedResources = result.merged.map(r => ({
+          id: r.id || crypto.randomUUID(),
+          name: r.name,
+          category: r.category,
+          phone: r.phone,
+          address: r.address,
+          city: r.city,
+          hours: r.hours,
+          website: r.website,
+          email: r.email,
+          services: typeof r.services === 'string' ? r.services.split(',').map(s => s.trim()) : [],
+          eligibility: r.eligibility,
+          notes: r.notes
+        }))
+        
+        setLocalResources(convertedResources)
         setLastSyncTime(new Date())
         setSyncStatus(`Sync complete! Added: ${result.added}, Updated: ${result.updated}, Conflicts: ${result.conflicts}`)
         setTimeout(() => setSyncStatus(''), 5000)
