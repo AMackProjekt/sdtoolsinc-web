@@ -353,10 +353,18 @@ export default function ClientsPage() {
               </div>
 
               <div className="flex gap-2 pt-4 border-t border-border">
-                <Button variant="primary" className="flex-1 text-sm py-2">
+                <Button 
+                  variant="primary" 
+                  className="flex-1 text-sm py-2"
+                  onClick={() => router.push(`/clients/${client.id}`)}
+                >
                   View Details
                 </Button>
-                <Button variant="outline" className="flex-1 text-sm py-2">
+                <Button 
+                  variant="outline" 
+                  className="flex-1 text-sm py-2"
+                  onClick={() => router.push(`/clients/${client.id}?tab=notes`)}
+                >
                   Add Note
                 </Button>
               </div>
