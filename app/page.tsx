@@ -32,7 +32,27 @@ export default function Page() {
 
         <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 px-4">
           <Button variant="primary" href="/interest">Get Started</Button>
-          <Button variant="ghost" href="/portal-coming-soon">View Platform</Button>
+          <Button variant="ghost" href="/portal-coming-soon">View Platform Demo</Button>
+        </div>
+
+        {/* Portal Sign In Links */}
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 text-sm text-muted">
+          <span className="text-xs uppercase tracking-wider">Already have access?</span>
+          <div className="flex gap-3">
+            <a 
+              href="https://toolsinc-client-portal.azurestaticapps.net" 
+              className="text-brand hover:text-brand2 transition-colors font-medium"
+            >
+              Client Portal Sign In →
+            </a>
+            <span className="text-border">|</span>
+            <a 
+              href="https://toolsinc-casemgr-portal.azurestaticapps.net" 
+              className="text-brand hover:text-brand2 transition-colors font-medium"
+            >
+              Case Manager Sign In →
+            </a>
+          </div>
         </div>
 
         {/* KPI band */}
