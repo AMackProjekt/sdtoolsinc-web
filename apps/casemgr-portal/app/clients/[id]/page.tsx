@@ -5,6 +5,16 @@ import { useRouter, useParams } from 'next/navigation'
 import { useAuth } from '@/lib/auth'
 import { PortalHeader } from '@/components/ui/PortalHeader'
 import { Button } from '@/components/ui/Button'
+import { FileUpload } from '@/components/ui/FileUpload'
+import { 
+  uploadFile, 
+  getClientFiles, 
+  downloadFile, 
+  deleteFile,
+  exportToCSV,
+  exportToJSON,
+  type StoredFile 
+} from '@/lib/file-storage'
 
 interface Client {
   id: string
@@ -184,6 +194,9 @@ export default function ClientDetailsPage() {
   const [client, setClient] = useState<Client | null>(null)
   const [activeTab, setActiveTab] = useState<'overview' | 'notes' | 'documents' | 'appointments' | 'goals'>('overview')
   const [newNote, setNewNote] = useState('')
+  const [showUploadModal, setShowUploadModal] = useState(false)
+  const [clientFiles, setClientFiles] = useState<StoredFile[]>([])
+  const [uploading, setUploading] = useState(false)
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -192,6 +205,11 @@ export default function ClientDetailsPage() {
   }, [isAuthenticated, router])
 
   useEffect(() => {
+    
+    // Load client files
+    if (foundClient) {
+      setClientFiles(getClientFiles(foundClient.id))
+    }
     // Find client by ID - in production, fetch from API
     const foundClient = MOCK_CLIENTS.find(c => c.id === params.id)
     setClient(foundClient || null)
@@ -226,11 +244,79 @@ export default function ClientDetailsPage() {
     if (newNote.trim()) {
       const updatedNotes = [
         `${newNote} - ${new Date().toISOString().split('T')[0]}`,
-        ...(client.notes || [])
-      ]
-      setClient({ ...client, notes: updatedNotes })
-      setNewNote('')
+   
+
+  const handleFileUpload = async (file: File, metadata: { type: string; description?: string }) => {
+    if (!client || !user) return
+    
+    setUploading(true)
+    try {
+      const storedFile = await uploadFile(file, {
+        ...metadata,
+        uploadedBy: user.email || user.name || 'Unknown'
+      }, client.id)
+      
+      setClientFiles(prev => [storedFile, ...prev])
+      setShowUploadModal(false)
+    } catch (error) {
+      console.error('Upload failed:', error)
+      alert('Failed to upload file. Please try again.')
+    } finally {
+      setUploading(false)
     }
+  }
+
+  const handleFileDownload = (file: StoredFile) => {
+    downloadFile(file)
+  }
+
+  const handleFileDelete = (fileId: string) => {
+    if (!client) return
+    if (confirm('Are you sure you want to delete this file?')) {
+      if (deleteFile(fileId, client.id)) {
+        setClientFiles(prev => prev.filter(f => f.id !== fileId))
+      }
+    }
+  }
+
+  const handleExportClientData = () => {
+    if (!client) return
+    
+    const exportData = {
+      client: {
+        id: client.id,
+        name: client.name,
+        email: client.email,
+        phone: client.phone,
+        status: client.status,
+        progress: client.progress,
+        address: client.address,
+        caseType: client.caseType,
+        priority: client.priority
+      },
+      notes: client.notes || [],
+      documents: clientFiles.map(f => ({
+        name: f.name,
+        type: f.type,
+        uploadedAt: f.uploadedAt,
+        uploadedBy: f.uploadedBy
+      })),
+      appointments: client.appointments || [],
+      goals: client.goals || [],
+      exportedAt: new Date().toISOString()
+    }
+    
+    exportToJSON(exportData, `client-${client.id}-${client.name.replace(/\s+/g, '-')}`)
+  }     ...(client.notes || [])
+      ]
+      setCliediv className="flex gap-2">
+              <Button variant="outline" onClick={handleExportClientData}>
+                Export Data
+              </Button>
+              <Button variant="primary" onClick={() => router.push(`/clients/${client.id}/edit`)}>
+                Edit Client
+              </Button>
+            </div
   }
 
   const getStatusColor = (status: string) => {
@@ -452,30 +538,67 @@ export default function ClientDetailsPage() {
             </div>
           </div>
         )}
-
-        {activeTab === 'documents' && (
-          <div className="glass rounded-xl p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold text-text">Documents</h2>
-              <Button variant="primary">Upload Document</Button>
+ onClick={() => setShowUploadModal(!showUploadModal)}>
+                {showUploadModal ? 'Cancel Upload' : 'Upload Document'}
+              </Button>
             </div>
+
+            {/* Upload Form */}
+            {showUploadModal && (
+              <div className="mb-6 p-4 bg-bg rounded-lg border border-border">
+                <FileUpload
+                  onUpload={handleFileUpload}
+                  acceptedTypes=".pdf,.doc,.docx,.jpg,.jpeg,.png,.txt"
+                  maxSizeMB={10}
+                  label="Select Document"
+                  showPreview={true}
+                />
+              </div>
+            )}
             
+            {/* Files List */}
             <div className="space-y-3">
-              {(client.documents || []).map((doc, index) => (
-                <div key={index} className="p-4 bg-bg rounded-lg border border-border flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-brand/10 rounded-lg flex items-center justify-center">
-                      <span className="text-brand text-xs font-bold">PDF</span>
+              {clientFiles.map((file) => {
+                const fileExt = file.name.split('.').pop()?.toUpperCase() || 'FILE'
+                return (
+                  <div key={file.id} className="p-4 bg-bg rounded-lg border border-border flex items-center justify-between">
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <div className="w-10 h-10 bg-brand/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <span className="text-brand text-xs font-bold">{fileExt}</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm text-text font-medium truncate">{file.name}</div>
+                        <div className="text-xs text-muted">
+                          {file.documentType} • {new Date(file.uploadedAt).toLocaleDateString()} • {file.uploadedBy}
+                        </div>
+                        {file.description && (
+                          <div className="text-xs text-muted mt-1 italic">{file.description}</div>
+                        )}
+                      </div>
                     </div>
-                    <div>
-                      <div className="text-sm text-text font-medium">{doc.name}</div>
-                      <div className="text-xs text-muted">{doc.type} • {new Date(doc.date).toLocaleDateString()}</div>
+                    <div className="flex gap-2 flex-shrink-0">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => handleFileDownload(file)}
+                      >
+                        Download
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => handleFileDelete(file.id)}
+                        className="text-red-400 hover:text-red-300"
+                      >
+                        Delete
+                      </Button>
                     </div>
                   </div>
-                  <div className="flex gap-2">
-                    <Button variant="ghost" size="sm">View</Button>
-                    <Button variant="ghost" size="sm">Download</Button>
-                  </div>
+                )
+              })}
+              {clientFiles.length === 0 && !showUploadModal && (
+                <div className="text-center text-muted py-8">
+                  No documents uploaded yet. Click &quot;Upload Document&quot; to add files
                 </div>
               ))}
               {(!client.documents || client.documents.length === 0) && (
