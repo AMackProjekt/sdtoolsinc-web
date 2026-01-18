@@ -43,6 +43,7 @@ export default function DashboardPage() {
             <nav className="hidden md:flex gap-6">
               <Link href="/dashboard" className="text-text font-medium">Dashboard</Link>
               <Link href="/courses" className="text-muted hover:text-text transition">Courses</Link>
+              <Link href="/journal" className="text-muted hover:text-text transition">Journal</Link>
               <Link href="/profile" className="text-muted hover:text-text transition">Profile</Link>
               <Link href="/program-interest" className="text-muted hover:text-text transition">Add Portal to Your Program</Link>
             </nav>
