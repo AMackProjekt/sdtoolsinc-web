@@ -6,6 +6,7 @@ import { useAuth } from '@/lib/auth'
 import { PortalHeader } from '@/components/ui/PortalHeader'
 import { Button } from '@/components/ui/Button'
 import { FileUpload } from '@/components/ui/FileUpload'
+import { AICoach } from '@/components/ui/AICoach'
 import { 
   uploadFile, 
   getClientFiles, 
@@ -681,6 +682,15 @@ export default function ClientDetailsPage() {
           </div>
         )}
       </div>
+
+      {/* AI Coach */}
+      <AICoach 
+        clientName={client?.name}
+        progress={client?.progress}
+        recentAchievements={client?.notes?.slice(0, 2).map(n => n.split(' - ')[0])}
+        goals={client?.goals}
+        lastActivity={client?.lastContact}
+      />
     </div>
   )
 }

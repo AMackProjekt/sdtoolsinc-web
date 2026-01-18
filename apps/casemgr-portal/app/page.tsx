@@ -9,6 +9,7 @@ import { AddClientModal } from '@/components/ui/AddClientModal'
 import { CaseNoteTemplates } from '@/components/ui/CaseNoteTemplates'
 import { KPICard } from '@/components/ui/KPICard'
 import { AgentMonitor } from '@/components/ui/AgentMonitor'
+import { AICoach } from '@/components/ui/AICoach'
 import '@/lib/background-agents' // Initialize background agents
 
 interface Client {
@@ -453,6 +454,11 @@ export default function CaseManagerDashboard() {
           </div>
         )}
       </main>
+
+      {/* AI Coach */}
+      <AICoach 
+        recentAchievements={['Managed 15 active clients', 'Completed 23 appointments this month']}
+      />
     </div>
   )
 }
