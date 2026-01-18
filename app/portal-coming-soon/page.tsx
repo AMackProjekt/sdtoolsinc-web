@@ -90,11 +90,11 @@ export default function PortalComingSoon() {
           {/* Call to Action */}
           <div className="space-y-4">
             <p className="text-muted font-medium">
-              Interested in early access? Get in touch with our team.
+              Interested in early access? Request to be notified when we launch.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3">
-              <Button variant="primary" href="/interest">
-                Submit Interest Form
+              <Button variant="primary" href="/portal-interest">
+                Request Early Access
               </Button>
               <Button variant="ghost" href="/">
                 Back to Home
