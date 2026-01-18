@@ -245,7 +245,12 @@ export default function ClientDetailsPage() {
     if (newNote.trim()) {
       const updatedNotes = [
         `${newNote} - ${new Date().toISOString().split('T')[0]}`,
-   
+        ...(client.notes || [])
+      ]
+      setClient({ ...client, notes: updatedNotes })
+      setNewNote('')
+    }
+  }
 
   const handleFileUpload = async (file: File, metadata: { type: string; description?: string }) => {
     if (!client || !user) return
@@ -308,16 +313,6 @@ export default function ClientDetailsPage() {
     }
     
     exportToJSON(exportData, `client-${client.id}-${client.name.replace(/\s+/g, '-')}`)
-  }     ...(client.notes || [])
-      ]
-      setCliediv className="flex gap-2">
-              <Button variant="outline" onClick={handleExportClientData}>
-                Export Data
-              </Button>
-              <Button variant="primary" onClick={() => router.push(`/clients/${client.id}/edit`)}>
-                Edit Client
-              </Button>
-            </div
   }
 
   const getStatusColor = (status: string) => {
@@ -378,9 +373,14 @@ export default function ClientDetailsPage() {
                 </span>
               </div>
             </div>
-            <Button variant="primary" onClick={() => router.push(`/clients/${client.id}/edit`)}>
-              Edit Client
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={handleExportClientData}>
+                Export Data
+              </Button>
+              <Button variant="primary" onClick={() => router.push(`/clients/${client.id}/edit`)}>
+                Edit Client
+              </Button>
+            </div>
           </div>
 
           {/* Progress Bar */}
@@ -539,7 +539,16 @@ export default function ClientDetailsPage() {
             </div>
           </div>
         )}
- onClick={() => setShowUploadModal(!showUploadModal)}>
+
+        {/* Documents Tab */}
+        {activeTab === 'documents' && (
+          <div className="glass rounded-xl p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-text">Documents & Files</h2>
+              <Button 
+                variant="primary"
+                onClick={() => setShowUploadModal(!showUploadModal)}
+              >
                 {showUploadModal ? 'Cancel Upload' : 'Upload Document'}
               </Button>
             </div>
@@ -599,18 +608,14 @@ export default function ClientDetailsPage() {
               })}
               {clientFiles.length === 0 && !showUploadModal && (
                 <div className="text-center text-muted py-8">
-                  No documents uploaded yet. Click &quot;Upload Document&quot; to add files
-                </div>
-              ))}
-              {(!client.documents || client.documents.length === 0) && (
-                <div className="text-center text-muted py-8">
-                  No documents uploaded yet.
+                  No documents uploaded yet. Click &quot;Upload Document&quot; to add files.
                 </div>
               )}
             </div>
           </div>
         )}
 
+        {/* Appointments Tab */}
         {activeTab === 'appointments' && (
           <div className="glass rounded-xl p-6">
             <div className="flex justify-between items-center mb-4">
