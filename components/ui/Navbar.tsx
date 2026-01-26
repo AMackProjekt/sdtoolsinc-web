@@ -35,6 +35,7 @@ export function Navbar() {
           <a className="text-sm font-medium text-muted hover:text-text transition" href="/partnerships">Partnerships</a>
           <a className="text-sm font-medium text-muted hover:text-text transition" href="/referral">Referral</a>
           <a className="text-sm font-medium text-muted hover:text-text transition" href="/#contact">Contact</a>
+          <a className="text-sm font-medium text-muted hover:text-text transition" href="/#founder-contact">Founder</a>
           
           {/* Portal Sign In Dropdown */}
           <div className="relative group">
@@ -99,6 +100,7 @@ export function Navbar() {
             <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/partnerships" onClick={() => setMobileMenuOpen(false)}>Partnerships</a>
             <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/referral" onClick={() => setMobileMenuOpen(false)}>Referral</a>
             <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/#contact" onClick={() => setMobileMenuOpen(false)}>Contact</a>
+            <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/#founder-contact" onClick={() => setMobileMenuOpen(false)}>Founder</a>
             
             {/* Mobile Portal Sign In */}
             <div className="pt-3 border-t border-border space-y-2">
