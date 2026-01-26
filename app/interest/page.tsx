@@ -21,6 +21,24 @@ export default function InterestPage() {
 
         <div className="mx-auto mt-12 max-w-[900px]">
           <GlowCard className="p-8 md:p-10">
+            {/* Header Notice */}
+            <div className="mb-8 text-center">
+              <p className="text-lg text-text mb-2">
+                Are you an <span className="font-bold text-brand">organization or program</span> looking to add our portal to your services?
+              </p>
+              <a 
+                href="/apps/client-portal/app/program-interest"
+                className="inline-block px-6 py-3 bg-gradient-to-r from-accent to-brand2 text-bg font-semibold rounded-lg hover:opacity-90 transition"
+              >
+                📋 Schedule a Live Demo for Your Program
+              </a>
+              <p className="text-sm text-muted mt-4">
+                Otherwise, continue below to submit an individual interest form
+              </p>
+            </div>
+
+            <div className="border-t border-border my-8"></div>
+
             {/* Important Notice */}
             <div className="mb-8 rounded-lg border border-brand/30 bg-brand/5 p-6">
               <p className="text-sm text-text leading-relaxed">

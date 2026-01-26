@@ -32,7 +32,27 @@ export default function Page() {
 
         <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 px-4">
           <Button variant="primary" href="/interest">Get Started</Button>
-          <Button variant="ghost" href="/portal-coming-soon">View Platform</Button>
+          <Button variant="ghost" href="/portal-coming-soon">View Platform Demo</Button>
+        </div>
+
+        {/* Portal Sign In Links */}
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 text-sm text-muted">
+          <span className="text-xs uppercase tracking-wider">Already have access?</span>
+          <div className="flex gap-3">
+            <a 
+              href="https://toolsinc-client-portal.azurestaticapps.net" 
+              className="text-brand hover:text-brand2 transition-colors font-medium"
+            >
+              Client Portal Sign In →
+            </a>
+            <span className="text-border">|</span>
+            <a 
+              href="https://toolsinc-casemgr-portal.azurestaticapps.net" 
+              className="text-brand hover:text-brand2 transition-colors font-medium"
+            >
+              Case Manager Sign In →
+            </a>
+          </div>
         </div>
 
         {/* KPI band */}
@@ -254,6 +274,46 @@ export default function Page() {
             <a href="mailto:partner@sdtoolsinc.org" className="text-text hover:text-brand transition-colors">
               partner@sdtoolsinc.org
             </a>
+          </GlowCard>
+        </div>
+
+        {/* Founder Contact */}
+        <div className="mt-12">
+          <GlowCard className="p-8 max-w-2xl mx-auto">
+            <div id="founder-contact" className="text-center">
+              <div className="text-xs font-semibold tracking-[0.18em] text-brand2 uppercase mb-4">
+                Leadership
+              </div>
+              <h3 className="text-2xl font-extrabold tracking-tight text-text mb-2">
+                Founder & CEO
+              </h3>
+              <p className="text-lg font-semibold text-text mb-1">Mack</p>
+              <p className="text-sm text-muted mb-6">
+                Founder & Chief Executive Officer, T.O.O.L.S Inc
+              </p>
+              
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-sm">
+                <div className="flex items-center gap-2">
+                  <span className="text-muted">📞</span>
+                  <a 
+                    href="tel:+16193507638" 
+                    className="text-text hover:text-brand transition-colors font-medium"
+                  >
+                    +1 (619) 350-7638
+                  </a>
+                </div>
+                <span className="hidden sm:block text-border">|</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-muted">✉️</span>
+                  <a 
+                    href="mailto:dmack@sdtoolsinc.org" 
+                    className="text-text hover:text-brand transition-colors font-medium"
+                  >
+                    dmack@sdtoolsinc.org
+                  </a>
+                </div>
+              </div>
+            </div>
           </GlowCard>
         </div>
       </section>

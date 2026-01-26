@@ -43,7 +43,9 @@ export default function DashboardPage() {
             <nav className="hidden md:flex gap-6">
               <Link href="/dashboard" className="text-text font-medium">Dashboard</Link>
               <Link href="/courses" className="text-muted hover:text-text transition">Courses</Link>
+              <Link href="/journal" className="text-muted hover:text-text transition">Journal</Link>
               <Link href="/profile" className="text-muted hover:text-text transition">Profile</Link>
+              <Link href="/program-interest" className="text-muted hover:text-text transition">Add Portal to Your Program</Link>
             </nav>
           </div>
           <button onClick={handleLogout} className="px-4 py-2 text-sm text-muted hover:text-text transition">
@@ -96,12 +98,15 @@ export default function DashboardPage() {
 
         <div className="glass rounded-xl p-6 text-center">
           <p className="text-muted mb-4">Continue building your portal experience</p>
-          <div className="flex gap-4 justify-center">
+          <div className="flex gap-4 justify-center flex-wrap">
             <Link href="/courses" className="px-6 py-3 bg-brand text-bg font-semibold rounded-lg hover:bg-brand2 transition">
               Browse Courses
             </Link>
             <Link href="/profile" className="px-6 py-3 border border-brand text-brand font-semibold rounded-lg hover:bg-brand/10 transition">
               Edit Profile
+            </Link>
+            <Link href="/program-interest" className="px-6 py-3 bg-gradient-to-r from-accent to-brand2 text-bg font-semibold rounded-lg hover:opacity-90 transition">
+              📋 Add Portal to Your Program
             </Link>
           </div>
         </div>

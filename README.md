@@ -198,3 +198,7 @@ This is a private repository for T.O.O.L.S Inc. For questions or support, contac
 ## License
 
 Copyright © 2026 T.O.O.L.S Inc. All rights reserved.
+TOOLS INC Website
+
+
+<img width="2204" height="1120" alt="Screenshot 2026-01-17 143537" src="https://github.com/user-attachments/assets/46636232-eb64-4bb3-a73b-23fd74263cf3" />
