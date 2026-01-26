@@ -1,4 +1,6 @@
-export const PORTAL_DEFINITIONS = {
+import type { Portal } from '@/lib/types'
+
+export const PORTAL_DEFINITIONS: Record<string, Portal> = {
   client: {
     id: 'client',
     name: 'Client Portal',
@@ -53,7 +55,7 @@ export const PORTAL_DEFINITIONS = {
   },
 }
 
-export function getAvailablePortals(userRoles: string[]) {
+export function getAvailablePortals(userRoles: string[]): Portal[] {
   return Object.values(PORTAL_DEFINITIONS).filter(portal => 
     portal.requiredRoles.some(role => userRoles.includes(role))
   )

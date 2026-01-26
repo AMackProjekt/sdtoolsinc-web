@@ -32,8 +32,8 @@ export const ENV = {
   // Database
   DB_CONNECTION_STRING: process.env.DB_CONNECTION_STRING,
 
-  // Feature Flags
-  ENABLE_RBAC: process.env.ENABLE_RBAC === 'true',
+  // Feature Flags (default to true unless explicitly set to 'false')
+  ENABLE_RBAC: process.env.ENABLE_RBAC !== 'false',
   ENABLE_AUDIT_LOGGING: process.env.ENABLE_AUDIT_LOGGING !== 'false',
   ENABLE_EMAIL_VERIFICATION: process.env.ENABLE_EMAIL_VERIFICATION !== 'false',
 

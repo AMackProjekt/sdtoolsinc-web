@@ -94,13 +94,18 @@ export const API_ENDPOINTS = {
 /**
  * API Request Headers
  */
+/**
+ * API Request Headers
+ */
 export const getApiHeaders = (includeAuth = true) => {
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
   }
 
   if (includeAuth && typeof window !== 'undefined') {
-    const token = localStorage.getItem('auth_token')
+    // Import AUTH_TOKEN_KEY from env at runtime to avoid circular dependency
+    const AUTH_TOKEN_KEY = 'auth_token'
+    const token = localStorage.getItem(AUTH_TOKEN_KEY)
     if (token) {
       headers['Authorization'] = `Bearer ${token}`
     }

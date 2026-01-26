@@ -1,6 +1,8 @@
 'use client'
 
-export function HubHeader({ user }: { user: any }) {
+import type { User } from '@/lib/types'
+
+export function HubHeader({ user }: { user: User | null }) {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-bg/80 border-b border-border">
       <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">

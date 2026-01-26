@@ -2,17 +2,7 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-
-interface Portal {
-  id: string
-  name: string
-  description: string
-  url: string
-  icon: string
-  color: string
-  gradient: string
-  badge?: string
-}
+import type { Portal } from '@/lib/types'
 
 export function PortalCard({ portal }: { portal: Portal }) {
   return (

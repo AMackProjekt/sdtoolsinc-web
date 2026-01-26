@@ -6,11 +6,12 @@ import { PortalGrid } from '@/components/ui/PortalGrid'
 import { HubHeader } from '@/components/ui/HubHeader'
 import { RoleIndicator } from '@/components/ui/RoleIndicator'
 import { getAvailablePortals } from '@/lib/portal-config'
+import type { User, Portal } from '@/lib/types'
 
 export default function PortalHubPage() {
   const router = useRouter()
-  const [user, setUser] = useState<any>(null)
-  const [availablePortals, setAvailablePortals] = useState<any[]>([])
+  const [user, setUser] = useState<User | null>(null)
+  const [availablePortals, setAvailablePortals] = useState<Portal[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -21,7 +22,7 @@ export default function PortalHubPage() {
     //   .then(data => { ... })
     
     // Mock user data for demonstration
-    const mockUser = {
+    const mockUser: User = {
       name: 'John Doe',
       email: 'john.doe@example.com',
       roles: ['client', 'case_manager'],
@@ -77,9 +78,9 @@ export default function PortalHubPage() {
             Welcome to T.O.O.L.S Inc
           </h1>
           <p className="text-lg text-muted mb-6">
-            {user.name || user.email}
+            {user?.name || user?.email || 'Guest'}
           </p>
-          <RoleIndicator roles={user.roles || []} />
+          <RoleIndicator roles={user?.roles || []} />
         </div>
 
         {/* Portal Grid */}
@@ -89,7 +90,7 @@ export default function PortalHubPage() {
         </div>
 
         {/* Quick Stats */}
-        {user.stats && (
+        {user?.stats && (
           <div className="glass rounded-xl p-8">
             <h3 className="text-xl font-bold text-text mb-6">Quick Overview</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
