@@ -17,7 +17,7 @@
     "package": "npm run export && electron-builder --win --config electron-builder.json"
   },
   "dependencies": {
-    "next": "14.2.0",
+    "next": "14.2.35",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "framer-motion": "11.0.0"
