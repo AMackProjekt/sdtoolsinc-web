@@ -83,10 +83,10 @@ function validateRoleName(name: string): { valid: boolean; error?: string } {
   if (name.trim().length === 0) {
     return { valid: false, error: 'Role name cannot be empty' };
   }
-  if (name.length > 50) {
+  if (name.trim().length > 50) {
     return { valid: false, error: 'Role name must be 50 characters or less' };
   }
-  if (!/^[a-z_]+$/.test(name)) {
+  if (!/^[a-z_]+$/.test(name.trim())) {
     return { valid: false, error: 'Role name must contain only lowercase letters and underscores' };
   }
   return { valid: true };
