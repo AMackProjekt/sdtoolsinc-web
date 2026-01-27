@@ -95,7 +95,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Navigation Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div onClick={() => router.push("/portal/courses")} className="cursor-pointer">
             <GlowCard className="p-6">
               <div className="text-4xl mb-4">📚</div>
@@ -109,6 +109,14 @@ export default function DashboardPage() {
               <div className="text-4xl mb-4">👤</div>
               <h3 className="text-lg font-extrabold tracking-tight text-text">Profile Settings</h3>
               <p className="mt-2 text-sm text-muted">Manage your account and preferences</p>
+            </GlowCard>
+          </div>
+
+          <div onClick={() => router.push("/portal/mackai")} className="cursor-pointer">
+            <GlowCard className="p-6">
+              <div className="text-4xl mb-4">🤖</div>
+              <h3 className="text-lg font-extrabold tracking-tight text-text">MackAi System</h3>
+              <p className="mt-2 text-sm text-muted">Access the hybrid AI assistant dashboard</p>
             </GlowCard>
           </div>
 
