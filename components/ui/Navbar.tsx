@@ -37,10 +37,21 @@ export function Navbar() {
           <a className="text-sm font-medium text-muted hover:text-text transition" href="/#contact">Contact</a>
           <a className="text-sm font-medium text-muted hover:text-text transition" href="/#founder-contact">Founder</a>
           
+          {/* My Portals Link */}
+          <a 
+            href={process.env.NEXT_PUBLIC_HUB_URL || 'https://portal.sdtoolsinc.org'}
+            className="text-sm font-medium text-brand hover:text-brand2 transition flex items-center gap-2"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+            </svg>
+            My Portals
+          </a>
+          
           {/* Portal Sign In Dropdown */}
           <div className="relative group">
-            <button className="text-sm font-medium text-brand hover:text-brand2 transition flex items-center gap-1">
-              Portal Sign In
+            <button className="text-sm font-medium text-muted hover:text-text transition flex items-center gap-1">
+              Sign In
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
@@ -102,19 +113,33 @@ export function Navbar() {
             <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/#contact" onClick={() => setMobileMenuOpen(false)}>Contact</a>
             <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/#founder-contact" onClick={() => setMobileMenuOpen(false)}>Founder</a>
             
+            {/* My Portals - Prominent Link */}
+            <div className="pt-3 border-t border-border">
+              <a 
+                href={process.env.NEXT_PUBLIC_HUB_URL || 'https://portal.sdtoolsinc.org'}
+                className="flex items-center gap-2 px-2 py-3 text-sm font-semibold text-brand hover:text-brand2 transition"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+                My Portals Hub
+              </a>
+            </div>
+            
             {/* Mobile Portal Sign In */}
-            <div className="pt-3 border-t border-border space-y-2">
-              <div className="text-xs uppercase tracking-wider text-muted px-2 py-1">Portal Sign In</div>
+            <div className="pt-2 border-t border-border space-y-2">
+              <div className="text-xs uppercase tracking-wider text-muted px-2 py-1">Direct Sign In</div>
               <a 
                 href="https://toolsinc-client-portal.azurestaticapps.net" 
-                className="block px-2 py-2 text-sm font-medium text-brand hover:text-brand2 transition"
+                className="block px-2 py-2 text-sm font-medium text-muted hover:text-text transition"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Client Portal →
               </a>
               <a 
                 href="https://toolsinc-casemgr-portal.azurestaticapps.net" 
-                className="block px-2 py-2 text-sm font-medium text-brand hover:text-brand2 transition"
+                className="block px-2 py-2 text-sm font-medium text-muted hover:text-text transition"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Case Manager Portal →
