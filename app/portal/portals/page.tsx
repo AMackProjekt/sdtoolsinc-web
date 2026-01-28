@@ -105,6 +105,43 @@ export default function PortalsPage() {
           </p>
         </motion.div>
 
+        {/* Sign In Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="mb-12"
+        >
+          <GlowCard className="bg-gradient-to-br from-brand/5 to-brand2/5">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-extrabold tracking-tight text-text mb-2">🔐 Sign In to Your Portal</h2>
+              <p className="text-sm text-muted">
+                Choose your portal below to access your account
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+              <a 
+                href="https://toolsinc-client-portal.azurestaticapps.net"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="glass rounded-lg px-6 py-4 hover:bg-brand/10 transition-all hover:-translate-y-1 hover:shadow-glow"
+              >
+                <div className="font-semibold text-text mb-1">Client Portal</div>
+                <div className="text-xs text-muted">Access your dashboard</div>
+              </a>
+              <a 
+                href="https://toolsinc-casemgr-portal.azurestaticapps.net"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="glass rounded-lg px-6 py-4 hover:bg-brand/10 transition-all hover:-translate-y-1 hover:shadow-glow"
+              >
+                <div className="font-semibold text-text mb-1">Case Manager Portal</div>
+                <div className="text-xs text-muted">Manage your clients</div>
+              </a>
+            </div>
+          </GlowCard>
+        </motion.div>
+
         {/* Portal Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
           {portals.map((portal, index) => (

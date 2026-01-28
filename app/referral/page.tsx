@@ -15,9 +15,9 @@ export default function ReferralPage() {
           <div className="mb-3 text-xs font-semibold tracking-[0.18em] text-brand2 uppercase">
             Get Started
           </div>
-          <h1 className="h1">Referral Form</h1>
+          <h1 className="h1">Referral & Contact</h1>
           <p className="mx-auto mt-6 max-w-[760px] p-lead">
-            Justice Involved
+            Submit a referral for justice-involved individuals or get in touch with our team
           </p>
         </div>
 
@@ -77,6 +77,79 @@ export default function ReferralPage() {
               </div>
             </div>
           </GlowCard>
+
+          {/* Contact Information */}
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <GlowCard className="p-6 text-center">
+              <div className="text-2xl mb-3">📧</div>
+              <div className="text-sm font-semibold text-brand2 uppercase tracking-wider mb-2">
+                For More Information
+              </div>
+              <a href="mailto:info@sdtoolsinc.org" className="text-text hover:text-brand transition-colors">
+                info@sdtoolsinc.org
+              </a>
+            </GlowCard>
+
+            <GlowCard className="p-6 text-center">
+              <div className="text-2xl mb-3">📰</div>
+              <div className="text-sm font-semibold text-brand2 uppercase tracking-wider mb-2">
+                Subscribe to Newsletter
+              </div>
+              <a href="mailto:news@sdtoolsinc.org?subject=Subscribe%20to%20Newsletter" className="text-text hover:text-brand transition-colors">
+                news@sdtoolsinc.org
+              </a>
+            </GlowCard>
+
+            <GlowCard className="p-6 text-center">
+              <div className="text-2xl mb-3">🤝</div>
+              <div className="text-sm font-semibold text-brand2 uppercase tracking-wider mb-2">
+                Partnership
+              </div>
+              <a href="mailto:partner@sdtoolsinc.org" className="text-text hover:text-brand transition-colors">
+                partner@sdtoolsinc.org
+              </a>
+            </GlowCard>
+          </div>
+
+          {/* Founder Contact */}
+          <div className="mt-12">
+            <GlowCard className="p-8 max-w-2xl mx-auto">
+              <div className="text-center">
+                <div className="text-xs font-semibold tracking-[0.18em] text-brand2 uppercase mb-4">
+                  Leadership
+                </div>
+                <h3 className="text-2xl font-extrabold tracking-tight text-text mb-2">
+                  Founder & CEO
+                </h3>
+                <p className="text-lg font-semibold text-text mb-1">Mack</p>
+                <p className="text-sm text-muted mb-6">
+                  Founder & Chief Executive Officer, T.O.O.L.S Inc
+                </p>
+                
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-sm">
+                  <div className="flex items-center gap-2">
+                    <span className="text-muted">📞</span>
+                    <a 
+                      href="tel:+16193507638" 
+                      className="text-text hover:text-brand transition-colors font-medium"
+                    >
+                      +1 (619) 350-7638
+                    </a>
+                  </div>
+                  <span className="hidden sm:block text-border">|</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-muted">✉️</span>
+                    <a 
+                      href="mailto:dmack@sdtoolsinc.org" 
+                      className="text-text hover:text-brand transition-colors font-medium"
+                    >
+                      dmack@sdtoolsinc.org
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </GlowCard>
+          </div>
 
           {/* Additional Info */}
           <div className="mt-8 text-center">

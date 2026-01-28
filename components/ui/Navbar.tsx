@@ -33,10 +33,8 @@ export function Navbar() {
           <a className="text-sm font-medium text-muted hover:text-text transition" href="/reentry">Reentry</a>
           <a className="text-sm font-medium text-muted hover:text-text transition" href="/#dashboard">Impact</a>
           <a className="text-sm font-medium text-muted hover:text-text transition" href="/partnerships">Partnerships</a>
-          <a className="text-sm font-medium text-muted hover:text-text transition" href="/referral">Referral</a>
+          <a className="text-sm font-medium text-muted hover:text-text transition" href="/referral">Referral & Contact</a>
           <a className="text-sm font-medium text-muted hover:text-text transition" href="/demos">Demos</a>
-          <a className="text-sm font-medium text-muted hover:text-text transition" href="/#contact">Contact</a>
-          <a className="text-sm font-medium text-muted hover:text-text transition" href="/#founder-contact">Founder</a>
           <a className="text-sm font-medium text-brand hover:text-brand2 transition flex items-center gap-2" href="/portal/portals">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
@@ -44,34 +42,16 @@ export function Navbar() {
             My Portals
           </a>
           
-          {/* Portal Sign In Dropdown */}
-          <div className="relative group">
-            <button className="text-sm font-medium text-muted hover:text-text transition flex items-center gap-1">
-              Sign In
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-            <div className="absolute right-0 mt-2 w-56 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-              <div className="glass rounded-lg shadow-xl border border-border overflow-hidden">
-                <a 
-                  href="https://toolsinc-client-portal.azurestaticapps.net"
-                  className="block px-4 py-3 text-sm text-text hover:bg-brand/10 transition"
-                >
-                  <div className="font-medium">Client Portal</div>
-                  <div className="text-xs text-muted mt-0.5">Access your dashboard</div>
-                </a>
-                <div className="border-t border-border" />
-                <a 
-                  href="https://toolsinc-casemgr-portal.azurestaticapps.net"
-                  className="block px-4 py-3 text-sm text-text hover:bg-brand/10 transition"
-                >
-                  <div className="font-medium">Case Manager Portal</div>
-                  <div className="text-xs text-muted mt-0.5">Manage your clients</div>
-                </a>
-              </div>
-            </div>
-          </div>
+          {/* Newsletter Signup */}
+          <a 
+            href="mailto:news@sdtoolsinc.org?subject=Subscribe%20to%20Newsletter"
+            className="text-sm font-medium text-muted hover:text-text transition flex items-center gap-1"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+            Newsletter
+          </a>
         </nav>
 
         {/* Mobile Menu Button */}
@@ -105,40 +85,33 @@ export function Navbar() {
             <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/reentry" onClick={() => setMobileMenuOpen(false)}>Reentry</a>
             <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/#dashboard" onClick={() => setMobileMenuOpen(false)}>Impact</a>
             <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/partnerships" onClick={() => setMobileMenuOpen(false)}>Partnerships</a>
-            <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/referral" onClick={() => setMobileMenuOpen(false)}>Referral</a>
-            <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/#contact" onClick={() => setMobileMenuOpen(false)}>Contact</a>
-            <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/#founder-contact" onClick={() => setMobileMenuOpen(false)}>Founder</a>
+            <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/referral" onClick={() => setMobileMenuOpen(false)}>Referral & Contact</a>
             
             {/* My Portals - Prominent Link */}
             <div className="pt-3 border-t border-border">
               <a 
-                href={process.env.NEXT_PUBLIC_HUB_URL || 'https://portal.sdtoolsinc.org'}
+                href="/portal/portals"
                 className="flex items-center gap-2 px-2 py-3 text-sm font-semibold text-brand hover:text-brand2 transition"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                 </svg>
-                My Portals Hub
+                My Portals
               </a>
             </div>
             
-            {/* Mobile Portal Sign In */}
-            <div className="pt-2 border-t border-border space-y-2">
-              <div className="text-xs uppercase tracking-wider text-muted px-2 py-1">Direct Sign In</div>
+            {/* Newsletter Signup */}
+            <div className="pt-2 border-t border-border">
               <a 
-                href="https://toolsinc-client-portal.azurestaticapps.net" 
-                className="block px-2 py-2 text-sm font-medium text-muted hover:text-text transition"
+                href="mailto:news@sdtoolsinc.org?subject=Subscribe%20to%20Newsletter" 
+                className="flex items-center gap-2 px-2 py-3 text-sm font-medium text-muted hover:text-text transition"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Client Portal →
-              </a>
-              <a 
-                href="https://toolsinc-casemgr-portal.azurestaticapps.net" 
-                className="block px-2 py-2 text-sm font-medium text-muted hover:text-text transition"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Case Manager Portal →
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+                Subscribe to Newsletter
               </a>
             </div>
           </nav>
