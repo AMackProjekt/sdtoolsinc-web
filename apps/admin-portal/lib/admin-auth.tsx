@@ -116,43 +116,50 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Simulate API call delay
       await new Promise((resolve) => setTimeout(resolve, 500));
 
-      // Check stored credentials (NEVER do this in production!)
-      const storedPassword = localStorage.getItem(`admin-pwd-${email}`);
-      if (!storedPassword || atob(storedPassword) !== password) {
-        // For demo purposes, create a default super admin if none exists
-        if (email === "admin@sdtoolsinc.org" && password === "demo123") {
-          const newAdmin: AdminUser = {
-            id: "1",
-            email: "admin@sdtoolsinc.org",
-            name: "Super Admin",
-            role: "super_admin",
-            permissions: ROLE_PERMISSIONS.super_admin,
-            lastLogin: new Date().toISOString(),
-            createdAt: new Date().toISOString(),
-          };
-
-          // Store session and credentials
-          const encryptedSession = btoa(JSON.stringify(newAdmin));
-          localStorage.setItem("admin-session", encryptedSession);
-          localStorage.setItem(`admin-pwd-${email}`, btoa(password));
-
-          setUser(newAdmin);
-          return true;
-        }
+      // Check if admin setup is complete
+      const setupComplete = localStorage.getItem("admin-setup-complete") === "true";
+      if (!setupComplete) {
+        // Setup not yet completed
         return false;
       }
 
-      // Find existing admin user
-      const storedAdmin = localStorage.getItem("admin-session");
-      if (storedAdmin) {
-        const adminData = JSON.parse(atob(storedAdmin));
+      // Check stored credentials (NEVER do this in production!)
+      const storedPassword = localStorage.getItem(`admin-pwd-${email}`);
+      const storedSession = localStorage.getItem("admin-user");
+
+      if (storedPassword && atob(storedPassword) === password && storedSession) {
+        const adminData = JSON.parse(atob(storedSession));
         adminData.lastLogin = new Date().toISOString();
 
         // Update session with new login time
         const encryptedSession = btoa(JSON.stringify(adminData));
         localStorage.setItem("admin-session", encryptedSession);
+        localStorage.setItem("admin-user", encryptedSession);
 
         setUser(adminData);
+        return true;
+      }
+
+      // For demo purposes, support default admin account
+      if (email === "dmack@sdtoolsinc.org" && password === "TOOLSINC") {
+        const newAdmin: AdminUser = {
+          id: "admin-1",
+          email: "dmack@sdtoolsinc.org",
+          name: "Donyale Mack",
+          role: "super_admin",
+          permissions: ROLE_PERMISSIONS.super_admin,
+          lastLogin: new Date().toISOString(),
+          createdAt: new Date().toISOString(),
+        };
+
+        // Store session
+        const encryptedSession = btoa(JSON.stringify(newAdmin));
+        localStorage.setItem("admin-session", encryptedSession);
+        localStorage.setItem("admin-user", encryptedSession);
+        localStorage.setItem(`admin-pwd-${email}`, btoa(password));
+        localStorage.setItem("admin-setup-complete", "true");
+
+        setUser(newAdmin);
         return true;
       }
 
