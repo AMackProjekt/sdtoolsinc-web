@@ -236,21 +236,25 @@ export default function DemosPage() {
               </button>
 
               {/* Video Container */}
-              <div className="w-full bg-black aspect-video flex flex-col items-center justify-center">
-                <div className="text-6xl mb-4">
-                  {demos.find(d => d.id === selectedDemo.id)?.icon}
-                </div>
-                <p className="text-xl font-semibold text-text mb-2">{selectedDemo.title}</p>
-                <p className="text-sm text-muted mb-8">Video Demo Player</p>
+              <div className="w-full bg-black aspect-video flex flex-col items-center justify-center relative">
+                <video
+                  controls
+                  className="w-full h-full"
+                  src={`/videos/demos/${demos.find(d => d.id === selectedDemo.id)?.videoPlaceholder}.mp4`}
+                  onError={() => {
+                    // Fallback if video not found
+                  }}
+                >
+                  <p>Your browser doesn't support HTML5 video. Please check back later.</p>
+                </video>
                 
-                {/* Placeholder Message */}
-                <div className="bg-panel/50 border border-border rounded-lg p-8 text-center max-w-md">
-                  <p className="text-muted mb-4">
-                    This demo video is currently being prepared. 
-                  </p>
-                  <p className="text-xs text-muted/70">
-                    Video file: {demos.find(d => d.id === selectedDemo.id)?.videoPlaceholder}.mp4
-                  </p>
+                {/* Fallback if video not available */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-black/40 to-black/60 text-center pointer-events-none">
+                  <div className="text-6xl mb-4">
+                    {demos.find(d => d.id === selectedDemo.id)?.icon}
+                  </div>
+                  <p className="text-lg font-semibold text-white mb-2">{selectedDemo.title}</p>
+                  <p className="text-sm text-gray-300">Video Demo</p>
                 </div>
               </div>
 
