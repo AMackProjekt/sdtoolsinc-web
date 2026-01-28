@@ -36,12 +36,7 @@ export function Navbar() {
           <a className="text-sm font-medium text-muted hover:text-text transition" href="/referral">Referral</a>
           <a className="text-sm font-medium text-muted hover:text-text transition" href="/#contact">Contact</a>
           <a className="text-sm font-medium text-muted hover:text-text transition" href="/#founder-contact">Founder</a>
-          
-          {/* My Portals Link */}
-          <a 
-            href={process.env.NEXT_PUBLIC_HUB_URL || 'https://portal.sdtoolsinc.org'}
-            className="text-sm font-medium text-brand hover:text-brand2 transition flex items-center gap-2"
-          >
+          <a className="text-sm font-medium text-brand hover:text-brand2 transition flex items-center gap-2" href="/portal/portals">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
             </svg>

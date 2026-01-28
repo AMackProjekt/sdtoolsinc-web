@@ -120,6 +120,14 @@ export default function DashboardPage() {
             </GlowCard>
           </div>
 
+          <div onClick={() => router.push("/portal/portals")} className="cursor-pointer">
+            <GlowCard className="p-6">
+              <div className="text-4xl mb-4">🌐</div>
+              <h3 className="text-lg font-extrabold tracking-tight text-text">My Portals</h3>
+              <p className="mt-2 text-sm text-muted">Access all portals and tools</p>
+            </GlowCard>
+          </div>
+
           <GlowCard className="p-6">
             <div className="text-4xl mb-4">🎓</div>
             <h3 className="text-lg font-extrabold tracking-tight text-text">Certificates</h3>
