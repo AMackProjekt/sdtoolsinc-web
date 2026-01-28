@@ -34,6 +34,7 @@ export function Navbar() {
           <a className="text-sm font-medium text-muted hover:text-text transition" href="/#dashboard">Impact</a>
           <a className="text-sm font-medium text-muted hover:text-text transition" href="/partnerships">Partnerships</a>
           <a className="text-sm font-medium text-muted hover:text-text transition" href="/referral">Referral</a>
+          <a className="text-sm font-medium text-muted hover:text-text transition" href="/demos">Demos</a>
           <a className="text-sm font-medium text-muted hover:text-text transition" href="/#contact">Contact</a>
           <a className="text-sm font-medium text-muted hover:text-text transition" href="/#founder-contact">Founder</a>
           <a className="text-sm font-medium text-brand hover:text-brand2 transition flex items-center gap-2" href="/portal/portals">
