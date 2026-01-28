@@ -32,7 +32,7 @@ export default function Page() {
 
         <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 px-4">
           <Button variant="primary" href="/interest">Get Started</Button>
-          <Button variant="ghost" href="/portal-coming-soon">View Platform Demo</Button>
+          <Button variant="ghost" href="/demos">View Platform Demo</Button>
         </div>
 
         {/* Portal Sign In Links */}
