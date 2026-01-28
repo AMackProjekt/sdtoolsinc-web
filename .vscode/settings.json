@@ -5,5 +5,16 @@
     "azureFunctions.projectRuntime": "~4",
     "debug.internalConsoleOptions": "neverOpen",
     "azureFunctions.projectLanguageModel": 4,
-    "azureFunctions.preDeployTask": "npm prune (functions)"
+    "azureFunctions.preDeployTask": "npm prune (functions)",
+    "powershell.pester.codeLens": false,
+    "chat.tools.terminal.autoApprove": {
+        "/^node --version; npm --version$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^Get-Command azd -ErrorAction SilentlyContinue; Get-Command az -ErrorAction SilentlyContinue$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
 }
