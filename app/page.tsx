@@ -47,7 +47,7 @@ export default function Page() {
             </a>
             <span className="text-border">|</span>
             <a 
-              href="https://toolsinc-casemgr-portal.azurestaticapps.net" 
+              href="https://staff.sdtoolsinc.org" 
               className="text-brand hover:text-brand2 transition-colors font-medium"
             >
               Case Manager Sign In →
@@ -217,35 +217,56 @@ export default function Page() {
 
       {/* INTEREST FORM */}
       <section id="contact" className="mx-auto max-w-container px-7 py-20">
-        <div className="text-center mb-10">
+        <div className="text-center mb-10 px-4">
           <div className="text-xs font-semibold tracking-[0.18em] text-brand2 uppercase">
             Get Started
           </div>
           <h2 className="h2 mt-4">
             Ready to Start Your Journey?
           </h2>
-          <p className="mx-auto mt-4 max-w-[680px] text-muted">
+          <p className="mx-auto mt-4 max-w-[680px] text-muted px-4">
             Let us know how we can support you. Fill out the form below and we&apos;ll respond within 48 hours.
           </p>
         </div>
 
-        <GlowCard className="p-8">
-          <iframe
-            src="https://forms.cloud.microsoft/r/G0kkRW4F7q"
-            width="100%"
-            height="800"
-            frameBorder="0"
-            marginHeight={0}
-            marginWidth={0}
-            title="T.O.O.L.S Inc Interest Form"
-            className="rounded-lg"
-          >
-            Loading…
-          </iframe>
+        <GlowCard className="p-4 sm:p-6 md:p-8">
+          {/* Form Preview - Shows while iframe loads */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-bg/80 pointer-events-none z-10 rounded-lg" />
+            <iframe
+              src="https://forms.cloud.microsoft/r/G0kkRW4F7q"
+              width="100%"
+              height="800"
+              frameBorder="0"
+              marginHeight={0}
+              marginWidth={0}
+              title="T.O.O.L.S Inc Interest Form"
+              className="rounded-lg min-h-[600px] sm:min-h-[700px] md:min-h-[800px]"
+              loading="lazy"
+            >
+              Loading…
+            </iframe>
+          </div>
+          
+          {/* Mobile Alternative - Link to open in new tab */}
+          <div className="mt-4 text-center sm:hidden">
+            <p className="text-xs text-muted mb-3">Having trouble viewing the form?</p>
+            <a
+              href="https://forms.cloud.microsoft/r/G0kkRW4F7q"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-brand hover:text-brand2 transition-colors"
+            >
+              Open in New Tab
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </a>
+          </div>
         </GlowCard>
 
         {/* Contact Information */}
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 px-4">
           <GlowCard className="p-6 text-center">
             <div className="text-2xl mb-3">📧</div>
             <div className="text-sm font-semibold text-brand2 uppercase tracking-wider mb-2">

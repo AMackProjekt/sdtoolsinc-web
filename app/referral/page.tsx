@@ -23,24 +23,24 @@ export default function ReferralPage() {
 
         <div className="mx-auto mt-12 max-w-[800px]">
           <GlowCard className="p-8 md:p-12">
-            <div className="space-y-8">
+            <div className="space-y-6 sm:space-y-8">
               {/* QR Code Section */}
-              <div className="flex flex-col items-center gap-6">
-                <div className="rounded-xl bg-panel border border-border p-8 shadow-glow">
-                  <div className="rounded-lg bg-white p-4">
+              <div className="flex flex-col items-center gap-4 sm:gap-6">
+                <div className="rounded-xl bg-panel border border-border p-6 sm:p-8 shadow-glow">
+                  <div className="rounded-lg bg-white p-3 sm:p-4">
                     <img
                       src="/referral-qr.png"
                       alt="QR Code for Referral Form"
-                      className="h-48 w-48 object-contain"
+                      className="h-32 w-32 sm:h-40 sm:w-40 md:h-48 md:w-48 object-contain"
                     />
                   </div>
                 </div>
 
-                <div className="text-center">
-                  <p className="text-lg font-semibold text-text">
+                <div className="text-center px-4">
+                  <p className="text-base sm:text-lg font-semibold text-text">
                     Scan the QR code and fill out the form
                   </p>
-                  <p className="mt-4 text-sm text-muted leading-relaxed">
+                  <p className="mt-3 sm:mt-4 text-xs sm:text-sm text-muted leading-relaxed">
                     Non-Referral Agents please input <span className="font-semibold text-text">N/A</span> in the fields that do not apply to you.
                   </p>
                 </div>
@@ -61,6 +61,15 @@ export default function ReferralPage() {
                 <p className="text-sm text-muted">
                   If unable to scan QR code, please visit:
                 </p>
+                
+                {/* Form Preview Badge */}
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand/10 border border-brand/20">
+                  <svg className="w-5 h-5 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                  <span className="text-xs font-semibold text-brand">Secure Microsoft Form</span>
+                </div>
+                
                 <a
                   href="https://forms.office.com/r/G0kkRW4F7q"
                   target="_blank"
@@ -68,7 +77,7 @@ export default function ReferralPage() {
                   className="inline-block"
                 >
                   <Button variant="primary">
-                    Open Referral Form
+                    📋 Open Referral Form
                   </Button>
                 </a>
                 <p className="text-xs text-muted font-mono break-all">

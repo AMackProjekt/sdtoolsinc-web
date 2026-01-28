@@ -37,34 +37,15 @@ export function Navbar() {
           <a className="text-sm font-medium text-muted hover:text-text transition" href="/#contact">Contact</a>
           <a className="text-sm font-medium text-muted hover:text-text transition" href="/#founder-contact">Founder</a>
           
-          {/* Portal Sign In Dropdown */}
-          <div className="relative group">
-            <button className="text-sm font-medium text-brand hover:text-brand2 transition flex items-center gap-1">
-              Portal Sign In
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-            <div className="absolute right-0 mt-2 w-56 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-              <div className="glass rounded-lg shadow-xl border border-border overflow-hidden">
-                <a 
-                  href="https://toolsinc-client-portal.azurestaticapps.net"
-                  className="block px-4 py-3 text-sm text-text hover:bg-brand/10 transition"
-                >
-                  <div className="font-medium">Client Portal</div>
-                  <div className="text-xs text-muted mt-0.5">Access your dashboard</div>
-                </a>
-                <div className="border-t border-border" />
-                <a 
-                  href="https://toolsinc-casemgr-portal.azurestaticapps.net"
-                  className="block px-4 py-3 text-sm text-text hover:bg-brand/10 transition"
-                >
-                  <div className="font-medium">Case Manager Portal</div>
-                  <div className="text-xs text-muted mt-0.5">Manage your clients</div>
-                </a>
-              </div>
-            </div>
-          </div>
+          {/* My Portals Link */}
+          <a className="text-sm font-medium text-muted hover:text-text transition" href="/portals">
+            My Portals
+          </a>
+          
+          {/* Sign Up Button */}
+          <Button as="a" href="/interest" className="text-sm">
+            Sign Up
+          </Button>
         </nav>
 
         {/* Mobile Menu Button */}
@@ -101,24 +82,18 @@ export function Navbar() {
             <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/referral" onClick={() => setMobileMenuOpen(false)}>Referral</a>
             <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/#contact" onClick={() => setMobileMenuOpen(false)}>Contact</a>
             <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/#founder-contact" onClick={() => setMobileMenuOpen(false)}>Founder</a>
+            <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/portals" onClick={() => setMobileMenuOpen(false)}>My Portals</a>
             
-            {/* Mobile Portal Sign In */}
-            <div className="pt-3 border-t border-border space-y-2">
-              <div className="text-xs uppercase tracking-wider text-muted px-2 py-1">Portal Sign In</div>
-              <a 
-                href="https://toolsinc-client-portal.azurestaticapps.net" 
-                className="block px-2 py-2 text-sm font-medium text-brand hover:text-brand2 transition"
+            {/* Mobile Sign Up Button */}
+            <div className="pt-3 border-t border-border">
+              <Button 
+                as="a" 
+                href="/interest" 
+                className="w-full"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Client Portal →
-              </a>
-              <a 
-                href="https://toolsinc-casemgr-portal.azurestaticapps.net" 
-                className="block px-2 py-2 text-sm font-medium text-brand hover:text-brand2 transition"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Case Manager Portal →
-              </a>
+                Sign Up
+              </Button>
             </div>
           </nav>
         </motion.div>

@@ -23,11 +23,11 @@ export default function ReentryPage() {
 
       {/* Overview */}
       <section className="mx-auto max-w-container px-7 pb-16">
-        <GlowCard className="p-8">
-          <h3 className="text-2xl font-extrabold tracking-tight text-text mb-4">
+        <GlowCard className="p-6 sm:p-8">
+          <h3 className="text-xl sm:text-2xl font-extrabold tracking-tight text-text mb-4">
             Navigating Life After Incarceration
           </h3>
-          <p className="text-muted leading-relaxed mb-4">
+          <p className="text-sm sm:text-base text-muted leading-relaxed mb-4">
             Returning to society after incarceration presents unique challenges that require specialized support 
             and understanding. At T.O.O.L.S Inc, we recognize these challenges and provide comprehensive reentry 
             services designed to help justice-involved individuals successfully reintegrate into their communities.
@@ -42,9 +42,9 @@ export default function ReentryPage() {
 
       {/* Core Services */}
       <section className="mx-auto max-w-container px-7 py-20">
-        <div className="mb-10 text-center">
+        <div className="mb-10 text-center px-4">
           <h2 className="h2">Comprehensive Reentry Support</h2>
-          <p className="mt-4 text-muted max-w-2xl mx-auto">
+          <p className="mt-4 text-muted max-w-2xl mx-auto px-2">
             Our holistic approach addresses every aspect of successful reintegration
           </p>
         </div>

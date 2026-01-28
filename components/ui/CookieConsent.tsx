@@ -30,11 +30,17 @@ export function CookieConsent() {
     };
     localStorage.setItem("cookie-consent", JSON.stringify(allAccepted));
     setShowBanner(false);
+    // Trigger Google Analytics initialization
+    window.location.reload();
   };
 
   const acceptSelected = () => {
     localStorage.setItem("cookie-consent", JSON.stringify(preferences));
     setShowBanner(false);
+    // Trigger Google Analytics initialization if analytics accepted
+    if (preferences.analytics) {
+      window.location.reload();
+    }
   };
 
   const declineAll = () => {

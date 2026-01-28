@@ -154,9 +154,9 @@ export function ChatBot() {
             className={cn(
               "fixed z-50 bg-panel border border-border shadow-glow overflow-hidden flex flex-col",
               "inset-0 rounded-none sm:inset-auto",
-              "sm:bottom-20 sm:right-4 sm:w-[360px] sm:h-[550px] sm:rounded-xl",
-              "md:bottom-24 md:right-6 md:w-[380px] md:h-[600px]",
-              "lg:w-[400px] lg:h-[650px]"
+              "sm:bottom-20 sm:right-4 sm:w-[420px] sm:h-[650px] sm:rounded-xl",
+              "md:bottom-24 md:right-6 md:w-[480px] md:h-[700px]",
+              "lg:w-[520px] lg:h-[750px]"
             )}
           >
             {/* Header */}

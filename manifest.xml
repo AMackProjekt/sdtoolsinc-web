@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BlackmagicDesign>
+    <Plugin>
+        <Id>com.donyalemack.sdtoolsinc-web</Id>
+        <Name>sdtoolsinc-web</Name>
+        <Version>1.0.0</Version>
+        <Description>launch</Description>
+        <FilePath>main.js</FilePath>
+    </Plugin>
+</BlackmagicDesign>
