@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "export",
+  // Temporarily disable static export to support authentication
+  // output: "export",
   images: { unoptimized: true },
   trailingSlash: true
 };
