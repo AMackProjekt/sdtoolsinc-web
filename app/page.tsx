@@ -229,6 +229,37 @@ export default function Page() {
           </p>
         </div>
 
+        {/* Founder Contact */}
+        <div className="mb-12">
+          <GlowCard className="p-8 text-center">
+            <div className="text-sm font-semibold text-brand2 uppercase tracking-wider mb-2">
+              Founder &amp; CEO
+            </div>
+            <h3 className="text-2xl font-bold text-text mb-2">
+              Mack
+            </h3>
+            <p className="text-muted mb-6">
+              Founder &amp; Chief Executive Officer, T.O.O.L.S Inc
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
+              <a 
+                href="tel:+16193507638" 
+                className="text-text hover:text-brand transition-colors font-medium flex items-center gap-2"
+              >
+                <span className="text-lg">📞</span>
+                +1 (619) 350-7638
+              </a>
+              <a 
+                href="mailto:dmack@sdtoolsinc.org" 
+                className="text-text hover:text-brand2 transition-colors font-medium flex items-center gap-2"
+              >
+                <span className="text-lg">📧</span>
+                dmack@sdtoolsinc.org
+              </a>
+            </div>
+          </GlowCard>
+        </div>
+
         <GlowCard className="p-8">
           <iframe
             src="https://forms.cloud.microsoft/r/G0kkRW4F7q"
