@@ -5,10 +5,14 @@ import { cn } from "@/lib/cn";
 
 export function GlowCard({
   className,
-  children
+  children,
+  onClick,
+  ...props
 }: {
   className?: string;
   children: React.ReactNode;
+  onClick?: () => void;
+  [key: string]: any;
 }) {
   return (
     <motion.div
@@ -22,6 +26,9 @@ export function GlowCard({
         "transition-shadow hover:shadow-glow",
         className
       )}
+      onClick={onClick}
+      style={{ cursor: onClick ? "pointer" : "default" }}
+      {...props}
     >
       {/* subtle animated glow */}
       <motion.div
