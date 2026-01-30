@@ -1,0 +1,141 @@
+name: System Health Monitor
+
+on:
+  schedule:
+    # Daily at 6:00 AM UTC
+    - cron: '0 6 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  dependency-check:
+    name: Check Dependencies & Security
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check for outdated packages
+        id: outdated
+        run: |
+          echo "## 📦 Outdated Packages" >> $GITHUB_STEP_SUMMARY
+          npm outdated --long || true
+          npm outdated --json > outdated.json || true
+          
+      - name: Security audit
+        id: audit
+        run: |
+          echo "## 🔒 Security Audit" >> $GITHUB_STEP_SUMMARY
+          npm audit --json > audit.json || true
+          npm audit || true
+
+      - name: Check critical vulnerabilities
+        run: |
+          CRITICAL=$(cat audit.json | jq '.metadata.vulnerabilities.critical // 0')
+          HIGH=$(cat audit.json | jq '.metadata.vulnerabilities.high // 0')
+          
+          echo "Critical vulnerabilities: $CRITICAL" >> $GITHUB_STEP_SUMMARY
+          echo "High vulnerabilities: $HIGH" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "$CRITICAL" -gt "0" ]; then
+            echo "::error::Found $CRITICAL critical vulnerabilities! Immediate action required."
+            exit 1
+          fi
+
+      - name: Upload audit results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-reports
+          path: |
+            audit.json
+            outdated.json
+
+  health-check:
+    name: Service Health Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check Azure Static Web Apps
+        run: |
+          echo "## 🌐 Azure Static Web Apps Health" >> $GITHUB_STEP_SUMMARY
+          DEPLOYED_URL="https://blue-desert-08d808f10.5.azurestaticapps.net"
+          
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" $DEPLOYED_URL)
+          if [ "$STATUS" -eq "200" ]; then
+            echo "✅ Site is online (HTTP $STATUS)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Site returned HTTP $STATUS" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+
+      - name: Check Supabase API
+        env:
+          SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+        run: |
+          echo "## 🗄️ Supabase Health" >> $GITHUB_STEP_SUMMARY
+          
+          if [ -z "$SUPABASE_URL" ]; then
+            echo "⚠️ Supabase URL not configured in secrets" >> $GITHUB_STEP_SUMMARY
+          else
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "${SUPABASE_URL}/rest/v1/")
+            echo "Supabase API: HTTP $STATUS" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  build-performance:
+    name: Build Performance Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build and measure time
+        run: |
+          echo "## ⚡ Build Performance" >> $GITHUB_STEP_SUMMARY
+          START=$(date +%s)
+          npm run build
+          END=$(date +%s)
+          DURATION=$((END - START))
+          
+          echo "Build completed in ${DURATION} seconds" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "$DURATION" -gt "180" ]; then
+            echo "⚠️ Build time exceeded 3 minutes (${DURATION}s)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ Build time within acceptable range" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Check bundle size
+        run: |
+          du -sh out/ >> $GITHUB_STEP_SUMMARY || echo "Build output directory not found"
+
+  create-report:
+    name: Create Monitoring Report
+    needs: [dependency-check, health-check, build-performance]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Generate report summary
+        run: |
+          echo "# 📊 Daily System Health Report - $(date +'%Y-%m-%d')" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "All monitoring checks completed. Review job outputs above." >> $GITHUB_STEP_SUMMARY

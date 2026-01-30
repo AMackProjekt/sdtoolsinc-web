@@ -28,6 +28,7 @@ interface AuthContextType extends AuthState {
   signInWithMagicLink: (email: string) => Promise<void>;
   signInWithPassword: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string, fullName: string) => Promise<void>;
+  requestPasswordReset: (email: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -183,14 +184,30 @@ export function useAuth(): AuthContextType {
         authState = { ...authState, isLoading: true, error: null };
         notifyListeners();
 
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
 
         if (error) throw error;
 
-        router.push("/portal/dashboard");
+        const userId = data.user?.id;
+        if (userId) {
+          const profile = await getCurrentProfile(userId);
+          const role = (profile as UserProfile | null)?.role;
+
+          if (role === "admin") {
+            router.push("/admin/dashboard");
+          } else if (role === "case_manager") {
+            router.push("/portal/manager/dashboard");
+          } else if (role === "client") {
+            router.push("/portal/client/dashboard");
+          } else {
+            router.push("/portal/dashboard");
+          }
+        } else {
+          router.push("/portal/dashboard");
+        }
       } catch (error) {
         const message = error instanceof Error ? error.message : "Login failed";
         authState = { ...authState, isLoading: false, error: message };
@@ -231,6 +248,27 @@ export function useAuth(): AuthContextType {
     [router]
   );
 
+  const requestPasswordReset = useCallback(async (email: string) => {
+    try {
+      authState = { ...authState, isLoading: true, error: null };
+      notifyListeners();
+
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth/reset-password`,
+      });
+
+      if (error) throw error;
+
+      authState = { ...authState, isLoading: false, error: null };
+      notifyListeners();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Reset request failed";
+      authState = { ...authState, isLoading: false, error: message };
+      notifyListeners();
+      throw error;
+    }
+  }, []);
+
   const signOut = useCallback(async () => {
     try {
       authState = { ...authState, isLoading: true, error: null };
@@ -263,6 +301,7 @@ export function useAuth(): AuthContextType {
     signInWithMagicLink,
     signInWithPassword,
     signUp,
+    requestPasswordReset,
     signOut,
   };
 }

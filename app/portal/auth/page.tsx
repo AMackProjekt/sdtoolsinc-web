@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { useAuth } from "@/lib/auth";
+import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/cn";
+import Link from "next/link";
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -14,7 +15,7 @@ export default function AuthPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   
-  const { login, signup } = useAuth();
+  const { signInWithPassword, signUp } = useAuth();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -23,14 +24,11 @@ export default function AuthPage() {
     setLoading(true);
 
     try {
-      const success = isLogin
-        ? await login(email, password)
-        : await signup(email, password, name);
-
-      if (success) {
-        router.push("/portal/dashboard");
+      if (isLogin) {
+        await signInWithPassword(email, password);
       } else {
-        setError(isLogin ? "Invalid credentials" : "Signup failed");
+        await signUp(email, password, name);
+        router.push("/auth/verify-email");
       }
     } catch (err) {
       setError("An error occurred. Please try again.");
@@ -130,6 +128,17 @@ export default function AuthPage() {
             >
               {loading ? "Please wait..." : isLogin ? "Sign In" : "Create Account"}
             </button>
+
+            {isLogin && (
+              <div className="text-center">
+                <Link
+                  href="/portal/auth/forgot-password"
+                  className="text-sm text-brand hover:text-brand2 transition-colors"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+            )}
           </form>
 
           <div className="mt-6 text-center">
