@@ -61,7 +61,7 @@ Once schema is executed:
 Once GitHub Actions completes and Supabase schema is executed:
 
 ```
-https://sdtoolsinc-web.azurewebsites.net
+https://sdtoolsinc.org
 ```
 
 **Test paths**:
