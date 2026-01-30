@@ -1,27 +1,20 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/lib/admin-auth";
 import { useRouter } from "next/navigation";
-import { isAdminSetupComplete } from "@/lib/admin-setup";
 import { cn } from "@/lib/cn";
+import Link from "next/link";
 
 export default function AdminLoginPage() {
-  const [email, setEmail] = useState("dmack@sdtoolsinc.org");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [setupRequired, setSetupRequired] = useState(false);
   
   const { login } = useAuth();
   const router = useRouter();
-
-  useEffect(() => {
-    // Check if setup is required
-    const setupComplete = isAdminSetupComplete();
-    setSetupRequired(!setupComplete);
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -34,7 +27,7 @@ export default function AdminLoginPage() {
       if (success) {
         router.push("/");
       } else {
-        setError("Invalid credentials. Please check your email and password.");
+        setError("Invalid credentials or unauthorized account.");
       }
     } catch (err) {
       setError("An error occurred. Please try again.");
@@ -43,63 +36,6 @@ export default function AdminLoginPage() {
       setLoading(false);
     }
   };
-
-  if (setupRequired) {
-    return (
-      <div className="min-h-screen bg-bg flex items-center justify-center px-7 relative overflow-hidden">
-        {/* Animated background */}
-        <div className="pointer-events-none fixed inset-0 -z-10">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-950/20 via-bg to-blue-900/20" />
-          <motion.div
-            className="absolute top-1/4 -left-32 w-96 h-96 rounded-full bg-blue-500/10 blur-3xl"
-            animate={{
-              scale: [1, 1.2, 1],
-              opacity: [0.3, 0.5, 0.3],
-            }}
-            transition={{
-              duration: 8,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          />
-        </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="w-full max-w-md text-center"
-        >
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 mb-6 shadow-lg shadow-blue-500/20">
-            <svg
-              className="w-8 h-8 text-white"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-              />
-            </svg>
-          </div>
-          <h1 className="text-3xl font-bold text-text mb-3">Setup Required</h1>
-          <p className="text-muted mb-8">
-            Complete the admin account setup to continue.
-          </p>
-          <motion.button
-            whileHover={{ y: -2 }}
-            whileTap={{ y: 0 }}
-            onClick={() => router.push("/setup")}
-            className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition"
-          >
-            Start Setup →
-          </motion.button>
-        </motion.div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-bg flex items-center justify-center px-7 relative overflow-hidden">
@@ -288,38 +224,16 @@ export default function AdminLoginPage() {
                 "Sign In"
               )}
             </motion.button>
-          </form>
 
-          {/* Demo Credentials */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6, duration: 0.5 }}
-            className="mt-6 pt-6 border-t border-border/50"
-          >
-            <div className="flex items-start gap-3 text-xs text-muted bg-orange-500/5 rounded-lg p-3 border border-orange-500/20">
-              <svg
-                className="w-4 h-4 flex-shrink-0 mt-0.5 text-orange-400"
-                fill="currentColor"
-                viewBox="0 0 20 20"
+            <div className="text-center">
+              <Link
+                href="/auth/forgot-password"
+                className="text-sm text-red-300 hover:text-red-200 transition-colors"
               >
-                <path
-                  fillRule="evenodd"
-                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <div>
-                <p className="font-semibold text-orange-400 mb-1">Demo Credentials</p>
-                <p className="text-muted">
-                  Email: <span className="font-mono text-text">admin@sdtoolsinc.org</span>
-                </p>
-                <p className="text-muted">
-                  Password: <span className="font-mono text-text">demo123</span>
-                </p>
-              </div>
+                Forgot password?
+              </Link>
             </div>
-          </motion.div>
+          </form>
 
           {/* Security Notice */}
           <motion.div

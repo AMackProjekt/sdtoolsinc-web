@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/cn";
+import Link from "next/link";
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -12,33 +13,27 @@ export default function AuthPage() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [error, setError] = useState("");
-  const [info, setInfo] = useState("");
-
-  const {
-    signInWithPassword,
-    signUp,
-    signInWithAzure,
-    signInWithMagicLink,
-    isLoading,
-    error: authError,
-  } = useAuth();
+  const [loading, setLoading] = useState(false);
+  
+  const { signInWithPassword, signUp } = useAuth();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    setInfo("");
+    setLoading(true);
 
     try {
       if (isLogin) {
         await signInWithPassword(email, password);
-        router.push("/portal/dashboard");
       } else {
         await signUp(email, password, name);
-        setInfo("Check your email to verify your account.");
+        router.push("/auth/verify-email");
       }
     } catch (err) {
-      setError(authError || "An error occurred. Please try again.");
+      setError("An error occurred. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -121,72 +116,29 @@ export default function AuthPage() {
               </div>
             )}
 
-            {info && (
-              <div className="rounded-lg bg-brand/10 border border-brand/30 px-4 py-3 text-sm text-brand">
-                {info}
-              </div>
-            )}
-
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={loading}
               className={cn(
                 "w-full rounded-lg px-6 py-3 font-semibold transition-all",
                 "bg-gradient-to-br from-brand to-brand2 text-[#02131a]",
                 "hover:shadow-glow",
-                isLoading && "opacity-50 cursor-not-allowed"
+                loading && "opacity-50 cursor-not-allowed"
               )}
             >
-              {isLoading ? "Please wait..." : isLogin ? "Sign In" : "Create Account"}
+              {loading ? "Please wait..." : isLogin ? "Sign In" : "Create Account"}
             </button>
 
-            <div className="space-y-3">
-              <button
-                type="button"
-                onClick={async () => {
-                  setError("");
-                  try {
-                    await signInWithAzure();
-                  } catch (err) {
-                    setError(authError || "Azure sign-in failed");
-                  }
-                }}
-                disabled={isLoading}
-                className={cn(
-                  "w-full rounded-lg px-6 py-3 font-semibold transition-all",
-                  "border border-border text-text hover:bg-panel",
-                  isLoading && "opacity-50 cursor-not-allowed"
-                )}
-              >
-                Continue with Microsoft (Azure AD)
-              </button>
-
-              <button
-                type="button"
-                onClick={async () => {
-                  setError("");
-                  setInfo("");
-                  if (!email) {
-                    setError("Enter your email to receive a magic link");
-                    return;
-                  }
-                  try {
-                    await signInWithMagicLink(email);
-                    setInfo("Magic link sent. Check your inbox.");
-                  } catch (err) {
-                    setError(authError || "Magic link failed");
-                  }
-                }}
-                disabled={isLoading}
-                className={cn(
-                  "w-full rounded-lg px-6 py-3 font-semibold transition-all",
-                  "border border-border text-text hover:bg-panel",
-                  isLoading && "opacity-50 cursor-not-allowed"
-                )}
-              >
-                Send magic link
-              </button>
-            </div>
+            {isLogin && (
+              <div className="text-center">
+                <Link
+                  href="/portal/auth/forgot-password"
+                  className="text-sm text-brand hover:text-brand2 transition-colors"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+            )}
           </form>
 
           <div className="mt-6 text-center">

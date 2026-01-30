@@ -12,7 +12,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 export async function getProfile(userId: string) {
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, full_name, avatar_url, role, created_at")
+    .select("id, full_name, avatar_url, role, email")
     .eq("id", userId)
     .single();
 
@@ -25,6 +25,6 @@ export async function getProfile(userId: string) {
     full_name: string | null;
     avatar_url: string | null;
     role: "admin" | "case_manager" | "client";
-    created_at: string;
+    email: string | null;
   };
 }

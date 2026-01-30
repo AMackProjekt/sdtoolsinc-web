@@ -2,12 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  supabase,
-  createProfile,
-  getCurrentProfile,
-  updateProfile as updateSupabaseProfile,
-} from "@/lib/supabase";
+import { supabase, getCurrentProfile } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
 
 export type AuthRole = "admin" | "case_manager" | "client";
@@ -34,7 +29,6 @@ interface AuthContextType extends AuthState {
   signInWithPassword: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string, fullName: string) => Promise<void>;
   requestPasswordReset: (email: string) => Promise<void>;
-  updateProfile: (updates: { full_name?: string; avatar_url?: string }) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -62,6 +56,7 @@ export function useAuth(): AuthContextType {
     };
     listeners.add(listener);
 
+    // Check if user is already authenticated
     const checkAuth = async () => {
       try {
         const {
@@ -103,6 +98,7 @@ export function useAuth(): AuthContextType {
 
     checkAuth();
 
+    // Subscribe to auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -182,71 +178,75 @@ export function useAuth(): AuthContextType {
     }
   }, []);
 
-  const signInWithPassword = useCallback(async (email: string, password: string) => {
-    try {
-      authState = { ...authState, isLoading: true, error: null };
-      notifyListeners();
-
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) throw error;
-
-      if (data.user) {
-        const profile = await getCurrentProfile(data.user.id);
-        authState = {
-          user: data.user,
-          profile: profile as UserProfile | null,
-          isAuthenticated: true,
-          isLoading: false,
-          error: null,
-        };
+  const signInWithPassword = useCallback(
+    async (email: string, password: string) => {
+      try {
+        authState = { ...authState, isLoading: true, error: null };
         notifyListeners();
-      }
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Login failed";
-      authState = { ...authState, isLoading: false, error: message };
-      notifyListeners();
-      throw error;
-    }
-  }, []);
 
-  const signUp = useCallback(async (email: string, password: string, fullName: string) => {
-    try {
-      authState = { ...authState, isLoading: true, error: null };
-      notifyListeners();
-
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: fullName,
-          },
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
-      });
-
-      if (error) throw error;
-
-      if (data.user) {
-        await createProfile(data.user.id, {
-          full_name: fullName,
-          role: "client",
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
         });
-      }
 
-      authState = { ...authState, isLoading: false, error: null };
-      notifyListeners();
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Signup failed";
-      authState = { ...authState, isLoading: false, error: message };
-      notifyListeners();
-      throw error;
-    }
-  }, []);
+        if (error) throw error;
+
+        const userId = data.user?.id;
+        if (userId) {
+          const profile = await getCurrentProfile(userId);
+          const role = (profile as UserProfile | null)?.role;
+
+          if (role === "admin") {
+            router.push("/admin/dashboard");
+          } else if (role === "case_manager") {
+            router.push("/portal/manager/dashboard");
+          } else if (role === "client") {
+            router.push("/portal/client/dashboard");
+          } else {
+            router.push("/portal/dashboard");
+          }
+        } else {
+          router.push("/portal/dashboard");
+        }
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Login failed";
+        authState = { ...authState, isLoading: false, error: message };
+        notifyListeners();
+        throw error;
+      }
+    },
+    [router]
+  );
+
+  const signUp = useCallback(
+    async (email: string, password: string, fullName: string) => {
+      try {
+        authState = { ...authState, isLoading: true, error: null };
+        notifyListeners();
+
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              full_name: fullName,
+            },
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
+          },
+        });
+
+        if (error) throw error;
+
+        router.push("/auth/verify-email");
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Signup failed";
+        authState = { ...authState, isLoading: false, error: message };
+        notifyListeners();
+        throw error;
+      }
+    },
+    [router]
+  );
 
   const requestPasswordReset = useCallback(async (email: string) => {
     try {
@@ -263,29 +263,6 @@ export function useAuth(): AuthContextType {
       notifyListeners();
     } catch (error) {
       const message = error instanceof Error ? error.message : "Reset request failed";
-      authState = { ...authState, isLoading: false, error: message };
-      notifyListeners();
-      throw error;
-    }
-  }, []);
-
-  const updateProfile = useCallback(async (updates: { full_name?: string; avatar_url?: string }) => {
-    if (!authState.user) return;
-
-    try {
-      authState = { ...authState, isLoading: true, error: null };
-      notifyListeners();
-
-      const profile = await updateSupabaseProfile(authState.user.id, updates);
-      authState = {
-        ...authState,
-        profile: profile as UserProfile | null,
-        isLoading: false,
-        error: null,
-      };
-      notifyListeners();
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Profile update failed";
       authState = { ...authState, isLoading: false, error: message };
       notifyListeners();
       throw error;
@@ -309,7 +286,7 @@ export function useAuth(): AuthContextType {
         error: null,
       };
       notifyListeners();
-      router.push("/portal/auth");
+      router.push("/");
     } catch (error) {
       const message = error instanceof Error ? error.message : "Logout failed";
       authState = { ...authState, isLoading: false, error: message };
@@ -325,7 +302,6 @@ export function useAuth(): AuthContextType {
     signInWithPassword,
     signUp,
     requestPasswordReset,
-    updateProfile,
     signOut,
   };
 }

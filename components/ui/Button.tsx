@@ -9,9 +9,12 @@ type Props = {
   children?: React.ReactNode;
   onClick?: () => void;
   href?: string;
+  type?: "button" | "submit" | "reset";
+  disabled?: boolean;
+  [key: string]: any;
 };
 
-export function Button({ className, variant = "ghost", children, href, ...props }: Props) {
+export function Button({ className, variant = "ghost", children, href, type, disabled, ...props }: Props) {
   const base =
     "inline-flex items-center justify-center rounded-md px-5 py-3 text-sm font-semibold transition will-change-transform";
   const ghost =
@@ -21,6 +24,8 @@ export function Button({ className, variant = "ghost", children, href, ...props 
 
   const Component = href ? motion.a : motion.button;
   const linkProps = href ? { href } : {};
+  const buttonProps = type ? { type } : {};
+  const disabledProps = disabled !== undefined ? { disabled } : {};
 
   return (
     <Component
@@ -28,6 +33,8 @@ export function Button({ className, variant = "ghost", children, href, ...props 
       whileTap={{ y: 0 }}
       className={cn(base, variant === "primary" ? primary : ghost, className)}
       {...linkProps}
+      {...buttonProps}
+      {...disabledProps}
       {...props}
     >
       {children}

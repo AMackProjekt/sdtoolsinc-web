@@ -9,6 +9,9 @@
     "export": "next build && next export",
     "start": "next start",
     "lint": "next lint",
+    "health-check": "node scripts/health-check.cjs",
+      "check-updates": "npm outdated",
+      "security-audit": "npm audit",
     "optimize-logos": "node scripts/optimize-logos.js",
     "docker:build": "docker build -t toolsinc-web:latest .",
     "docker:run": "docker run -d -p 3000:3000 --name toolsinc-web toolsinc-web:latest",
@@ -19,10 +22,12 @@
     "compose:logs": "docker-compose logs -f"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.93.3",
     "clsx": "^2.1.1",
     "framer-motion": "^11.0.0",
-    "next": "^16.1.6",
+    "lucide-react": "^0.563.0",
+    "next": "^14.2.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "recharts": "^2.12.7",

@@ -1,21 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-
-/**
- * SECURITY WARNING:
- * This is a MOCK IMPLEMENTATION for development only!
- * 
- * Before production deployment:
- * 1. Implement secure backend API (Node.js/Express, ASP.NET, etc.)
- * 2. Use proper password hashing (bcrypt, argon2)
- * 3. Implement JWT or session-based authentication
- * 4. Add HTTPS-only, HttpOnly cookies
- * 5. Never store passwords or sensitive data in localStorage
- * 6. Implement proper role-based access control (RBAC) on backend
- * 7. Add rate limiting and brute force protection
- * 8. Implement audit logging for admin actions
- */
+import { supabase, getProfile } from "@/lib/supabase";
 
 export type AdminRole = "super_admin" | "admin" | "moderator" | "viewer";
 
@@ -94,76 +80,76 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AdminUser | null>(null);
 
   useEffect(() => {
-    // Check for stored admin session (encrypted in production)
-    const storedUser = localStorage.getItem("admin-session");
-    if (storedUser) {
-      try {
-        const decoded = JSON.parse(atob(storedUser)); // Base64 decode (use proper encryption in production)
-        // Update last login time on session restore
-        decoded.lastLogin = new Date().toISOString();
-        setUser(decoded);
-      } catch (e) {
-        // Invalid session, clear it
-        localStorage.removeItem("admin-session");
+    const loadSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session?.user) {
+        setUser(null);
+        return;
       }
-    }
+
+      try {
+        const profile = await getProfile(session.user.id);
+        if (profile.role !== "admin") {
+          await supabase.auth.signOut();
+          setUser(null);
+          return;
+        }
+
+        const adminUser: AdminUser = {
+          id: profile.id,
+          email: session.user.email ?? "",
+          name: profile.full_name ?? session.user.email ?? "Admin",
+          role: "admin",
+          permissions: ROLE_PERMISSIONS.admin,
+          avatar: profile.avatar_url ?? undefined,
+          lastLogin: new Date().toISOString(),
+          createdAt: session.user.created_at ?? new Date().toISOString(),
+        };
+
+        setUser(adminUser);
+      } catch (error) {
+        console.error("Failed to load admin profile:", error);
+        setUser(null);
+      }
+    };
+
+    loadSession();
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
-    // In production: Call secure backend API for authentication
-    // This is a mock implementation for development only
     try {
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-      // Check if admin setup is complete
-      const setupComplete = localStorage.getItem("admin-setup-complete") === "true";
-      if (!setupComplete) {
-        // Setup not yet completed
+      if (error) throw error;
+
+      const userId = data.user?.id;
+      if (!userId) return false;
+
+      const profile = await getProfile(userId);
+      if (profile.role !== "admin") {
+        await supabase.auth.signOut();
         return false;
       }
 
-      // Check stored credentials (NEVER do this in production!)
-      const storedPassword = localStorage.getItem(`admin-pwd-${email}`);
-      const storedSession = localStorage.getItem("admin-user");
+      const adminUser: AdminUser = {
+        id: profile.id,
+        email: data.user?.email ?? email,
+        name: profile.full_name ?? data.user?.email ?? "Admin",
+        role: "admin",
+        permissions: ROLE_PERMISSIONS.admin,
+        avatar: profile.avatar_url ?? undefined,
+        lastLogin: new Date().toISOString(),
+        createdAt: data.user?.created_at ?? new Date().toISOString(),
+      };
 
-      if (storedPassword && atob(storedPassword) === password && storedSession) {
-        const adminData = JSON.parse(atob(storedSession));
-        adminData.lastLogin = new Date().toISOString();
-
-        // Update session with new login time
-        const encryptedSession = btoa(JSON.stringify(adminData));
-        localStorage.setItem("admin-session", encryptedSession);
-        localStorage.setItem("admin-user", encryptedSession);
-
-        setUser(adminData);
-        return true;
-      }
-
-      // For demo purposes, support default admin account
-      if (email === "dmack@sdtoolsinc.org" && password === "TOOLSINC") {
-        const newAdmin: AdminUser = {
-          id: "admin-1",
-          email: "dmack@sdtoolsinc.org",
-          name: "Donyale Mack",
-          role: "super_admin",
-          permissions: ROLE_PERMISSIONS.super_admin,
-          lastLogin: new Date().toISOString(),
-          createdAt: new Date().toISOString(),
-        };
-
-        // Store session
-        const encryptedSession = btoa(JSON.stringify(newAdmin));
-        localStorage.setItem("admin-session", encryptedSession);
-        localStorage.setItem("admin-user", encryptedSession);
-        localStorage.setItem(`admin-pwd-${email}`, btoa(password));
-        localStorage.setItem("admin-setup-complete", "true");
-
-        setUser(newAdmin);
-        return true;
-      }
-
-      return false;
+      setUser(adminUser);
+      return true;
     } catch (error) {
       console.error("Login error:", error);
       return false;
@@ -171,7 +157,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = () => {
-    localStorage.removeItem("admin-session");
+    supabase.auth.signOut();
     setUser(null);
   };
 
@@ -180,10 +166,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const updatedUser = { ...user, ...updates };
     setUser(updatedUser);
-
-    // Update encrypted session
-    const encryptedSession = btoa(JSON.stringify(updatedUser));
-    localStorage.setItem("admin-session", encryptedSession);
   };
 
   // Role checking functions
@@ -239,29 +221,6 @@ export function useAuth() {
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
-}
-
-// Utility function to create a new admin user (for development/setup)
-export function createAdminUser(
-  email: string,
-  password: string,
-  name: string,
-  role: AdminRole = "admin"
-): AdminUser {
-  const newAdmin: AdminUser = {
-    id: Date.now().toString(),
-    email,
-    name,
-    role,
-    permissions: ROLE_PERMISSIONS[role],
-    createdAt: new Date().toISOString(),
-    lastLogin: new Date().toISOString(),
-  };
-
-  // Store credentials (NEVER do this in production!)
-  localStorage.setItem(`admin-pwd-${email}`, btoa(password));
-
-  return newAdmin;
 }
 
 // Export types and constants for use in other components
