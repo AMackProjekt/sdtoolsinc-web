@@ -92,7 +92,7 @@ export default function PortalsPage() {
               onClick={() => router.push("/portal/profile")}
               className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-muted hover:text-text transition-colors"
             >
-              <span>{user.name}</span>
+              <span>{user.email}</span>
             </button>
           </div>
         </div>

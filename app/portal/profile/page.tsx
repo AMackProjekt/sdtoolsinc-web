@@ -2,28 +2,28 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/lib/hooks/useAuth";
+import { useAuth } from "@/lib/auth";
 import { motion } from "framer-motion";
 import { GlowCard } from "@/components/ui/GlowCard";
 import { cn } from "@/lib/cn";
 
 export default function ProfilePage() {
-  const { user, profile, isAuthenticated, isLoading, updateProfile, signOut } = useAuth();
+  const { user, isAuthenticated, updateProfile, logout } = useAuth();
   const router = useRouter();
   const [fullName, setFullName] = useState("");
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
+    if (!isAuthenticated) {
       router.push("/portal/auth");
       return;
     }
-    if (profile?.full_name) {
-      setFullName(profile.full_name);
+    if (user?.name) {
+      setFullName(user.name);
     }
-  }, [isAuthenticated, isLoading, profile, router]);
+  }, [isAuthenticated, user, router]);
 
-  if (isLoading) {
+  if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-bg">
         <div className="text-muted">Loading...</div>
@@ -35,7 +35,7 @@ export default function ProfilePage() {
 
   const handleSave = async () => {
     try {
-      await updateProfile({ full_name: fullName });
+      updateProfile({ name: fullName });
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (err) {
@@ -56,8 +56,8 @@ export default function ProfilePage() {
             </button>
           </div>
           <button
-            onClick={async () => {
-              await signOut();
+            onClick={() => {
+              logout();
             }}
             className="text-sm font-semibold text-muted hover:text-text transition-colors"
           >
@@ -116,7 +116,7 @@ export default function ProfilePage() {
                 </label>
                 <input
                   type="text"
-                  value={profile?.role || "user"}
+                  value="User"
                   disabled
                   className="w-full rounded-lg bg-bg/50 border border-border px-4 py-3 text-muted cursor-not-allowed capitalize"
                 />
@@ -157,18 +157,12 @@ export default function ProfilePage() {
             
             <div className="space-y-3 text-sm">
               <div className="flex justify-between">
-                <span className="text-muted">Account Created</span>
-                <span className="text-text">{new Date(user.created_at || "").toLocaleDateString()}</span>
+                <span className="text-muted">Email</span>
+                <span className="text-text">{user.email}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted">Email Verified</span>
-                <span className={user.email_confirmed_at ? "text-green-400" : "text-yellow-400"}>
-                  {user.email_confirmed_at ? "Yes ✓" : "Pending"}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted">Last Sign In</span>
-                <span className="text-text">{user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleDateString() : "Never"}</span>
+                <span className="text-muted">Status</span>
+                <span className="text-green-400">Active ✓</span>
               </div>
             </div>
           </GlowCard>
