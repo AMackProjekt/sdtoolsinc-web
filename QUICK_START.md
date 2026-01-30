@@ -1,6 +1,6 @@
 # 🎯 QUICK START - FINAL ACTIVATION STEPS
 
-**Status**: System ready for production, final database setup required.
+**Status**: System ready for production via **Azure Static Web Apps**, final database setup required.
 
 ---
 
@@ -34,10 +34,11 @@ SELECT COUNT(*) FROM courses;
 
 | Item | Status | Details |
 |------|--------|---------|
-| Next.js Build | ✅ | Configured with `output: 'standalone'` for SSR |
-| Azure App Service | ✅ | Created and running at sdtoolsinc-web.azurewebsites.net |
+| Next.js Build | ✅ | Configured with `output: 'export'` for static export |
+| Azure Static Web Apps | ✅ | Configured for static site hosting (sdtoolsinc.org) |
 | Environment Variables | ✅ | Supabase URL and keys configured in Azure |
-| GitHub Actions | ✅ | Workflow updated with ZIP deploy (pushed and running) |
+| GitHub Actions | ✅ | Workflow updated for Static Web Apps deployment |
+| Custom Domain | ✅ | sdtoolsinc.org mapped to Static Web Apps |
 | Portal Code | ✅ | Updated to fetch from live Supabase instead of mock data |
 | Supabase Client | ✅ | All course/lesson functions implemented in lib/supabase.ts |
 | Database Schema | ⏳ | **AWAITING YOUR ACTION** - Ready to execute |
@@ -77,13 +78,8 @@ https://sdtoolsinc.org
 # View latest GitHub Actions run
 gh run list --limit 1
 
-# Check Azure app is running
-az webapp show --resource-group sdtoolsinc_group-a7cd --name sdtoolsinc-web --query state
-```
-
-### View app logs:
-```bash
-az webapp log tail --resource-group sdtoolsinc_group-a7cd --name sdtoolsinc-web
+# Check Azure Static Web Apps status
+az staticwebapp show --name sdtoolsinc --resource-group sdtoolsinc_group-a7cd --query state
 ```
 
 ---
@@ -93,7 +89,7 @@ az webapp log tail --resource-group sdtoolsinc_group-a7cd --name sdtoolsinc-web
 Your system is live when:
 - ✅ Database schema executed (10 courses in database)
 - ✅ GitHub Actions workflow passed (green checkmark)
-- ✅ https://sdtoolsinc-web.azurewebsites.net loads
+- ✅ https://sdtoolsinc.org loads
 - ✅ Portal shows real courses from Supabase
 - ✅ No "mock data" visible
 
