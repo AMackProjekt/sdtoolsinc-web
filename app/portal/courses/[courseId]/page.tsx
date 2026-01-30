@@ -8,10 +8,6 @@ import { motion } from "framer-motion";
 import { GlowCard } from "@/components/ui/GlowCard";
 import { getCourseById, getProgramById, getLessonsByCourse } from "@/lib/courseData";
 
-export async function generateStaticParams() {
-  return [];
-}
-
 export default function CourseDetailPage() {
   const { user, isAuthenticated, updateProfile, logout } = useAuth();
   const router = useRouter();
