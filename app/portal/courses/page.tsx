@@ -7,21 +7,50 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { GlowCard } from "@/components/ui/GlowCard";
 import { CourseFilter } from "@/components/courses/CourseFilter";
-import {
-  programs,
-  courses,
-  filterCourses,
-  CourseType,
-  DifficultyLevel,
-  Course,
-} from "@/lib/courseData";
+
+interface Program {
+  id: string;
+  name: string;
+  description: string;
+  overview: string;
+  thumbnail: string;
+  color: string;
+  level: string;
+  duration: string;
+  target_audience: string;
+  outcomes?: string[];
+}
+
+interface Course {
+  id: string;
+  title: string;
+  description: string;
+  program_id: string;
+  type: string;
+  level: string;
+  duration: string;
+  thumbnail: string;
+  outline?: Record<string, any>;
+  prerequisites?: string[];
+  credits?: number;
+  instructors?: string[];
+  schedule?: {
+    meetDays?: string[];
+    startTime?: string;
+    endTime?: string;
+    location?: string;
+  };
+}
 
 export default function CoursesPage() {
-  const { user, isAuthenticated, updateProfile, logout } = useAuth();
+  const { user, isAuthenticated, updateProfile } = useAuth();
   const router = useRouter();
-  const [filteredCourses, setFilteredCourses] = useState<Course[]>(courses);
+  const [programs, setPrograms] = useState<Program[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
   const [activeTab, setActiveTab] = useState<"catalog" | "programs">("programs");
-  const [selectedProgram, setSelectedProgram] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -29,27 +58,91 @@ export default function CoursesPage() {
     }
   }, [isAuthenticated, router]);
 
+  // Fetch programs and courses
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [programsRes, coursesRes] = await Promise.all([
+          fetch('/api/programs'),
+          fetch('/api/courses'),
+        ]);
+
+        if (!programsRes.ok || !coursesRes.ok) {
+          throw new Error('Failed to fetch data');
+        }
+
+        const programsData = await programsRes.json();
+        const coursesData = await coursesRes.json();
+
+        setPrograms(programsData);
+        setCourses(coursesData);
+        setFilteredCourses(coursesData);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load data');
+        console.error('Error fetching data:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   if (!user) return null;
 
-  const handleFilterChange = (filters?: {
+  const handleFilterChange = async (filters?: {
     programId?: string;
-    type?: CourseType;
-    level?: DifficultyLevel;
+    type?: string;
+    level?: string;
     search?: string;
   }) => {
-    const filtered = filterCourses(courses, filters);
-    setFilteredCourses(filtered);
-  };
+    try {
+      const query = new URLSearchParams();
+      if (filters?.programId) query.append('programId', filters.programId);
+      if (filters?.type) query.append('type', filters.type);
+      if (filters?.level) query.append('level', filters.level);
+      if (filters?.search) query.append('search', filters.search);
 
-  const enrollCourse = (courseId: string) => {
-    if (!user.enrolledCourses.includes(courseId)) {
-      updateProfile({
-        enrolledCourses: [...user.enrolledCourses, courseId],
-      });
+      const response = await fetch(`/api/courses?${query.toString()}`);
+      if (!response.ok) throw new Error('Failed to filter courses');
+
+      const filtered = await response.json();
+      setFilteredCourses(filtered);
+    } catch (err) {
+      console.error('Error filtering courses:', err);
     }
   };
 
-  const getCourseTypeColor = (type: CourseType) => {
+  const enrollCourse = async (courseId: string) => {
+    try {
+      if (!user.enrolledCourses.includes(courseId)) {
+        const response = await fetch('/api/enrollments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            courseId,
+            userId: user.id,
+          }),
+        });
+
+        if (!response.ok) {
+          const data = await response.json();
+          throw new Error(data.error || 'Enrollment failed');
+        }
+
+        // Update local state
+        updateProfile({
+          enrolledCourses: [...user.enrolledCourses, courseId],
+        });
+      }
+    } catch (err) {
+      console.error('Enrollment error:', err);
+      alert(err instanceof Error ? err.message : 'Failed to enroll');
+    }
+  };
+
+  const getCourseTypeColor = (type: string) => {
     switch (type) {
       case "online":
         return "bg-blue-500/20 text-blue-400 border-blue-500/30";
@@ -57,10 +150,12 @@ export default function CoursesPage() {
         return "bg-purple-500/20 text-purple-400 border-purple-500/30";
       case "hybrid":
         return "bg-teal-500/20 text-teal-400 border-teal-500/30";
+      default:
+        return "bg-slate-500/20 text-slate-400 border-slate-500/30";
     }
   };
 
-  const getCourseTypeIcon = (type: CourseType) => {
+  const getCourseTypeIcon = (type: string) => {
     switch (type) {
       case "online":
         return "🌐";
@@ -68,6 +163,8 @@ export default function CoursesPage() {
         return "🏫";
       case "hybrid":
         return "🔄";
+      default:
+        return "📚";
     }
   };
 
@@ -86,14 +183,24 @@ export default function CoursesPage() {
               ← Back to Dashboard
             </button>
           </div>
-          <button
-            onClick={logout}
-            className="text-sm font-semibold text-muted hover:text-text transition-colors"
-          >
-            Logout
-          </button>
+          <div className="flex items-center gap-4">
+            {loading && <span className="text-sm text-muted">Loading...</span>}
+            <button
+              onClick={() => router.push("/portal/dashboard")}
+              className="text-sm font-semibold text-muted hover:text-text transition-colors"
+            >
+              Dashboard
+            </button>
+          </div>
         </div>
       </header>
+
+      {/* Error Message */}
+      {error && (
+        <div className="mx-auto max-w-container px-7 py-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400">
+          {error}
+        </div>
+      )}
 
       <div className="mx-auto max-w-container px-7 py-8">
         {/* Hero Section */}
@@ -135,16 +242,33 @@ export default function CoursesPage() {
           </div>
         </motion.div>
 
+        {/* Loading State */}
+        {loading && (
+          <div className="flex items-center justify-center py-20">
+            <div className="text-center">
+              <div className="inline-block animate-spin mb-4">
+                <div className="w-8 h-8 border-2 border-brand border-t-transparent rounded-full"></div>
+              </div>
+              <p className="text-muted">Loading courses and programs...</p>
+            </div>
+          </div>
+        )}
+
         {/* PROGRAMS TAB */}
-        {activeTab === "programs" && (
+        {!loading && activeTab === "programs" && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
           >
+            {programs.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-muted">No programs available</p>
+              </div>
+            ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
               {programs.map((program, index) => {
-                const programCourses = courses.filter((c) => c.programId === program.id);
+                const programCourses = courses.filter((c) => c.program_id === program.id);
                 const isEnrolledInProgram = programCourses.some((c) =>
                   user.enrolledCourses.includes(c.id)
                 );
@@ -190,7 +314,7 @@ export default function CoursesPage() {
                         <span className="text-[10px]">{programCourses.length} courses</span>
                       </div>
 
-                      <p className="text-xs text-muted mb-4 flex-1">{program.targetAudience}</p>
+                      <p className="text-xs text-muted mb-4 flex-1">{program.target_audience}</p>
 
                       <Link
                         href={`/portal/programs/${program.id}`}
@@ -203,11 +327,12 @@ export default function CoursesPage() {
                 );
               })}
             </div>
+            )}
           </motion.div>
         )}
 
         {/* COURSE CATALOG TAB */}
-        {activeTab === "catalog" && (
+        {!loading && activeTab === "catalog" && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -219,7 +344,7 @@ export default function CoursesPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredCourses.map((course, index) => {
                   const isEnrolled = user.enrolledCourses.includes(course.id);
-                  const program = programs.find((p) => p.id === course.programId);
+                  const program = programs.find((p) => p.id === course.program_id);
 
                   return (
                     <motion.div
@@ -272,7 +397,7 @@ export default function CoursesPage() {
                                 d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
                               />
                             </svg>
-                            {course.lessons.length} lessons
+                            Lessons available
                           </span>
                           <span className="flex items-center gap-1">
                             <svg
@@ -298,10 +423,14 @@ export default function CoursesPage() {
                         {course.schedule && (
                           <div className="text-xs text-muted mb-4 p-3 bg-bg rounded-lg">
                             <div className="font-semibold text-text mb-1">📍 Schedule</div>
-                            <div>{course.schedule.meetDays.join(", ")}</div>
-                            <div>
-                              {course.schedule.startTime} - {course.schedule.endTime}
-                            </div>
+                            {course.schedule.meetDays && (
+                              <div>{course.schedule.meetDays.join(", ")}</div>
+                            )}
+                            {course.schedule.startTime && course.schedule.endTime && (
+                              <div>
+                                {course.schedule.startTime} - {course.schedule.endTime}
+                              </div>
+                            )}
                             {course.schedule.location && <div>{course.schedule.location}</div>}
                           </div>
                         )}
