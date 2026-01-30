@@ -7,6 +7,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { GlowCard } from "@/components/ui/GlowCard";
 import { CourseFilter } from "@/components/courses/CourseFilter";
+import { getPrograms, getCourses, getCoursesByProgram, enrollCourse as supabaseEnroll } from "@/lib/supabase";
 
 interface Program {
   id: string;
@@ -58,22 +59,15 @@ export default function CoursesPage() {
     }
   }, [isAuthenticated, router]);
 
-  // Fetch programs and courses
+  // Fetch programs and courses from live Supabase
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [programsRes, coursesRes] = await Promise.all([
-          fetch('/api/programs'),
-          fetch('/api/courses'),
+        const [programsData, coursesData] = await Promise.all([
+          getPrograms(),
+          getCourses(),
         ]);
-
-        if (!programsRes.ok || !coursesRes.ok) {
-          throw new Error('Failed to fetch data');
-        }
-
-        const programsData = await programsRes.json();
-        const coursesData = await coursesRes.json();
 
         setPrograms(programsData);
         setCourses(coursesData);
@@ -98,16 +92,32 @@ export default function CoursesPage() {
     search?: string;
   }) => {
     try {
-      const query = new URLSearchParams();
-      if (filters?.programId) query.append('programId', filters.programId);
-      if (filters?.type) query.append('type', filters.type);
-      if (filters?.level) query.append('level', filters.level);
-      if (filters?.search) query.append('search', filters.search);
+      let filtered = courses;
 
-      const response = await fetch(`/api/courses?${query.toString()}`);
-      if (!response.ok) throw new Error('Failed to filter courses');
+      // Filter by program
+      if (filters?.programId) {
+        filtered = filtered.filter(c => c.program_id === filters.programId);
+      }
 
-      const filtered = await response.json();
+      // Filter by type
+      if (filters?.type) {
+        filtered = filtered.filter(c => c.type === filters.type);
+      }
+
+      // Filter by level
+      if (filters?.level) {
+        filtered = filtered.filter(c => c.level === filters.level);
+      }
+
+      // Filter by search text
+      if (filters?.search) {
+        const search = filters.search.toLowerCase();
+        filtered = filtered.filter(c =>
+          c.title.toLowerCase().includes(search) ||
+          c.description.toLowerCase().includes(search)
+        );
+      }
+
       setFilteredCourses(filtered);
     } catch (err) {
       console.error('Error filtering courses:', err);
@@ -116,25 +126,20 @@ export default function CoursesPage() {
 
   const enrollCourse = async (courseId: string) => {
     try {
-      if (!user.enrolledCourses.includes(courseId)) {
-        const response = await fetch('/api/enrollments', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            courseId,
-            userId: user.id,
-          }),
-        });
+      if (!user.id) {
+        alert('Please log in to enroll');
+        return;
+      }
 
-        if (!response.ok) {
-          const data = await response.json();
-          throw new Error(data.error || 'Enrollment failed');
-        }
+      if (!user.enrolledCourses.includes(courseId)) {
+        await supabaseEnroll(user.id, courseId);
 
         // Update local state
         updateProfile({
           enrolledCourses: [...user.enrolledCourses, courseId],
         });
+        
+        alert('Successfully enrolled in course!');
       }
     } catch (err) {
       console.error('Enrollment error:', err);
