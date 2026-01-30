@@ -45,9 +45,8 @@ jobs:
       - name: Prepare deployment directory
         run: |
           mkdir -p deploy
-          cp -r .next/. deploy/
-          cp -r public/. deploy/public/ 2>/dev/null || true
-          ls -la deploy/ | head -20
+          cp -r out/. deploy/
+          ls -R deploy/ | head -50
       
       - name: Build And Deploy
         id: builddeploy

@@ -3,8 +3,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-// Prevent static generation for auth pages
-export const dynamic = 'force-dynamic';
 import Link from "next/link";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { getPortalUrlForUser } from "@/lib/portal-routing";
