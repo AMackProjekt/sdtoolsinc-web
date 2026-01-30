@@ -15,6 +15,11 @@ import {
   getCourseProgress,
 } from "@/lib/courseData";
 
+// For static export, provide empty params - page loads dynamically on client
+export async function generateStaticParams() {
+  return [];
+}
+
 export default function LessonPage() {
   const { user, isAuthenticated, updateProfile, logout } = useAuth();
   const router = useRouter();
