@@ -1,9 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "export",
+  // Removed output: "export" for full Next.js SSR support
   images: { unoptimized: true },
   trailingSlash: true,
-  // Exclude api folder from Next.js compilation
+  output: 'standalone', // For Azure App Service / Container deployment
   typescript: {
     tsconfigPath: './tsconfig.json'
   }
