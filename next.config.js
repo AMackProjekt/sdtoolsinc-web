@@ -1,6 +1,6 @@
-/** @type {import('next').NextConfig} */
+/** @type {import('next).NextConfig} */
 const nextConfig = {
-  output: "export",
+  // Static export disabled - using server-side rendering with Azure Functions
   images: { unoptimized: true },
   trailingSlash: true
 };
