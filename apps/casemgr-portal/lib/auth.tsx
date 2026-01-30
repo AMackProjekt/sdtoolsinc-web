@@ -2,20 +2,21 @@
 
 import { createContext, useContext, useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
+import { supabase, getProfile } from '@/lib/supabase'
 
 interface User {
-  username: string
-  email?: string
+  id: string
+  email: string
   fullName?: string
   name?: string
-  id?: string
+  role?: string
   caseManagerId?: string
 }
 
 interface AuthContextType {
   user: User | null
   loading: boolean
-  login: (username: string, password: string) => Promise<void>
+  login: (email: string, password: string) => Promise<void>
   logout: () => void
   isAuthenticated: boolean
 }
@@ -28,38 +29,87 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter()
 
   useEffect(() => {
-    // Check for existing session
-    const storedUser = localStorage.getItem('portal_user')
-    if (storedUser) {
+    const loadSession = async () => {
       try {
-        setUser(JSON.parse(storedUser))
+        const { data: { session } } = await supabase.auth.getSession()
+        
+        if (session?.user) {
+          const profile = await getProfile(session.user.id)
+          const userData: User = {
+            id: session.user.id,
+            email: session.user.email || '',
+            name: profile.full_name || session.user.email || 'User',
+            fullName: profile.full_name || session.user.email || 'User',
+            role: profile.role,
+            caseManagerId: session.user.id
+          }
+          setUser(userData)
+        }
       } catch (error) {
-        localStorage.removeItem('portal_user')
+        console.error('Failed to load session', error)
+      } finally {
+        setLoading(false)
       }
     }
-    setLoading(false)
+
+    loadSession()
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session?.user) {
+        try {
+          const profile = await getProfile(session.user.id)
+          const userData: User = {
+            id: session.user.id,
+            email: session.user.email || '',
+            name: profile.full_name || session.user.email || 'User',
+            fullName: profile.full_name || session.user.email || 'User',
+            role: profile.role,
+            caseManagerId: session.user.id
+          }
+          setUser(userData)
+        } catch (error) {
+          console.error('Failed to load profile', error)
+          setUser(null)
+        }
+      } else {
+        setUser(null)
+      }
+    })
+
+    return () => {
+      subscription?.unsubscribe()
+    }
   }, [])
 
-  const login = async (username: string, password: string) => {
-    // TODO: Replace with actual API call
-    // For now, simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    const userData: User = {
-      username,
-      email: `${username}@example.com`,
-      fullName: username.charAt(0).toUpperCase() + username.slice(1),
-      name: username.charAt(0).toUpperCase() + username.slice(1),
-      id: Math.random().toString(36).substring(7),
-      caseManagerId: '3' // Default to D.Mack for demo
+  const login = async (email: string, password: string) => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+
+      if (error) throw error
+
+      if (data.user) {
+        const profile = await getProfile(data.user.id)
+        const userData: User = {
+          id: data.user.id,
+          email: data.user.email || '',
+          name: profile.full_name || data.user.email || 'User',
+          fullName: profile.full_name || data.user.email || 'User',
+          role: profile.role,
+          caseManagerId: data.user.id
+        }
+        setUser(userData)
+      }
+    } catch (error) {
+      console.error('Login error', error)
+      throw error
     }
-    
-    localStorage.setItem('portal_user', JSON.stringify(userData))
-    setUser(userData)
   }
 
-  const logout = () => {
-    localStorage.removeItem('portal_user')
+  const logout = async () => {
+    await supabase.auth.signOut()
     setUser(null)
     router.push('/auth/login')
   }

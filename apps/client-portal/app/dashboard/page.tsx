@@ -1,33 +1,36 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useAuth } from '@/lib/auth'
 
 export default function DashboardPage() {
   const router = useRouter()
-  const [user, setUser] = useState<any>(null)
+  const { user, profile, isAuthenticated, isLoading, signOut } = useAuth()
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('portal_user')
-    if (!storedUser) {
+    if (!isLoading && !isAuthenticated) {
       router.push('/auth/login')
-    } else {
-      setUser(JSON.parse(storedUser))
     }
-  }, [router])
+  }, [isAuthenticated, isLoading, router])
 
-  const handleLogout = () => {
-    localStorage.removeItem('portal_user')
+  const handleLogout = async () => {
+    await signOut()
     router.push('/auth/login')
   }
 
-  if (!user) {
+  if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-bg">
+        <div className="pointer-events-none fixed inset-0 -z-10 bg-dash-glow" />
         <div className="text-muted">Loading...</div>
       </div>
     )
+  }
+
+  if (!user || !isAuthenticated) {
+    return null
   }
 
   return (
@@ -55,44 +58,46 @@ export default function DashboardPage() {
       </header>
 
       <main className="max-w-7xl mx-auto px-6 py-8">
-        <h1 className="text-4xl font-extrabold mb-2">Welcome back, {user.username}!</h1>
+        <h1 className="text-4xl font-extrabold mb-2">Welcome back, {profile?.full_name || 'Guest'}!</h1>
         <p className="text-muted mb-8">Here's your progress overview</p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="glass rounded-xl p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-bold">Courses Enrolled</h3>
+              <h3 className="font-bold">Email</h3>
               <div className="w-10 h-10 rounded-full bg-brand/20 flex items-center justify-center">
                 <svg className="w-5 h-5 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
               </div>
             </div>
-            <div className="text-3xl font-bold text-brand">3</div>
+            <div className="text-sm truncate text-brand">{user?.email}</div>
           </div>
 
           <div className="glass rounded-xl p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-bold">Completed</h3>
+              <h3 className="font-bold">Member Since</h3>
               <div className="w-10 h-10 rounded-full bg-brand2/20 flex items-center justify-center">
                 <svg className="w-5 h-5 text-brand2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
             </div>
-            <div className="text-3xl font-bold text-brand2">1</div>
+            <div className="text-sm text-brand2">
+              {user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'Today'}
+            </div>
           </div>
 
           <div className="glass rounded-xl p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-bold">Hours Learned</h3>
+              <h3 className="font-bold">Role</h3>
               <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
                 <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
             </div>
-            <div className="text-3xl font-bold text-accent">24</div>
+            <div className="text-sm text-accent capitalize">{profile?.role || 'client'}</div>
           </div>
         </div>
 

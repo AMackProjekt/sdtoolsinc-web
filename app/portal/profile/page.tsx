@@ -2,44 +2,45 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/lib/auth";
+import { useAuth } from "@/lib/hooks/useAuth";
 import { motion } from "framer-motion";
 import { GlowCard } from "@/components/ui/GlowCard";
 import { cn } from "@/lib/cn";
 
 export default function ProfilePage() {
-  const { user, isAuthenticated, updateProfile, logout } = useAuth();
+  const { user, profile, isAuthenticated, isLoading, updateProfile, signOut } = useAuth();
   const router = useRouter();
-  const [name, setName] = useState("");
-  const [notifications, setNotifications] = useState(true);
-  const [emailUpdates, setEmailUpdates] = useState(true);
+  const [fullName, setFullName] = useState("");
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!isLoading && !isAuthenticated) {
       router.push("/portal/auth");
       return;
     }
-    if (user) {
-      setName(user.name);
-      setNotifications(user.preferences.notifications);
-      setEmailUpdates(user.preferences.emailUpdates);
+    if (profile?.full_name) {
+      setFullName(profile.full_name);
     }
-  }, [isAuthenticated, router, user]);
+  }, [isAuthenticated, isLoading, profile, router]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-bg">
+        <div className="text-muted">Loading...</div>
+      </div>
+    );
+  }
 
   if (!user) return null;
 
-  const handleSave = () => {
-    updateProfile({
-      name,
-      preferences: {
-        ...user.preferences,
-        notifications,
-        emailUpdates,
-      },
-    });
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+  const handleSave = async () => {
+    try {
+      await updateProfile({ full_name: fullName });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    } catch (err) {
+      console.error("Failed to update profile", err);
+    }
   };
 
   return (
@@ -55,7 +56,9 @@ export default function ProfilePage() {
             </button>
           </div>
           <button
-            onClick={logout}
+            onClick={async () => {
+              await signOut();
+            }}
             className="text-sm font-semibold text-muted hover:text-text transition-colors"
           >
             Logout
@@ -88,8 +91,8 @@ export default function ProfilePage() {
                 </label>
                 <input
                   type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
                   className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-brand/50"
                 />
               </div>
@@ -100,58 +103,24 @@ export default function ProfilePage() {
                 </label>
                 <input
                   type="email"
-                  value={user.email}
+                  value={user.email || ""}
                   disabled
                   className="w-full rounded-lg bg-bg/50 border border-border px-4 py-3 text-muted cursor-not-allowed"
                 />
                 <p className="mt-1 text-xs text-muted">Email cannot be changed</p>
               </div>
-            </div>
-          </GlowCard>
 
-          {/* Notifications */}
-          <GlowCard className="p-6">
-            <h2 className="text-lg font-extrabold tracking-tight text-text mb-4">
-              Notification Preferences
-            </h2>
-
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="font-semibold text-text">Push Notifications</div>
-                  <p className="text-xs text-muted mt-1">
-                    Receive notifications about course updates and progress
-                  </p>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={notifications}
-                    onChange={(e) => setNotifications(e.target.checked)}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-panel border border-border rounded-full peer peer-checked:bg-brand transition-colors"></div>
-                  <div className="absolute left-1 top-1 bg-text w-4 h-4 rounded-full transition-transform peer-checked:translate-x-5"></div>
+              <div>
+                <label className="block text-sm font-semibold text-text mb-2">
+                  Role
                 </label>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="font-semibold text-text">Email Updates</div>
-                  <p className="text-xs text-muted mt-1">
-                    Get weekly updates about new courses and opportunities
-                  </p>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={emailUpdates}
-                    onChange={(e) => setEmailUpdates(e.target.checked)}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-panel border border-border rounded-full peer peer-checked:bg-brand transition-colors"></div>
-                  <div className="absolute left-1 top-1 bg-text w-4 h-4 rounded-full transition-transform peer-checked:translate-x-5"></div>
-                </label>
+                <input
+                  type="text"
+                  value={profile?.role || "user"}
+                  disabled
+                  className="w-full rounded-lg bg-bg/50 border border-border px-4 py-3 text-muted cursor-not-allowed capitalize"
+                />
+                <p className="mt-1 text-xs text-muted">Role is set by administrators</p>
               </div>
             </div>
           </GlowCard>
@@ -167,12 +136,40 @@ export default function ProfilePage() {
                 <svg className="h-5 w-5 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
-                <span className="text-text">AES-256 Encryption Enabled</span>
+                <span className="text-text">Supabase + Azure Authentication Enabled</span>
+              </div>
+
+              <div className="text-xs text-muted">
+                <p>Your account is secured with enterprise-grade encryption and multi-factor authentication support.</p>
               </div>
 
               <button className="text-sm text-brand hover:text-brand2 transition-colors font-semibold">
                 Change Password →
               </button>
+            </div>
+          </GlowCard>
+
+          {/* Account Info */}
+          <GlowCard className="p-6">
+            <h2 className="text-lg font-extrabold tracking-tight text-text mb-4">
+              Account Information
+            </h2>
+            
+            <div className="space-y-3 text-sm">
+              <div className="flex justify-between">
+                <span className="text-muted">Account Created</span>
+                <span className="text-text">{new Date(user.created_at || "").toLocaleDateString()}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted">Email Verified</span>
+                <span className={user.email_confirmed_at ? "text-green-400" : "text-yellow-400"}>
+                  {user.email_confirmed_at ? "Yes ✓" : "Pending"}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted">Last Sign In</span>
+                <span className="text-text">{user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleDateString() : "Never"}</span>
+              </div>
             </div>
           </GlowCard>
 

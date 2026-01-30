@@ -9,7 +9,7 @@ export default function LoginPage() {
   const router = useRouter()
   const { login } = useAuth()
   const [formData, setFormData] = useState({
-    username: '',
+    email: '',
     password: ''
   })
   const [error, setError] = useState('')
@@ -21,15 +21,15 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      if (formData.username && formData.password) {
-        await login(formData.username, formData.password)
+      if (formData.email && formData.password) {
+        await login(formData.email, formData.password)
         router.push('/')
       } else {
-        setError('Please enter both username and password')
+        setError('Please enter both email and password')
         setLoading(false)
       }
     } catch (err) {
-      setError('Login failed. Please try again.')
+      setError(err instanceof Error ? err.message : 'Login failed. Please try again.')
       setLoading(false)
     }
   }
@@ -72,18 +72,18 @@ export default function LoginPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Username */}
+          {/* Email */}
           <div>
-            <label htmlFor="username" className="block text-sm font-medium mb-2">
-              Username
+            <label htmlFor="email" className="block text-sm font-medium mb-2">
+              Email Address
             </label>
             <input
-              id="username"
-              type="text"
-              value={formData.username}
-              onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+              id="email"
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               className="w-full px-4 py-3 rounded-lg bg-panel border border-border text-text focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20 transition"
-              placeholder="Enter your username"
+              placeholder="Enter your email"
               required
             />
           </div>

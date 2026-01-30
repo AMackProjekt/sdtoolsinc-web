@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { useAuth } from "@/lib/auth";
+import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/cn";
 
@@ -12,30 +12,33 @@ export default function AuthPage() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  
-  const { login, signup } = useAuth();
+  const [info, setInfo] = useState("");
+
+  const {
+    signInWithPassword,
+    signUp,
+    signInWithAzure,
+    signInWithMagicLink,
+    isLoading,
+    error: authError,
+  } = useAuth();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    setLoading(true);
+    setInfo("");
 
     try {
-      const success = isLogin
-        ? await login(email, password)
-        : await signup(email, password, name);
-
-      if (success) {
+      if (isLogin) {
+        await signInWithPassword(email, password);
         router.push("/portal/dashboard");
       } else {
-        setError(isLogin ? "Invalid credentials" : "Signup failed");
+        await signUp(email, password, name);
+        setInfo("Check your email to verify your account.");
       }
     } catch (err) {
-      setError("An error occurred. Please try again.");
-    } finally {
-      setLoading(false);
+      setError(authError || "An error occurred. Please try again.");
     }
   };
 
@@ -118,18 +121,72 @@ export default function AuthPage() {
               </div>
             )}
 
+            {info && (
+              <div className="rounded-lg bg-brand/10 border border-brand/30 px-4 py-3 text-sm text-brand">
+                {info}
+              </div>
+            )}
+
             <button
               type="submit"
-              disabled={loading}
+              disabled={isLoading}
               className={cn(
                 "w-full rounded-lg px-6 py-3 font-semibold transition-all",
                 "bg-gradient-to-br from-brand to-brand2 text-[#02131a]",
                 "hover:shadow-glow",
-                loading && "opacity-50 cursor-not-allowed"
+                isLoading && "opacity-50 cursor-not-allowed"
               )}
             >
-              {loading ? "Please wait..." : isLogin ? "Sign In" : "Create Account"}
+              {isLoading ? "Please wait..." : isLogin ? "Sign In" : "Create Account"}
             </button>
+
+            <div className="space-y-3">
+              <button
+                type="button"
+                onClick={async () => {
+                  setError("");
+                  try {
+                    await signInWithAzure();
+                  } catch (err) {
+                    setError(authError || "Azure sign-in failed");
+                  }
+                }}
+                disabled={isLoading}
+                className={cn(
+                  "w-full rounded-lg px-6 py-3 font-semibold transition-all",
+                  "border border-border text-text hover:bg-panel",
+                  isLoading && "opacity-50 cursor-not-allowed"
+                )}
+              >
+                Continue with Microsoft (Azure AD)
+              </button>
+
+              <button
+                type="button"
+                onClick={async () => {
+                  setError("");
+                  setInfo("");
+                  if (!email) {
+                    setError("Enter your email to receive a magic link");
+                    return;
+                  }
+                  try {
+                    await signInWithMagicLink(email);
+                    setInfo("Magic link sent. Check your inbox.");
+                  } catch (err) {
+                    setError(authError || "Magic link failed");
+                  }
+                }}
+                disabled={isLoading}
+                className={cn(
+                  "w-full rounded-lg px-6 py-3 font-semibold transition-all",
+                  "border border-border text-text hover:bg-panel",
+                  isLoading && "opacity-50 cursor-not-allowed"
+                )}
+              >
+                Send magic link
+              </button>
+            </div>
           </form>
 
           <div className="mt-6 text-center">
