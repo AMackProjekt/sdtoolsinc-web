@@ -497,3 +497,235 @@ export async function markLessonComplete(
 
   return data;
 }
+
+// ============================================
+// MESSAGES - for case manager communication
+// ============================================
+
+export interface Message {
+  id: string;
+  sender_id: string;
+  recipient_id: string;
+  subject: string;
+  message: string;
+  read: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+/**
+ * Get messages for a user
+ */
+export async function getMessages(userId: string): Promise<Message[]> {
+  const { data, error } = await supabase
+    .from("messages")
+    .select("*")
+    .or(`sender_id.eq.${userId},recipient_id.eq.${userId}`)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching messages:", error);
+    return [];
+  }
+
+  return data || [];
+}
+
+/**
+ * Send a message
+ */
+export async function sendMessage(
+  senderId: string,
+  recipientId: string,
+  subject: string,
+  message: string
+): Promise<Message | null> {
+  const { data, error } = await supabase
+    .from("messages")
+    .insert({
+      sender_id: senderId,
+      recipient_id: recipientId,
+      subject,
+      message,
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error sending message:", error);
+    return null;
+  }
+
+  return data;
+}
+
+/**
+ * Mark message as read
+ */
+export async function markMessageRead(messageId: string): Promise<boolean> {
+  const { error } = await supabase
+    .from("messages")
+    .update({ read: true, updated_at: new Date().toISOString() })
+    .eq("id", messageId);
+
+  if (error) {
+    console.error("Error marking message as read:", error);
+    return false;
+  }
+
+  return true;
+}
+
+// ============================================
+// REPORTS & GRIEVANCES
+// ============================================
+
+export interface Report {
+  id: string;
+  user_id: string | null;
+  type: "report" | "grievance" | "feedback";
+  category: string;
+  subject: string;
+  description: string;
+  anonymous: boolean;
+  status: "pending" | "under_review" | "resolved" | "closed";
+  priority: "low" | "medium" | "high" | "urgent";
+  assigned_to: string | null;
+  resolution: string | null;
+  created_at: string;
+  updated_at: string;
+  resolved_at: string | null;
+}
+
+/**
+ * Submit a report or grievance
+ */
+export async function submitReport(report: {
+  user_id?: string | null;
+  type: "report" | "grievance" | "feedback";
+  category: string;
+  subject: string;
+  description: string;
+  anonymous?: boolean;
+  priority?: "low" | "medium" | "high" | "urgent";
+}): Promise<Report | null> {
+  const { data, error } = await supabase
+    .from("reports")
+    .insert({
+      ...report,
+      anonymous: report.anonymous ?? false,
+      priority: report.priority ?? "medium",
+      status: "pending",
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error submitting report:", error);
+    return null;
+  }
+
+  return data;
+}
+
+/**
+ * Get reports for a user
+ */
+export async function getUserReports(userId: string): Promise<Report[]> {
+  const { data, error } = await supabase
+    .from("reports")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching reports:", error);
+    return [];
+  }
+
+  return data || [];
+}
+
+// ============================================
+// CERTIFICATES
+// ============================================
+
+export interface Certificate {
+  id: string;
+  user_id: string;
+  course_id: string;
+  program_id: string | null;
+  certificate_number: string;
+  issued_date: string;
+  completion_date: string;
+  certificate_data: Record<string, any>;
+}
+
+/**
+ * Generate certificate for course completion
+ */
+export async function generateCertificate(
+  userId: string,
+  courseId: string,
+  programId?: string
+): Promise<Certificate | null> {
+  // Generate unique certificate number
+  const timestamp = Date.now();
+  const certificateNumber = `TOOLS-${new Date().getFullYear()}-${timestamp.toString().slice(-6)}`;
+
+  const { data, error } = await supabase
+    .from("certificates")
+    .insert({
+      user_id: userId,
+      course_id: courseId,
+      program_id: programId,
+      certificate_number: certificateNumber,
+      completion_date: new Date().toISOString(),
+      certificate_data: {},
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error generating certificate:", error);
+    return null;
+  }
+
+  return data;
+}
+
+/**
+ * Get certificates for a user
+ */
+export async function getUserCertificates(userId: string): Promise<Certificate[]> {
+  const { data, error } = await supabase
+    .from("certificates")
+    .select("*")
+    .eq("user_id", userId)
+    .order("issued_date", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching certificates:", error);
+    return [];
+  }
+
+  return data || [];
+}
+
+/**
+ * Verify certificate by number
+ */
+export async function verifyCertificate(certificateNumber: string): Promise<Certificate | null> {
+  const { data, error } = await supabase
+    .from("certificates")
+    .select("*")
+    .eq("certificate_number", certificateNumber)
+    .single();
+
+  if (error) {
+    console.error("Error verifying certificate:", error);
+    return null;
+  }
+
+  return data;
+}

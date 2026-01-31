@@ -122,6 +122,38 @@ export default function DashboardPage() {
             </GlowCard>
           </div>
 
+          <div onClick={() => router.push("/portal/messages")} className="cursor-pointer">
+            <GlowCard className="p-6 h-full">
+              <div className="text-4xl mb-4">💬</div>
+              <h3 className="text-lg font-extrabold tracking-tight text-text">Messages</h3>
+              <p className="mt-2 text-sm text-muted">Communicate with your case manager</p>
+            </GlowCard>
+          </div>
+
+          <div onClick={() => router.push("/portal/certificates")} className="cursor-pointer">
+            <GlowCard className="p-6 h-full">
+              <div className="text-4xl mb-4">🏆</div>
+              <h3 className="text-lg font-extrabold tracking-tight text-text">Certificates</h3>
+              <p className="mt-2 text-sm text-muted">View and download your achievements</p>
+            </GlowCard>
+          </div>
+
+          <div onClick={() => router.push("/portal/settings")} className="cursor-pointer">
+            <GlowCard className="p-6 h-full">
+              <div className="text-4xl mb-4">⚙️</div>
+              <h3 className="text-lg font-extrabold tracking-tight text-text">Customization</h3>
+              <p className="mt-2 text-sm text-muted">Personalize your portal experience</p>
+            </GlowCard>
+          </div>
+
+          <div onClick={() => router.push("/portal/report")} className="cursor-pointer">
+            <GlowCard className="p-6 h-full">
+              <div className="text-4xl mb-4">📋</div>
+              <h3 className="text-lg font-extrabold tracking-tight text-text">Report & Grievance</h3>
+              <p className="mt-2 text-sm text-muted">Submit concerns safely and confidentially</p>
+            </GlowCard>
+          </div>
+
           <div onClick={() => router.push("/portal/mackai")} className="cursor-pointer">
             <GlowCard className="p-6 h-full">
               <div className="text-4xl mb-4">🤖</div>
@@ -137,12 +169,6 @@ export default function DashboardPage() {
               <p className="mt-2 text-sm text-muted">Access all portals and tools</p>
             </GlowCard>
           </div>
-
-          <GlowCard className="p-6 h-full">
-            <div className="text-4xl mb-4">🏆</div>
-            <h3 className="text-lg font-extrabold tracking-tight text-text">Certificates</h3>
-            <p className="mt-2 text-sm text-muted">View and download your achievements</p>
-          </GlowCard>
 
           <GlowCard className="p-6 h-full">
             <div className="text-4xl mb-4">📊</div>

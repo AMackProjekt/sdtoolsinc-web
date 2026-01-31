@@ -9,10 +9,36 @@ type User = {
   avatar?: string;
   enrolledCourses: string[];
   completedLessons: string[];
+  // Demographics
+  demographics?: {
+    age?: number;
+    gender?: string;
+    ethnicity?: string;
+    location?: string;
+  };
+  // Contact Information
+  contactInfo?: {
+    phone?: string;
+    address?: string;
+    city?: string;
+    state?: string;
+    zipCode?: string;
+    emergencyContact?: {
+      name?: string;
+      phone?: string;
+      relationship?: string;
+    };
+  };
+  // Case Manager Assignment
+  caseManagerId?: string;
   preferences: {
     notifications: boolean;
     emailUpdates: boolean;
     theme: "dark" | "light";
+    // Customization preferences
+    dashboardLayout?: string[];
+    fontSize?: "small" | "medium" | "large";
+    accentColor?: string;
   };
 };
 
@@ -52,10 +78,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         name,
         enrolledCourses: [],
         completedLessons: [],
+        demographics: {},
+        contactInfo: {
+          emergencyContact: {},
+        },
         preferences: {
           notifications: true,
           emailUpdates: true,
           theme: "dark",
+          fontSize: "medium",
         },
       };
 
