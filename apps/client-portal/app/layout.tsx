@@ -1,4 +1,5 @@
 import './globals.css'
+import { AuthProvider } from '@/lib/auth'
 
 export const metadata = {
   title: 'T.O.O.L.S Inc Portal',
@@ -9,7 +10,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className="font-sans antialiased">
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   )

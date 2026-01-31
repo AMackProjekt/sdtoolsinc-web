@@ -1,9 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Temporarily disable static export to support authentication
-  // output: "export",
+  // Static export for Azure Static Web Apps
+  output: 'export',
   images: { unoptimized: true },
-  trailingSlash: true
+  trailingSlash: true,
+  typescript: {
+    tsconfigPath: './tsconfig.json'
+  }
 };
 
 export default nextConfig;

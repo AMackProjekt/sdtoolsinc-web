@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 
-// Prevent static generation for auth pages
-export const dynamic = 'force-dynamic';
 import Link from "next/link";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { Button } from "@/components/ui/Button";

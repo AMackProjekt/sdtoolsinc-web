@@ -2,27 +2,35 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/lib/auth";
+import { useAuth } from "@/lib/hooks/useAuth";
 import { motion } from "framer-motion";
 import { GlowCard } from "@/components/ui/GlowCard";
 
 export default function DashboardPage() {
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, profile, isAuthenticated, isLoading, signOut } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!isLoading && !isAuthenticated) {
       router.push("/portal/auth");
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, isLoading, router]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-bg">
+        <div className="text-muted">Loading...</div>
+      </div>
+    );
+  }
 
   if (!user) return null;
 
   const stats = [
-    { label: "Courses Enrolled", value: user.enrolledCourses.length, icon: "📚" },
-    { label: "Lessons Completed", value: user.completedLessons.length, icon: "✅" },
-    { label: "Certificates", value: "0", icon: "🏆" },
-    { label: "Progress", value: "45%", icon: "📈" },
+    { label: "Profile Status", value: profile?.role || "Client", icon: "👤" },
+    { label: "Account Age", value: profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : "Today", icon: "📅" },
+    { label: "Verified", value: user.email_confirmed_at ? "Yes" : "No", icon: "✅" },
+    { label: "Email", value: "Verified", icon: "📧" },
   ];
 
   return (
@@ -48,7 +56,9 @@ export default function DashboardPage() {
               <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-brand"></span>
             </button>
             <button
-              onClick={logout}
+              onClick={async () => {
+                await signOut();
+              }}
               className="text-sm font-semibold text-muted hover:text-text transition-colors"
             >
               Logout
@@ -65,9 +75,9 @@ export default function DashboardPage() {
           className="mb-8"
         >
           <h1 className="text-3xl font-extrabold tracking-tight text-text">
-            Welcome back, {user.name}!
+            Welcome, {profile?.full_name || user.email}!
           </h1>
-          <p className="mt-2 text-muted">Continue your learning journey</p>
+          <p className="mt-2 text-muted">Continue your learning journey with live authentication</p>
         </motion.div>
 
         {/* Stats */}
@@ -83,7 +93,7 @@ export default function DashboardPage() {
                 <div className="flex items-center gap-4">
                   <div className="text-3xl">{stat.icon}</div>
                   <div>
-                    <div className="text-2xl font-extrabold tracking-tight text-text">
+                    <div className="text-lg font-extrabold tracking-tight text-text">
                       {stat.value}
                     </div>
                     <div className="text-xs text-muted mt-1">{stat.label}</div>
@@ -95,9 +105,9 @@ export default function DashboardPage() {
         </div>
 
         {/* Navigation Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div onClick={() => router.push("/portal/courses")} className="cursor-pointer">
-            <GlowCard className="p-6">
+            <GlowCard className="p-6 h-full">
               <div className="text-4xl mb-4">📚</div>
               <h3 className="text-lg font-extrabold tracking-tight text-text">My Courses</h3>
               <p className="mt-2 text-sm text-muted">Access your enrolled courses and continue learning</p>
@@ -105,7 +115,7 @@ export default function DashboardPage() {
           </div>
 
           <div onClick={() => router.push("/portal/profile")} className="cursor-pointer">
-            <GlowCard className="p-6">
+            <GlowCard className="p-6 h-full">
               <div className="text-4xl mb-4">👤</div>
               <h3 className="text-lg font-extrabold tracking-tight text-text">Profile Settings</h3>
               <p className="mt-2 text-sm text-muted">Manage your account and preferences</p>
@@ -113,7 +123,7 @@ export default function DashboardPage() {
           </div>
 
           <div onClick={() => router.push("/portal/mackai")} className="cursor-pointer">
-            <GlowCard className="p-6">
+            <GlowCard className="p-6 h-full">
               <div className="text-4xl mb-4">🤖</div>
               <h3 className="text-lg font-extrabold tracking-tight text-text">MackAi System</h3>
               <p className="mt-2 text-sm text-muted">Access the hybrid AI assistant dashboard</p>
@@ -121,21 +131,27 @@ export default function DashboardPage() {
           </div>
 
           <div onClick={() => router.push("/portal/portals")} className="cursor-pointer">
-            <GlowCard className="p-6">
+            <GlowCard className="p-6 h-full">
               <div className="text-4xl mb-4">🌐</div>
               <h3 className="text-lg font-extrabold tracking-tight text-text">My Portals</h3>
               <p className="mt-2 text-sm text-muted">Access all portals and tools</p>
             </GlowCard>
           </div>
 
-          <GlowCard className="p-6">
-            <div className="text-4xl mb-4">🎓</div>
+          <GlowCard className="p-6 h-full">
+            <div className="text-4xl mb-4">🏆</div>
             <h3 className="text-lg font-extrabold tracking-tight text-text">Certificates</h3>
             <p className="mt-2 text-sm text-muted">View and download your achievements</p>
           </GlowCard>
+
+          <GlowCard className="p-6 h-full">
+            <div className="text-4xl mb-4">📊</div>
+            <h3 className="text-lg font-extrabold tracking-tight text-text">Analytics</h3>
+            <p className="mt-2 text-sm text-muted">Track your progress and insights</p>
+          </GlowCard>
         </div>
 
-        {/* Recent Activity */}
+        {/* Account Status */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -143,11 +159,28 @@ export default function DashboardPage() {
           className="mt-8"
         >
           <h2 className="text-xl font-extrabold tracking-tight text-text mb-4">
-            Recent Activity
+            Account Status
           </h2>
           <GlowCard className="p-6">
-            <div className="text-center py-8 text-muted">
-              <p>No recent activity yet. Start a course to see your progress here!</p>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-muted">Email Address</span>
+                <span className="text-text font-semibold">{user.email}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-muted">Role</span>
+                <span className="text-text font-semibold capitalize">{profile?.role || "User"}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-muted">Email Verified</span>
+                <span className={`font-semibold ${user.email_confirmed_at ? "text-green-400" : "text-yellow-400"}`}>
+                  {user.email_confirmed_at ? "Yes ✓" : "Pending"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-muted">Member Since</span>
+                <span className="text-text font-semibold">{new Date(user.created_at || "").toLocaleDateString()}</span>
+              </div>
             </div>
           </GlowCard>
         </motion.div>

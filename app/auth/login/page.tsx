@@ -1,20 +1,34 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
-// Prevent static generation for auth pages
-export const dynamic = 'force-dynamic';
 import Link from "next/link";
 import { useAuth } from "@/lib/hooks/useAuth";
+import { getPortalUrlForUser } from "@/lib/portal-routing";
 import { Button } from "@/components/ui/Button";
 import { motion } from "framer-motion";
 
 export default function LoginPage() {
-  const { signInWithAzure, signInWithPassword, signInWithMagicLink, isLoading, error } = useAuth();
+  const router = useRouter();
+  const { signInWithAzure, signInWithPassword, signInWithMagicLink, isLoading, error, user, profile } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [tab, setTab] = useState<"azure" | "magic" | "password">("azure");
   const [magicLinkSent, setMagicLinkSent] = useState(false);
+
+  // Redirect to appropriate portal after successful login
+  useEffect(() => {
+    if (user && profile) {
+      const portalInfo = getPortalUrlForUser(profile, user.email || "");
+      if (portalInfo) {
+        // Redirect to appropriate portal
+        if (typeof window !== "undefined") {
+          window.location.href = portalInfo.portalUrl;
+        }
+      }
+    }
+  }, [user, profile]);
 
   const handlePasswordLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,6 +73,16 @@ export default function LoginPage() {
             <p className="p-lead mb-8 text-center">
               Sign in to access your T.O.O.L.S Inc portal
             </p>
+
+            {/* Portal Access Requirements */}
+            <div className="mb-6 p-4 bg-panel border border-border rounded-lg">
+              <p className="text-xs font-semibold text-brand mb-2">PORTAL ACCESS:</p>
+              <ul className="text-xs text-muted space-y-1">
+                <li>🔵 <strong>Client Portal:</strong> Any email</li>
+                <li>👥 <strong>Case Manager:</strong> @sdtoolsinc.org emails only</li>
+                <li>⚙️ <strong>Admin Portal:</strong> dmack@sdtoolsinc.org only</li>
+              </ul>
+            </div>
 
             {error && (
               <div className="mb-6 rounded-lg bg-red-500/10 p-4 text-red-400">

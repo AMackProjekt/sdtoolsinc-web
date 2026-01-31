@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { useAuth } from "@/lib/auth";
+import { useAuth } from "@/lib/hooks/useAuth";
 import { Navbar } from "@/components/ui/Navbar";
 import { GlowCard } from "@/components/ui/GlowCard";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -11,7 +11,7 @@ import { getMackAiInstance, MODULE_CAPABILITIES } from "@/lib/mackai";
 import type { AIModule } from "@/lib/mackai";
 
 export default function MackAiPage() {
-  const { isAuthenticated } = useAuth();
+  const { user, profile, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
   const [mackaiService] = useState(() => getMackAiInstance());
   const [moduleStatus, setModuleStatus] = useState<any>(null);
@@ -22,10 +22,10 @@ export default function MackAiPage() {
   const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!isLoading && !isAuthenticated) {
       router.push("/portal/auth");
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, isLoading, router]);
 
   useEffect(() => {
     const loadStatus = () => {

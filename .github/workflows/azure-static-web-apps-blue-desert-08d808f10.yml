@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          submodules: true
+          submodules: false
           lfs: false
       
       - name: Setup Node.js
@@ -33,6 +33,8 @@ jobs:
         run: npm run build
         env:
           NODE_OPTIONS: '--max_old_space_size=4096'
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
       
       - name: Install API dependencies
         run: cd api && npm install
