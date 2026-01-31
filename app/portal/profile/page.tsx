@@ -12,6 +12,22 @@ export default function ProfilePage() {
   const router = useRouter();
   const [fullName, setFullName] = useState("");
   const [saved, setSaved] = useState(false);
+  
+  // Demographics state
+  const [age, setAge] = useState("");
+  const [gender, setGender] = useState("");
+  const [ethnicity, setEthnicity] = useState("");
+  const [location, setLocation] = useState("");
+  
+  // Contact info state
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [zipCode, setZipCode] = useState("");
+  const [emergencyName, setEmergencyName] = useState("");
+  const [emergencyPhone, setEmergencyPhone] = useState("");
+  const [emergencyRelationship, setEmergencyRelationship] = useState("");
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -20,6 +36,26 @@ export default function ProfilePage() {
     }
     if (user?.name) {
       setFullName(user.name);
+    }
+    // Load demographics
+    if (user?.demographics) {
+      setAge(user.demographics.age?.toString() || "");
+      setGender(user.demographics.gender || "");
+      setEthnicity(user.demographics.ethnicity || "");
+      setLocation(user.demographics.location || "");
+    }
+    // Load contact info
+    if (user?.contactInfo) {
+      setPhone(user.contactInfo.phone || "");
+      setAddress(user.contactInfo.address || "");
+      setCity(user.contactInfo.city || "");
+      setState(user.contactInfo.state || "");
+      setZipCode(user.contactInfo.zipCode || "");
+      if (user.contactInfo.emergencyContact) {
+        setEmergencyName(user.contactInfo.emergencyContact.name || "");
+        setEmergencyPhone(user.contactInfo.emergencyContact.phone || "");
+        setEmergencyRelationship(user.contactInfo.emergencyContact.relationship || "");
+      }
     }
   }, [isAuthenticated, user, router]);
 
@@ -35,7 +71,27 @@ export default function ProfilePage() {
 
   const handleSave = async () => {
     try {
-      updateProfile({ name: fullName });
+      updateProfile({
+        name: fullName,
+        demographics: {
+          age: age ? parseInt(age) : undefined,
+          gender,
+          ethnicity,
+          location,
+        },
+        contactInfo: {
+          phone,
+          address,
+          city,
+          state,
+          zipCode,
+          emergencyContact: {
+            name: emergencyName,
+            phone: emergencyPhone,
+            relationship: emergencyRelationship,
+          },
+        },
+      });
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (err) {
@@ -121,6 +177,197 @@ export default function ProfilePage() {
                   className="w-full rounded-lg bg-bg/50 border border-border px-4 py-3 text-muted cursor-not-allowed capitalize"
                 />
                 <p className="mt-1 text-xs text-muted">Role is set by administrators</p>
+              </div>
+            </div>
+          </GlowCard>
+
+          {/* Demographics */}
+          <GlowCard className="p-6">
+            <h2 className="text-lg font-extrabold tracking-tight text-text mb-4">
+              Demographics (Optional)
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-text mb-2">
+                  Age
+                </label>
+                <input
+                  type="number"
+                  value={age}
+                  onChange={(e) => setAge(e.target.value)}
+                  placeholder="Your age"
+                  className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-brand/50"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-text mb-2">
+                  Gender
+                </label>
+                <select
+                  value={gender}
+                  onChange={(e) => setGender(e.target.value)}
+                  className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-brand/50"
+                >
+                  <option value="">Select...</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Non-binary">Non-binary</option>
+                  <option value="Prefer not to say">Prefer not to say</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-text mb-2">
+                  Ethnicity
+                </label>
+                <input
+                  type="text"
+                  value={ethnicity}
+                  onChange={(e) => setEthnicity(e.target.value)}
+                  placeholder="Your ethnicity"
+                  className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-brand/50"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-text mb-2">
+                  Location
+                </label>
+                <input
+                  type="text"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  placeholder="City, State"
+                  className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-brand/50"
+                />
+              </div>
+            </div>
+          </GlowCard>
+
+          {/* Contact Information */}
+          <GlowCard className="p-6">
+            <h2 className="text-lg font-extrabold tracking-tight text-text mb-4">
+              Contact Information
+            </h2>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-text mb-2">
+                  Phone Number
+                </label>
+                <input
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="(555) 123-4567"
+                  className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-brand/50"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-text mb-2">
+                  Street Address
+                </label>
+                <input
+                  type="text"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  placeholder="123 Main Street"
+                  className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-brand/50"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-text mb-2">
+                    City
+                  </label>
+                  <input
+                    type="text"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    placeholder="City"
+                    className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-brand/50"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-text mb-2">
+                    State
+                  </label>
+                  <input
+                    type="text"
+                    value={state}
+                    onChange={(e) => setState(e.target.value)}
+                    placeholder="State"
+                    className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-brand/50"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-text mb-2">
+                    ZIP Code
+                  </label>
+                  <input
+                    type="text"
+                    value={zipCode}
+                    onChange={(e) => setZipCode(e.target.value)}
+                    placeholder="12345"
+                    className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-brand/50"
+                  />
+                </div>
+              </div>
+            </div>
+          </GlowCard>
+
+          {/* Emergency Contact */}
+          <GlowCard className="p-6">
+            <h2 className="text-lg font-extrabold tracking-tight text-text mb-4">
+              Emergency Contact
+            </h2>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-text mb-2">
+                  Contact Name
+                </label>
+                <input
+                  type="text"
+                  value={emergencyName}
+                  onChange={(e) => setEmergencyName(e.target.value)}
+                  placeholder="Full name"
+                  className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-brand/50"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-text mb-2">
+                    Contact Phone
+                  </label>
+                  <input
+                    type="tel"
+                    value={emergencyPhone}
+                    onChange={(e) => setEmergencyPhone(e.target.value)}
+                    placeholder="(555) 123-4567"
+                    className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-brand/50"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-text mb-2">
+                    Relationship
+                  </label>
+                  <input
+                    type="text"
+                    value={emergencyRelationship}
+                    onChange={(e) => setEmergencyRelationship(e.target.value)}
+                    placeholder="e.g., Spouse, Parent, Friend"
+                    className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-brand/50"
+                  />
+                </div>
               </div>
             </div>
           </GlowCard>
