@@ -12,14 +12,66 @@ export default function ProfilePage() {
   const router = useRouter();
   const [fullName, setFullName] = useState("");
   const [saved, setSaved] = useState(false);
+  
+  // Demographics state
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [gender, setGender] = useState("");
+  const [ethnicity, setEthnicity] = useState("");
+  const [veteranStatus, setVeteranStatus] = useState(false);
+  const [disabilityStatus, setDisabilityStatus] = useState(false);
+  
+  // Contact information state
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [alternatePhone, setAlternatePhone] = useState("");
+  const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [zipCode, setZipCode] = useState("");
+  const [emergencyContact, setEmergencyContact] = useState("");
+  const [emergencyPhone, setEmergencyPhone] = useState("");
+  
+  // Preferences state
+  const [notifications, setNotifications] = useState(true);
+  const [emailUpdates, setEmailUpdates] = useState(true);
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [language, setLanguage] = useState("en");
 
   useEffect(() => {
     if (!isAuthenticated) {
       router.push("/portal/auth");
       return;
     }
-    if (user?.name) {
-      setFullName(user.name);
+    if (user) {
+      setFullName(user.name || "");
+      
+      // Load demographics
+      if (user.demographics) {
+        setDateOfBirth(user.demographics.dateOfBirth || "");
+        setGender(user.demographics.gender || "");
+        setEthnicity(user.demographics.ethnicity || "");
+        setVeteranStatus(user.demographics.veteranStatus || false);
+        setDisabilityStatus(user.demographics.disabilityStatus || false);
+      }
+      
+      // Load contact info
+      if (user.contactInfo) {
+        setPhoneNumber(user.contactInfo.phoneNumber || "");
+        setAlternatePhone(user.contactInfo.alternatePhone || "");
+        setAddress(user.contactInfo.address || "");
+        setCity(user.contactInfo.city || "");
+        setState(user.contactInfo.state || "");
+        setZipCode(user.contactInfo.zipCode || "");
+        setEmergencyContact(user.contactInfo.emergencyContact || "");
+        setEmergencyPhone(user.contactInfo.emergencyPhone || "");
+      }
+      
+      // Load preferences
+      if (user.preferences) {
+        setNotifications(user.preferences.notifications);
+        setEmailUpdates(user.preferences.emailUpdates);
+        setTheme(user.preferences.theme);
+        setLanguage(user.preferences.language || "en");
+      }
     }
   }, [isAuthenticated, user, router]);
 
@@ -35,7 +87,32 @@ export default function ProfilePage() {
 
   const handleSave = async () => {
     try {
-      updateProfile({ name: fullName });
+      updateProfile({ 
+        name: fullName,
+        demographics: {
+          dateOfBirth,
+          gender,
+          ethnicity,
+          veteranStatus,
+          disabilityStatus,
+        },
+        contactInfo: {
+          phoneNumber,
+          alternatePhone,
+          address,
+          city,
+          state,
+          zipCode,
+          emergencyContact,
+          emergencyPhone,
+        },
+        preferences: {
+          notifications,
+          emailUpdates,
+          theme,
+          language,
+        },
+      });
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (err) {
@@ -78,13 +155,13 @@ export default function ProfilePage() {
         </motion.div>
 
         <div className="mt-8 space-y-6">
-          {/* Profile Info */}
+          {/* Personal Information */}
           <GlowCard className="p-6">
             <h2 className="text-lg font-extrabold tracking-tight text-text mb-4">
               Personal Information
             </h2>
             
-            <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-text mb-2">
                   Full Name
@@ -109,18 +186,273 @@ export default function ProfilePage() {
                 />
                 <p className="mt-1 text-xs text-muted">Email cannot be changed</p>
               </div>
-
+              
               <div>
                 <label className="block text-sm font-semibold text-text mb-2">
-                  Role
+                  Date of Birth
+                </label>
+                <input
+                  type="date"
+                  value={dateOfBirth}
+                  onChange={(e) => setDateOfBirth(e.target.value)}
+                  className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-brand/50"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-semibold text-text mb-2">
+                  Gender
+                </label>
+                <select
+                  value={gender}
+                  onChange={(e) => setGender(e.target.value)}
+                  className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-brand/50"
+                >
+                  <option value="">Prefer not to say</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="non-binary">Non-binary</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-semibold text-text mb-2">
+                  Ethnicity (Optional)
+                </label>
+                <select
+                  value={ethnicity}
+                  onChange={(e) => setEthnicity(e.target.value)}
+                  className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-brand/50"
+                >
+                  <option value="">Prefer not to say</option>
+                  <option value="hispanic">Hispanic or Latino</option>
+                  <option value="white">White</option>
+                  <option value="black">Black or African American</option>
+                  <option value="asian">Asian</option>
+                  <option value="native">American Indian or Alaska Native</option>
+                  <option value="pacific">Native Hawaiian or Pacific Islander</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              
+              <div className="space-y-3">
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={veteranStatus}
+                    onChange={(e) => setVeteranStatus(e.target.checked)}
+                    className="w-5 h-5 rounded border-border text-brand focus:ring-brand focus:ring-offset-0"
+                  />
+                  <span className="text-sm font-semibold text-text">Veteran</span>
+                </label>
+                
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={disabilityStatus}
+                    onChange={(e) => setDisabilityStatus(e.target.checked)}
+                    className="w-5 h-5 rounded border-border text-brand focus:ring-brand focus:ring-offset-0"
+                  />
+                  <span className="text-sm font-semibold text-text">Has disability accommodations</span>
+                </label>
+              </div>
+            </div>
+          </GlowCard>
+          
+          {/* Contact Information */}
+          <GlowCard className="p-6">
+            <h2 className="text-lg font-extrabold tracking-tight text-text mb-4">
+              Contact Information
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-text mb-2">
+                  Primary Phone Number
+                </label>
+                <input
+                  type="tel"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  placeholder="(555) 123-4567"
+                  className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-brand/50"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-semibold text-text mb-2">
+                  Alternate Phone (Optional)
+                </label>
+                <input
+                  type="tel"
+                  value={alternatePhone}
+                  onChange={(e) => setAlternatePhone(e.target.value)}
+                  placeholder="(555) 987-6543"
+                  className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-brand/50"
+                />
+              </div>
+              
+              <div className="md:col-span-2">
+                <label className="block text-sm font-semibold text-text mb-2">
+                  Street Address
                 </label>
                 <input
                   type="text"
-                  value="User"
-                  disabled
-                  className="w-full rounded-lg bg-bg/50 border border-border px-4 py-3 text-muted cursor-not-allowed capitalize"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  placeholder="123 Main St"
+                  className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-brand/50"
                 />
-                <p className="mt-1 text-xs text-muted">Role is set by administrators</p>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-semibold text-text mb-2">
+                  City
+                </label>
+                <input
+                  type="text"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  placeholder="Los Angeles"
+                  className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-brand/50"
+                />
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-text mb-2">
+                    State
+                  </label>
+                  <select
+                    value={state}
+                    onChange={(e) => setState(e.target.value)}
+                    className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-brand/50"
+                  >
+                    <option value="">Select</option>
+                    <option value="CA">CA</option>
+                    <option value="NY">NY</option>
+                    <option value="TX">TX</option>
+                    <option value="FL">FL</option>
+                    <option value="IL">IL</option>
+                    {/* Add more states as needed */}
+                  </select>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-semibold text-text mb-2">
+                    ZIP Code
+                  </label>
+                  <input
+                    type="text"
+                    value={zipCode}
+                    onChange={(e) => setZipCode(e.target.value)}
+                    placeholder="90001"
+                    className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-brand/50"
+                  />
+                </div>
+              </div>
+            </div>
+          </GlowCard>
+          
+          {/* Emergency Contact */}
+          <GlowCard className="p-6">
+            <h2 className="text-lg font-extrabold tracking-tight text-text mb-4">
+              Emergency Contact
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-text mb-2">
+                  Contact Name
+                </label>
+                <input
+                  type="text"
+                  value={emergencyContact}
+                  onChange={(e) => setEmergencyContact(e.target.value)}
+                  placeholder="Jane Doe"
+                  className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-brand/50"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-semibold text-text mb-2">
+                  Contact Phone
+                </label>
+                <input
+                  type="tel"
+                  value={emergencyPhone}
+                  onChange={(e) => setEmergencyPhone(e.target.value)}
+                  placeholder="(555) 123-4567"
+                  className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-brand/50"
+                />
+              </div>
+            </div>
+          </GlowCard>
+          
+          {/* Preferences & Customization */}
+          <GlowCard className="p-6">
+            <h2 className="text-lg font-extrabold tracking-tight text-text mb-4">
+              Preferences & Customization
+            </h2>
+            
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-text mb-2">
+                    Theme
+                  </label>
+                  <select
+                    value={theme}
+                    onChange={(e) => setTheme(e.target.value as "dark" | "light")}
+                    className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-brand/50"
+                  >
+                    <option value="dark">Dark</option>
+                    <option value="light">Light</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-semibold text-text mb-2">
+                    Language
+                  </label>
+                  <select
+                    value={language}
+                    onChange={(e) => setLanguage(e.target.value)}
+                    className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-brand/50"
+                  >
+                    <option value="en">English</option>
+                    <option value="es">Español</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div className="space-y-3 pt-4">
+                <label className="flex items-center justify-between p-4 rounded-lg bg-bg border border-border cursor-pointer">
+                  <div>
+                    <div className="font-semibold text-text">Push Notifications</div>
+                    <div className="text-sm text-muted">Receive updates about your courses and messages</div>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={notifications}
+                    onChange={(e) => setNotifications(e.target.checked)}
+                    className="w-5 h-5 rounded border-border text-brand focus:ring-brand focus:ring-offset-0"
+                  />
+                </label>
+                
+                <label className="flex items-center justify-between p-4 rounded-lg bg-bg border border-border cursor-pointer">
+                  <div>
+                    <div className="font-semibold text-text">Email Updates</div>
+                    <div className="text-sm text-muted">Get weekly progress reports via email</div>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={emailUpdates}
+                    onChange={(e) => setEmailUpdates(e.target.checked)}
+                    className="w-5 h-5 rounded border-border text-brand focus:ring-brand focus:ring-offset-0"
+                  />
+                </label>
               </div>
             </div>
           </GlowCard>
