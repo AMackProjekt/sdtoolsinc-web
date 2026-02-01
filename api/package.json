@@ -10,8 +10,15 @@
     "test": "node -e \"console.log('tests placeholder'); process.exit(0);\""
   },
   "dependencies": {
+    "@azure/communication-email": "^1.1.0",
     "@azure/functions": "^4.11.0",
-    "mssql": "^12.2.0"
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/uuid": "^10.0.0",
+    "bcryptjs": "^3.0.3",
+    "jsonwebtoken": "^9.0.3",
+    "mssql": "^12.2.0",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@types/mssql": "^9.1.9",
