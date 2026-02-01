@@ -8,7 +8,6 @@ export default function InterestPage() {
     <main className="min-h-screen bg-bg">
       {/* Background glow */}
       <div className="pointer-events-none fixed inset-0 -z-10 bg-dash-glow" />
-
       <Navbar />
 
       <section className="mx-auto max-w-container px-7 pt-24 pb-16">
@@ -26,7 +25,7 @@ export default function InterestPage() {
               <p className="text-lg text-text mb-2">
                 Are you an <span className="font-bold text-brand">organization or program</span> looking to add our portal to your services?
               </p>
-              <a 
+              <a
                 href="/apps/client-portal/app/program-interest"
                 className="inline-block px-6 py-3 bg-gradient-to-r from-accent to-brand2 text-bg font-semibold rounded-lg hover:opacity-90 transition"
               >
@@ -42,8 +41,8 @@ export default function InterestPage() {
             {/* Important Notice */}
             <div className="mb-8 rounded-lg border border-brand/30 bg-brand/5 p-6">
               <p className="text-sm text-text leading-relaxed">
-                If filling this form out for a loved one, friend or family member please be sure to put all information 
-                so that contact can be made. If the individual is currently incarcerated please fill out this form with 
+                If filling this form out for a loved one, friend or family member please be sure to put all information
+                so that contact can be made. If the individual is currently incarcerated please fill out this form with
                 your contact information and someone will reach out to you within <span className="font-semibold">48 hours</span>.
               </p>
               <p className="mt-3 text-sm font-semibold text-brand2">
@@ -53,8 +52,8 @@ export default function InterestPage() {
 
             {/* QR Code and Mobile Access - Side by Side */}
             <div className="mb-8 flex flex-col md:flex-row items-center justify-center gap-8">
-              {/* QR Code */}
-              <div className="flex-shrink-0">
+              {/* QR Code - Hidden on mobile */}
+              <div className="flex-shrink-0 hidden md:block">
                 <div className="rounded-xl bg-white p-4 shadow-lg">
                   <Image
                     src="/qr-interest-form.webp"
@@ -70,28 +69,47 @@ export default function InterestPage() {
               {/* Alternative Text */}
               <div className="flex items-center">
                 <p className="text-sm text-muted text-center md:text-left">
-                  If you are having trouble clicking the link or are on a mobile device{" "}
+                  Scan the QR code or use the form below. Having trouble?{" "}
                   <a
                     href="https://forms.cloud.microsoft/r/G0kkRW4F7q"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-brand hover:text-brand2 transition-colors font-semibold underline"
                   >
-                    click here
+                    Open form in new window
                   </a>
                 </p>
               </div>
             </div>
 
-            {/* Start Now Button */}
-            <div className="text-center">
+            {/* Embedded Microsoft Form - Mobile Responsive */}
+            <div className="relative w-full overflow-hidden rounded-lg border border-border/50 bg-panel">
+              <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+                <iframe
+                  src="https://forms.cloud.microsoft/r/G0kkRW4F7q"
+                  className="absolute top-0 left-0 w-full h-full"
+                  style={{ 
+                    border: "none",
+                    minHeight: "600px"
+                  }}
+                  title="T.O.O.L.S Inc Interest Form"
+                  allowFullScreen
+                />
+              </div>
+            </div>
+
+            {/* Fallback Link */}
+            <div className="mt-6 text-center">
+              <p className="text-xs text-muted mb-3">
+                Form not displaying correctly?
+              </p>
               <a
                 href="https://forms.cloud.microsoft/r/G0kkRW4F7q"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <Button>
-                  Start Now
+                  Open in New Window
                 </Button>
               </a>
             </div>
