@@ -6,6 +6,8 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { InteractiveTiles } from "@/components/ui/InteractiveTiles";
 import { ChatBot } from "@/components/ui/ChatBot";
 import { CookieConsent } from "@/components/ui/CookieConsent";
+import { FirstStepsChecklist } from "@/components/ui/FirstStepsChecklist";
+import { SecondChanceEmployers } from "@/components/ui/SecondChanceEmployers";
 
 export default function Page() {
   return (

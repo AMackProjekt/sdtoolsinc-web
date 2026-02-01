@@ -29,7 +29,9 @@ export function Navbar() {
 
         {/* Desktop Navigation */}
         <nav className="hidden lg:flex items-center gap-6">
+          <a className="text-sm font-medium text-brand hover:text-brand2 transition" href="/first-steps">New to Reentry?</a>
           <a className="text-sm font-medium text-muted hover:text-text transition" href="/#platform">Programs</a>
+          <a className="text-sm font-medium text-muted hover:text-text transition" href="/resources">Success Tools</a>
           <a className="text-sm font-medium text-muted hover:text-text transition" href="/reentry">Reentry</a>
           <a className="text-sm font-medium text-muted hover:text-text transition" href="/#dashboard">Impact</a>
           <a className="text-sm font-medium text-muted hover:text-text transition" href="/partnerships">Partnerships</a>
@@ -81,8 +83,12 @@ export function Navbar() {
           className="lg:hidden border-t border-border bg-bg/95 backdrop-blur-xl"
         >
           <nav className="flex flex-col px-4 py-4 space-y-3">
-            <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/#platform" onClick={() => setMobileMenuOpen(false)}>Programs</a>
-            <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/reentry" onClick={() => setMobileMenuOpen(false)}>Reentry</a>
+              <a className="text-sm font-semibold text-brand hover:text-brand2 transition py-3 flex items-center gap-2" href="/first-steps" onClick={() => setMobileMenuOpen(false)}>
+                🆕 New to Reentry?
+              </a>
+              <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/#platform" onClick={() => setMobileMenuOpen(false)}>Programs</a>
+            <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/resources" onClick={() => setMobileMenuOpen(false)}>Success Tools</a>
+              <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/reentry" onClick={() => setMobileMenuOpen(false)}>Reentry</a>
             <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/#dashboard" onClick={() => setMobileMenuOpen(false)}>Impact</a>
             <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/partnerships" onClick={() => setMobileMenuOpen(false)}>Partnerships</a>
             <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/referral" onClick={() => setMobileMenuOpen(false)}>Referral & Contact</a>
