@@ -9,6 +9,35 @@ type User = {
   avatar?: string;
   enrolledCourses: string[];
   completedLessons: string[];
+  demographics?: {
+    dateOfBirth?: string;
+    gender?: "M" | "F" | "Non-binary" | "Prefer not to say";
+    race?: string[];
+    ethnicity?: string;
+    veteran?: boolean;
+    parentStatus?: "Single" | "Parent" | "Caregiver";
+    jjBackground?: {
+      status: "Probation" | "Parole" | "Post-release" | "Other";
+      dpo?: string;
+      restrictions?: string[];
+    };
+  };
+  contact?: {
+    phone?: string;
+    address?: string;
+    city?: string;
+    state?: string;
+    zip?: string;
+    emergencyContact?: string;
+    emergencyPhone?: string;
+  };
+  certificates?: Array<{
+    courseId: string;
+    courseName: string;
+    completionDate: string;
+    certificateId: string;
+    score?: number;
+  }>;
   preferences: {
     notifications: boolean;
     emailUpdates: boolean;
