@@ -107,7 +107,7 @@ export default function DashboardPage() {
         {/* Navigation Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div onClick={() => router.push("/portal/courses")} className="cursor-pointer">
-            <GlowCard className="p-6 h-full">
+            <GlowCard className="p-6 h-full hover:border-brand/50 transition-all">
               <div className="text-4xl mb-4">📚</div>
               <h3 className="text-lg font-extrabold tracking-tight text-text">My Courses</h3>
               <p className="mt-2 text-sm text-muted">Access your enrolled courses and continue learning</p>
@@ -115,40 +115,48 @@ export default function DashboardPage() {
           </div>
 
           <div onClick={() => router.push("/portal/profile")} className="cursor-pointer">
-            <GlowCard className="p-6 h-full">
+            <GlowCard className="p-6 h-full hover:border-brand/50 transition-all">
               <div className="text-4xl mb-4">👤</div>
               <h3 className="text-lg font-extrabold tracking-tight text-text">Profile Settings</h3>
-              <p className="mt-2 text-sm text-muted">Manage your account and preferences</p>
+              <p className="mt-2 text-sm text-muted">Manage your account, demographics, and preferences</p>
+            </GlowCard>
+          </div>
+          
+          <div onClick={() => router.push("/portal/messages")} className="cursor-pointer">
+            <GlowCard className="p-6 h-full hover:border-brand/50 transition-all">
+              <div className="text-4xl mb-4">💬</div>
+              <h3 className="text-lg font-extrabold tracking-tight text-text">Messages</h3>
+              <p className="mt-2 text-sm text-muted">Chat with your case manager and get support</p>
+              <div className="mt-3 flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-brand animate-pulse"></div>
+                <span className="text-xs text-brand font-semibold">2 unread</span>
+              </div>
+            </GlowCard>
+          </div>
+
+          <div onClick={() => router.push("/portal/certificates")} className="cursor-pointer">
+            <GlowCard className="p-6 h-full hover:border-brand/50 transition-all">
+              <div className="text-4xl mb-4">🏆</div>
+              <h3 className="text-lg font-extrabold tracking-tight text-text">My Certificates</h3>
+              <p className="mt-2 text-sm text-muted">View and download your course certificates</p>
+            </GlowCard>
+          </div>
+          
+          <div onClick={() => router.push("/portal/report")} className="cursor-pointer">
+            <GlowCard className="p-6 h-full hover:border-brand/50 transition-all">
+              <div className="text-4xl mb-4">📝</div>
+              <h3 className="text-lg font-extrabold tracking-tight text-text">Submit Report</h3>
+              <p className="mt-2 text-sm text-muted">File concerns, grievances, or suggestions anonymously</p>
             </GlowCard>
           </div>
 
           <div onClick={() => router.push("/portal/mackai")} className="cursor-pointer">
-            <GlowCard className="p-6 h-full">
+            <GlowCard className="p-6 h-full hover:border-brand/50 transition-all">
               <div className="text-4xl mb-4">🤖</div>
               <h3 className="text-lg font-extrabold tracking-tight text-text">MackAi System</h3>
               <p className="mt-2 text-sm text-muted">Access the hybrid AI assistant dashboard</p>
             </GlowCard>
           </div>
-
-          <div onClick={() => router.push("/portal/portals")} className="cursor-pointer">
-            <GlowCard className="p-6 h-full">
-              <div className="text-4xl mb-4">🌐</div>
-              <h3 className="text-lg font-extrabold tracking-tight text-text">My Portals</h3>
-              <p className="mt-2 text-sm text-muted">Access all portals and tools</p>
-            </GlowCard>
-          </div>
-
-          <GlowCard className="p-6 h-full">
-            <div className="text-4xl mb-4">🏆</div>
-            <h3 className="text-lg font-extrabold tracking-tight text-text">Certificates</h3>
-            <p className="mt-2 text-sm text-muted">View and download your achievements</p>
-          </GlowCard>
-
-          <GlowCard className="p-6 h-full">
-            <div className="text-4xl mb-4">📊</div>
-            <h3 className="text-lg font-extrabold tracking-tight text-text">Analytics</h3>
-            <p className="mt-2 text-sm text-muted">Track your progress and insights</p>
-          </GlowCard>
         </div>
 
         {/* Account Status */}

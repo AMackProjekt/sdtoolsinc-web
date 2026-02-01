@@ -9,10 +9,33 @@ type User = {
   avatar?: string;
   enrolledCourses: string[];
   completedLessons: string[];
+  // Demographics
+  demographics?: {
+    dateOfBirth?: string;
+    gender?: string;
+    ethnicity?: string;
+    veteranStatus?: boolean;
+    disabilityStatus?: boolean;
+  };
+  // Contact Information
+  contactInfo?: {
+    phoneNumber?: string;
+    alternatePhone?: string;
+    address?: string;
+    city?: string;
+    state?: string;
+    zipCode?: string;
+    emergencyContact?: string;
+    emergencyPhone?: string;
+  };
+  // Case Manager Assignment
+  caseManagerId?: string;
+  // Preferences & Customization
   preferences: {
     notifications: boolean;
     emailUpdates: boolean;
     theme: "dark" | "light";
+    language?: string;
   };
 };
 
