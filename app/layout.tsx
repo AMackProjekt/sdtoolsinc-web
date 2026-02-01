@@ -3,6 +3,11 @@ import { Footer } from "@/components/ui/Footer";
 
 export const metadata = {
   metadataBase: new URL('https://sdtoolsinc.org'),
+  icons: {
+    icon: '/logos/main-logo.png',
+    shortcut: '/logos/main-logo.png',
+    apple: '/logos/main-logo.png',
+  },
   title: {
     default: 'T.O.O.L.S Inc - Reentry Programs & Support for Justice-Involved Individuals',
     template: '%s | T.O.O.L.S Inc'
