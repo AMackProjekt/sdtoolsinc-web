@@ -17,6 +17,23 @@ interface PortalInfo {
   roles: string[];
 }
 
+// Environment-aware portal URLs
+const isDevelopment = process.env.NODE_ENV === 'development';
+
+const PRODUCTION_URLS = {
+  client: "https://toolsinc-client-portal.azurestaticapps.net",
+  casemgr: "https://toolsinc-casemgr-portal.azurestaticapps.net",
+  admin: "https://toolsinc-admin-portal.azurestaticapps.net",
+};
+
+const DEVELOPMENT_URLS = {
+  client: "http://localhost:3001",
+  casemgr: "http://localhost:3002",
+  admin: "http://localhost:3003",
+};
+
+const PORTAL_URLS = isDevelopment ? DEVELOPMENT_URLS : PRODUCTION_URLS;
+
 const portals: PortalInfo[] = [
   {
     id: "client",
@@ -24,7 +41,7 @@ const portals: PortalInfo[] = [
     description: "Access your personal dashboard, track progress, enroll in courses, and manage your profile.",
     icon: "👤",
     color: "from-blue-500 to-cyan-500",
-    url: "http://localhost:3001",
+    url: PORTAL_URLS.client,
     roles: ["client", "user"]
   },
   {
@@ -33,7 +50,7 @@ const portals: PortalInfo[] = [
     description: "Manage client cases, track outcomes, coordinate services, and generate reports.",
     icon: "👥",
     color: "from-purple-500 to-pink-500",
-    url: "http://localhost:3002",
+    url: PORTAL_URLS.casemgr,
     roles: ["casemgr", "coordinator"]
   },
   {
@@ -42,7 +59,7 @@ const portals: PortalInfo[] = [
     description: "Manage users, configure settings, access analytics, and oversee system operations.",
     icon: "⚙️",
     color: "from-amber-500 to-orange-500",
-    url: "http://localhost:3003",
+    url: PORTAL_URLS.admin,
     roles: ["admin", "superadmin"]
   }
 ];

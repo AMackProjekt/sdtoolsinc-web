@@ -13,22 +13,39 @@ export interface PortalConfig {
   description: string;
 }
 
+// Environment-aware portal URLs
+const isDevelopment = process.env.NODE_ENV === 'development';
+
+const PRODUCTION_URLS = {
+  client: "https://toolsinc-client-portal.azurestaticapps.net",
+  casemgr: "https://toolsinc-casemgr-portal.azurestaticapps.net",
+  admin: "https://toolsinc-admin-portal.azurestaticapps.net",
+};
+
+const DEVELOPMENT_URLS = {
+  client: "http://localhost:3001",
+  casemgr: "http://localhost:3002",
+  admin: "http://localhost:3003",
+};
+
+const PORTAL_URLS = isDevelopment ? DEVELOPMENT_URLS : PRODUCTION_URLS;
+
 export const PORTAL_CONFIG: Record<string, PortalConfig> = {
   client: {
-    portalUrl: "http://localhost:3001",
+    portalUrl: PORTAL_URLS.client,
     portalName: "Client Portal",
     allowedRoles: ["client"],
     description: "Access your dashboard, courses, and profile",
   },
   casemgr: {
-    portalUrl: "http://localhost:3002",
+    portalUrl: PORTAL_URLS.casemgr,
     portalName: "Case Manager Portal",
     allowedRoles: ["case_manager"],
     emailPattern: /@sdtoolsinc\.org$/,
     description: "Manage cases, clients, and outcomes",
   },
   admin: {
-    portalUrl: "http://localhost:3003",
+    portalUrl: PORTAL_URLS.admin,
     portalName: "Admin Portal",
     allowedRoles: ["admin"],
     emailPattern: /^dmack@sdtoolsinc\.org$/,
