@@ -1,5 +1,6 @@
 import "./globals.css";
 import { Footer } from "@/components/ui/Footer";
+import { PrivacyBanner } from "@/components/ui/PrivacyBanner";
 
 export const metadata = {
   metadataBase: new URL('https://sdtoolsinc.org'),
@@ -107,6 +108,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="font-sans text-text antialiased">
+        <PrivacyBanner />
         {children}
         <Footer />
       </body>

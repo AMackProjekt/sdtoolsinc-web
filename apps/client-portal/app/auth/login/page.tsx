@@ -17,6 +17,11 @@ export default function LoginPage() {
   const [showMagicLink, setShowMagicLink] = useState(false)
   const [magicLinkSent, setMagicLinkSent] = useState(false)
 
+  const markRedirectStart = () => {
+    if (typeof window === 'undefined') return
+    window.localStorage.setItem('portal_redirect_start_ms', Date.now().toString())
+  }
+
   useEffect(() => {
     if (isAuthenticated && !authLoading) {
       router.push('/dashboard')
@@ -29,6 +34,7 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
+      markRedirectStart()
       await signInWithPassword(formData.email, formData.password)
       router.push('/dashboard')
     } catch (err: any) {
@@ -41,6 +47,7 @@ export default function LoginPage() {
     setError('')
     setLoading(true)
     try {
+      markRedirectStart()
       await signInWithAzure()
     } catch (err: any) {
       setError(err?.message || 'Azure sign-in failed. Please try again.')

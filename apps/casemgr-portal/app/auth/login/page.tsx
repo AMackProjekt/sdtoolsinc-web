@@ -15,6 +15,11 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  const markRedirectStart = () => {
+    if (typeof window === 'undefined') return
+    window.localStorage.setItem('portal_redirect_start_ms', Date.now().toString())
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
@@ -22,6 +27,7 @@ export default function LoginPage() {
 
     try {
       if (formData.email && formData.password) {
+        markRedirectStart()
         await login(formData.email, formData.password)
         router.push('/')
       } else {

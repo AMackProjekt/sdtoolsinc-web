@@ -1,0 +1,35 @@
+{
+    "azureFunctions.deploySubpath": "api",
+    "azureFunctions.postDeployTask": "npm install (functions)",
+    "azureFunctions.projectLanguage": "TypeScript",
+    "azureFunctions.projectRuntime": "~4",
+    "debug.internalConsoleOptions": "neverOpen",
+    "azureFunctions.projectLanguageModel": 4,
+    "azureFunctions.preDeployTask": "npm prune (functions)",
+    "powershell.pester.codeLens": false,
+    "powershell.powerShellDefaultVersion": "PowerShell (x64)",
+    "powershell.integratedConsole.startInBackground": true,
+    "terminal.integrated.shellIntegration.enabled": true,
+    "terminal.integrated.profiles.windows": {
+        "PowerShell": {
+            "source": "PowerShell",
+            "icon": "terminal-powershell",
+            "args": [
+                "-NoExit",
+                "-Command",
+                "Import-Module Az.Accounts, Az.Resources, Az.Migrate, Az.Websites, Az.Storage -ErrorAction SilentlyContinue; Write-Host 'Azure PowerShell Suite loaded' -ForegroundColor Green"
+            ]
+        }
+    },
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
+    "chat.tools.terminal.autoApprove": {
+        "/^node --version; npm --version$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^Get-Command azd -ErrorAction SilentlyContinue; Get-Command az -ErrorAction SilentlyContinue$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}

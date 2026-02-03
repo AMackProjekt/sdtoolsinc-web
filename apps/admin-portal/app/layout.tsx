@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/lib/admin-auth";
+import { RedirectTiming } from "@/components/RedirectTiming";
 
 export const metadata: Metadata = {
   title: "T.O.O.L.S Inc - Admin Portal",
@@ -16,6 +17,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AuthProvider>
+          <RedirectTiming portal="admin" />
           {children}
         </AuthProvider>
       </body>

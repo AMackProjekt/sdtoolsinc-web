@@ -16,12 +16,18 @@ export default function AdminLoginPage() {
   const { login } = useAuth();
   const router = useRouter();
 
+  const markRedirectStart = () => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem("portal_redirect_start_ms", Date.now().toString());
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
     try {
+      markRedirectStart();
       const success = await login(email, password);
 
       if (success) {

@@ -1,5 +1,6 @@
 import './globals.css'
 import { AuthProvider } from '@/lib/auth'
+import { RedirectTiming } from '@/components/RedirectTiming'
 
 export const metadata = {
   title: 'T.O.O.L.S Inc Portal',
@@ -11,6 +12,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className="font-sans antialiased">
         <AuthProvider>
+          <RedirectTiming portal="client" />
           {children}
         </AuthProvider>
       </body>

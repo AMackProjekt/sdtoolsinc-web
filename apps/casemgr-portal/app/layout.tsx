@@ -4,6 +4,7 @@ import './globals.css'
 import { AuthProvider } from '@/lib/auth'
 import { MackAI } from '@/components/ui/MackAI'
 import { Toaster } from '@/components/ui/Toaster'
+import { RedirectTiming } from '@/components/RedirectTiming'
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -16,6 +17,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="font-sans antialiased">
         <AuthProvider>
+          <RedirectTiming portal="casemgr" />
           {children}
           <MackAI />
           <Toaster />

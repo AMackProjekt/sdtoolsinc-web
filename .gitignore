@@ -11,6 +11,8 @@ coverage/
 out/
 build/
 dist/
+dist-electron/
+apps/**/dist-electron/
 
 # Production
 /build
@@ -23,6 +25,7 @@ dist/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+*.log
 
 # Local env files
 .env
@@ -30,6 +33,7 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
+api/local.settings.json
 
 # Vercel
 .vercel
