@@ -4,13 +4,16 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/admin-auth'
 import { motion } from 'framer-motion'
+import { StatCard } from '@/components/ui/StatCard'
+import { AdminHeader } from '@/components/ui/AdminHeader'
+import { Users, UserCheck, UserCog, Activity } from 'lucide-react'
 
 // Types
 interface DashboardStats {
   totalUsers: number
   activeClients: number
   caseManagers: number
-  pendingAssignments: number
+  systemHealth: number
 }
 
 interface RecentActivity {
@@ -26,7 +29,7 @@ const MOCK_STATS: DashboardStats = {
   totalUsers: 247,
   activeClients: 156,
   caseManagers: 18,
-  pendingAssignments: 12
+  systemHealth: 98
 }
 
 const MOCK_ACTIVITIES: RecentActivity[] = [
@@ -67,56 +70,11 @@ const MOCK_ACTIVITIES: RecentActivity[] = [
   }
 ]
 
-// Stat Card Component
-interface StatCardProps {
-  title: string
-  value: number
-  icon: string
-  color: 'red' | 'orange' | 'purple' | 'blue'
-  trend?: { value: number; isPositive: boolean }
-}
 
-function StatCard({ title, value, icon, color, trend }: StatCardProps) {
-  const colorClasses = {
-    red: 'from-brand/20 to-brand/5 text-brand',
-    orange: 'from-brand2/20 to-brand2/5 text-brand2',
-    purple: 'from-accent/20 to-accent/5 text-accent',
-    blue: 'from-blue-500/20 to-blue-500/5 text-blue-400'
-  }
-
-  const borderColors = {
-    red: 'hover:border-brand/40',
-    orange: 'hover:border-brand2/40',
-    purple: 'hover:border-accent/40',
-    blue: 'hover:border-blue-500/40'
-  }
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -2 }}
-      className={`glass rounded-xl p-6 transition-all ${borderColors[color]}`}
-    >
-      <div className="flex items-start justify-between mb-4">
-        <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${colorClasses[color]} flex items-center justify-center text-2xl`}>
-          {icon}
-        </div>
-        {trend && (
-          <div className={`text-sm font-medium ${trend.isPositive ? 'text-green-400' : 'text-red-400'}`}>
-            {trend.isPositive ? '↑' : '↓'} {Math.abs(trend.value)}%
-          </div>
-        )}
-      </div>
-      <div className="text-3xl font-bold text-text mb-1">{value.toLocaleString()}</div>
-      <div className="text-sm text-muted">{title}</div>
-    </motion.div>
-  )
-}
 
 // Quick Action Button Component
 interface QuickActionProps {
-  icon: string
+  icon: React.ReactNode
   label: string
   onClick: () => void
   variant?: 'primary' | 'secondary'
@@ -228,31 +186,7 @@ export default function AdminDashboard() {
       <div className="pointer-events-none fixed inset-0 -z-10 bg-gradient-to-b from-brand/5 via-transparent to-transparent" />
 
       {/* Header */}
-      <header className="sticky top-0 z-40 backdrop-blur-xl border-b border-border bg-bg/80">
-        <div className="mx-auto max-w-7xl px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <h1 className="text-xl font-bold text-text">Admin Dashboard</h1>
-              <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-brand/10 text-brand border border-brand/20">
-                {user.role === 'super_admin' ? 'Super Admin' : user.role.replace('_', ' ').toUpperCase()}
-              </span>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-muted hidden sm:block">Welcome, {user.name}</span>
-              <button
-                onClick={() => router.push('/settings')}
-                className="p-2 rounded-lg hover:bg-glass transition-colors text-muted hover:text-text"
-                aria-label="Settings"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <AdminHeader />
 
       <main className="mx-auto max-w-7xl px-6 pt-8 pb-16">
         {/* Welcome Message */}
@@ -269,35 +203,38 @@ export default function AdminDashboard() {
           </p>
         </motion.div>
 
-        {/* Statistics Cards */}
+        {/* Statistics Cards - Now Clickable */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard
             title="Total Users"
             value={stats.totalUsers}
-            icon="👥"
-            color="red"
-            trend={{ value: 8, isPositive: true }}
+            icon={<Users className="w-6 h-6" />}
+            variant="primary"
+            trend={{ value: 8, isPositive: true, label: 'vs last month' }}
+            onClick={() => router.push('/users')}
           />
           <StatCard
             title="Active Clients"
             value={stats.activeClients}
-            icon="✨"
-            color="orange"
-            trend={{ value: 12, isPositive: true }}
+            icon={<UserCheck className="w-6 h-6" />}
+            variant="success"
+            trend={{ value: 12, isPositive: true, label: 'vs last month' }}
+            onClick={() => router.push('/users?role=client&status=active')}
           />
           <StatCard
             title="Case Managers"
             value={stats.caseManagers}
-            icon="👔"
-            color="purple"
-            trend={{ value: 2, isPositive: true }}
+            icon={<UserCog className="w-6 h-6" />}
+            variant="warning"
+            trend={{ value: 2, isPositive: true, label: 'vs last month' }}
+            onClick={() => router.push('/users?role=case_manager')}
           />
           <StatCard
-            title="Pending Assignments"
-            value={stats.pendingAssignments}
-            icon="⏳"
-            color="blue"
-            trend={{ value: 3, isPositive: false }}
+            title="System Health"
+            value={`${stats.systemHealth}%`}
+            icon={<Activity className="w-6 h-6" />}
+            variant="success"
+            onClick={() => router.push('/system/health')}
           />
         </div>
 
@@ -309,7 +246,7 @@ export default function AdminDashboard() {
           className="glass rounded-xl p-6 mb-8"
         >
           <h3 className="text-xl font-semibold text-text mb-6">Quick Actions</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             <QuickActionButton
               icon="➕"
               label="Create User"
@@ -319,7 +256,7 @@ export default function AdminDashboard() {
             <QuickActionButton
               icon="📋"
               label="Assign Client"
-              onClick={() => router.push('/clients')}
+              onClick={() => router.push('/assignments')}
             />
             <QuickActionButton
               icon="📊"
@@ -328,8 +265,13 @@ export default function AdminDashboard() {
             />
             <QuickActionButton
               icon="🔍"
-              label="View Audit Logs"
-              onClick={() => router.push('/audit')}
+              label="Search Resources"
+              onClick={() => router.push('/search')}
+            />
+            <QuickActionButton
+              icon="🌐"
+              label="CalBenefits Portal"
+              onClick={() => window.open('https://calbenefits.ca.gov', '_blank')}
             />
           </div>
         </motion.div>
