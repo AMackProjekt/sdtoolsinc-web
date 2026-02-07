@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/admin-auth'
 import { motion } from 'framer-motion'
@@ -74,7 +74,7 @@ const MOCK_ACTIVITIES: RecentActivity[] = [
 
 // Quick Action Button Component
 interface QuickActionProps {
-  icon: React.ReactNode
+  icon: ReactNode
   label: string
   onClick: () => void
   variant?: 'primary' | 'secondary'
