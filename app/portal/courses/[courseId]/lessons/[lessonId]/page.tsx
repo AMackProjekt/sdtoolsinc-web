@@ -318,3 +318,5 @@ export default function LessonPage() {
     </div>
   );
 }
+
+// Generate static params for all lessons
