@@ -210,14 +210,7 @@ export default function DashboardPage() {
                     className="block px-4 py-2 text-sm text-muted hover:text-text hover:bg-glass transition"
                     onClick={() => setShowUserMenu(false)}
                   >
-                    Profile
-                  </Link>
-                  <Link
-                    href="/profile"
-                    className="block px-4 py-2 text-sm text-muted hover:text-text hover:bg-glass transition"
-                    onClick={() => setShowUserMenu(false)}
-                  >
-                    Settings
+                    Profile & Settings
                   </Link>
                   <button
                     onClick={handleLogout}

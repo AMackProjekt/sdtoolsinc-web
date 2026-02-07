@@ -115,7 +115,7 @@ export function RecentMessages({ messages, unreadCount, loading = false, classNa
                       </div>
                     )}
                     {!message.read && (
-                      <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-brand rounded-full border-2 border-panel" />
+                      <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-brand rounded-full border-2 border-bg" />
                     )}
                   </div>
 

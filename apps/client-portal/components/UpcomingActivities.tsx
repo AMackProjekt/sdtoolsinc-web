@@ -37,7 +37,7 @@ const activityColors = {
 export function UpcomingActivities({ activities, loading = false, className }: UpcomingActivitiesProps) {
   const handleAddToCalendar = (activity: Activity) => {
     // Create iCal format for calendar apps
-    const startDate = new Date(`${activity.date} ${activity.time}`)
+    const startDate = new Date(`${activity.date}T${activity.time}`)
     const endDate = new Date(startDate.getTime() + 60 * 60 * 1000) // Add 1 hour
     
     const icsContent = `BEGIN:VCALENDAR
