@@ -10,17 +10,6 @@ import { ProgressBar } from '@/components/ui/ProgressBar'
 import { Button } from '@/components/ui/Button'
 import { GED_COURSE_LESSONS } from '@/lib/course-data'
 
-// Required for Next.js static export with dynamic routes
-export function generateStaticParams() {
-  return [
-    { id: '1' },
-    { id: '2' },
-    { id: '3' },
-    { id: '4' },
-    { id: '5' },
-  ]
-}
-
 interface Lesson {
   id: string
   title: string
@@ -79,7 +68,7 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
     <div className="min-h-screen bg-bg">
       <div className="pointer-events-none fixed inset-0 -z-10 bg-dash-glow" />
       
-      <PortalHeader user={user} />
+      <PortalHeader />
 
       <main className="max-w-7xl mx-auto px-6 py-8">
         {/* Breadcrumb */}

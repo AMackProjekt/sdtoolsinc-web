@@ -46,7 +46,7 @@ export default function LoginPage() {
       <div className="pointer-events-none fixed inset-0 -z-10 bg-dash-glow" />
       
       {/* Loading Screen - Welcome Back */}
-      {loading && formData.username && formData.password && (
+      {loading && formData.email && formData.password && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-bg/95 backdrop-blur-sm">
           <div className="text-center">
             <div className="mb-6">
