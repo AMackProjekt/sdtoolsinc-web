@@ -168,26 +168,26 @@ export default function ProgramsPage() {
           <KPICard
             title="On Track"
             value={onTrackCount}
-            subtitle="Clients progressing well"
-            trend={{ value: 0, isPositive: true }}
+            icon="✓"
+            trend={{ value: 0, label: "stable", isPositive: true }}
           />
           <KPICard
             title="Needs Attention"
             value={needsAttentionCount}
-            subtitle="Behind on milestones"
-            trend={{ value: 0, isPositive: false }}
+            icon="⚠️"
+            trend={{ value: 0, label: "stable", isPositive: false }}
           />
           <KPICard
             title="At Risk"
             value={atRiskCount}
-            subtitle="Requires intervention"
-            trend={{ value: 0, isPositive: false }}
+            icon="🔴"
+            trend={{ value: 0, label: "stable", isPositive: false }}
           />
           <KPICard
             title="Gainfully Employed"
             value={employedCount}
-            subtitle="Program graduates"
-            trend={{ value: 0, isPositive: true }}
+            icon="💼"
+            trend={{ value: 0, label: "stable", isPositive: true }}
           />
         </div>
 

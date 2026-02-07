@@ -179,14 +179,3 @@ export default function PrivacyPolicyPage() {
     </main>
   );
 }
-
-## Contact Us
-
-**Privacy Officer:** Donyale Mack  
-**Email:** privacy@sdtoolsinc.org  
-**Phone:** (619) 350-7638  
-**Address:** T.O.O.L.S. Inc., San Diego, CA
-
----
-
-**Your trust matters to us.** If you have questions or concerns about your privacy, please reach out. We're here to help.

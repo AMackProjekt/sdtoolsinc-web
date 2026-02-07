@@ -206,14 +206,14 @@ export default function ClientDetailsPage() {
   }, [isAuthenticated, router])
 
   useEffect(() => {
+    // Find client by ID - in production, fetch from API
+    const foundClient = MOCK_CLIENTS.find(c => c.id === params.id)
+    setClient(foundClient || null)
     
     // Load client files
     if (foundClient) {
       setClientFiles(getClientFiles(foundClient.id))
     }
-    // Find client by ID - in production, fetch from API
-    const foundClient = MOCK_CLIENTS.find(c => c.id === params.id)
-    setClient(foundClient || null)
   }, [params.id])
 
   if (!isAuthenticated || !user) {
@@ -227,7 +227,7 @@ export default function ClientDetailsPage() {
   if (!client) {
     return (
       <div className="min-h-screen bg-bg">
-        <PortalHeader title="Client Not Found" />
+        <PortalHeader />
         <div className="max-w-7xl mx-auto px-6 py-8">
           <div className="glass rounded-xl p-8 text-center">
             <h2 className="text-2xl font-bold text-text mb-4">Client Not Found</h2>
@@ -344,7 +344,7 @@ export default function ClientDetailsPage() {
 
   return (
     <div className="min-h-screen bg-bg">
-      <PortalHeader title="Client Details" />
+      <PortalHeader />
 
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Back Button */}

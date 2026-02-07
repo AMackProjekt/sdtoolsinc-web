@@ -10,7 +10,10 @@ import { CaseNoteTemplates } from '@/components/ui/CaseNoteTemplates'
 import { KPICard } from '@/components/ui/KPICard'
 import { AgentMonitor } from '@/components/ui/AgentMonitor'
 import { AICoach } from '@/components/ui/AICoach'
-import '@/lib/background-agents' // Initialize background agents
+import { ChartWrapper } from '@/components/ui/ChartWrapper'
+import { WeeklyEngagementChart } from '@/components/ui/WeeklyEngagementChart'
+import { ClientEngagementChart } from '@/components/ui/ClientEngagementChart'
+import '@/lib/background-agents'
 
 interface Client {
   id: string
@@ -246,6 +249,110 @@ export default function CaseManagerDashboard() {
           <AgentMonitor />
         </div>
 
+        {/* Engagement Charts */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <ChartWrapper title="Weekly Activity" description="Engagement metrics for the past 7 days" height="300px">
+            <WeeklyEngagementChart />
+          </ChartWrapper>
+          <ChartWrapper title="Client Growth Trends" description="6-month client engagement overview" height="300px">
+            <ClientEngagementChart />
+          </ChartWrapper>
+        </div>
+
+        {/* Today's Schedule & High Priority Alerts */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {/* Today's Schedule */}
+          <div className="glass rounded-xl p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-text">Today&apos;s Schedule</h2>
+              <Button variant="ghost" className="text-sm" onClick={() => router.push('/calendar')}>
+                View All →
+              </Button>
+            </div>
+            <div className="space-y-3">
+              {[
+                { time: '9:00 AM', client: 'John Doe', type: 'Initial Consultation', status: 'upcoming' },
+                { time: '11:30 AM', client: 'Jane Smith', type: 'Progress Check-in', status: 'upcoming' },
+                { time: '2:00 PM', client: 'Michael Johnson', type: 'Job Placement Follow-up', status: 'upcoming' },
+                { time: '4:30 PM', client: 'Sarah Williams', type: '30-Day Review', status: 'upcoming' },
+              ].map((meeting, idx) => (
+                <div
+                  key={idx}
+                  onClick={() => router.push(`/calendar?meeting=${idx}`)}
+                  className="flex items-start gap-3 p-3 rounded-lg bg-glass hover:bg-brand/5 cursor-pointer transition-colors border border-transparent hover:border-brand/30"
+                >
+                  <div className="flex-shrink-0 w-16 text-sm text-muted">
+                    {meeting.time}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-text font-medium">{meeting.client}</div>
+                    <div className="text-sm text-muted truncate">{meeting.type}</div>
+                  </div>
+                  <div className="flex-shrink-0">
+                    <span className="inline-flex items-center px-2 py-1 text-xs font-medium rounded-full bg-blue-500/10 text-blue-400">
+                      {meeting.status}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* High Priority Alerts */}
+          <div className="glass rounded-xl p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-text">High Priority Alerts</h2>
+              <Button variant="ghost" className="text-sm" onClick={() => router.push('/tasks')}>
+                View All →
+              </Button>
+            </div>
+            <div className="space-y-3">
+              {[
+                { 
+                  title: 'Missing Documentation', 
+                  client: 'Robert Brown', 
+                  severity: 'urgent',
+                  action: 'Review case file',
+                  link: '/clients/5'
+                },
+                { 
+                  title: 'Follow-up Required', 
+                  client: 'John Doe', 
+                  severity: 'warning',
+                  action: 'Schedule next meeting',
+                  link: '/clients/1'
+                },
+                { 
+                  title: 'Program Completion Pending', 
+                  client: 'Sarah Williams', 
+                  severity: 'warning',
+                  action: 'Complete 90-day assessment',
+                  link: '/clients/4'
+                },
+              ].map((alert, idx) => (
+                <div
+                  key={idx}
+                  onClick={() => router.push(alert.link)}
+                  className="flex items-start gap-3 p-3 rounded-lg bg-glass hover:bg-brand/5 cursor-pointer transition-colors border border-transparent hover:border-brand/30"
+                >
+                  <div className="flex-shrink-0 mt-1">
+                    {alert.severity === 'urgent' ? (
+                      <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse" />
+                    ) : (
+                      <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-text font-medium">{alert.title}</div>
+                    <div className="text-sm text-muted">{alert.client}</div>
+                    <div className="text-xs text-brand mt-1">{alert.action}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
         {/* Quick Actions */}
         <div className="glass rounded-xl p-6 mb-8">
           <h2 className="text-xl font-semibold text-text mb-4">Quick Actions</h2>
@@ -256,11 +363,11 @@ export default function CaseManagerDashboard() {
             <Button variant="secondary" className="w-full" onClick={() => setShowNoteModal(true)}>
               📝 New Case Note
             </Button>
-            <Button variant="outline" className="w-full" onClick={() => router.push('/schedule')}>
+            <Button variant="outline" className="w-full" onClick={() => router.push('/calendar')}>
               📅 Schedule Meeting
             </Button>
-            <Button variant="outline" className="w-full" onClick={() => router.push('/calbenefits')}>
-              🏛️ CalBenefits Portal
+            <Button variant="outline" className="w-full" onClick={() => router.push('/tasks')}>
+              ✓ View Tasks
             </Button>
           </div>
         </div>

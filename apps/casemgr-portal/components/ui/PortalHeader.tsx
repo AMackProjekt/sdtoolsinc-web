@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { cn } from '@/lib/cn'
+import { Logo } from '@/components/ui/Logo'
 import { NotificationCenter } from './NotificationCenter'
 import { CaseManagerCard } from './CaseManagerCard'
 
@@ -29,9 +30,10 @@ export function PortalHeader({ user }: PortalHeaderProps) {
     { href: '/', label: 'Dashboard', icon: '📊' },
     { href: '/clients', label: 'Clients', icon: '👥' },
     { href: '/programs', label: '30/60/90', icon: '📋' },
-    { href: '/schedule', label: 'Schedule', icon: '📅' },
+    { href: '/calendar', label: 'Calendar', icon: '📅' },
+    { href: '/tasks', label: 'Tasks', icon: '✓' },
+    { href: '/reports', label: 'Reports', icon: '📈' },
     { href: '/resources', label: 'Resources', icon: '📚' },
-    { href: '/calbenefits', label: 'CalBenefits', icon: '🏥' },
   ]
 
   const quickActions = [
@@ -47,9 +49,10 @@ export function PortalHeader({ user }: PortalHeaderProps) {
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="text-xl font-bold bg-gradient-to-r from-brand to-brand2 bg-clip-text text-transparent">
-            T.O.O.L.S Case Manager
-          </Link>
+          <div className="flex items-center gap-2">
+            <Logo size="md" href="/" />
+            <span className="text-sm text-muted hidden sm:inline">Case Manager</span>
+          </div>
 
           {/* Navigation */}
           <nav className="hidden md:flex gap-6 items-center">

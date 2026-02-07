@@ -108,7 +108,7 @@ export function AICoach({
     return {
       type: contentType === 'quotes' ? 'quote' : 'tip',
       message: content.message,
-      author: content.author,
+      author: 'author' in content ? content.author : undefined,
       action: 'action' in content ? content.action : undefined
     }
   }
