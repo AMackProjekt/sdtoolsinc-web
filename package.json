@@ -17,6 +17,8 @@
     "deps:update-root": "npm update",
     "deps:update-portals": "cd apps/client-portal && npm update && cd ../casemgr-portal && npm update && cd ../admin-portal && npm update && cd ..",
     "deps:update-all": "npm update && npm run deps:update-portals && cd api && npm update",
+    "analyze": "ANALYZE=true next build",
+    "verify": "bash scripts/verify-performance.sh"
     "optimize-logos": "node scripts/optimize-logos.js",
     "docker:build": "docker build -t toolsinc-web:latest .",
     "docker:run": "docker run -d -p 3000:3000 --name toolsinc-web toolsinc-web:latest",
@@ -30,25 +32,26 @@
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.93.3",
     "clsx": "^2.1.1",
-    "framer-motion": "^11.0.0",
+    "framer-motion": "^11.18.2",
     "lucide-react": "^0.563.0",
     "next": "^16.1.3",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
-    "recharts": "^2.12.7",
-    "serve": "^14.2.1",
-    "tailwind-merge": "^2.5.2"
+    "recharts": "^2.15.4",
+    "serve": "^14.2.5",
+    "tailwind-merge": "^2.6.0"
   },
   "devDependencies": {
-    "@types/node": "^20.12.12",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
+    "@next/bundle-analyzer": "^15.1.3",
+    "@types/node": "^22.10.5",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
     "autoprefixer": "^10.4.20",
-    "eslint": "^9.0.0",
+    "eslint": "^9.18.0",
     "eslint-config-next": "^16.1.3",
-    "postcss": "^8.4.41",
+    "postcss": "^8.4.49",
     "sharp": "^0.34.5",
-    "tailwindcss": "^3.4.10",
-    "typescript": "^5.7.2"
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.3"
   }
 }

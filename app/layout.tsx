@@ -1,6 +1,7 @@
 import "./globals.css";
 import { Footer } from "@/components/ui/Footer";
 import { PrivacyBanner } from "@/components/ui/PrivacyBanner";
+import { WebVitals } from "@/components/WebVitals";
 
 export const metadata = {
   metadataBase: new URL('https://sdtoolsinc.org'),
@@ -88,6 +89,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap"
+          rel="stylesheet"
+        />
         <script
           async
           src="https://www.googletagmanager.com/gtag/js?id=G-CLEPBVEEFX"
@@ -108,9 +115,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="font-sans text-text antialiased">
+<<<<<<< HEAD
         <PrivacyBanner />
         {children}
         <Footer />
+=======
+        <WebVitals />
+        <AuthProvider>
+          {children}
+          <Footer />
+        </AuthProvider>
+>>>>>>> origin/copilot/optimize-website-performance
       </body>
     </html>
   );
