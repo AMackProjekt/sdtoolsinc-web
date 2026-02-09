@@ -5,9 +5,9 @@ import { PrivacyBanner } from "@/components/ui/PrivacyBanner";
 export const metadata = {
   metadataBase: new URL('https://sdtoolsinc.org'),
   icons: {
-    icon: '/logos/main-logo.png',
-    shortcut: '/logos/main-logo.png',
-    apple: '/logos/main-logo.png',
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
   },
   title: {
     default: 'T.O.O.L.S. Inc. | Reentry Support & Workforce Development in San Diego, CA',
