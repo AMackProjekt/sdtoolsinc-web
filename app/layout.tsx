@@ -1,4 +1,5 @@
 import "./globals.css";
+import { AuthProvider } from "@/lib/auth";
 import { Footer } from "@/components/ui/Footer";
 import { PrivacyBanner } from "@/components/ui/PrivacyBanner";
 import { WebVitals } from "@/components/WebVitals";
@@ -115,17 +116,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="font-sans text-text antialiased">
-<<<<<<< HEAD
-        <PrivacyBanner />
-        {children}
-        <Footer />
-=======
         <WebVitals />
+        <PrivacyBanner />
         <AuthProvider>
           {children}
           <Footer />
         </AuthProvider>
->>>>>>> origin/copilot/optimize-website-performance
       </body>
     </html>
   );
