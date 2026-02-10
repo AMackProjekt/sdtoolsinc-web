@@ -18,7 +18,7 @@
     "deps:update-portals": "cd apps/client-portal && npm update && cd ../casemgr-portal && npm update && cd ../admin-portal && npm update && cd ..",
     "deps:update-all": "npm update && npm run deps:update-portals && cd api && npm update",
     "analyze": "ANALYZE=true next build",
-    "verify": "bash scripts/verify-performance.sh"
+    "verify": "bash scripts/verify-performance.sh",
     "optimize-logos": "node scripts/optimize-logos.js",
     "docker:build": "docker build -t toolsinc-web:latest .",
     "docker:run": "docker run -d -p 3000:3000 --name toolsinc-web toolsinc-web:latest",
