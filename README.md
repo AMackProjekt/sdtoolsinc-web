@@ -222,6 +222,7 @@ Monitor system health at:
 - [Performance Guide](./PERFORMANCE.md) - Optimization best practices
 - [Health Checks](./HEALTH_CHECKS.md) - Monitoring and alerting
 - [Docker Deployment](./DOCKER.md) - Container deployment guide
+- [Portal Configuration](./docs/PORTAL_CONFIGURATION.md) - Portal setup, user approval, and role management
 
 ## 🐛 Troubleshooting
 
