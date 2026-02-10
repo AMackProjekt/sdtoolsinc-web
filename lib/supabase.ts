@@ -497,3 +497,223 @@ export async function markLessonComplete(
 
   return data;
 }
+
+// ============================================
+// MESSAGES - COMMUNICATION FUNCTIONS
+// ============================================
+
+export interface Message {
+  id: string;
+  sender_id: string;
+  recipient_id: string;
+  subject: string;
+  message: string;
+  read: boolean;
+  parent_message_id?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+/**
+ * Get messages for a user (both sent and received)
+ */
+export async function getMessages(userId: string): Promise<Message[]> {
+  try {
+    const { data, error } = await supabase
+      .from("messages")
+      .select("*")
+      .or(`sender_id.eq.${userId},recipient_id.eq.${userId}`)
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.error("Error fetching messages:", error);
+    return [];
+  }
+}
+
+/**
+ * Send a message
+ */
+export async function sendMessage(
+  senderId: string,
+  recipientId: string,
+  subject: string,
+  message: string,
+  parentMessageId?: string
+): Promise<Message | null> {
+  try {
+    const { data, error } = await supabase
+      .from("messages")
+      .insert({
+        sender_id: senderId,
+        recipient_id: recipientId,
+        subject,
+        message,
+        parent_message_id: parentMessageId,
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error("Error sending message:", error);
+    return null;
+  }
+}
+
+/**
+ * Mark message as read
+ */
+export async function markMessageRead(messageId: string): Promise<boolean> {
+  try {
+    const { error } = await supabase
+      .from("messages")
+      .update({ read: true, updated_at: new Date().toISOString() })
+      .eq("id", messageId);
+
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error("Error marking message as read:", error);
+    return false;
+  }
+}
+
+/**
+ * Get unread message count
+ */
+export async function getUnreadMessageCount(userId: string): Promise<number> {
+  try {
+    const { count, error } = await supabase
+      .from("messages")
+      .select("*", { count: "exact", head: true })
+      .eq("recipient_id", userId)
+      .eq("read", false);
+
+    if (error) throw error;
+    return count || 0;
+  } catch (error) {
+    console.error("Error getting unread count:", error);
+    return 0;
+  }
+}
+
+// ============================================
+// REPORTS - ANONYMOUS REPORTING FUNCTIONS
+// ============================================
+
+export interface Report {
+  id: string;
+  user_id?: string;
+  report_type: "report" | "grievance" | "feedback";
+  category: string;
+  priority: "low" | "medium" | "high" | "urgent";
+  status: "pending" | "reviewing" | "resolved" | "closed";
+  title: string;
+  description: string;
+  anonymous: boolean;
+  resolution?: string;
+  assigned_to?: string;
+  created_at: string;
+  updated_at: string;
+  resolved_at?: string;
+}
+
+/**
+ * Submit a report (can be anonymous)
+ */
+export async function submitReport(report: {
+  userId?: string;
+  reportType: "report" | "grievance" | "feedback";
+  category: string;
+  priority: "low" | "medium" | "high" | "urgent";
+  title: string;
+  description: string;
+  anonymous: boolean;
+}): Promise<Report | null> {
+  try {
+    const { data, error } = await supabase
+      .from("reports")
+      .insert({
+        user_id: report.anonymous ? null : report.userId,
+        report_type: report.reportType,
+        category: report.category,
+        priority: report.priority,
+        title: report.title,
+        description: report.description,
+        anonymous: report.anonymous,
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error("Error submitting report:", error);
+    return null;
+  }
+}
+
+/**
+ * Get user's reports
+ */
+export async function getUserReports(userId: string): Promise<Report[]> {
+  try {
+    const { data, error } = await supabase
+      .from("reports")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.error("Error fetching reports:", error);
+    return [];
+  }
+}
+
+// ============================================
+// CERTIFICATES FUNCTIONS
+// ============================================
+
+/**
+ * Get user certificates
+ */
+export async function getUserCertificates(userId: string): Promise<any[]> {
+  try {
+    const { data, error } = await supabase
+      .from("certificates")
+      .select("*")
+      .eq("user_id", userId)
+      .order("completion_date", { ascending: false });
+
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.error("Error fetching certificates:", error);
+    return [];
+  }
+}
+
+/**
+ * Verify certificate by number
+ */
+export async function verifyCertificate(certificateNumber: string): Promise<any | null> {
+  try {
+    const { data, error } = await supabase
+      .from("certificates")
+      .select("*")
+      .eq("certificate_number", certificateNumber)
+      .single();
+
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error("Error verifying certificate:", error);
+    return null;
+  }
+}

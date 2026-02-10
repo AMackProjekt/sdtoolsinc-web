@@ -125,6 +125,124 @@ export default function ProfilePage() {
             </div>
           </GlowCard>
 
+          {/* Contact Information */}
+          <GlowCard className="p-6">
+            <h2 className="text-lg font-extrabold tracking-tight text-text mb-4">
+              Contact Information
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-text mb-2">
+                  Phone Number
+                </label>
+                <input
+                  type="tel"
+                  placeholder="(555) 123-4567"
+                  className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-brand/50"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-text mb-2">
+                  City
+                </label>
+                <input
+                  type="text"
+                  placeholder="Your city"
+                  className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-brand/50"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-semibold text-text mb-2">
+                  Address
+                </label>
+                <input
+                  type="text"
+                  placeholder="Street address"
+                  className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-brand/50"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-text mb-2">
+                  State
+                </label>
+                <input
+                  type="text"
+                  placeholder="State"
+                  className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-brand/50"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-text mb-2">
+                  Zip Code
+                </label>
+                <input
+                  type="text"
+                  placeholder="12345"
+                  className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-brand/50"
+                />
+              </div>
+            </div>
+          </GlowCard>
+
+          {/* Emergency Contact */}
+          <GlowCard className="p-6">
+            <h2 className="text-lg font-extrabold tracking-tight text-text mb-4">
+              Emergency Contact
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-text mb-2">
+                  Contact Name
+                </label>
+                <input
+                  type="text"
+                  placeholder="Full name"
+                  className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-brand/50"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-text mb-2">
+                  Contact Phone
+                </label>
+                <input
+                  type="tel"
+                  placeholder="(555) 123-4567"
+                  className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-brand/50"
+                />
+              </div>
+            </div>
+          </GlowCard>
+
+          {/* Case Manager */}
+          <GlowCard className="p-6">
+            <h2 className="text-lg font-extrabold tracking-tight text-text mb-4">
+              Case Manager
+            </h2>
+            
+            <div className="space-y-3 text-sm">
+              {user.caseManager ? (
+                <>
+                  <div className="flex justify-between">
+                    <span className="text-muted">Name</span>
+                    <span className="text-text">{user.caseManager.name || "Not assigned"}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted">Email</span>
+                    <span className="text-text">{user.caseManager.email || "N/A"}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted">Phone</span>
+                    <span className="text-text">{user.caseManager.phone || "N/A"}</span>
+                  </div>
+                </>
+              ) : (
+                <p className="text-muted">No case manager assigned yet</p>
+              )}
+            </div>
+          </GlowCard>
+
           {/* Security */}
           <GlowCard className="p-6">
             <h2 className="text-lg font-extrabold tracking-tight text-text mb-4">
