@@ -4,15 +4,15 @@
 
 A Next.js 15 web application supporting justice-involved individuals through programs, referrals, and a learning portal.
 
-[![Next.js](https://img.shields.io/badge/Next.js-15.5.9-black)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-18.3.1-blue)](https://reactjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16.1.5-black)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19.2.3-blue)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7.3-blue)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3.4.17-38bdf8)](https://tailwindcss.com/)
 
 ## 🚀 Quick Start
 
 ```bash
-# Install dependencies
+# Install dependencies (includes Next.js 16.1.5 security patch)
 npm install
 
 # Run development server
@@ -27,6 +27,8 @@ npm start
 # Analyze bundle size
 npm run analyze
 ```
+
+> **⚠️ Security Note:** After pulling latest changes, run `npm install` to update Next.js to 16.1.5, which patches a critical DoS vulnerability (CVE).
 
 Visit [http://localhost:3000](http://localhost:3000) to view the app.
 
@@ -119,8 +121,8 @@ See [DOCKER.md](./DOCKER.md) for detailed Docker deployment guide.
 ## 🛠️ Technology Stack
 
 ### Frontend
-- **Next.js 15.5.9** - React framework with static export
-- **React 18.3.1** - UI library
+- **Next.js 16.1.5** - React framework with static export (patched for CVE DoS vulnerability)
+- **React 19.2.3** - UI library
 - **TypeScript 5.7.3** - Type safety
 - **Tailwind CSS 3.4.17** - Utility-first CSS
 - **Framer Motion 11.18.2** - Animation library
@@ -222,6 +224,7 @@ Monitor system health at:
 - [Performance Guide](./PERFORMANCE.md) - Optimization best practices
 - [Health Checks](./HEALTH_CHECKS.md) - Monitoring and alerting
 - [Docker Deployment](./DOCKER.md) - Container deployment guide
+- [Portal Configuration](./docs/PORTAL_CONFIGURATION.md) - Portal setup, user approval, and role management
 
 ## 🐛 Troubleshooting
 

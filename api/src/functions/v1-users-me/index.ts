@@ -20,21 +20,29 @@ export async function usersMe(req: HttpRequest, context: InvocationContext): Pro
   if (method === "GET") {
     // Get or create user
     let users = await query(
-      "SELECT * FROM Users WHERE EntraId = @entraId",
+      `SELECT Id, Email, DisplayName, EntraId, Role, IsActive, CreatedAt, UpdatedAt,
+              Approved, ApprovedAt, ApprovedBy, Status, RejectionReason
+       FROM Users WHERE EntraId = @entraId`,
       { entraId }
     );
 
     if (users.length === 0) {
-      // Create new user
+      // Create new user with pending approval status
+      const defaultRole = email.endsWith('@sdtoolsinc.org') 
+        ? (email === 'dmack@sdtoolsinc.org' ? 'Admin' : 'CaseManager')
+        : 'Client';
+      
       await query(
-        `INSERT INTO Users (Email, DisplayName, EntraId) 
+        `INSERT INTO Users (Email, DisplayName, EntraId, Role, Approved, Status) 
          OUTPUT INSERTED.* 
-         VALUES (@email, @displayName, @entraId)`,
-        { email, displayName, entraId }
+         VALUES (@email, @displayName, @entraId, @role, 0, 'pending')`,
+        { email, displayName, entraId, role: defaultRole }
       );
       
       users = await query(
-        "SELECT * FROM Users WHERE EntraId = @entraId",
+        `SELECT Id, Email, DisplayName, EntraId, Role, IsActive, CreatedAt, UpdatedAt,
+                Approved, ApprovedAt, ApprovedBy, Status, RejectionReason
+         FROM Users WHERE EntraId = @entraId`,
         { entraId }
       );
     }

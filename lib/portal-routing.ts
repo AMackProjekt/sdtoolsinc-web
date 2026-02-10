@@ -13,22 +13,13 @@ export interface PortalConfig {
   description: string;
 }
 
-// Environment-aware portal URLs
-const isDevelopment = process.env.NODE_ENV === 'development';
-
-const PRODUCTION_URLS = {
-  client: "https://toolsinc-client-portal.azurestaticapps.net",
-  casemgr: "https://toolsinc-casemgr-portal.azurestaticapps.net",
-  admin: "https://toolsinc-admin-portal.azurestaticapps.net",
+// Runtime environment-aware portal URLs using NEXT_PUBLIC_ variables
+// These are evaluated at runtime and can be different per deployment environment
+const PORTAL_URLS = {
+  client: process.env.NEXT_PUBLIC_CLIENT_PORTAL_URL || "http://localhost:3001",
+  casemgr: process.env.NEXT_PUBLIC_CASEMGR_PORTAL_URL || "http://localhost:3002",
+  admin: process.env.NEXT_PUBLIC_ADMIN_PORTAL_URL || "http://localhost:3003",
 };
-
-const DEVELOPMENT_URLS = {
-  client: "http://localhost:3001",
-  casemgr: "http://localhost:3002",
-  admin: "http://localhost:3003",
-};
-
-const PORTAL_URLS = isDevelopment ? DEVELOPMENT_URLS : PRODUCTION_URLS;
 
 export const PORTAL_CONFIG: Record<string, PortalConfig> = {
   client: {
@@ -48,7 +39,7 @@ export const PORTAL_CONFIG: Record<string, PortalConfig> = {
     portalUrl: PORTAL_URLS.admin,
     portalName: "Admin Portal",
     allowedRoles: ["admin"],
-    emailPattern: /^dmack@sdtoolsinc\.org$/,
+    // Removed email restriction - any user with admin role can access
     description: "System administration and configuration",
   },
 };
@@ -62,8 +53,8 @@ export function getPortalUrlForUser(
 ): { portalUrl: string; portalName: string } | null {
   const role = profile.role as AuthRole;
 
-  // Admin portal - strict email check
-  if (role === "admin" && userEmail === "dmack@sdtoolsinc.org") {
+  // Admin portal - allow any admin role
+  if (role === "admin") {
     return {
       portalUrl: PORTAL_CONFIG.admin.portalUrl,
       portalName: PORTAL_CONFIG.admin.portalName,
