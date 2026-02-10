@@ -243,19 +243,27 @@ export async function userApproval(req: HttpRequest, context: InvocationContext)
 
       const adminId = adminUsers[0].Id;
 
-      // Bulk approve users
-      const userIdList = body.userIds.map((id: string) => `'${id}'`).join(',');
-      
-      await query(
-        `UPDATE Users 
-         SET Approved = 1, 
-             Status = 'approved', 
-             ApprovedAt = GETUTCDATE(), 
-             ApprovedBy = @approvedBy,
-             UpdatedAt = GETUTCDATE()
-         WHERE Id IN (${userIdList})`,
-        { approvedBy: adminId }
-      );
+      // Bulk approve users - use individual queries to avoid SQL injection
+      // This is safer than string interpolation
+      let approvedCount = 0;
+      for (const userId of body.userIds) {
+        try {
+          await query(
+            `UPDATE Users 
+             SET Approved = 1, 
+                 Status = 'approved', 
+                 ApprovedAt = GETUTCDATE(), 
+                 ApprovedBy = @approvedBy,
+                 UpdatedAt = GETUTCDATE()
+             WHERE Id = @userId`,
+            { approvedBy: adminId, userId }
+          );
+          approvedCount++;
+        } catch (error) {
+          context.error(`Error approving user ${userId}:`, error);
+          // Continue with other users
+        }
+      }
 
       // Log audit event
       await query(
@@ -265,14 +273,14 @@ export async function userApproval(req: HttpRequest, context: InvocationContext)
           adminId,
           details: JSON.stringify({
             approvedUserIds: body.userIds,
-            count: body.userIds.length
+            count: approvedCount
           })
         }
       );
 
       return ok({
         success: true,
-        approved: body.userIds.length
+        approved: approvedCount
       });
     } catch (error) {
       context.error("Error bulk approving users:", error);
