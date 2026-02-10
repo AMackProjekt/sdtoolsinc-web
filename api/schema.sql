@@ -10,8 +10,19 @@ CREATE TABLE Users (
     CreatedAt DATETIME2 DEFAULT GETUTCDATE(),
     UpdatedAt DATETIME2 DEFAULT GETUTCDATE(),
     IsActive BIT DEFAULT 1,
-    Role NVARCHAR(50) DEFAULT 'Client'
+    Role NVARCHAR(50) DEFAULT 'Client',
+    -- User approval fields
+    Approved BIT DEFAULT 0,
+    ApprovedAt DATETIME2 NULL,
+    ApprovedBy UNIQUEIDENTIFIER NULL,
+    Status NVARCHAR(20) DEFAULT 'pending',
+    RejectionReason NVARCHAR(MAX) NULL,
+    FOREIGN KEY (ApprovedBy) REFERENCES Users(Id)
 );
+
+CREATE INDEX IDX_Users_Status ON Users(Status);
+CREATE INDEX IDX_Users_Approved ON Users(Approved);
+CREATE INDEX IDX_Users_EntraId ON Users(EntraId);
 
 -- User Profiles
 CREATE TABLE UserProfiles (
