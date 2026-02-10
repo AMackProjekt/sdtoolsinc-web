@@ -4,6 +4,29 @@
 
 A Next.js 15 web application supporting justice-involved individuals through programs, referrals, and a learning portal.
 
+---
+
+## 📋 Open Pull Requests Documentation
+
+**⭐ NEW**: Comprehensive analysis of all open PRs is now available!
+
+👉 **Start here**: [PR_SUMMARY_FOR_MAINTAINERS.md](PR_SUMMARY_FOR_MAINTAINERS.md) - 5-minute executive summary
+
+**What's included**:
+- Analysis of all 8 open PRs with critical issues identified
+- Step-by-step resolution plans for each PR
+- Recommended merge order and timeline
+- Testing checklists and code fix examples
+
+**Key findings**:
+- ⛔ PR #17 has merge conflicts + 15 critical bugs requiring fixes
+- ✅ PR #14 ready to merge after testing
+- 🤔 PR #16 is duplicate of #17 and should be closed
+
+See [PR_DOCS_README.md](PR_DOCS_README.md) for full documentation index.
+
+---
+
 [![Next.js](https://img.shields.io/badge/Next.js-16.1.5-black)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.2.3-blue)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7.3-blue)](https://www.typescriptlang.org/)
