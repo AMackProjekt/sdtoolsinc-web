@@ -12,7 +12,7 @@ A Next.js 15 web application supporting justice-involved individuals through pro
 ## 🚀 Quick Start
 
 ```bash
-# Install dependencies
+# Install dependencies (includes Next.js 16.1.5 security patch)
 npm install
 
 # Run development server
@@ -27,6 +27,8 @@ npm start
 # Analyze bundle size
 npm run analyze
 ```
+
+> **⚠️ Security Note:** After pulling latest changes, run `npm install` to update Next.js to 16.1.5, which patches a critical DoS vulnerability (CVE).
 
 Visit [http://localhost:3000](http://localhost:3000) to view the app.
 
@@ -119,8 +121,8 @@ See [DOCKER.md](./DOCKER.md) for detailed Docker deployment guide.
 ## 🛠️ Technology Stack
 
 ### Frontend
-- **Next.js 15.5.9** - React framework with static export
-- **React 18.3.1** - UI library
+- **Next.js 16.1.5** - React framework with static export (patched for CVE DoS vulnerability)
+- **React 19.2.3** - UI library
 - **TypeScript 5.7.3** - Type safety
 - **Tailwind CSS 3.4.17** - Utility-first CSS
 - **Framer Motion 11.18.2** - Animation library
