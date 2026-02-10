@@ -4,8 +4,8 @@
 
 A Next.js 15 web application supporting justice-involved individuals through programs, referrals, and a learning portal.
 
-[![Next.js](https://img.shields.io/badge/Next.js-15.5.9-black)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-18.3.1-blue)](https://reactjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16.1.5-black)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19.2.3-blue)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7.3-blue)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3.4.17-38bdf8)](https://tailwindcss.com/)
 
