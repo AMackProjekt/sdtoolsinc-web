@@ -59,7 +59,7 @@ npm run docker:build      # Build Docker image
 npm run docker:run        # Run container on port 3000
 npm run compose:up        # Docker Compose stack
 ```
-See [DOCKER.md](../DOCKER.md) for Azure Container Registry and ACI deployment.
+See [DOCKER.md](../docs/DOCKER.md) for Azure Container Registry and ACI deployment.
 
 ### Azure Deployment
 - **Trigger**: Push to `main` or pull request

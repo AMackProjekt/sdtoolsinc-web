@@ -111,8 +111,8 @@ echo ""
 # 7. Check critical files exist
 echo "7️⃣  Verifying critical files..."
 CRITICAL_FILES=(
-    "PERFORMANCE.md"
-    "HEALTH_CHECKS.md"
+    "docs/PERFORMANCE.md"
+    "docs/HEALTH_CHECKS.md"
     "components/WebVitals.tsx"
     "components/ErrorBoundary.tsx"
     "app/error.tsx"
