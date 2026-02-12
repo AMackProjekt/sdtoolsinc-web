@@ -31,6 +31,12 @@ type User = {
     emergencyContact?: string;
     emergencyPhone?: string;
   };
+  caseManager?: {
+    id?: string;
+    name?: string;
+    email?: string;
+    phone?: string;
+  };
   certificates?: Array<{
     courseId: string;
     courseName: string;
@@ -42,6 +48,8 @@ type User = {
     notifications: boolean;
     emailUpdates: boolean;
     theme: "dark" | "light";
+    fontSize?: "small" | "medium" | "large";
+    accentColor?: string;
   };
 };
 
