@@ -11,10 +11,6 @@ import { getProgramById, getCoursesByProgram } from "@/lib/courseData";
 export const dynamic = "force-static";
 export const dynamicParams = true;
 
-export async function generateStaticParams() {
-  return [];
-}
-
 export default function ProgramDetailPage() {
   const { user, isAuthenticated, updateProfile, logout } = useAuth();
   const router = useRouter();
