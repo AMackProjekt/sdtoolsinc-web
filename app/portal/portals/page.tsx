@@ -3,9 +3,11 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/hooks/useAuth";
+import { getPortalRedirectUrl } from "@/lib/sso";
 import { motion } from "framer-motion";
 import { GlowCard } from "@/components/ui/GlowCard";
 import { Button } from "@/components/ui/Button";
+import { PORTAL_CONFIG } from "@/lib/portal-routing";
 
 interface PortalInfo {
   id: string;
@@ -17,23 +19,6 @@ interface PortalInfo {
   roles: string[];
 }
 
-// Environment-aware portal URLs
-const isDevelopment = process.env.NODE_ENV === 'development';
-
-const PRODUCTION_URLS = {
-  client: "https://toolsinc-client-portal.azurestaticapps.net",
-  casemgr: "https://toolsinc-casemgr-portal.azurestaticapps.net",
-  admin: "https://toolsinc-admin-portal.azurestaticapps.net",
-};
-
-const DEVELOPMENT_URLS = {
-  client: "http://localhost:3001",
-  casemgr: "http://localhost:3002",
-  admin: "http://localhost:3003",
-};
-
-const PORTAL_URLS = isDevelopment ? DEVELOPMENT_URLS : PRODUCTION_URLS;
-
 const portals: PortalInfo[] = [
   {
     id: "client",
@@ -41,7 +26,7 @@ const portals: PortalInfo[] = [
     description: "Access your personal dashboard, track progress, enroll in courses, and manage your profile.",
     icon: "👤",
     color: "from-blue-500 to-cyan-500",
-    url: PORTAL_URLS.client,
+    url: PORTAL_CONFIG.client.portalUrl,
     roles: ["client", "user"]
   },
   {
@@ -50,7 +35,7 @@ const portals: PortalInfo[] = [
     description: "Manage client cases, track outcomes, coordinate services, and generate reports.",
     icon: "👥",
     color: "from-purple-500 to-pink-500",
-    url: PORTAL_URLS.casemgr,
+    url: PORTAL_CONFIG.casemgr.portalUrl,
     roles: ["casemgr", "coordinator"]
   },
   {
@@ -59,7 +44,7 @@ const portals: PortalInfo[] = [
     description: "Manage users, configure settings, access analytics, and oversee system operations.",
     icon: "⚙️",
     color: "from-amber-500 to-orange-500",
-    url: PORTAL_URLS.admin,
+    url: PORTAL_CONFIG.admin.portalUrl,
     roles: ["admin", "superadmin"]
   }
 ];
@@ -70,7 +55,7 @@ export default function PortalsPage() {
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      router.push("/portal/auth");
+      router.push("/auth/login");
     }
   }, [isAuthenticated, isLoading, router]);
 
@@ -84,8 +69,12 @@ export default function PortalsPage() {
 
   if (!user) return null;
 
-  const handlePortalClick = (portalUrl: string) => {
-    window.open(portalUrl, "_blank");
+  const handlePortalClick = async (targetProfile: typeof profile) => {
+    if (!targetProfile) return;
+    const portalUrl = await getPortalRedirectUrl(targetProfile);
+    if (portalUrl) {
+      window.location.href = portalUrl;
+    }
   };
 
   return (
@@ -146,7 +135,7 @@ export default function PortalsPage() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
               <a 
-                href="https://toolsinc-client-portal.azurestaticapps.net"
+                href={PORTAL_CONFIG.client.portalUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="glass rounded-lg px-6 py-4 hover:bg-brand/10 transition-all hover:-translate-y-1 hover:shadow-glow"
@@ -155,7 +144,7 @@ export default function PortalsPage() {
                 <div className="text-xs text-muted">Access your dashboard</div>
               </a>
               <a 
-                href="https://toolsinc-casemgr-portal.azurestaticapps.net"
+                href={PORTAL_CONFIG.casemgr.portalUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="glass rounded-lg px-6 py-4 hover:bg-brand/10 transition-all hover:-translate-y-1 hover:shadow-glow"
@@ -230,7 +219,7 @@ export default function PortalsPage() {
                       </div>
                     </>
                   )}
-                </div>
+                </div>rofile
 
                 {/* Action Button */}
                 <button

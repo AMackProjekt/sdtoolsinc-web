@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { supabase, getProfile } from '@/lib/supabase'
+import { checkAndRestoreSSOToken, restoreSessionFromToken } from '../../../lib/sso'
 
 interface User {
   id: string
@@ -31,6 +32,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const loadSession = async () => {
       try {
+        // Check for SSO token in URL first
+        const ssoToken = checkAndRestoreSSOToken()
+        
+        if (ssoToken) {
+          // Restore session from SSO token
+          await restoreSessionFromToken(ssoToken)
+        }
+
         const { data: { session } } = await supabase.auth.getSession()
         
         if (session?.user) {

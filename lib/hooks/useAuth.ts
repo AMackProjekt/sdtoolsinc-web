@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase, getCurrentProfile } from "@/lib/supabase";
+import { supabase, getCurrentProfile, updateProfile as updateSupabaseProfile, createProfile } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
 
 export type AuthRole = "admin" | "case_manager" | "client";
@@ -30,6 +30,7 @@ interface AuthContextType extends AuthState {
   signUp: (email: string, password: string, fullName: string) => Promise<void>;
   requestPasswordReset: (email: string) => Promise<void>;
   signOut: () => Promise<void>;
+  updateProfile: (updates: { full_name?: string; avatar_url?: string }) => Promise<void>;
 }
 
 let authState: AuthState = {
@@ -64,7 +65,13 @@ export function useAuth(): AuthContextType {
         } = await supabase.auth.getSession();
 
         if (session?.user) {
-          const profile = await getCurrentProfile(session.user.id);
+          let profile = await getCurrentProfile(session.user.id);
+          if (!profile) {
+            profile = await createProfile(session.user.id, {
+              full_name: session.user.user_metadata?.full_name || session.user.email || "User",
+              role: "client",
+            });
+          }
           authState = {
             user: session.user,
             profile: profile as UserProfile | null,
@@ -103,7 +110,13 @@ export function useAuth(): AuthContextType {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session?.user) {
-        const profile = await getCurrentProfile(session.user.id);
+        let profile = await getCurrentProfile(session.user.id);
+        if (!profile) {
+          profile = await createProfile(session.user.id, {
+            full_name: session.user.user_metadata?.full_name || session.user.email || "User",
+            role: "client",
+          });
+        }
         authState = {
           user: session.user,
           profile: profile as UserProfile | null,
@@ -191,23 +204,8 @@ export function useAuth(): AuthContextType {
 
         if (error) throw error;
 
-        const userId = data.user?.id;
-        if (userId) {
-          const profile = await getCurrentProfile(userId);
-          const role = (profile as UserProfile | null)?.role;
-
-          if (role === "admin") {
-            router.push("/admin/dashboard");
-          } else if (role === "case_manager") {
-            router.push("/portal/manager/dashboard");
-          } else if (role === "client") {
-            router.push("/portal/client/dashboard");
-          } else {
-            router.push("/portal/dashboard");
-          }
-        } else {
-          router.push("/portal/dashboard");
-        }
+        // Auth state will be updated via onAuthStateChange subscription
+        // Login page will handle the redirect via useEffect
       } catch (error) {
         const message = error instanceof Error ? error.message : "Login failed";
         authState = { ...authState, isLoading: false, error: message };
@@ -215,7 +213,7 @@ export function useAuth(): AuthContextType {
         throw error;
       }
     },
-    [router]
+    []
   );
 
   const signUp = useCallback(
@@ -237,7 +235,7 @@ export function useAuth(): AuthContextType {
 
         if (error) throw error;
 
-        router.push("/auth/verify-email");
+        router.push(`/auth/check-email?email=${encodeURIComponent(email)}`);
       } catch (error) {
         const message = error instanceof Error ? error.message : "Signup failed";
         authState = { ...authState, isLoading: false, error: message };
@@ -295,6 +293,31 @@ export function useAuth(): AuthContextType {
     }
   }, [router]);
 
+  const updateProfile = useCallback(async (updates: { full_name?: string; avatar_url?: string }) => {
+    if (!authState.user) {
+      throw new Error("No authenticated user");
+    }
+
+    try {
+      authState = { ...authState, isLoading: true, error: null };
+      notifyListeners();
+
+      const updated = await updateSupabaseProfile(authState.user.id, updates);
+      authState = {
+        ...authState,
+        profile: updated as UserProfile | null,
+        isLoading: false,
+        error: null,
+      };
+      notifyListeners();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Profile update failed";
+      authState = { ...authState, isLoading: false, error: message };
+      notifyListeners();
+      throw error;
+    }
+  }, []);
+
   return {
     ...state,
     signInWithAzure,
@@ -303,5 +326,6 @@ export function useAuth(): AuthContextType {
     signUp,
     requestPasswordReset,
     signOut,
+    updateProfile,
   };
 }

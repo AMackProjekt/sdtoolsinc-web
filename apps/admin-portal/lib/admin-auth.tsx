@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { supabase, getProfile } from "@/lib/supabase";
+import { checkAndRestoreSSOToken, restoreSessionFromToken } from "../../../lib/sso";
 
 export type AdminRole = "super_admin" | "admin" | "moderator" | "viewer";
 
@@ -81,37 +82,50 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const loadSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
-      if (!session?.user) {
-        setUser(null);
-        return;
-      }
-
       try {
-        const profile = await getProfile(session.user.id);
-        if (profile.role !== "admin") {
-          await supabase.auth.signOut();
+        // Check for SSO token in URL first
+        const ssoToken = checkAndRestoreSSOToken();
+        
+        if (ssoToken) {
+          // Restore session from SSO token
+          await restoreSessionFromToken(ssoToken);
+        }
+
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
+        if (!session?.user) {
           setUser(null);
           return;
         }
 
-        const adminUser: AdminUser = {
-          id: profile.id,
-          email: session.user.email ?? "",
-          name: profile.full_name ?? session.user.email ?? "Admin",
-          role: "admin",
-          permissions: ROLE_PERMISSIONS.admin,
-          avatar: profile.avatar_url ?? undefined,
-          lastLogin: new Date().toISOString(),
-          createdAt: session.user.created_at ?? new Date().toISOString(),
-        };
+        try {
+          const profile = await getProfile(session.user.id);
+          if (profile.role !== "admin") {
+            await supabase.auth.signOut();
+            setUser(null);
+            return;
+          }
 
-        setUser(adminUser);
+          const adminUser: AdminUser = {
+            id: profile.id,
+            email: session.user.email ?? "",
+            name: profile.full_name ?? session.user.email ?? "Admin",
+            role: "admin",
+            permissions: ROLE_PERMISSIONS.admin,
+            avatar: profile.avatar_url ?? undefined,
+            lastLogin: new Date().toISOString(),
+            createdAt: session.user.created_at ?? new Date().toISOString(),
+          };
+
+          setUser(adminUser);
+        } catch (error) {
+          console.error("Failed to load admin profile:", error);
+          setUser(null);
+        }
       } catch (error) {
-        console.error("Failed to load admin profile:", error);
+        console.error("Failed to load session:", error);
         setUser(null);
       }
     };

@@ -28,7 +28,7 @@ npm start
 npm run analyze
 ```
 
-Visit [http://localhost:3000](http://localhost:3000) to view the app.
+Visit [https://sdtoolsinc.org](https://sdtoolsinc.org) to view the app.
 
 ## ⚡ Performance
 
@@ -51,6 +51,18 @@ This website is optimized for performance with:
 ✅ **Compression** - Gzip/Brotli enabled for all assets
 
 See [PERFORMANCE.md](./PERFORMANCE.md) for detailed optimization guide.
+
+## 🔐 Authentication & SSO
+
+Users authenticate once on the main site and are automatically signed in across all portal applications:
+
+- **Unified Login**: Single sign-on via Supabase Auth
+- **Multi-Protocol**: Email/password, Magic Links, Azure OAuth
+- **Automatic Redirection**: After login, users are redirected to their role-based portal
+- **Session Sharing**: Access tokens shared securely between main site and portals
+- **Zero Friction**: No re-authentication required when switching portals
+
+See [SSO_IMPLEMENTATION.md](./SSO_IMPLEMENTATION.md) for architecture and testing guide.
 
 ## 🏥 Health Monitoring
 
@@ -103,6 +115,7 @@ See [HEALTH_CHECKS.md](./HEALTH_CHECKS.md) for monitoring documentation.
 | `npm run lint` | Run ESLint |
 | `npm run analyze` | Analyze bundle size with visual report |
 | `npm run optimize-logos` | Optimize logo images |
+| `ts-node scripts/validate-links.ts` | Validate external links and portal configuration |
 
 ### Docker Commands
 
@@ -255,3 +268,4 @@ See [LICENSE](./LICENSE) for details.
 ---
 
 **T.O.O.L.S Inc** - Empowering individuals to step into their purpose.
+

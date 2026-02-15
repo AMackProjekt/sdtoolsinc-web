@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 import Link from "next/link";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { getPortalUrlForUser } from "@/lib/portal-routing";
+import { getPortalRedirectUrl } from "@/lib/sso";
 import { Button } from "@/components/ui/Button";
 import { motion } from "framer-motion";
 
@@ -19,16 +19,16 @@ export default function LoginPage() {
 
   // Redirect to appropriate portal after successful login
   useEffect(() => {
-    if (user && profile) {
-      const portalInfo = getPortalUrlForUser(profile, user.email || "");
-      if (portalInfo) {
-        // Redirect to appropriate portal
-        if (typeof window !== "undefined") {
-          window.location.href = portalInfo.portalUrl;
+    if (user && profile && !isLoading) {
+      const redirectToPortal = async () => {
+        const portalUrl = await getPortalRedirectUrl(profile);
+        if (portalUrl && typeof window !== "undefined") {
+          window.location.href = portalUrl;
         }
-      }
+      };
+      redirectToPortal();
     }
-  }, [user, profile]);
+  }, [user, profile, isLoading]);
 
   const handlePasswordLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -199,6 +199,14 @@ export default function LoginPage() {
                     {isLoading ? "Signing in..." : "Sign In"}
                   </Button>
                 </form>
+                <div className="text-center">
+                  <Link
+                    href="/portal/auth/forgot-password"
+                    className="text-sm text-brand hover:text-brand2 transition-colors"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
               </motion.div>
             )}
 
