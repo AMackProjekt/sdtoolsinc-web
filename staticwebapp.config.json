@@ -1,6 +1,30 @@
 {
   "routes": [
     {
+      "route": "/*",
+      "methods": ["GET"],
+      "headers": {
+        "Host": "client.sdtoolsinc.org"
+      },
+      "rewrite": "/client-portal/index.html"
+    },
+    {
+      "route": "/*",
+      "methods": ["GET"],
+      "headers": {
+        "Host": "staff.sdtoolsinc.org"
+      },
+      "rewrite": "/casemgr-portal/index.html"
+    },
+    {
+      "route": "/*",
+      "methods": ["GET"],
+      "headers": {
+        "Host": "admin.sdtoolsinc.org"
+      },
+      "rewrite": "/admin-portal/index.html"
+    },
+    {
       "route": "/admin/*",
       "allowedRoles": ["admin", "authenticated"]
     },

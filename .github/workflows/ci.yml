@@ -1,0 +1,190 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  lint:
+    name: Lint & Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Type Check
+        run: npx tsc --noEmit
+
+  test:
+    name: Test Suite
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Unit Tests
+        run: npm run test:unit
+
+      - name: Upload Coverage
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage/coverage-final.json
+
+  security:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Audit Dependencies
+        run: npm audit --audit-level=moderate || true
+
+      - name: Run Security Checks
+        run: npm run security-audit || true
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: [lint, test, security]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Build Main Site
+        run: npm run export
+
+      - name: Build Client Portal
+        run: cd apps/client-portal && npm install && npm run export && cd ../..
+
+      - name: Build Case Manager Portal
+        run: cd apps/casemgr-portal && npm install && npm run export && cd ../..
+
+      - name: Build Admin Portal
+        run: cd apps/admin-portal && npm install && npm run export && cd ../..
+
+      - name: Create Unified Output Directory
+        run: |
+          mkdir -p deploy/out
+          cp -r out/* deploy/out/ || true
+          mkdir -p deploy/out/client-portal deploy/out/casemgr-portal deploy/out/admin-portal
+          cp -r apps/client-portal/out/* deploy/out/client-portal/ || true
+          cp -r apps/casemgr-portal/out/* deploy/out/casemgr-portal/ || true
+          cp -r apps/admin-portal/out/* deploy/out/admin-portal/ || true
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: deploy/out
+
+  e2e-tests:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Install Cypress
+        run: npm install cypress --no-save
+
+      - name: Start Dev Server
+        run: npm run dev > /tmp/server.log 2>&1 &
+        timeout-minutes: 2
+
+      - name: Wait for Server
+        run: npx wait-on http://localhost:3000
+
+      - name: Run E2E Tests
+        run: npx cypress run --browser chrome
+        timeout-minutes: 10
+
+      - name: Upload E2E Results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-results
+          path: cypress/screenshots
+
+  deploy-preview:
+    name: Deploy Preview
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Preview
+        run: echo "Deploy PR preview to staging"
+
+  deploy-production:
+    name: Deploy Production
+    runs-on: ubuntu-latest
+    needs: [build, e2e-tests]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-artifacts
+          path: deploy/out
+
+      - name: Deploy to Azure SWA
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: 'upload'
+          app_location: 'deploy/out'
+          api_location: 'api'
+          skip_app_build: true
+          output_location: ''
+
+      - name: Notify Deployment
+        run: |
+          echo "✅ Deployed to production"
+          echo "Main Site: https://sdtoolsinc.org"
+          echo "Client Portal: https://client.sdtoolsinc.org"
+          echo "Staff Portal: https://staff.sdtoolsinc.org"
+          echo "Admin Portal: https://admin.sdtoolsinc.org"

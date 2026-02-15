@@ -3,6 +3,8 @@ import { AuthProvider } from "@/lib/auth";
 import { Footer } from "@/components/ui/Footer";
 import { PrivacyBanner } from "@/components/ui/PrivacyBanner";
 import { WebVitals } from "@/components/WebVitals";
+import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
+import { PWAInit } from "@/components/PWAInit";
 
 export const metadata = {
   metadataBase: new URL('https://sdtoolsinc.org'),
@@ -11,6 +13,7 @@ export const metadata = {
     shortcut: '/favicon.ico',
     apple: '/apple-touch-icon.png',
   },
+  manifest: '/manifest.json',
   title: {
     default: 'T.O.O.L.S. Inc. | Reentry Support & Workforce Development in San Diego, CA',
     template: '%s | T.O.O.L.S. Inc.'
@@ -118,8 +121,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="font-sans text-text antialiased">
         <WebVitals />
         <PrivacyBanner />
+        <PWAInit />
         <AuthProvider>
           {children}
+          <PWAInstallPrompt />
           <Footer />
         </AuthProvider>
       </body>
