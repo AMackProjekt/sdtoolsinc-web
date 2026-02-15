@@ -71,7 +71,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
-      - run: npm ci
+      - run: npm ci --legacy-peer-deps
 
       - name: Build Main Site
         run: npm run export
