@@ -5,16 +5,6 @@ Sentry.init({
   environment: process.env.NODE_ENV,
   tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
   
-  integrations: [
-    new Sentry.Replay({
-      maskAllText: true,
-      blockAllMedia: true,
-    }),
-  ],
-  
-  ReplaySessionSampleRate: 0.1,
-  ReplayOnErrorSampleRate: 1.0,
-  
   denyUrls: [
     // Browser extensions
     /extensions\//i,
