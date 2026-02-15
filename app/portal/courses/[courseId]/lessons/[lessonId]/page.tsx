@@ -15,6 +15,15 @@ import {
   getCourseProgress,
 } from "@/lib/courseData";
 
+export const dynamic = "force-static";
+export const dynamicParams = true;
+
+// generateStaticParams for static export
+export async function generateStaticParams() {
+  // Return empty array for static export since courses/lessons are dynamic
+  return [];
+}
+
 export default function LessonPage() {
   const { user, isAuthenticated, updateProfile, logout } = useAuth();
   const router = useRouter();
