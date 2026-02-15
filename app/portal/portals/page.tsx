@@ -223,7 +223,7 @@ export default function PortalsPage() {
 
                 {/* Action Button */}
                 <button
-                  onClick={() => handlePortalClick(portal.url)}
+                  onClick={() => window.location.href = portal.url}
                   className="w-full inline-flex items-center justify-center rounded-lg px-5 py-3 text-sm font-semibold transition will-change-transform glass text-text hover:shadow-glow hover:-translate-y-1"
                 >
                   Access Portal →
