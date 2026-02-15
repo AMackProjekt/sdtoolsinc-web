@@ -302,6 +302,7 @@ export function useAuth(): AuthContextType {
       authState = { ...authState, isLoading: true, error: null };
       notifyListeners();
 
+      if (!authState.user) throw new Error("User not authenticated");
       const updated = await updateSupabaseProfile(authState.user.id, updates);
       authState = {
         ...authState,
