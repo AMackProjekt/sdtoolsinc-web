@@ -1,0 +1,131 @@
+# Docker Compose for Open WebUI Integration
+# Full-featured AI interface for T.O.O.L.S Inc
+
+version: '3.8'
+
+services:
+  # Open WebUI - Main AI interface
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: toolsinc-openwebui
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      # Azure OpenAI Configuration
+      - OPENAI_API_BASE=${AZURE_OPENAI_ENDPOINT}
+      - OPENAI_API_KEY=${AZURE_OPENAI_API_KEY}
+      - OPENAI_API_TYPE=azure
+      - OPENAI_API_VERSION=${AZURE_OPENAI_API_VERSION}
+      
+      # App Configuration
+      - WEBUI_NAME=T.O.O.L.S Inc AI Studio
+      - WEBUI_URL=http://localhost:8080
+      - ENV=production
+      
+      # Authentication (optional - enable for production)
+      - ENABLE_SIGNUP=true
+      - DEFAULT_USER_ROLE=user
+      
+      # Features
+      - ENABLE_RAG=true
+      - ENABLE_IMAGE_GENERATION=false
+      - ENABLE_COMMUNITY_SHARING=false
+      
+      # Data persistence
+      - DATA_DIR=/app/backend/data
+      
+      # Optional: OpenAI Direct (if not using Azure)
+      # - OPENAI_API_KEY=${OPENAI_API_KEY}
+      # - OPENAI_API_BASE=https://api.openai.com/v1
+      
+    volumes:
+      - openwebui-data:/app/backend/data
+      - ./open-webui-docs:/app/backend/data/docs:ro  # Custom T.O.O.L.S Inc docs
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '1'
+          memory: 2G
+    
+    networks:
+      - toolsinc-ai-network
+
+  # Optional: Vector database for RAG (Uncomment if needed)
+  # chroma:
+  #   image: ghcr.io/chroma-core/chroma:latest
+  #   container_name: toolsinc-chroma
+  #   restart: unless-stopped
+  #   ports:
+  #     - "8000:8000"
+  #   environment:
+  #     - ANONYMIZED_TELEMETRY=false
+  #     - ALLOW_RESET=true
+  #   volumes:
+  #     - chroma-data:/chroma/chroma
+  #   networks:
+  #     - toolsinc-ai-network
+
+  # Optional: Redis for caching (Uncomment for performance)
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: toolsinc-redis
+  #   restart: unless-stopped
+  #   ports:
+  #     - "6379:6379"
+  #   command: redis-server --appendonly yes
+  #   volumes:
+  #     - redis-data:/data
+  #   networks:
+  #     - toolsinc-ai-network
+
+volumes:
+  openwebui-data:
+    driver: local
+  # chroma-data:
+  #   driver: local
+  # redis-data:
+  #   driver: local
+
+networks:
+  toolsinc-ai-network:
+    driver: bridge
+
+# Usage Instructions:
+# 
+# 1. Create .env file with required variables:
+#    cp .env.example .env
+#    # Edit .env with your Azure OpenAI credentials
+#
+# 2. Start Open WebUI:
+#    docker-compose -f docker-compose.openwebui.yml up -d
+#
+# 3. Access at http://localhost:8080
+#
+# 4. First time setup:
+#    - Create admin account
+#    - Configure Azure OpenAI models in Settings
+#    - Upload T.O.O.L.S Inc documentation for RAG
+#
+# 5. Stop services:
+#    docker-compose -f docker-compose.openwebui.yml down
+#
+# 6. View logs:
+#    docker-compose -f docker-compose.openwebui.yml logs -f openwebui
+#
+# 7. Update to latest:
+#    docker-compose -f docker-compose.openwebui.yml pull
+#    docker-compose -f docker-compose.openwebui.yml up -d

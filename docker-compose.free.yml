@@ -1,0 +1,114 @@
+# Docker Compose for FREE AI Setup (Zero Cost)
+# Uses Ollama for local LLMs - no API costs!
+
+version: '3.8'
+
+services:
+  # Open WebUI - Connects to Ollama running on host
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: toolsinc-openwebui-free
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      # Connect to Ollama on host machine
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      
+      # App Configuration
+      - WEBUI_NAME=T.O.O.L.S Inc AI Studio (Free)
+      - WEBUI_URL=http://localhost:8080
+      - ENV=production
+      
+      # Enable free features
+      - ENABLE_SIGNUP=true
+      - DEFAULT_USER_ROLE=user
+      - ENABLE_RAG=true
+      - ENABLE_IMAGE_GENERATION=false
+      - ENABLE_COMMUNITY_SHARING=false
+      
+      # Data persistence
+      - DATA_DIR=/app/backend/data
+      
+    volumes:
+      - openwebui-data-free:/app/backend/data
+      - ./open-webui-docs:/app/backend/data/docs:ro  # Custom T.O.O.L.S Inc docs
+    
+    # Allow access to host network (for Ollama)
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    # Resource limits (adjust based on your hardware)
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '1'
+          memory: 2G
+    
+    networks:
+      - toolsinc-free-network
+
+volumes:
+  openwebui-data-free:
+    driver: local
+
+networks:
+  toolsinc-free-network:
+    driver: bridge
+
+# ============================================
+# FREE SETUP INSTRUCTIONS
+# ============================================
+#
+# Prerequisites:
+# 1. Install Ollama: https://ollama.ai/download
+#    Windows: winget install Ollama.Ollama
+#    Mac/Linux: curl -fsSL https://ollama.ai/install.sh | sh
+#
+# 2. Download free AI model:
+#    ollama pull llama3.1:8b
+#
+# Usage:
+# 1. Ollama runs automatically in background
+#    (Check: http://localhost:11434)
+#
+# 2. Start Open WebUI:
+#    docker-compose -f docker-compose.free.yml up -d
+#
+# 3. Access at http://localhost:8080
+#    First time: Create account (local only)
+#
+# 4. Start using:
+#    - Chat with AI (free, unlimited)
+#    - Upload documents (RAG)
+#    - No API keys needed!
+#
+# Stop:
+#    docker-compose -f docker-compose.free.yml down
+#
+# Logs:
+#    docker-compose -f docker-compose.free.yml logs -f
+#
+# Update:
+#    docker-compose -f docker-compose.free.yml pull
+#    docker-compose -f docker-compose.free.yml up -d
+#
+# ============================================
+# COST: $0/month in API fees!
+# ============================================
+# Uses your computer's CPU/GPU
+# Recommended: 16GB RAM, 8-core CPU
+# Works on less but slower
+# GPU highly recommended for speed
+# ============================================
