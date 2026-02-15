@@ -1,9 +1,18 @@
 "use client";
 
+import { Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 
 export default function CheckEmailPage() {
+  return (
+    <Suspense fallback={null}>
+      <CheckEmailPageContent />
+    </Suspense>
+  );
+}
+
+function CheckEmailPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const email = searchParams.get("email") || "your email";

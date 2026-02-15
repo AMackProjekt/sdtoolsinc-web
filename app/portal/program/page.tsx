@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import Link from "next/link";
@@ -11,6 +11,14 @@ import { getProgramById, getCoursesByProgram } from "@/lib/courseData";
 export const dynamic = "force-static";
 
 export default function ProgramDetailPage() {
+  return (
+    <Suspense fallback={null}>
+      <ProgramDetailPageContent />
+    </Suspense>
+  );
+}
+
+function ProgramDetailPageContent() {
   const { user, isAuthenticated, updateProfile, logout } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();

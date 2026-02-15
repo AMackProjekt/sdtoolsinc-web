@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { motion } from "framer-motion";
@@ -8,6 +8,14 @@ import { Certificate } from "@/components/ui/Certificate";
 import { GlowCard } from "@/components/ui/GlowCard";
 
 export default function CertificatesPage() {
+  return (
+    <Suspense fallback={null}>
+      <CertificatesPageContent />
+    </Suspense>
+  );
+}
+
+function CertificatesPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, isAuthenticated } = useAuth();

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { motion } from "framer-motion";
@@ -12,6 +12,14 @@ import { cn } from "@/lib/cn";
 export const dynamic = "force-static";
 
 export default function QuizPage() {
+  return (
+    <Suspense fallback={null}>
+      <QuizPageContent />
+    </Suspense>
+  );
+}
+
+function QuizPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, isAuthenticated, updateProfile } = useAuth();

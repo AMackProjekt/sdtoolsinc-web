@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import Link from "next/link";
@@ -18,6 +18,14 @@ import {
 export const dynamic = "force-static";
 
 export default function LessonPage() {
+  return (
+    <Suspense fallback={null}>
+      <LessonPageContent />
+    </Suspense>
+  );
+}
+
+function LessonPageContent() {
   const { user, isAuthenticated, updateProfile, logout } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();

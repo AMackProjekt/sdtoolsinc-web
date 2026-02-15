@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/lib/auth'
 import { PortalHeader } from '@/components/ui/PortalHeader'
@@ -94,6 +94,14 @@ const MOCK_CLIENTS: Client[] = [
 ]
 
 export default function CaseManagerDashboard() {
+  return (
+    <Suspense fallback={null}>
+      <CaseManagerDashboardContent />
+    </Suspense>
+  )
+}
+
+function CaseManagerDashboardContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { user, isAuthenticated } = useAuth()

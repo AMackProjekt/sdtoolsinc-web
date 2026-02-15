@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/lib/auth'
 import { PortalHeader } from '@/components/ui/PortalHeader'
@@ -87,6 +87,14 @@ const MOCK_APPOINTMENTS: Appointment[] = [
 ]
 
 export default function CalendarPage() {
+  return (
+    <Suspense fallback={null}>
+      <CalendarPageContent />
+    </Suspense>
+  )
+}
+
+function CalendarPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { user, isAuthenticated } = useAuth()
