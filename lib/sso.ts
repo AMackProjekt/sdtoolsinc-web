@@ -90,7 +90,7 @@ export function checkAndRestoreSSOToken(): string | null {
 
   if (token) {
     // Remove token from URL to keep it clean
-    const url = new URL(window.location);
+    const url = new URL(window.location.href);
     url.searchParams.delete("sso_token");
     window.history.replaceState({}, document.title, url.toString());
 
