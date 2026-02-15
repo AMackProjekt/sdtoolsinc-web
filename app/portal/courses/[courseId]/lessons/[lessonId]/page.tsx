@@ -16,7 +16,7 @@ import {
 } from "@/lib/courseData";
 
 export const dynamic = "force-static";
-export const dynamicParams = true;
+export const dynamicParams = false;
 
 export default function LessonPage() {
   const { user, isAuthenticated, updateProfile, logout } = useAuth();

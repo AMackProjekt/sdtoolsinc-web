@@ -10,7 +10,7 @@ import { QuizResults } from "@/components/ui/QuizResults";
 import { cn } from "@/lib/cn";
 
 export const dynamic = "force-static";
-export const dynamicParams = true;
+export const dynamicParams = false;
 
 export default function QuizPage() {
   const router = useRouter();
