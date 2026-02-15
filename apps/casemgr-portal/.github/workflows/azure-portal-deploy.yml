@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'portal-app/**'
+      - 'apps/casemgr-portal/**'
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
@@ -25,12 +25,12 @@ jobs:
           node-version: '20'
       
       - name: Install dependencies
-        working-directory: ./portal-app
+        working-directory: ./apps/casemgr-portal
         run: npm install
       
       - name: Build portal
-        working-directory: ./portal-app
-        run: npm run build
+        working-directory: ./apps/casemgr-portal
+        run: npm run export
       
       - name: Deploy to Azure SWA
         uses: Azure/static-web-apps-deploy@v1
@@ -38,9 +38,9 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_PORTAL_SWA_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: 'upload'
-          app_location: 'portal-app/out'
+          app_location: 'apps/casemgr-portal'
+          output_location: 'out'
           skip_app_build: true
-          output_location: ''
 
   close_pull_request:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
