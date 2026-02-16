@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev -p 3002",
     "build": "next build",
-    "export": "next build && next export",
+    "export": "next build",
     "start": "next start -p 3002",
     "lint": "next lint",
     "electron": "electron .",
