@@ -4,9 +4,9 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/lib/auth'
-import { Logo } from '@/components/ui/Logo'
-import { StatusBadge } from '@/components/ui/StatusBadge'
-import { LoadingSkeleton } from '@/components/ui/LoadingSkeleton'
+import { Logo } from '../../../../components/ui/Logo'
+import { StatusBadge } from '../../../../components/ui/StatusBadge'
+import { LoadingSkeleton } from '../../../../components/ui/LoadingSkeleton'
 
 interface Message {
   id: string

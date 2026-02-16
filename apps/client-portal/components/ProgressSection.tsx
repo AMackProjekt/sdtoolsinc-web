@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { cn } from '@/lib/cn'
-import { ProgressBar } from '@/components/ui/ProgressBar'
+import { ProgressBar } from '../../../components/ui/ProgressBar'
 
 interface Course {
   id: string

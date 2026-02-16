@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/cn'
-import { ProgressBar } from '@/components/ui/ProgressBar'
+import { ProgressBar } from '../../../components/ui/ProgressBar'
 
 interface HeroProgressCardProps {
   coursesCompleted: number

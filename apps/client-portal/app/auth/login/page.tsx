@@ -63,7 +63,13 @@ export default function LoginPage() {
     try {
       await signInWithMagicLink(formData.email)
       setMagicLinkSent(true)
+    } catch (err: any) {
+      setError(err?.message || 'Magic link failed. Please try again.')
+    } finally {
       setLoading(false)
+    }
+  }
+
   return (
     <div className="min-h-screen relative flex items-center justify-center px-4">
       {/* Background glow */}
@@ -227,8 +233,7 @@ export default function LoginPage() {
             </div>
           </>
         )}
-          </div>
-        </form>
+      </div>
 
         {/* Legal Print */}
         <div className="mt-6 pt-6 border-t border-border">

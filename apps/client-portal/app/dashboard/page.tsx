@@ -4,12 +4,12 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/lib/auth'
-import { Logo } from '@/components/ui/Logo'
-import { StatCard } from '@/components/ui/StatCard'
-import { HeroProgressCard } from '../components/HeroProgressCard'
-import { ProgressSection } from '../components/ProgressSection'
-import { UpcomingActivities } from '../components/UpcomingActivities'
-import { RecentMessages } from '../components/RecentMessages'
+import { Logo } from '../../../../components/ui/Logo'
+import { StatCard } from '../../../../components/ui/StatCard'
+import { HeroProgressCard } from '../../components/HeroProgressCard'
+import { ProgressSection } from '../../components/ProgressSection'
+import { UpcomingActivities } from '../../components/UpcomingActivities'
+import { RecentMessages } from '../../components/RecentMessages'
 
 // Mock data
 const mockStats = {
