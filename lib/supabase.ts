@@ -1,9 +1,11 @@
 import { createClient } from "@supabase/supabase-js";
+import type { SupabaseClient as SupabaseClientType } from "@supabase/supabase-js";
+import type { Database } from "@/types/database";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-type SupabaseClient = ReturnType<typeof createClient>;
+type SupabaseClient = SupabaseClientType<Database>;
 
 function createSupabaseStub(): SupabaseClient {
   return new Proxy({} as SupabaseClient, {
@@ -19,7 +21,7 @@ function createSupabaseStub(): SupabaseClient {
 // Use a stub during build when env vars are missing to avoid prerender failures.
 export const supabase: SupabaseClient =
   supabaseUrl && supabaseAnonKey
-    ? createClient(supabaseUrl, supabaseAnonKey)
+    ? createClient<Database>(supabaseUrl, supabaseAnonKey)
     : createSupabaseStub();
 
 /**
