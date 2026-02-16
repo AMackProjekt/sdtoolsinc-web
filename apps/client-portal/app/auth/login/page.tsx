@@ -233,7 +233,6 @@ export default function LoginPage() {
             </div>
           </>
         )}
-      </div>
 
         {/* Legal Print */}
         <div className="mt-6 pt-6 border-t border-border">
@@ -242,7 +241,7 @@ export default function LoginPage() {
             Your information will be kept confidential and used solely for program purposes. 
             T.O.O.L.S Inc is committed to protecting your privacy and supporting your journey.
           </p>
-          
+
           {/* Copyright & Branding */}
           <div className="text-center">
             <p className="text-xs text-muted">
