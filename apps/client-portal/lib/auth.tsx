@@ -7,7 +7,7 @@ import { checkAndRestoreSSOToken, restoreSessionFromToken } from '../../../lib/s
 
 export interface UserProfile {
   id: string
-  email?: string
+  email: string | null
   full_name: string | null
   avatar_url: string | null
   role: 'admin' | 'case_manager' | 'client'
