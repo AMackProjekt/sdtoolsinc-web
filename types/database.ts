@@ -276,10 +276,6 @@ export type Database = {
         };
       };
     };
-    Views: {};
-    Functions: {};
-    Enums: {};
-    CompositeTypes: {};
     Views: {
       [_ in never]: never;
     };
