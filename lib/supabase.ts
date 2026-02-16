@@ -1,14 +1,13 @@
 import { createClient } from "@supabase/supabase-js";
-import type { SupabaseClient as SupabaseClientType } from "@supabase/supabase-js";
-import type { Database } from "@/types/database";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-type SupabaseClient = SupabaseClientType<Database>;
+type AnySupabaseClient = SupabaseClient<any>;
 
-function createSupabaseStub(): SupabaseClient {
-  return new Proxy({} as SupabaseClient, {
+function createSupabaseStub(): AnySupabaseClient {
+  return new Proxy({} as AnySupabaseClient, {
     get() {
       throw new Error(
         "Missing Supabase environment variables. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY."
@@ -19,9 +18,9 @@ function createSupabaseStub(): SupabaseClient {
 
 // Create client without strict typing for now (types can be generated later).
 // Use a stub during build when env vars are missing to avoid prerender failures.
-export const supabase: SupabaseClient =
+export const supabase: AnySupabaseClient =
   supabaseUrl && supabaseAnonKey
-    ? createClient<Database>(supabaseUrl, supabaseAnonKey)
+    ? createClient(supabaseUrl, supabaseAnonKey)
     : createSupabaseStub();
 
 /**
