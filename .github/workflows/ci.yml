@@ -89,6 +89,7 @@ jobs:
         run: |
           mkdir -p deploy/out
           cp -r out/* deploy/out/ || true
+          cp staticwebapp.config.json deploy/out/ || true
           mkdir -p deploy/out/client-portal deploy/out/casemgr-portal deploy/out/admin-portal
           cp -r apps/client-portal/out/* deploy/out/client-portal/ || true
           cp -r apps/casemgr-portal/out/* deploy/out/casemgr-portal/ || true
