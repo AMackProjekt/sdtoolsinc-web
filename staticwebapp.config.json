@@ -25,6 +25,14 @@
       "rewrite": "/admin-portal/index.html"
     },
     {
+      "route": "/*",
+      "methods": ["GET"],
+      "headers": {
+        "Host": "*.azurestaticapps.net"
+      },
+      "rewrite": "/client-portal/index.html"
+    },
+    {
       "route": "/admin/*",
       "allowedRoles": ["admin", "authenticated"]
     },
