@@ -1,56 +1,16 @@
 {
   "routes": [
     {
-      "route": "/*",
-      "methods": ["GET"],
-      "headers": {
-        "Host": "client.sdtoolsinc.org"
-      },
-      "rewrite": "/client-portal/index.html"
+      "route": "/api/*"
     },
     {
-      "route": "/*",
-      "methods": ["GET"],
-      "headers": {
-        "Host": "staff.sdtoolsinc.org"
-      },
-      "rewrite": "/casemgr-portal/index.html"
+      "route": "/client-portal/*"
     },
     {
-      "route": "/*",
-      "methods": ["GET"],
-      "headers": {
-        "Host": "admin.sdtoolsinc.org"
-      },
-      "rewrite": "/admin-portal/index.html"
+      "route": "/casemgr-portal/*"
     },
     {
-      "route": "/client-portal/*",
-      "rewrite": "/client-portal/index.html"
-    },
-    {
-      "route": "/*",
-      "methods": ["GET"],
-      "headers": {
-        "Host": "*.azurestaticapps.net"
-      },
-      "rewrite": "/client-portal/index.html"
-    },
-    {
-      "route": "/admin/*",
-      "allowedRoles": ["admin", "authenticated"]
-    },
-    {
-      "route": "/api/v1/admin/*",
-      "allowedRoles": ["admin"]
-    },
-    {
-      "route": "/casemgr/*",
-      "allowedRoles": ["case_manager", "admin", "authenticated"]
-    },
-    {
-      "route": "/client/*",
-      "allowedRoles": ["client", "authenticated"]
+      "route": "/admin-portal/*"
     },
     {
       "route": "/*",
@@ -59,7 +19,7 @@
   ],
   "navigationFallback": {
     "rewrite": "/client-portal/index.html",
-    "exclude": ["/images/*", "/css/*", "/js/*", "/api/*", "/videos/*", "/*.webp", "/*.png", "/*.jpg", "/*.jpeg", "/client-portal/*", "/casemgr-portal/*", "/admin-portal/*"]
+    "exclude": ["/api/*", "/*.json", "/*.txt", "/_next/*", "/*.webp", "/*.png", "/*.jpg", "/*.jpeg", "/*.svg", "/*.woff", "/*.woff2"]
   },
   "responseOverrides": {
     "401": {
