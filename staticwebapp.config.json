@@ -25,6 +25,10 @@
       "rewrite": "/admin-portal/index.html"
     },
     {
+      "route": "/client-portal/*",
+      "rewrite": "/client-portal/index.html"
+    },
+    {
       "route": "/*",
       "methods": ["GET"],
       "headers": {
@@ -54,8 +58,8 @@
     }
   ],
   "navigationFallback": {
-    "rewrite": "/index.html",
-    "exclude": ["/images/*", "/css/*", "/js/*", "/api/*", "/videos/*", "/*.webp", "/*.png", "/*.jpg", "/*.jpeg"]
+    "rewrite": "/client-portal/index.html",
+    "exclude": ["/images/*", "/css/*", "/js/*", "/api/*", "/videos/*", "/*.webp", "/*.png", "/*.jpg", "/*.jpeg", "/client-portal/*", "/casemgr-portal/*", "/admin-portal/*"]
   },
   "responseOverrides": {
     "401": {
