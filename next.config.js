@@ -30,11 +30,6 @@ const nextConfig = {
   // Power by header
   poweredByHeader: false,
   
-  // ESLint during builds
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  
   // TypeScript during builds
   typescript: {
     tsconfigPath: './tsconfig.json'

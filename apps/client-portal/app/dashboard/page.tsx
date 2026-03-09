@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/lib/auth'
+import { api, type DashboardData } from '@/lib/api'
 import { Logo } from '../../../../components/ui/Logo'
 import { StatCard } from '../../../../components/ui/StatCard'
 import { HeroProgressCard } from '../../components/HeroProgressCard'
@@ -98,13 +99,48 @@ export default function DashboardPage() {
   const { user, profile, isAuthenticated, isLoading, signOut } = useAuth()
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [notificationCount] = useState(2)
-  const [unreadMessagesCount] = useState(2)
+  const [securityNotice, setSecurityNotice] = useState('')
+  const [dashboardData, setDashboardData] = useState<DashboardData>({
+    stats: mockStats,
+    progress: mockProgress,
+    courses: mockCourses,
+    activities: mockActivities,
+    messages: mockMessages,
+  })
+  const unreadMessagesCount = dashboardData.messages.filter((message) => !message.read).length
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       router.push('/auth/login')
     }
   }, [isAuthenticated, isLoading, router])
+
+  useEffect(() => {
+    if (!isAuthenticated) return
+
+    const loadDashboard = async () => {
+      try {
+        const data = await api.getDashboardData()
+        setDashboardData(data)
+      } catch {
+        setDashboardData({
+          stats: mockStats,
+          progress: mockProgress,
+          courses: mockCourses,
+          activities: mockActivities,
+          messages: mockMessages,
+        })
+      }
+    }
+
+    const notice = window.localStorage.getItem('portal_security_notice')
+    if (notice) {
+      setSecurityNotice(notice)
+      window.localStorage.removeItem('portal_security_notice')
+    }
+
+    loadDashboard()
+  }, [isAuthenticated])
 
   const handleLogout = async () => {
     await signOut()
@@ -233,31 +269,37 @@ export default function DashboardPage() {
           <p className="text-muted">Here's your progress overview and upcoming activities</p>
         </div>
 
+        {securityNotice && (
+          <div className="mb-6 rounded-lg border border-brand/30 bg-brand/10 px-4 py-3 text-sm text-brand" role="status" aria-live="polite">
+            {securityNotice}
+          </div>
+        )}
+
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard
             title="Check-ins"
-            value={mockStats.checkIns}
+            value={dashboardData.stats.checkIns}
             icon="✓"
             variant="success"
             trend={{ value: 15, label: 'vs last month', isPositive: true }}
           />
           <StatCard
             title="Hours Learned"
-            value={mockStats.hoursLearned}
+            value={dashboardData.stats.hoursLearned}
             icon="📚"
             variant="primary"
             trend={{ value: 20, label: 'vs last month', isPositive: true }}
           />
           <StatCard
             title="Certificates"
-            value={mockStats.certificates}
+            value={dashboardData.stats.certificates}
             icon="🏆"
             variant="warning"
           />
           <StatCard
             title="Courses Completed"
-            value={mockStats.coursesCompleted}
+            value={dashboardData.stats.coursesCompleted}
             icon="🎓"
             variant="default"
             onClick={() => router.push('/courses')}
@@ -267,22 +309,22 @@ export default function DashboardPage() {
         {/* Hero Progress Card */}
         <div className="mb-8">
           <HeroProgressCard
-            coursesCompleted={mockProgress.coursesCompleted}
-            totalCourses={mockProgress.totalCourses}
-            milestones={mockProgress.milestones}
+            coursesCompleted={dashboardData.progress.coursesCompleted}
+            totalCourses={dashboardData.progress.totalCourses}
+            milestones={dashboardData.progress.milestones}
             onClick={() => router.push('/courses')}
           />
         </div>
 
         {/* Two Column Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          <ProgressSection courses={mockCourses} />
-          <UpcomingActivities activities={mockActivities} />
+          <ProgressSection courses={dashboardData.courses} />
+          <UpcomingActivities activities={dashboardData.activities} />
         </div>
 
         {/* Recent Messages */}
         <div className="mb-8">
-          <RecentMessages messages={mockMessages} unreadCount={unreadMessagesCount} />
+          <RecentMessages messages={dashboardData.messages} unreadCount={unreadMessagesCount} />
         </div>
 
         {/* Bottom CTAs */}

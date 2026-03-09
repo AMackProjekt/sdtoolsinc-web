@@ -3,20 +3,24 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useAuth } from '@/lib/auth'
+import { isInviteRequired } from '@/lib/security'
 
 export default function SignupPage() {
   const router = useRouter()
-  const [step, setStep] = useState(1) // 1: Initial form, 2: Email verification
+  const { signUp, resendVerificationEmail } = useAuth()
+  const [step, setStep] = useState(1) // 1: Initial form, 2: Verification instructions
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    inviteCode: ''
   })
-  const [verificationCode, setVerificationCode] = useState('')
-  const [sentCode, setSentCode] = useState('')
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
+  const inviteRequired = isInviteRequired()
 
   const handleInitialSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -33,46 +37,19 @@ export default function SignupPage() {
       return
     }
 
-    setLoading(true)
-
-    try {
-      // TODO: Replace with actual API call to send verification email
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      // Simulate sending verification code
-      const code = Math.floor(100000 + Math.random() * 900000).toString()
-      setSentCode(code)
-      console.log('Verification code (for demo):', code) // In production, this is sent via email
-      
-      setStep(2)
-    } catch (err) {
-      setError('Failed to send verification email. Please try again.')
-    } finally {
-      setLoading(false)
+    if (inviteRequired && !formData.inviteCode.trim()) {
+      setError('Invite code is required for portal onboarding')
+      return
     }
-  }
 
-  const handleVerification = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
     setLoading(true)
 
     try {
-      // TODO: Replace with actual API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      if (verificationCode === sentCode) {
-        // Store user session (temporary - replace with proper auth)
-        localStorage.setItem('portal_user', JSON.stringify({ 
-          username: formData.username,
-          email: formData.email
-        }))
-        router.push('/profile/setup')
-      } else {
-        setError('Invalid verification code')
-      }
-    } catch (err) {
-      setError('Verification failed. Please try again.')
+      await signUp(formData.email, formData.password, formData.username, formData.inviteCode)
+      setSuccess('Verification email sent. After verification, your account will remain pending until staff approval.')
+      setStep(2)
+    } catch (err: any) {
+      setError(err?.message || 'Failed to send verification email. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -97,7 +74,7 @@ export default function SignupPage() {
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold mb-2">Create Account</h2>
           <p className="text-muted">
-            {step === 1 ? 'Join T.O.O.L.S Inc Portal' : 'Verify your email address'}
+            {step === 1 ? 'Join T.O.O.L.S Inc Portal' : 'Confirm your email to unlock portal access'}
           </p>
         </div>
 
@@ -153,6 +130,23 @@ export default function SignupPage() {
               />
             </div>
 
+            {inviteRequired && (
+              <div>
+                <label htmlFor="inviteCode" className="block text-sm font-medium mb-2">
+                  Invite Code
+                </label>
+                <input
+                  id="inviteCode"
+                  type="text"
+                  value={formData.inviteCode}
+                  onChange={(e) => setFormData({ ...formData, inviteCode: e.target.value })}
+                  className="w-full px-4 py-3 rounded-lg bg-panel border border-border text-text focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20 transition"
+                  placeholder="Enter your staff-issued code"
+                  required
+                />
+              </div>
+            )}
+
             {/* Confirm Password */}
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-medium mb-2">
@@ -195,9 +189,9 @@ export default function SignupPage() {
           </form>
         )}
 
-        {/* Step 2: Email Verification */}
+        {/* Step 2: Email Verification Instructions */}
         {step === 2 && (
-          <form onSubmit={handleVerification} className="space-y-6">
+          <div className="space-y-6">
             <div className="text-center mb-6">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-brand/20 mb-4">
                 <svg className="w-8 h-8 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -205,27 +199,19 @@ export default function SignupPage() {
                 </svg>
               </div>
               <p className="text-sm text-muted">
-                We've sent a verification code to<br />
+                We've sent a verification link to<br />
                 <span className="text-text font-medium">{formData.email}</span>
+              </p>
+              <p className="text-xs text-muted mt-3">
+                After verification, your account enters pending approval until a staff member activates it.
               </p>
             </div>
 
-            {/* Verification Code */}
-            <div>
-              <label htmlFor="verificationCode" className="block text-sm font-medium mb-2">
-                Verification Code
-              </label>
-              <input
-                id="verificationCode"
-                type="text"
-                value={verificationCode}
-                onChange={(e) => setVerificationCode(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg bg-panel border border-border text-text text-center text-2xl tracking-widest focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20 transition"
-                placeholder="000000"
-                required
-                maxLength={6}
-              />
-            </div>
+            {success && (
+              <div className="px-4 py-3 rounded-lg bg-brand/10 border border-brand/30 text-brand text-sm">
+                {success}
+              </div>
+            )}
 
             {/* Error Message */}
             {error && (
@@ -234,27 +220,36 @@ export default function SignupPage() {
               </div>
             )}
 
-            {/* Submit Button */}
+            {/* Continue to Login */}
             <button
-              type="submit"
-              disabled={loading}
+              type="button"
+              onClick={() => router.push('/auth/login?verify=check_email')}
               className="w-full px-6 py-3 bg-brand text-bg font-semibold rounded-lg hover:bg-brand2 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Verifying...' : 'Verify Email'}
+              Go to Sign In
             </button>
 
-            {/* Resend Code */}
+            {/* Resend Verification Email */}
             <div className="text-center">
               <button
                 type="button"
-                onClick={() => {
-                  const code = Math.floor(100000 + Math.random() * 900000).toString()
-                  setSentCode(code)
-                  console.log('New verification code (for demo):', code)
+                onClick={async () => {
+                  setError('')
+                  setSuccess('')
+                  setLoading(true)
+                  try {
+                    await resendVerificationEmail(formData.email)
+                    setSuccess('Verification email resent. Check your inbox and spam folder.')
+                  } catch (err: any) {
+                    setError(err?.message || 'Failed to resend verification email.')
+                  } finally {
+                    setLoading(false)
+                  }
                 }}
+                disabled={loading}
                 className="text-sm text-brand hover:text-brand2 transition"
               >
-                Resend code
+                {loading ? 'Sending...' : 'Resend verification email'}
               </button>
             </div>
 
@@ -262,13 +257,17 @@ export default function SignupPage() {
             <div className="text-center">
               <button
                 type="button"
-                onClick={() => setStep(1)}
+                onClick={() => {
+                  setStep(1)
+                  setError('')
+                  setSuccess('')
+                }}
                 className="text-sm text-muted hover:text-text transition"
               >
                 ← Back to registration
               </button>
             </div>
-          </form>
+          </div>
         )}
       </div>
     </div>

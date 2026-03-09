@@ -1,18 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useAuth } from "@/lib/auth";
+
+const RESEND_COOLDOWN_SECONDS = 45;
 
 export default function ClientForgotPasswordPage() {
+  const { requestPasswordReset } = useAuth();
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [cooldown, setCooldown] = useState(0);
+
+  useEffect(() => {
+    if (!cooldown) return;
+    const timer = window.setInterval(() => {
+      setCooldown((value) => (value > 0 ? value - 1 : 0));
+    }, 1000);
+
+    return () => window.clearInterval(timer);
+  }, [cooldown]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (cooldown > 0) {
+      setError(`Please wait ${cooldown}s before requesting another reset link.`);
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -21,9 +41,9 @@ export default function ClientForgotPasswordPage() {
         return;
       }
 
-      // TODO: Replace with real password reset request (Supabase or backend API)
-      await new Promise((resolve) => setTimeout(resolve, 900));
+      await requestPasswordReset(email.trim());
       setSent(true);
+      setCooldown(RESEND_COOLDOWN_SECONDS);
     } catch {
       setError("Unable to send reset email. Please try again.");
     } finally {
@@ -70,23 +90,25 @@ export default function ClientForgotPasswordPage() {
           )}
 
           {sent && !error && (
-            <div className="px-4 py-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-sm">
-              If an account exists for {email}, a reset link has been sent.
+            <div className="px-4 py-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-sm space-y-1">
+              <p>If an account exists for {email}, a reset link has been sent.</p>
+              <p className="text-xs text-emerald-200/90">Check spam/promotions folders and verify your mailbox is typed correctly.</p>
             </div>
           )}
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || cooldown > 0}
             className="w-full px-6 py-3 bg-brand text-bg font-semibold rounded-lg hover:bg-brand2 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? "Sending..." : "Send Reset Link"}
+            {loading ? "Sending..." : cooldown > 0 ? `Try again in ${cooldown}s` : "Send Reset Link"}
           </button>
 
-          <div className="text-center">
-            <Link href="/auth/login" className="text-sm text-brand hover:text-brand2 transition">
+          <div className="text-center space-y-2">
+            <Link href="/auth/login" className="text-sm text-brand hover:text-brand2 transition block">
               ← Back to sign in
             </Link>
+            <p className="text-xs text-muted">Still stuck? Contact support or ask your case manager to verify your account status.</p>
           </div>
         </form>
       </motion.div>

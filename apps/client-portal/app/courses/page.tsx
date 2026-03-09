@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useAuth } from '@/lib/auth'
 
 // Placeholder course data
 const courses = [
@@ -78,22 +79,18 @@ const categories = ['All', 'Employment', 'Education', 'Life Skills', 'Benefits']
 
 export default function CoursesPage() {
   const router = useRouter()
-  const [user, setUser] = useState<any>(null)
+  const { user, isAuthenticated, isLoading, signOut } = useAuth()
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
-    // Check if user is logged in
-    const storedUser = localStorage.getItem('portal_user')
-    if (!storedUser) {
+    if (!isLoading && !isAuthenticated) {
       router.push('/auth/login')
-    } else {
-      setUser(JSON.parse(storedUser))
     }
-  }, [router])
+  }, [isAuthenticated, isLoading, router])
 
-  const handleLogout = () => {
-    localStorage.removeItem('portal_user')
+  const handleLogout = async () => {
+    await signOut()
     router.push('/auth/login')
   }
 
@@ -104,12 +101,16 @@ export default function CoursesPage() {
     return matchesCategory && matchesSearch
   })
 
-  if (!user) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-muted">Loading...</div>
       </div>
     )
+  }
+
+  if (!isAuthenticated || !user) {
+    return null
   }
 
   return (
@@ -215,7 +216,11 @@ export default function CoursesPage() {
                   </div>
                   <div className="mb-4">
                     <div className="h-2 rounded-full bg-panel overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-brand to-brand2" style={{ width: `${course.progress}%` }} />
+                                            {/* eslint-disable-next-line @next/next/no-inline-styles */}
+                      <div 
+                        className="h-full bg-gradient-to-r from-brand to-brand2" 
+                        style={{ width: `${course.progress}%` } as React.CSSProperties}
+                      />
                     </div>
                   </div>
                   <button className="w-full px-4 py-2 bg-brand text-bg font-semibold rounded-lg hover:bg-brand2 transition">

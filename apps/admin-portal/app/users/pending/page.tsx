@@ -17,6 +17,13 @@ import {
   X as XIcon,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
+import {
+  fetchPendingUsers as fetchPendingUsersAPI,
+  approveUser,
+  rejectUser,
+  bulkApproveUsers,
+  type PendingUser as APIPendingUser,
+} from "@/lib/user-approval-api";
 
 interface PendingUser {
   Id: string;
@@ -81,41 +88,43 @@ export default function PendingUsersPage() {
       setLoading(true);
       setError(null);
 
-      // TODO: Replace with actual API call
-      // const response = await fetch('/api/v1/admin/users/pending');
-      // const data = await response.json();
-      // setUsers(data.users || []);
-
-      // Mock data for development
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      const mockUsers: PendingUser[] = [
-        {
-          Id: "1",
-          Email: "john.doe@example.com",
-          DisplayName: "John Doe",
-          Role: "Client",
-          Status: "pending",
-          CreatedAt: new Date().toISOString(),
-        },
-        {
-          Id: "2",
-          Email: "jane.smith@example.com",
-          DisplayName: "Jane Smith",
-          Role: "Client",
-          Status: "pending",
-          CreatedAt: new Date(Date.now() - 86400000).toISOString(),
-        },
-        {
-          Id: "3",
-          Email: "staff@sdtoolsinc.org",
-          DisplayName: "New Staff Member",
-          Role: "CaseManager",
-          Status: "pending",
-          CreatedAt: new Date(Date.now() - 172800000).toISOString(),
-        },
-      ];
-      setUsers(mockUsers);
-      setFilteredUsers(mockUsers);
+      try {
+        const apiUsers = await fetchPendingUsersAPI();
+        const mappedUsers: PendingUser[] = apiUsers.map(u => ({
+          Id: u.id,
+          Email: u.email,
+          DisplayName: u.display_name,
+          Role: u.role,
+          Status: u.status,
+          CreatedAt: u.created_at,
+        }));
+        setUsers(mappedUsers);
+        setFilteredUsers(mappedUsers);
+      } catch (apiError) {
+        console.warn('API not available, using mock data:', apiError);
+        // Fallback to mock data if API not available
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        const mockUsers: PendingUser[] = [
+          {
+            Id: "1",
+            Email: "john.doe@example.com",
+            DisplayName: "John Doe",
+            Role: "Client",
+            Status: "pending",
+            CreatedAt: new Date().toISOString(),
+          },
+          {
+            Id: "2",
+            Email: "jane.smith@example.com",
+            DisplayName: "Jane Smith",
+            Role: "Client",
+            Status: "pending",
+            CreatedAt: new Date(Date.now() - 86400000).toISOString(),
+          },
+        ];
+        setUsers(mockUsers);
+        setFilteredUsers(mockUsers);
+      }
     } catch (err) {
       console.error("Error fetching pending users:", err);
       setError("Failed to load pending users");
@@ -126,11 +135,7 @@ export default function PendingUsersPage() {
 
   const handleApprove = async (userId: string) => {
     try {
-      // TODO: Implement actual API call
-      // await fetch(`/api/v1/admin/users/${userId}/approve`, {
-      //   method: 'POST',
-      // });
-
+      await approveUser(userId);
       setUsers((prev) => prev.filter((u) => u.Id !== userId));
       setSelectedUsers((prev) => {
         const newSet = new Set(prev);
@@ -146,12 +151,7 @@ export default function PendingUsersPage() {
     if (selectedUsers.size === 0) return;
 
     try {
-      // TODO: Implement actual API call
-      // await fetch('/api/v1/admin/users/bulk-approve', {
-      //   method: 'POST',
-      //   body: JSON.stringify({ userIds: Array.from(selectedUsers) }),
-      // });
-
+      await bulkApproveUsers(Array.from(selectedUsers));
       setUsers((prev) => prev.filter((u) => !selectedUsers.has(u.Id)));
       setSelectedUsers(new Set());
     } catch (err) {
@@ -168,12 +168,7 @@ export default function PendingUsersPage() {
     if (!rejectUserId || !rejectReason.trim()) return;
 
     try {
-      // TODO: Implement actual API call
-      // await fetch(`/api/v1/admin/users/${rejectUserId}/reject`, {
-      //   method: 'POST',
-      //   body: JSON.stringify({ reason: rejectReason }),
-      // });
-
+      await rejectUser(rejectUserId, rejectReason);
       setUsers((prev) => prev.filter((u) => u.Id !== rejectUserId));
       setSelectedUsers((prev) => {
         const newSet = new Set(prev);

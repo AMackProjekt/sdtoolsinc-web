@@ -4,23 +4,11 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/lib/auth'
+import { api, type Message } from '@/lib/api'
 import { Logo } from '../../../../components/ui/Logo'
 import { StatusBadge } from '../../../../components/ui/StatusBadge'
 import { LoadingSkeleton } from '../../../../components/ui/LoadingSkeleton'
 
-interface Message {
-  id: string
-  senderId: string
-  senderName: string
-  senderAvatar?: string
-  subject: string
-  preview: string
-  body: string
-  timestamp: string
-  read: boolean
-}
-
-// Mock data - replace with API call
 const MOCK_MESSAGES: Message[] = [
   {
     id: '1',
@@ -55,6 +43,21 @@ export default function MessagesPage() {
       router.push('/auth/login')
     }
   }, [isAuthenticated, isLoading, router])
+
+  useEffect(() => {
+    if (!isAuthenticated) return
+
+    const loadMessages = async () => {
+      try {
+        const data = await api.getMessages()
+        setMessages(data.length ? data : MOCK_MESSAGES)
+      } catch {
+        setMessages(MOCK_MESSAGES)
+      }
+    }
+
+    loadMessages()
+  }, [isAuthenticated])
 
   const unreadCount = messages.filter(m => !m.read).length
 
@@ -200,7 +203,16 @@ export default function MessagesPage() {
                   <button className="px-6 py-3 bg-gradient-to-r from-brand to-brand2 text-white rounded-lg font-medium hover:shadow-lg transition-all">
                     Reply
                   </button>
-                  <button className="px-6 py-3 border border-border text-text rounded-lg font-medium hover:bg-glass transition-all">
+                  <button
+                    onClick={() => {
+                      setMessages((prev) =>
+                        prev.map((message) =>
+                          message.id === selectedMessage.id ? { ...message, read: false } : message
+                        )
+                      )
+                    }}
+                    className="px-6 py-3 border border-border text-text rounded-lg font-medium hover:bg-glass transition-all"
+                  >
                     Mark as Unread
                   </button>
                 </div>

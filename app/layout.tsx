@@ -9,9 +9,9 @@ import { PWAInit } from "@/components/PWAInit";
 export const metadata = {
   metadataBase: new URL('https://sdtoolsinc.org'),
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.ico',
-    apple: '/apple-touch-icon.png',
+    icon: '/logos/main-logo.png',
+    shortcut: '/logos/main-logo.png',
+    apple: '/logos/main-logo.png',
   },
   manifest: '/manifest.json',
   title: {

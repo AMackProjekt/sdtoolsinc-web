@@ -4,7 +4,10 @@
  */
 
 import { supabase } from "@/lib/supabase";
-import type { UserProfile } from "@/lib/hooks/useAuth";
+
+type UserProfile = {
+  role: "admin" | "case_manager" | "client";
+};
 
 /**
  * Get SSO token from current Supabase session

@@ -7,12 +7,13 @@ import { useAuth } from '@/lib/auth'
 
 export default function LoginPage() {
   const router = useRouter()
-  const { isAuthenticated, isLoading: authLoading, signInWithPassword, signInWithAzure, signInWithMagicLink } = useAuth()
+  const { isAuthenticated, isLoading: authLoading, signInWithPassword, signInWithMicrosoft, signInWithMagicLink, resendVerificationEmail } = useAuth()
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   })
   const [error, setError] = useState('')
+  const [info, setInfo] = useState('')
   const [loading, setLoading] = useState(false)
   const [showMagicLink, setShowMagicLink] = useState(false)
   const [magicLinkSent, setMagicLinkSent] = useState(false)
@@ -27,6 +28,36 @@ export default function LoginPage() {
       router.push('/dashboard')
     }
   }, [isAuthenticated, authLoading, router])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const params = new URLSearchParams(window.location.search)
+    const verifyState = params.get('verify')
+    const verifiedState = params.get('verified')
+    const approvalState = params.get('approval')
+
+    if (verifiedState === 'true' && approvalState === 'pending') {
+      setInfo('Email verified. Your account is now pending staff approval before first sign-in.')
+      return
+    }
+
+    if (verifiedState === 'true') {
+      setInfo('Email verified successfully. You can sign in now.')
+      return
+    }
+
+    if (verifyState === 'check_email') {
+      setInfo('Please verify your email before signing in. Check your inbox for the confirmation link.')
+      return
+    }
+
+    const securityNotice = window.localStorage.getItem('portal_security_notice')
+    if (securityNotice) {
+      setInfo(securityNotice)
+      window.localStorage.removeItem('portal_security_notice')
+    }
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -43,14 +74,14 @@ export default function LoginPage() {
     }
   }
 
-  const handleAzureSignIn = async () => {
+  const handleMicrosoftSignIn = async () => {
     setError('')
     setLoading(true)
     try {
       markRedirectStart()
-      await signInWithAzure()
+      await signInWithMicrosoft()
     } catch (err: any) {
-      setError(err?.message || 'Azure sign-in failed. Please try again.')
+      setError(err?.message || 'Microsoft sign-in failed. Please try again.')
       setLoading(false)
     }
   }
@@ -167,6 +198,13 @@ export default function LoginPage() {
                 </div>
               )}
 
+              {/* Info Message */}
+              {info && (
+                <div className="px-4 py-3 rounded-lg bg-brand/10 border border-brand/30 text-brand text-sm">
+                  {info}
+                </div>
+              )}
+
               {/* Submit Button */}
               <button
                 type="submit"
@@ -197,6 +235,34 @@ export default function LoginPage() {
                   </Link>
                 </div>
               )}
+
+              {!showMagicLink && (
+                <div className="text-center">
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      setError('')
+                      setInfo('')
+                      if (!formData.email) {
+                        setError('Enter your email first to resend verification.')
+                        return
+                      }
+                      setLoading(true)
+                      try {
+                        await resendVerificationEmail(formData.email)
+                        setInfo('Verification email resent. Please check your inbox and spam folder.')
+                      } catch (err: any) {
+                        setError(err?.message || 'Failed to resend verification email.')
+                      } finally {
+                        setLoading(false)
+                      }
+                    }}
+                    className="text-sm text-brand hover:text-brand2 transition"
+                  >
+                    Resend verification email
+                  </button>
+                </div>
+              )}
             </form>
 
             {/* Divider */}
@@ -209,23 +275,23 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Azure Sign In Button */}
+            {/* Microsoft Sign In Button */}
             <button
-              onClick={handleAzureSignIn}
+              onClick={handleMicrosoftSignIn}
               disabled={loading}
               className="w-full px-6 py-3 bg-panel border border-border text-text font-semibold rounded-lg hover:bg-panel/80 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M11.4 24H0V12.6h11.4V24zM24 24H12.6v-11.4H24V24zM11.4 11.4H0V0h11.4v11.4zm12.6 0H12.6V0H24v11.4z" />
               </svg>
-              Sign in with Azure
+              Sign in with Microsoft
             </button>
 
             {/* Sign Up Link */}
             <div className="text-center border-t border-border pt-6">
               <p className="text-sm text-muted mb-4">Don't have an account?</p>
               <Link
-                href="/coming-soon"
+                href="/auth/signup"
                 className="inline-block px-6 py-3 border border-brand text-brand font-semibold rounded-lg hover:bg-brand/10 transition"
               >
                 Create Account

@@ -23,16 +23,16 @@ function AuthCallbackContent() {
         const token_hash = searchParams.get('token_hash')
         const type = searchParams.get('type')
         
-        if (token_hash && type === 'email') {
+        if (token_hash && (type === 'email' || type === 'signup')) {
           const { error } = await supabase.auth.verifyOtp({
             token_hash,
-            type: 'email'
+            type: type === 'signup' ? 'signup' : 'email'
           })
           
           if (error) throw error
           
-          // Email verified successfully
-          router.push('/dashboard?verified=true')
+          // Email verified successfully. Account still requires staff approval.
+          router.push('/auth/login?verified=true&approval=pending')
         } else {
           // Regular OAuth callback
           const { error } = await supabase.auth.getSession()
