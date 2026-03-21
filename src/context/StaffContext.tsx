@@ -129,26 +129,7 @@ export function StaffProvider({ children }: { children: React.ReactNode }) {
     { slot: 'A9', name: 'Ian Buonamici', status: 'Active', environment: 'A-Block' },
     { slot: 'A10', name: 'Orrin "Keith" Page', status: 'Active', environment: 'A-Block' },
     
-    { slot: 'B1', name: 'Reginald "Reggie" Miller', status: 'Active', environment: 'B-Block' },
-    { slot: 'B2', name: 'Awaiting Intake', status: 'Pending', environment: 'B-Block' },
-    { slot: 'B3', name: 'Available Slot', status: 'Open', environment: 'B-Block' },
-    { slot: 'B4', name: 'Participant Placeholder', status: 'Pending Verification', environment: 'B-Block' },
-    { slot: 'B5', name: 'Case-Awaiting Docs', status: 'Active - SOP Audit', environment: 'B-Block' },
-    { slot: 'B6', name: 'Waitlist - Priority 1', status: 'Pending', environment: 'B-Block' },
-    { slot: 'B7', name: 'Waitlist - Priority 2', status: 'Pending', environment: 'B-Block' },
-    { slot: 'B8', name: 'Waitlist - Priority 3', status: 'Pending', environment: 'B-Block' },
-    
-    // C-BLOCK
-    { slot: 'C1', name: 'Cassandra "Cassy" Jones', status: 'Active', environment: 'C-Block' },
-    { slot: 'C2', name: 'Client - Awaiting Brief', status: 'Active', environment: 'C-Block' },
-    { slot: 'C3', name: 'Client - New Enrollment', status: 'Active', environment: 'C-Block' },
-    { slot: 'C4', name: 'Stabilization Slot', status: 'Transitioning', environment: 'C-Block' },
-    { slot: 'C5', name: 'Housing Search Slot', status: 'Active', environment: 'C-Block' },
-    { slot: 'C6', name: 'Available Slot', status: 'Open', environment: 'C-Block' },
-    
-    // D & J BLOCK (Expanded)
-    { slot: 'D1', name: 'Pending Enrollment D1', status: 'Pending', environment: 'D-Block' },
-    { slot: 'D2', name: 'Pending Enrollment D2', status: 'Pending', environment: 'D-Block' },
+    // D & J BLOCK
     { slot: 'D9', name: 'John Brackman', status: 'Active', environment: 'D-Block' },
     { slot: 'D10', name: 'Anthony Jones', status: 'Active', environment: 'D-Block' },
     { slot: 'J1', name: 'Waitlist J1', status: 'Pending', environment: 'J-Block' },

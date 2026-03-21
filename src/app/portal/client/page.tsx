@@ -70,9 +70,9 @@ export default function ClientDashboard() {
   const [feedbackType, setFeedbackType] = useState<'complaint' | 'suggestion'>('suggestion');
   const [feedbackContent, setFeedbackContent] = useState("");
 
-  const mySlot = "A3"; 
-  const myJournals = journals.filter(j => j.client === mySlot);
-  const myDocs = documents.filter(d => d.client.includes(mySlot));
+  const mySlot = ""; 
+  const myJournals = journals.filter(j => mySlot && j.client === mySlot);
+  const myDocs = documents.filter(d => mySlot && d.client.includes(mySlot));
 
   const handleAddJournal = () => {
     if (!journalContent.trim()) return;
@@ -167,40 +167,18 @@ export default function ClientDashboard() {
                            </h2>
                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Current Phase: Stabilization Audit</p>
                         </div>
-                        <div className="flex items-center gap-4 bg-slate-50 px-6 py-3 rounded-2xl border border-slate-100 shadow-inner group-hover:bg-teal-50 group-hover:border-teal-100 transition-colors">
+                        <div className="flex items-center gap-4 bg-slate-50 px-6 py-3 rounded-2xl border border-slate-100 shadow-inner">
                            <div className="text-right">
                               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Overall Progress</p>
-                              <p className="text-2xl font-black text-charcoal-900 leading-none group-hover:text-teal-600 transition-colors">82%</p>
+                              <p className="text-2xl font-black text-charcoal-900 leading-none">—</p>
                            </div>
-                           <div className="w-1.5 h-10 bg-teal-500 rounded-full"></div>
+                           <div className="w-1.5 h-10 bg-slate-200 rounded-full"></div>
                         </div>
                      </div>
 
                      <div className="relative mb-14 px-4">
-                        <div className="absolute top-5 left-10 right-10 h-1.5 bg-slate-100 hidden md:block rounded-full"></div>
-                        <div className="absolute top-5 left-10 w-[82%] h-1.5 bg-gradient-to-r from-teal-500 to-indigo-500 hidden md:block rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(20,184,166,0.3)]"></div>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 relative z-10">
-                           {[
-                             { label: 'Intake', status: 'completed', date: 'Jan 15' },
-                             { label: 'SOP Packet', status: 'completed', date: 'Feb 10' },
-                             { label: 'Verification', status: 'current', date: 'Active' },
-                             { label: 'Placement', status: 'future', date: 'Upcoming' }
-                           ].map((step, i) => (
-                              <div key={i} className="flex flex-col items-center md:items-start group/step">
-                                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-3 border-4 transition-all duration-500 ${
-                                   step.status === 'completed' ? 'bg-teal-500 border-teal-50 text-white shadow-lg shadow-teal-500/10' : 
-                                   step.status === 'current' ? 'bg-white border-teal-500 text-teal-600 scale-125 shadow-xl ring-8 ring-teal-50 transition-transform' : 
-                                   'bg-white border-slate-100 text-slate-300'
-                                 }`}>
-                                    {step.status === 'completed' ? <CheckCircle2 className="w-6 h-6" /> : <span className="text-sm font-black">{i+1}</span>}
-                                 </div>
-                                 <div className="text-center md:text-left">
-                                    <p className={`text-sm font-black tracking-tight ${step.status === 'current' ? 'text-charcoal-900' : 'text-slate-500'}`}>{step.label}</p>
-                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">{step.date}</p>
-                                 </div>
-                              </div>
-                           ))}
+                        <div className="flex items-center justify-center py-12 text-slate-300">
+                           <p className="text-sm font-bold italic">No milestones assigned yet. Check back after your intake meeting.</p>
                         </div>
                      </div>
 
@@ -214,7 +192,7 @@ export default function ClientDashboard() {
                               </div>
                               <div>
                                  <h4 className="text-lg font-bold tracking-tight mb-1">AI Journey Navigator <span className="text-[10px] bg-teal-500/20 text-teal-400 px-2 py-0.5 rounded-full border border-teal-500/30 uppercase tracking-widest ml-2">Active</span></h4>
-                                 <p className="text-xs text-white/50 leading-relaxed max-w-md italic font-medium">"You are 2 signatures away from final verification. Upload your DMV receipt today to hit 90%."</p>
+                                 <p className="text-xs text-white/50 leading-relaxed max-w-md italic font-medium">Your AI Navigator will provide personalized guidance once your roadmap milestones are set up.</p>
                               </div>
                            </div>
                            <Link href="/portal/client/goals/smart" className="px-8 py-3 bg-white text-indigo-900 font-bold rounded-xl text-xs uppercase tracking-widest hover:bg-teal-400 hover:text-charcoal-900 transition-all shadow-xl active:scale-95 text-center">
@@ -370,20 +348,7 @@ export default function ClientDashboard() {
                  
                  <div className="space-y-4">
                     <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest pl-4">Live Community Feed</h4>
-                    {[
-                      { from: 'J8 (Alisa)', to: 'Mack', msg: 'Thanks for staying late to help me with my DMV docs. You are a lifesaver!' },
-                      { from: 'D9 (John)', to: 'A3 (Brett)', msg: 'Congrats on your housing match milestone, brother! Keep going.' }
-                    ].map((so, i) => (
-                       <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex gap-4">
-                          <div className="w-10 h-10 rounded-full bg-teal-50 flex items-center justify-center shrink-0 border border-teal-100 text-teal-600 font-bold text-[10px] uppercase">
-                             {so.from.split(' ')[0]}
-                          </div>
-                          <div>
-                             <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">To <span className="text-teal-600">{so.to}</span></p>
-                             <p className="text-sm font-bold text-charcoal-900 italic">\"{so.msg}\"</p>
-                          </div>
-                       </div>
-                    ))}
+                    <p className="text-center py-10 text-slate-300 font-medium italic">No shout outs yet. Be the first to brighten someone's day.</p>
                  </div>
               </div>
            )}
@@ -457,7 +422,7 @@ export default function ClientDashboard() {
                      if(!note) return alert("Please provide a note for Mack.");
                      addRequest({
                         id: Date.now(),
-                        client: "Brett Purettman (A3)",
+                        client: "Participant",
                         type,
                         note,
                         status: 'pending',
