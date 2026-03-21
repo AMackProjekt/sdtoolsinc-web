@@ -1,28 +1,10 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { 
-  Calendar, 
-  Upload, 
-  MessageSquare, 
-  ArrowRight, 
-  CheckCircle2, 
-  Clock, 
-  AlertCircle, 
-  ChevronRight, 
-  FileText, 
-  ShieldCheck, 
-  Zap, 
-  Bot,
-  Video,
-  Quote,
-  BookOpen,
-  Heart,
-  Smile,
-  Megaphone,
-  Lightbulb,
-  Frown,
-  Plus
+  Heart, Smile, BookOpen, Megaphone, Lightbulb, Frown, Plus, Quote, Zap, Bot, AlertCircle,
+  ExternalLink, ChevronRight, CheckCircle2, Clock, FileText, ShieldCheck, Upload, MessageSquare,
+  Trash2, Eye, EyeOff, Copy, Check, Send
 } from "lucide-react";
 import Link from "next/link";
 import { useStaff } from "@/context/StaffContext";
@@ -33,71 +15,107 @@ const QUOTES = [
   "You are stronger than you think. DFC is here with you.",
   "Rise up and attack the day with an enthusiastic spirit.",
   "The only way to do great work is to love what you do. Or to start doing it today.",
-  "Your progress is not a sprint, it's a journey. Every mile counts."
+  "Your progress is not a sprint, it's a journey. Every mile counts.",
+  "It's okay not to be okay. Asking for help is strength.",
+  "Progress over perfection. You're doing better than you think."
 ];
 
-const SELF_CARE_TIPS = [
-  { title: "Breathe Deep", text: "Take 5 deep breaths before your daily check-in." },
-  { title: "Hydrate", text: "Drink a glass of water before starting your tasks." },
-  { title: "Walk", text: "A 10-minute walk can reset your mental clarity." },
-  { title: "Acknowledge", text: "Write down one thing you are proud of today." }
+const FINANCIAL_COURSES = [
+  { title: "Khan Academy Finance & Capital Markets", url: "https://www.khanacademy.org/economics-finance-domain/finance-and-capital-markets", description: "Free comprehensive finance fundamentals" },
+  { title: "GreenPath Financial Wellness", url: "https://www.greenpath.org/get-help/financial-counseling/", description: "Free credit counseling and workshops" },
+  { title: "NFCC Money Management", url: "https://www.nfcc.org/", description: "Free financial education and resources" },
+  { title: "Coursera: Finance for Everyone", url: "https://www.coursera.org/learn/finance-for-everyone-smart-tools-for-decision-making", description: "Free audit option available" }
 ];
+
+const ANGER_MANAGEMENT = [
+  { title: "MindBodyOnline Anger Management", url: "https://www.mindbodyonline.com", description: "Classes and programs in San Diego" },
+  { title: "San Diego County Mental Health", url: "https://www.sandiegocounty.gov/content/sdc/hhsa/programs_services/mhsa.html", description: "County anger management programs" },
+  { title: "NAMI San Diego - Support Groups", url: "https://nami.org/Get-Involved/Advocacy-Events/Find-a-NAMI-Group", description: "Free community support" },
+  { title: "Coursera: Emotional Intelligence", url: "https://www.coursera.org/learn/emotional-intelligence", description: "Free audit option" }
+];
+
+const AA_NA_MEETINGS = [
+  { time: "Daily", location: "Downtown San Diego (92101)", type: "AA/NA", url: "https://www.sandiegocountyaa.org/meetings", online: true, phone: "(619) 223-1183" },
+  { time: "Multiple Daily", location: "North Park (92104)", type: "AA", url: "https://www.sandiegocountyaa.org/meetings", online: true, phone: "(619) 223-1183" },
+  { time: "Evening", location: "El Cajon (92020)", type: "NA", url: "https://www.sandiegona.org", online: true, phone: "(619) 560-0811" },
+  { time: "Afternoon/Evening", location: "Chula Vista (91910)", type: "AA/NA", url: "https://www.sandiegocountyaa.org/meetings", online: true, phone: "(619) 223-1183" }
+];
+
+type MoodType = 'happy' | 'good' | 'neutral' | 'stressed' | 'bad';
 
 export default function ClientDashboard() {
-  const { 
-    caseNotes, 
-    documents, 
-    journals, 
-    addJournal, 
-    addFeedback, 
-    addShoutOut,
-    addRequest 
-  } = useStaff();
+  const { addJournal, addFeedback, addShoutOut, addRequest } = useStaff();
   
   const [quote, setQuote] = useState(QUOTES[0]);
   const [activeTab, setActiveTab] = useState("overview");
+  const [journalContent, setJournalContent] = useState("");
+  const [mood, setMood] = useState<MoodType>("neutral");
+  const [feedbackType, setFeedbackType] = useState<'complaint' | 'suggestion'>('suggestion');
+  const [feedbackContent, setFeedbackContent] = useState("");
+  const [ventMessage, setVentMessage] = useState("");
+  const [ventMessages, setVentMessages] = useState<Array<{id: number; msg: string; time: string}>>([]);
+  const [showVentPreview, setShowVentPreview] = useState(false);
+  const [clothingSizes, setClothingSizes] = useState({ gender: 'male', shirt: 'M', pants: '32', shoes: '10' });
+  const [needsCopy, setNeedsCopy] = useState(false);
 
-  // Motivational check on load
   useEffect(() => {
     setQuote(QUOTES[Math.floor(Math.random() * QUOTES.length)]);
   }, []);
-
-  // Journal State
-  const [journalContent, setJournalContent] = useState("");
-  const [mood, setMood] = useState("neutral");
-
-  // Feedback State
-  const [feedbackType, setFeedbackType] = useState<'complaint' | 'suggestion'>('suggestion');
-  const [feedbackContent, setFeedbackContent] = useState("");
-
-  const mySlot = ""; 
-  const myJournals = journals.filter(j => mySlot && j.client === mySlot);
-  const myDocs = documents.filter(d => mySlot && d.client.includes(mySlot));
 
   const handleAddJournal = () => {
     if (!journalContent.trim()) return;
     addJournal({
       id: Date.now(),
-      client: mySlot,
+      client: "Participant",
       date: new Date().toLocaleDateString(),
       mood,
       content: journalContent
     });
     setJournalContent("");
+    alert("Journal entry saved! 📝");
   };
 
   const handleAddFeedback = () => {
     if (!feedbackContent.trim()) return;
     addFeedback({
       id: Date.now(),
-      client: mySlot,
+      client: "Participant",
       type: feedbackType,
       content: feedbackContent,
       date: new Date().toLocaleDateString()
     });
     setFeedbackContent("");
-    alert("Thank you for your feedback. We will review it shortly.");
+    alert("Thank you for your feedback! Your voice matters. ✨");
   };
+
+  const submitVent = () => {
+    if (!ventMessage.trim()) return;
+    setVentMessages([...ventMessages, { id: Date.now(), msg: ventMessage, time: new Date().toLocaleTimeString() }]);
+    setVentMessage("");
+  };
+
+  const submitClothingRequest = () => {
+    const sizeInfo = `Gender: ${clothingSizes.gender === 'male' ? 'Male'  : 'Female'}, Shirt: ${clothingSizes.shirt}, Pants: ${clothingSizes.pants}, Shoes: ${clothingSizes.shoes}`;
+    alert(`✅ Clothing request submitted!\n\n${sizeInfo}\n\nWe'll process your request this week.`);
+  };
+
+  const copyMeetingInfo = (meeting: any) => {
+    const text = `${meeting.type} Meeting\nLocation: ${meeting.location}\nTime: ${meeting.time}\nPhone: ${meeting.phone}`;
+    navigator.clipboard.writeText(text);
+    setNeedsCopy(true);
+    setTimeout(() => setNeedsCopy(false), 2000);
+  };
+
+  const TABS = [
+    { id: 'overview', label: 'Home', icon: Zap },
+    { id: 'wellness', label: 'Wellness', icon: Heart },
+    { id: 'resources', label: 'Resources', icon: BookOpen },
+    { id: 'community', label: 'Community', icon: Smile },
+    { id: 'needs', label: 'Immediate Needs', icon: AlertCircle },
+    { id: 'okay', label: 'It\'s Okay', icon: Megaphone },
+    { id: 'why', label: 'What\'s Your Why', icon: Quote }
+  ];
+
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
@@ -117,331 +135,452 @@ export default function ClientDashboard() {
             \"{quote}\"
           </h1>
           <div className="flex flex-wrap items-center gap-6">
-             <div className="bg-white/10 px-4 py-2 rounded-xl backdrop-blur-md border border-white/5 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-teal-500 flex items-center justify-center font-bold text-xs text-charcoal-900">M</div>
-                <div className="text-xs">
-                   <p className="font-bold text-white">Advice of the Day</p>
-                   <p className="text-white/60">From Mack: \"One page at a time.\"</p>
-                </div>
-             </div>
              <button onClick={() => setQuote(QUOTES[Math.floor(Math.random() * QUOTES.length)])} className="text-xs font-bold text-teal-400 hover:text-white transition flex items-center gap-2">
                 Get New Quote <Zap className="w-3 h-3" />
              </button>
+             <a href="https://forms.microsoft.com/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAM__" target="_blank" rel="noopener noreferrer" className="text-xs font-bold bg-teal-500 text-charcoal-900 px-4 py-2 rounded-lg hover:bg-teal-400 transition flex items-center gap-1">
+               Quick Survey <ExternalLink className="w-3 h-3" />
+             </a>
           </div>
         </div>
       </div>
 
-      {/* DASHBOARD NAVIGATION */}
-      <div className="flex items-center gap-4 bg-white p-2 rounded-2xl border border-slate-200 shadow-sm overflow-x-auto no-scrollbar">
-         {[
-           { id: 'overview', label: 'Progress Explorer', icon: Zap },
-           { id: 'wellness', label: 'Wellness & Journal', icon: Heart },
-           { id: 'feedback', label: 'Support & Suggestions', icon: Megaphone },
-           { id: 'community', label: 'Shout Outs', icon: Smile }
-         ].map(tab => (
+      {/* TABS */}
+      <div className="flex items-center gap-2 bg-white p-2 rounded-2xl border border-slate-200 shadow-sm overflow-x-auto no-scrollbar flex-wrap">
+         {TABS.map(tab => (
            <button 
              key={tab.id}
              onClick={() => setActiveTab(tab.id)}
-             className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all whitespace-nowrap ${
+             className={`flex items-center gap-1.5 px-4 py-2.5 rounded-lg font-bold text-xs transition-all whitespace-nowrap ${
                 activeTab === tab.id ? 'bg-teal-600 text-white shadow-lg shadow-teal-500/20' : 'text-slate-500 hover:bg-slate-50 hover:text-charcoal-900'
              }`}
            >
-             <tab.icon className="w-4 h-4" /> {tab.label}
+             <tab.icon className="w-3.5 h-3.5" /> {tab.label}
            </button>
          ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        {/* MAIN CONTENT AREA */}
-        <div className="lg:col-span-2">
-           {activeTab === 'overview' && (
-              <div className="space-y-8 animate-in slide-in-from-bottom-4">
-                  {/* Progress Roadmap (Expanded) */}
-                  <div className="bg-white p-10 rounded-[2.5rem] border border-slate-200 shadow-sm relative overflow-hidden group">
-                     <div className="absolute top-0 right-0 w-64 h-64 bg-teal-500/5 rounded-full blur-3xl -mr-20 -mt-20"></div>
-                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 relative z-10">
+        {/* MAIN CONTENT */}
+        <div className="lg:col-span-2 space-y-8">
+
+          {/* OVERVIEW TAB */}
+          {activeTab === 'overview' && (
+            <div className="space-y-6 animate-in slide-in-from-bottom-4">
+              <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm">
+                <h2 className="text-2xl font-black text-charcoal-900 mb-3">Welcome to Your Portal</h2>
+                <p className="text-slate-600 leading-relaxed mb-4">This is your safe space to track your journey, access resources, and connect with support. Everything here is designed for your growth and wellbeing.</p>
+                <div className="flex flex-wrap gap-3">
+                  <a href="https://chat.google.com" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition text-sm font-bold">
+                    <MessageSquare className="w-4 h-4" /> Chat with Mack
+                  </a>
+                  <a href="https://forms.microsoft.com/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAM__" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 transition text-sm font-bold">
+                    <Upload className="w-4 h-4" /> Submit Feedback Form
+                  </a>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-8 rounded-[2rem] border border-teal-200 shadow-sm">
+                <h3 className="text-lg font-bold text-emerald-900 mb-4 flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5" /> Quick Wins This Week
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3 p-3 bg-white rounded-lg">
+                    <div className="w-5 h-5 rounded border-2 border-emerald-500 flex items-center justify-center mt-0.5">
+                      <Check className="w-3 h-3 text-emerald-500" />
+                    </div>
+                    <div>
+                      <p className="font-bold text-sm text-charcoal-900">Challenge yourself today</p>
+                      <p className="text-xs text-slate-500">Join a resource or take one action toward your goal</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 p-3 bg-white rounded-lg">
+                    <div className="w-5 h-5 rounded border-2 border-emerald-500 flex items-center justify-center mt-0.5" />
+                    <div>
+                      <p className="font-bold text-sm text-charcoal-900">Journal your feelings</p>
+                      <p className="text-xs text-slate-500">Head to Wellness and write what's on your mind</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm">
+                <h3 className="text-lg font-bold text-charcoal-900 mb-4">How are you feeling today?</h3>
+                <div className="flex gap-3">
+                   {[ { id: 'happy' as MoodType, icon: '😊', color: 'bg-green-100 text-green-700' },
+                      { id: 'good' as MoodType, icon: '🙂', color: 'bg-teal-100 text-teal-700' },
+                      { id: 'neutral' as MoodType, icon: '😐', color: 'bg-slate-100 text-slate-700' },
+                      { id: 'stressed' as MoodType, icon: '😟', color: 'bg-amber-100 text-amber-700' },
+                      { id: 'bad' as MoodType, icon: '😔', color: 'bg-rose-100 text-rose-700' }
+                    ].map(e => (
+                      <button 
+                        key={e.id}
+                        onClick={() => setMood(e.id)}
+                        className={`flex flex-col items-center gap-2 flex-1 p-3 rounded-lg border-2 transition-all ${
+                          mood === e.id ? `border-indigo-500 scale-105 shadow-md ${e.color}` : 'border-slate-100 hover:border-slate-200'
+                        }`}
+                      >
+                        <span className="text-2xl">{e.icon}</span>
+                      </button>
+                    ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* WELLNESS TAB */}
+          {activeTab === 'wellness' && (
+            <div className="space-y-6 animate-in slide-in-from-bottom-4">
+              <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm">
+                <h3 className="text-xl font-bold text-charcoal-900 mb-4 flex items-center gap-2">
+                  <BookOpen className="w-5 h-5 text-indigo-600" /> My Daily Journal
+                </h3>
+                <textarea 
+                  value={journalContent}
+                  onChange={(e) => setJournalContent(e.target.value)}
+                  placeholder="Write your thoughts for today... What was your biggest win? What are you grateful for?"
+                  className="w-full h-40 bg-slate-50 border border-slate-100 rounded-lg p-4 text-slate-700 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-teal-500/20 transition mb-4 font-serif text-sm leading-relaxed"
+                />
+                <button 
+                  onClick={handleAddJournal}
+                  className="w-full bg-indigo-600 text-white font-bold px-4 py-3 rounded-lg hover:bg-indigo-700 transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20"
+                >
+                  Save Journal Entry <Plus className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* RESOURCES TAB */}
+          {activeTab === 'resources' && (
+            <div className="space-y-6 animate-in slide-in-from-bottom-4">
+              <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm">
+                <h3 className="text-xl font-bold text-charcoal-900 mb-4 flex items-center gap-2">
+                  <BookOpen className="w-5 h-5 text-emerald-600" /> 💰 Free Financial Management Courses
+                </h3>
+                <div className="space-y-3">
+                  {FINANCIAL_COURSES.map((course, i) => (
+                    <a key={i} href={course.url} target="_blank" rel="noopener noreferrer" className="block p-4 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-lg hover:shadow-md transition">
+                      <div className="flex items-start justify-between">
                         <div>
-                           <h2 className="text-2xl font-black text-charcoal-900 tracking-tighter flex items-center gap-3">
-                               <Zap className="w-6 h-6 text-amber-500" /> My Housing Roadmap
-                           </h2>
-                           <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Current Phase: Stabilization Audit</p>
+                          <p className="font-bold text-charcoal-900 text-sm">{course.title}</p>
+                          <p className="text-xs text-slate-600 mt-1">{course.description}</p>
                         </div>
-                        <div className="flex items-center gap-4 bg-slate-50 px-6 py-3 rounded-2xl border border-slate-100 shadow-inner">
-                           <div className="text-right">
-                              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Overall Progress</p>
-                              <p className="text-2xl font-black text-charcoal-900 leading-none">—</p>
-                           </div>
-                           <div className="w-1.5 h-10 bg-slate-200 rounded-full"></div>
-                        </div>
-                     </div>
+                        <ExternalLink className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
 
-                     <div className="relative mb-14 px-4">
-                        <div className="flex items-center justify-center py-12 text-slate-300">
-                           <p className="text-sm font-bold italic">No milestones assigned yet. Check back after your intake meeting.</p>
+              <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm">
+                <h3 className="text-xl font-bold text-charcoal-900 mb-4 flex items-center gap-2">
+                  <Heart className="w-5 h-5 text-rose-600" /> 💪 Anger & Emotional Management
+                </h3>
+                <div className="space-y-3">
+                  {ANGER_MANAGEMENT.map((course, i) => (
+                    <a key={i} href={course.url} target="_blank" rel="noopener noreferrer" className="block p-4 bg-gradient-to-r from-rose-50 to-amber-50 border border-rose-200 rounded-lg hover:shadow-md transition">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <p className="font-bold text-charcoal-900 text-sm">{course.title}</p>
+                          <p className="text-xs text-slate-600 mt-1">{course.description}</p>
                         </div>
-                     </div>
+                        <ExternalLink className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
 
-                     {/* AI INSIGHT PULSE */}
-                     <div className="bg-indigo-900 rounded-3xl p-8 text-white relative overflow-hidden shadow-2xl shadow-indigo-900/40">
-                        <div className="absolute top-0 right-0 w-48 h-48 bg-teal-400/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
-                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 relative z-10">
-                           <div className="flex items-center gap-5">
-                              <div className="w-14 h-14 bg-white/10 border border-white/20 rounded-2xl flex items-center justify-center text-teal-400 shadow-inner">
-                                 <Bot className="w-8 h-8 animate-bounce duration-3000" />
-                              </div>
-                              <div>
-                                 <h4 className="text-lg font-bold tracking-tight mb-1">AI Journey Navigator <span className="text-[10px] bg-teal-500/20 text-teal-400 px-2 py-0.5 rounded-full border border-teal-500/30 uppercase tracking-widest ml-2">Active</span></h4>
-                                 <p className="text-xs text-white/50 leading-relaxed max-w-md italic font-medium">Your AI Navigator will provide personalized guidance once your roadmap milestones are set up.</p>
-                              </div>
-                           </div>
-                           <Link href="/portal/client/goals/smart" className="px-8 py-3 bg-white text-indigo-900 font-bold rounded-xl text-xs uppercase tracking-widest hover:bg-teal-400 hover:text-charcoal-900 transition-all shadow-xl active:scale-95 text-center">
-                              Fast-Track This Milestone
-                           </Link>
+              <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm">
+                <h3 className="text-xl font-bold text-charcoal-900 mb-4 flex items-center gap-2">
+                  <MessageSquare className="w-5 h-5 text-indigo-600" /> 🤝 AA/NA Meetings & Support
+                </h3>
+                <p className="text-xs text-slate-600 mb-4">San Diego area meetings (online & in-person)</p>
+                <div className="space-y-3">
+                  {AA_NA_MEETINGS.map((meeting, i) => (
+                    <div key={i} className="p-4 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-lg">
+                      <div className="flex items-start justify-between mb-2">
+                        <div>
+                          <p className="font-bold text-charcoal-900 text-sm">{meeting.type} - {meeting.location}</p>
+                          <p className="text-xs text-slate-600 mt-1 flex items-center gap-1">
+                            <Clock className="w-3 h-3" /> {meeting.time}
+                          </p>
                         </div>
-                     </div>
+                      </div>
+                      <div className="flex gap-2 pt-2">
+                        <a href={`tel:${meeting.phone}`} className="text-xs font-bold text-indigo-600 hover:text-indigo-700 bg-white px-3 py-1.5 rounded flex items-center gap-1">
+                          Call: {meeting.phone}
+                        </a>
+                        <a href={meeting.url} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-indigo-600 hover:text-indigo-700 bg-white px-3 py-1.5 rounded flex items-center gap-1">
+                          <ExternalLink className="w-3 h-3" /> Details
+                        </a>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-slate-500 mt-4 p-3 bg-slate-50 rounded">
+                  <span className="font-bold">📚 AA Literature:</span> <a href="https://www.sandiegocountyaa.org" target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">sandiegocountyaa.org</a> • 
+                  <span className="font-bold ml-2">📚 NA Literature:</span> <a href="https://www.sandiegona.org" target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">sandiegona.org</a>
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* COMMUNITY TAB */}
+          {activeTab === 'community' && (
+            <div className="space-y-6 animate-in slide-in-from-bottom-4">
+              <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm">
+                <h3 className="text-xl font-bold text-charcoal-900 mb-2 flex items-center gap-2">
+                  <Smile className="w-5 h-5 text-teal-600" /> Positive Vibes Board
+                </h3>
+                <p className="text-xs text-slate-600 mb-4">Share encouragement and celebrate wins</p>
+                <div className="flex gap-2">
+                  <input 
+                    type="text" 
+                    placeholder="Share a positive message or win..." 
+                    value={feedbackContent}
+                    onChange={(e) => setFeedbackContent(e.target.value)}
+                    className="flex-1 bg-slate-50 border border-slate-100 rounded-lg px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-500/20"
+                  />
+                  <button 
+                    onClick={handleAddFeedback}
+                    className="bg-teal-600 text-white font-bold px-4 py-2 rounded-lg hover:bg-teal-700 transition"
+                  >
+                    Post
+                  </button>
+                </div>
+              </div>
+
+              <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm">
+                <h3 className="text-xl font-bold text-charcoal-900 mb-4 flex items-center gap-2">
+                  <Heart className="w-5 h-5 text-rose-600" /> Anonymous Community Corner
+                </h3>
+                <p className="text-xs text-slate-600 mb-4">🔒 Completely anonymous. Share, vent, process your feelings without judgment.</p>
+                <div>
+                  <textarea 
+                    value={ventMessage}
+                    onChange={(e) => setVentMessage(e.target.value)}
+                    placeholder="What's on your mind? You're safe here and completely anonymous..."
+                    className="w-full h-24 bg-slate-50 border border-slate-100 rounded-lg p-4 text-sm outline-none focus:ring-2 focus:ring-rose-500/20 resize-none"
+                  />
+                  <button 
+                    onClick={submitVent}
+                    className="w-full mt-3 bg-rose-600 text-white font-bold px-4 py-2.5 rounded-lg hover:bg-rose-700 transition flex items-center justify-center gap-2"
+                  >
+                    <Send className="w-4 h-4" /> Share Anonymously
+                  </button>
+                </div>
+
+                {ventMessages.length > 0 && (
+                  <div className="mt-6 space-y-3">
+                    <p className="text-xs font-bold text-slate-500 uppercase">Community Messages</p>
+                    {ventMessages.map((msg, i) => (
+                      <div key={msg.id} className="p-4 bg-gradient-to-r from-purple-50 to-rose-50 border border-purple-200 rounded-lg text-sm">
+                        <p className="text-charcoal-900 italic mb-2">\"{msg.msg}\"</p>
+                        <p className="text-xs text-slate-500">—Anonymous • {msg.time}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* IMMEDIATE NEEDS TAB */}
+          {activeTab === 'needs' && (
+            <div className="space-y-6 animate-in slide-in-from-bottom-4">
+              <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm">
+                <h3 className="text-xl font-bold text-charcoal-900 mb-4 flex items-center gap-2">
+                  <AlertCircle className="w-5 h-5 text-amber-600" /> 📋 Immediate Needs Assessment
+                </h3>
+                <div className="space-y-4">
+                  <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                    <p className="font-bold text-charcoal-900 text-sm mb-2">Housing Stability</p>
+                    <div className="flex gap-2 flex-wrap">
+                      <button className="text-xs px-3 py-1 bg-white border border-amber-300 rounded hover:bg-amber-50 transition">Urgent</button>
+                      <button className="text-xs px-3 py-1 bg-white border border-amber-300 rounded hover:bg-amber-50 transition">Stable but at risk</button>
+                      <button className="text-xs px-3 py-1 bg-white border border-amber-300 rounded hover:bg-amber-50 transition">Stable</button>
+                    </div>
                   </div>
 
-                 {/* Mental Health Quick Check */}
-                 <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm">
-                    <h3 className="text-lg font-bold text-charcoal-900 mb-6 flex items-center gap-2">
-                       <Smile className="w-5 h-5 text-indigo-500" /> How are you feeling today?
-                    </h3>
-                    <div className="flex gap-4">
-                       {[
-                         { id: 'happy', icon: '😊', color: 'bg-green-100 text-green-700' },
-                         { id: 'good', icon: '🙂', color: 'bg-teal-100 text-teal-700' },
-                         { id: 'neutral', icon: '😐', color: 'bg-slate-100 text-slate-700' },
-                         { id: 'stressed', icon: '😟', color: 'bg-amber-100 text-amber-700' },
-                         { id: 'bad', icon: '😔', color: 'bg-rose-100 text-rose-700' }
-                       ].map(e => (
-                          <button 
-                            key={e.id}
-                            onClick={() => setMood(e.id)}
-                            className={`flex flex-col items-center gap-2 flex-1 p-4 rounded-2xl border-2 transition-all ${
-                              mood === e.id ? `border-indigo-500 scale-105 shadow-md ${e.color}` : 'border-slate-100 hover:border-slate-200'
-                            }`}
-                          >
-                            <span className="text-2xl">{e.icon}</span>
-                            <span className="text-[10px] font-bold uppercase">{e.id}</span>
-                          </button>
-                       ))}
+                  <div className="p-4 bg-rose-50 border border-rose-200 rounded-lg">
+                    <p className="font-bold text-charcoal-900 text-sm mb-2">👕 Clothing Request</p>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="text-xs font-bold text-slate-600 block mb-1">I need clothing for</label>
+                        <select value={clothingSizes.gender} onChange={e => setClothingSizes({...clothingSizes, gender: e.target.value})} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-rose-500/20">
+                          <option value="male">Male</option>
+                          <option value="female">Female</option>
+                        </select>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2">
+                        <div>
+                          <label className="text-xs font-bold text-slate-600 block mb-1">Shirt</label>
+                          <select value={clothingSizes.shirt} onChange={e => setClothingSizes({...clothingSizes, shirt: e.target.value})} className="w-full px-2 py-2 border border-slate-200 rounded text-xs outline-none focus:ring-2 focus:ring-rose-500/20">
+                            <option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>2XL</option><option>3XL</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="text-xs font-bold text-slate-600 block mb-1">Pants</label>
+                          <input type="text" value={clothingSizes.pants} onChange={e => setClothingSizes({...clothingSizes, pants: e.target.value})} placeholder="32" className="w-full px-2 py-2 border border-slate-200 rounded text-xs outline-none focus:ring-2 focus:ring-rose-500/20" />
+                        </div>
+                        <div>
+                          <label className="text-xs font-bold text-slate-600 block mb-1">Shoe</label>
+                          <input type="text" value={clothingSizes.shoes} onChange={e => setClothingSizes({...clothingSizes, shoes: e.target.value})} placeholder="10" className="w-full px-2 py-2 border border-slate-200 rounded text-xs outline-none focus:ring-2 focus:ring-rose-500/20" />
+                        </div>
+                      </div>
+                      <button 
+                        onClick={submitClothingRequest}
+                        className="w-full bg-rose-600 text-white font-bold py-2 rounded-lg hover:bg-rose-700 transition text-sm"
+                      >
+                        Submit Clothing Request
+                      </button>
                     </div>
-                 </div>
+                  </div>
+
+                  <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
+                    <p className="font-bold text-charcoal-900 text-sm mb-2">🥗 Food Security</p>
+                    <a href="https://www.feedingsandiego.org" target="_blank" rel="noopener noreferrer" className="text-xs text-emerald-600 hover:underline font-bold flex items-center gap-1">
+                      Feeding San Diego Resources <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
+
+                  <div className="p-4 bg-sky-50 border border-sky-200 rounded-lg">
+                    <p  className="font-bold text-charcoal-900 text-sm mb-2">🏥 Healthcare Access</p>
+                    <a href="https://www.sandiegocounty.gov/content/sdc/hhsa/programs_services" target="_blank" rel="noopener noreferrer" className="text-xs text-sky-600 hover:underline font-bold flex items-center gap-1">
+                      San Diego County Health Services <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
+                </div>
               </div>
-           )}
+            </div>
+          )}
 
-           {activeTab === 'wellness' && (
-              <div className="space-y-8 animate-in slide-in-from-bottom-4">
-                 {/* Journal Input */}
-                 <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm">
-                    <h3 className="text-xl font-bold text-charcoal-900 mb-6 flex items-center gap-2">
-                       <BookOpen className="w-5 h-5 text-indigo-600" /> My Daily Journal
-                    </h3>
-                    <textarea 
-                      value={journalContent}
-                      onChange={(e) => setJournalContent(e.target.value)}
-                      placeholder="Write your thoughts for today... What was your biggest win?"
-                      className="w-full h-40 bg-slate-50 border border-slate-100 rounded-2xl p-6 text-slate-700 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-teal-500/20 transition mb-4 font-serif text-lg leading-relaxed shadow-inner"
-                    />
-                    <div className="flex items-center justify-between">
-                       <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Entry Mood:</span>
-                          <span className="text-lg">{mood === 'happy' ? '😊' : mood === 'neutral' ? '😐' : mood === 'good' ? '🙂' : mood === 'stressed' ? '😟' : '😔'}</span>
-                       </div>
-                       <button 
-                         onClick={handleAddJournal}
-                         className="bg-indigo-600 text-white font-bold px-8 py-3 rounded-xl hover:bg-indigo-700 transition flex items-center gap-2 shadow-lg shadow-indigo-500/20"
-                       >
-                         Save Journal Entry <Plus className="w-4 h-4" />
-                       </button>
-                    </div>
-                 </div>
-
-                 {/* Journal History */}
-                 <div className="space-y-4">
-                    <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest pl-4">Past Entries</h4>
-                    {myJournals.map(entry => (
-                       <div key={entry.id} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm group hover:shadow-md transition">
-                          <div className="flex items-center justify-between mb-2">
-                             <div className="flex items-center gap-2">
-                                <span className="text-lg">{entry.mood === 'happy' ? '😊' : entry.mood === 'neutral' ? '😐' : entry.mood === 'good' ? '🙂' : entry.mood === 'stressed' ? '😟' : '😔'}</span>
-                                <span className="text-xs font-bold text-charcoal-900">{entry.date}</span>
-                             </div>
-                          </div>
-                          <p className="text-sm text-slate-600 leading-relaxed font-serif">{entry.content}</p>
-                       </div>
-                    ))}
-                    {myJournals.length === 0 && <p className="text-center py-8 text-slate-300 font-medium italic">Your journal is waiting for its first entry.</p>}
-                 </div>
+          {/* IT'S OKAY NOT TO BE OKAY TAB */}
+          {activeTab === 'okay' && (
+            <div className="space-y-6 animate-in slide-in-from-bottom-4">
+              <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-8 rounded-[2rem] border border-purple-300 shadow-sm">
+                <h2 className="text-3xl font-black text-purple-900 mb-3">It's Okay Not to Be Okay</h2>
+                <p className="text-purple-800 leading-relaxed font-medium mb-4">
+                  Asking for help is a sign of strength, not weakness. Every single person struggles sometimes. You're not alone, and reaching out — like you're doing right now — is exactly what healing looks like.
+                </p>
               </div>
-           )}
 
-           {activeTab === 'feedback' && (
-              <div className="space-y-8 animate-in slide-in-from-bottom-4">
-                 <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm">
-                    <h3 className="text-xl font-bold text-charcoal-900 mb-4 flex items-center gap-2">
-                       <Megaphone className="w-5 h-5 text-rose-500" /> Send Feedback or Suggestion
-                    </h3>
-                    <p className="text-sm text-slate-500 mb-8">Your voice matters at Dreams for Change. Tell us how we can improve.</p>
-                    
-                    <div className="flex gap-4 mb-6">
-                       <button 
-                         onClick={() => setFeedbackType('suggestion')}
-                         className={`flex-1 py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all ${
-                           feedbackType === 'suggestion' ? 'bg-emerald-50 text-emerald-700 border-2 border-emerald-200' : 'bg-slate-50 text-slate-500 border-2 border-transparent'
-                         }`}
-                       >
-                         <Lightbulb className="w-4 h-4" /> Suggestion
-                       </button>
-                       <button 
-                         onClick={() => setFeedbackType('complaint')}
-                         className={`flex-1 py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all ${
-                           feedbackType === 'complaint' ? 'bg-rose-50 text-rose-700 border-2 border-rose-200' : 'bg-slate-50 text-slate-500 border-2 border-transparent'
-                         }`}
-                       >
-                         <Frown className="w-4 h-4" /> Grievance
-                       </button>
-                    </div>
-
-                    <textarea 
-                      value={feedbackContent}
-                      onChange={(e) => setFeedbackContent(e.target.value)}
-                      placeholder={feedbackType === 'suggestion' ? "I would like to suggest..." : "I have a complaint about..."}
-                      className="w-full h-32 bg-slate-50 border border-slate-100 rounded-2xl p-6 text-slate-700 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-teal-500/20 transition mb-6 shadow-inner"
-                    />
-
-                    <button 
-                      onClick={handleAddFeedback}
-                      className={`w-full py-4 rounded-2xl font-bold text-white transition shadow-lg ${
-                         feedbackType === 'suggestion' ? 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-500/20' : 'bg-rose-600 hover:bg-rose-700 shadow-rose-500/20'
-                      }`}
-                    >
-                      Submit To Management
-                    </button>
-                 </div>
-              </div>
-           )}
-
-           {activeTab === 'community' && (
-              <div className="space-y-8 animate-in slide-in-from-bottom-4">
-                 <div className="bg-charcoal-900 p-8 rounded-[2rem] text-white overflow-hidden relative">
-                    <div className="absolute top-0 right-0 w-48 h-48 bg-teal-400/10 rounded-full blur-3xl"></div>
-                    <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-                       <Smile className="w-5 h-5 text-teal-400" /> Give a Shout Out
-                    </h3>
-                    <p className="text-sm text-slate-400 mb-8 max-w-lg">Highlight a fellow participant or a staff member who made an impact today.</p>
-                    
-                    <div className="space-y-4">
-                       <input 
-                         type="text" 
-                         placeholder="Who are you shouting out? (e.g. Mack, Alex, A2...)" 
-                         className="w-full bg-white/5 border border-white/10 p-4 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-400/50"
-                       />
-                       <textarea 
-                         placeholder="What was their impact?" 
-                         className="w-full bg-white/5 border border-white/10 p-4 rounded-xl text-sm h-24 outline-none focus:ring-2 focus:ring-teal-400/50"
-                       />
-                       <button className="w-full py-4 bg-teal-500 text-charcoal-900 font-bold rounded-xl hover:bg-teal-400 transition shadow-xl shadow-teal-500/20">Post Shout Out</button>
-                    </div>
-                 </div>
-                 
-                 <div className="space-y-4">
-                    <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest pl-4">Live Community Feed</h4>
-                    <p className="text-center py-10 text-slate-300 font-medium italic">No shout outs yet. Be the first to brighten someone's day.</p>
-                 </div>
-              </div>
-           )}
-        </div>
-
-        {/* SIDEBAR TOOLS */}
-        <div className="space-y-8">
-           
-           {/* Self-Care Corner */}
-           <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm">
-              <h3 className="text-lg font-bold text-charcoal-900 mb-6 flex items-center gap-2">
-                 <Heart className="w-5 h-5 text-rose-500" /> Self-Care Corner
-              </h3>
               <div className="space-y-4">
-                 {SELF_CARE_TIPS.map((tip, i) => (
-                    <div key={i} className="p-4 bg-slate-50 border border-slate-100 rounded-2xl hover:border-teal-500/30 transition cursor-default">
-                       <p className="text-xs font-bold text-charcoal-900 mb-1">{tip.title}</p>
-                       <p className="text-[11px] text-slate-500 leading-relaxed">{tip.text}</p>
-                    </div>
-                 ))}
+                {[
+                  { title: "Crisis Resources (24/7)", desc: "If you're in crisis, help is immediately available", items: ["National Suicide Prevention: 988", "Crisis Text Line: Text HOME to 741741", "San Diego 211: Dial 211"] },
+                  { title: "Your feelings are valid", desc: "Whatever you're experiencing is real and matters", items: ["Sadness. Anger. Confusion. Disappointment. All okay.", "Your pace is your pace. No judgment here.", "Growth isn't linear. Setbacks happen."] },
+                  { title: "You deserve support", desc: "Professional help can change your life", items: ["NAMI Peer Support: (619) 491-NAMI", "Community Mental Health Center: hotline available", "Therapy is for everyone, not just 'sick' people"] }
+                ].map((section, i) => (
+                  <div key={i} className="bg-white p-6 rounded-[2rem] border border-slate-200 shadow-sm">
+                    <h3 className="font-bold text-charcoal-900 mb-2">{section.title}</h3>
+                    <p className="text-xs text-slate-600 mb-4">{section.desc}</p>
+                    <ul className="space-y-2">
+                      {section.items.map((item, j) => (
+                        <li key={j} className="text-sm text-charcoal-900 flex items-start gap-2">
+                          <CheckCircle2 className="w-4 h-4 text-purple-500 shrink-0 mt-0.5" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
               </div>
-           </div>
 
-           {/* Meeting Hub (Launchpad) */}
-           <div className="bg-indigo-900 p-8 rounded-[2rem] text-white shadow-xl relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-teal-400/20 rounded-full blur-3xl -mr-10 -mt-10 transition-transform duration-1000 group-hover:scale-150"></div>
-              <h3 className="text-md font-bold mb-4 flex items-center gap-2">
-                 <Bot className="w-5 h-5 text-teal-400" /> CaseFlow AI Assistant
-              </h3>
-              <p className="text-xs text-slate-300 mb-6 leading-relaxed">
-                 Need help with your housing roadmap? Ask me anything about Section 8 or DMV vouchers.
-              </p>
-              <div className="p-4 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md mb-4 flex items-center text-xs text-white/40">
-                 Type your question...
+              <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm">
+                <h3 className="text-lg font-bold text-charcoal-900 mb-3">💬 What's something you're struggling with right now?</h3>
+                <textarea 
+                  placeholder="Write it here. No judgment. No filters. Just honesty..."
+                  rows={6}
+                  className="w-full bg-slate-50 border border-slate-100 rounded-lg p-4 text-sm outline-none focus:ring-2 focus:ring-purple-500/20"
+                />
+                <button className="w-full mt-3 bg-purple-600 text-white font-bold py-3 rounded-lg hover:bg-purple-700 transition">
+                  Save My Thoughts Privately
+                </button>
               </div>
-              <button className="w-full py-4 bg-teal-500 hover:bg-teal-400 text-charcoal-900 font-bold rounded-xl text-xs transition uppercase tracking-widest shadow-lg shadow-teal-500/20">Start Chat session</button>
-           </div>
+            </div>
+          )}
 
-           {/* LIVE REQUEST BRIDGE */}
-           <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-xl overflow-hidden relative group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-2xl -mr-10 -mt-10"></div>
-              <h3 className="text-lg font-black text-charcoal-900 mb-6 flex items-center gap-3 tracking-tighter">
-                 <Zap className="w-5 h-5 text-indigo-600" /> Case Request Hub
-              </h3>
-              
-              <div className="space-y-4 relative z-10">
-                 <div>
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Request Type</label>
-                    <select 
-                      id="requestType"
-                      className="w-full bg-slate-50 border border-slate-100 p-3 rounded-xl text-xs font-bold text-charcoal-900 outline-none focus:ring-2 focus:ring-indigo-500/20"
-                    >
-                       <option>Face-to-Face Session</option>
-                       <option>DMV/ID Voucher</option>
-                       <option>Housing Audit Review</option>
-                       <option>Emergency Resource</option>
-                    </select>
-                 </div>
-                 <div>
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Internal Note (Ref: Mack)</label>
+          {/* WHAT'S YOUR WHY TAB */}
+          {activeTab === 'why' && (
+            <div className="space-y-6 animate-in slide-in-from-bottom-4">
+              <div className="bg-gradient-to-br from-indigo-50 to-blue-50 p-8 rounded-[2rem] border border-indigo-300 shadow-sm">
+                <h2 className="text-3xl font-black text-indigo-900 mb-3">What's Your Why?</h2>
+                <p className="text-indigo-800 leading-relaxed font-medium">
+                  Your 'Why' is your anchor. When things get hard, it reminds you why you started. Your reason. Your dream. Your purpose. Let's get clear on it.
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                {[
+                  { q: "What does your ideal future look like?", hint: "Describe it in vivid detail. Where are you? What are you doing? Who's with you?" },
+                  { q: "What do you want for your family or loved ones?", hint: "What impact do you want to have? What legacy?" },
+                  { q: "What would your past self want you to know?", hint: "The version of you from 5 years ago — what would they tell you?" },
+                  { q: "When was the last time you felt truly proud of yourself?", hint: "What led to that moment? Can you recreate that feeling?" }
+                ].map((item, i) => (
+                  <div key={i} className="bg-white p-6 rounded-[2rem] border border-slate-200 shadow-sm">
+                    <h3 className="font-bold text-charcoal-900 mb-1 text-sm">{item.q}</h3>
+                    <p className="text-xs text-slate-500 mb-3 italic">{item.hint}</p>
                     <textarea 
-                      id="requestNote"
-                      placeholder="Brief context for the request..." 
-                      className="w-full bg-slate-50 border border-slate-100 p-4 rounded-xl text-xs h-24 outline-none focus:ring-2 focus:ring-indigo-500/20"
+                      placeholder="Write your answer..."
+                      rows={4}
+                      className="w-full bg-slate-50 border border-slate-100 rounded-lg p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-500/20"
                     />
-                 </div>
-                 <button 
-                   onClick={() => {
-                     const type = (document.getElementById('requestType') as HTMLSelectElement).value;
-                     const note = (document.getElementById('requestNote') as HTMLTextAreaElement).value;
-                     if(!note) return alert("Please provide a note for Mack.");
-                     addRequest({
-                        id: Date.now(),
-                        client: "Participant",
-                        type,
-                        note,
-                        status: 'pending',
-                        date: new Date().toLocaleDateString()
-                     });
-                     (document.getElementById('requestNote') as HTMLTextAreaElement).value = "";
-                     alert("Request submitted to Mack. You will be notified of approval.");
-                   }}
-                   className="w-full py-4 bg-indigo-600 text-white font-black rounded-xl hover:bg-indigo-700 transition shadow-lg shadow-indigo-600/20 active:scale-95"
-                 >
-                    Submit Request
-                 </button>
+                  </div>
+                ))}
               </div>
-           </div>
 
-           {/* Feedback Stats... (Existing) */}
-
+              <div className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white p-8 rounded-[2rem] shadow-lg">
+                <h3 className="text-xl font-bold mb-2">🎯 Your Why Statement</h3>
+                <p className="text-sm mb-4 text-white/90">Create a powerful statement that reminds you why you're doing this. Say it to yourself every morning.</p>
+                <textarea 
+                  placeholder='"I am fighting for __________ because __________. My future is worth it."'
+                  rows={4}
+                  className="w-full bg-white/10 border border-white/20 text-white rounded-lg p-4 text-sm outline-none focus:ring-2 focus:ring-white/50 placeholder:text-white/50 resize-none"
+                />
+                <button className="w-full mt-3 bg-white text-indigo-600 font-bold py-3 rounded-lg hover:bg-blue-50 transition">
+                  Save My Why
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
+        {/* SIDEBAR */}
+        <div className="space-y-6">
+          
+          {/* Self-Care Tips */}
+          <div className="bg-white p-6 rounded-[2rem] border border-slate-200 shadow-sm sticky top-4">
+            <h3 className="text-lg font-bold text-charcoal-900 mb-4 flex items-center gap-2">
+              <Heart className="w-5 h-5 text-rose-500" /> Self-Care Today
+            </h3>
+            <div className="space-y-3">
+              <div className="p-3 bg-gradient-to-r from-teal-50 to-blue-50 border border-teal-100 rounded-lg">
+                <p className="text-xs font-bold text-charcoal-900 mb-1">💧 Hydrate</p>
+                <p className="text-[11px] text-slate-600">Drink a glass of water right now</p>
+              </div>
+              <div className="p-3 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-100 rounded-lg">
+                <p className="text-xs font-bold text-charcoal-900 mb-1">🚶 Move</p>
+                <p className="text-[11px] text-slate-600">A 5-minute walk can reset your mood</p>
+              </div>
+              <div className="p-3 bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-100 rounded-lg">
+                <p className="text-xs font-bold text-charcoal-900 mb-1">🎁 Celebrate</p>
+                <p className="text-[11px] text-slate-600">Write down one thing you're doing well</p>
+              </div>
+              <div className="p-3 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-100 rounded-lg">
+                <p className="text-xs font-bold text-charcoal-900 mb-1">❤️ Breathe</p>
+                <p className="text-[11px] text-slate-600">5 deep breaths. In through nose, out through mouth</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-indigo-50 to-purple-50 p-6 rounded-[2rem] border border-indigo-200 shadow-sm">
+            <p className="text-sm font-bold text-indigo-900 mb-2">🌟 You're Doing Great</p>
+            <p className="text-xs text-indigo-800 leading-relaxed">The fact that you're here, taking steps to improve your life, shows incredible strength. Keep going. You've got this.</p>
+          </div>
+        </div>
       </div>
     </div>
   );
