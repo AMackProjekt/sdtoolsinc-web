@@ -99,6 +99,10 @@ function StaffLayoutContent({ children }: { children: React.ReactNode }) {
             <Terminal className="w-5 h-5 text-teal-400" />
             Command Terminal
           </Link>
+          <Link href="/portal/staff/compliance" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-charcoal-800 hover:text-white transition">
+            <ShieldCheck className="w-5 h-5" />
+            Compliance
+          </Link>
         </nav>
 
         <div className="p-4 border-t border-charcoal-800">

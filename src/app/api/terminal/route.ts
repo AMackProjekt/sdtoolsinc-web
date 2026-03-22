@@ -1,7 +1,12 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 import { getAuthContext } from '@/lib/authz';
 import { logAudit } from '@/lib/audit';
 import { enforce } from '@/lib/policy';
+
+const TerminalBodySchema = z.object({
+  command: z.string().min(1).max(500),
+});
 
 export async function POST(req: Request) {
   const auth = await getAuthContext();
@@ -18,8 +23,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'PHI workflow is not approved in this environment' }, { status: 503 });
   }
 
-  const { command } = await req.json();
-  const cmd = command.toLowerCase().trim();
+  const rawBody = await req.json();
+  const parsed = TerminalBodySchema.safeParse(rawBody);
+  if (!parsed.success) {
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
+  }
+  const cmd = parsed.data.command.toLowerCase().trim();
 
   let output = "";
   
