@@ -6,16 +6,22 @@ import { AlertCircle, Search, Filter, MoreHorizontal, Plus, Zap } from "lucide-r
 import { useStaff } from "@/context/StaffContext";
 
 export default function StaffDashboard() {
-  const { participants } = useStaff();
+  const { participants, updateParticipantStatus } = useStaff();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
 
+  function cycleStatus(current: string): string {
+    if (current.includes("Active")) return "Broken Platform";
+    if (current === "Broken Platform") return "Empty";
+    return "Active";
+  }
+
   const metrics = useMemo(() => ({
     capacity: participants.length,
     active: participants.filter(c => c.status.includes("Active")).length,
-    available: participants.filter(c => c.status === "Available").length,
-    pending: participants.filter(c => !c.status.includes("Active") && c.status !== "Available").length
+    empty: participants.filter(c => c.status === "Empty").length,
+    broken: participants.filter(c => c.status === "Broken Platform").length,
   }), [participants]);
 
   const filteredCaseload = useMemo(() => {
@@ -74,15 +80,15 @@ export default function StaffDashboard() {
 
         <div className="relative bg-gray-900 p-5 rounded-2xl border border-gray-700/50 overflow-hidden group hover:border-gray-600 transition-all">
           <div className="absolute top-0 right-0 w-24 h-24 bg-gray-700/20 rounded-full -mr-8 -mt-8 group-hover:bg-gray-700/30 transition-colors" />
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Available Slots</p>
-          <p className="text-4xl font-bold text-gray-400">{metrics.available}</p>
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Empty Slots</p>
+          <p className="text-4xl font-bold text-gray-400">{metrics.empty}</p>
           <div className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-gray-600/50 to-transparent w-full" />
         </div>
 
         <div className="relative bg-gray-900 p-5 rounded-2xl border border-rose-500/20 overflow-hidden group hover:border-rose-500/40 transition-all">
           <div className="absolute top-0 right-0 w-24 h-24 bg-rose-500/5 rounded-full -mr-8 -mt-8 group-hover:bg-rose-500/10 transition-colors" />
-          <p className="text-xs font-semibold text-rose-400/70 uppercase tracking-widest mb-2">Broken / Other</p>
-          <p className="text-4xl font-bold text-rose-400">{metrics.pending}</p>
+          <p className="text-xs font-semibold text-rose-400/70 uppercase tracking-widest mb-2">Broken Platform</p>
+          <p className="text-4xl font-bold text-rose-400">{metrics.broken}</p>
           <div className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-rose-500/40 to-transparent w-full" />
         </div>
       </div>
@@ -147,7 +153,7 @@ export default function StaffDashboard() {
                   <tr
                     key={index}
                     className={`group border-b border-gray-800/60 transition-all ${
-                      entry.status === "Available" ? "bg-gray-900/40" : "hover:bg-teal-500/5"
+                      entry.status === "Empty" ? "bg-gray-900/40" : "hover:bg-teal-500/5"
                     }`}
                   >
                     <td className="px-6 py-4 text-sm font-bold whitespace-nowrap">
@@ -160,7 +166,7 @@ export default function StaffDashboard() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-3">
-                        {entry.status === "Available" ? (
+                        {entry.status === "Empty" ? (
                           <div className="w-8 h-8 rounded-full border border-dashed border-gray-700 flex items-center justify-center bg-gray-800/50" />
                         ) : (
                           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-teal-500 to-cyan-600 flex items-center justify-center text-white font-bold text-xs shrink-0 cyber-avatar-glow">
@@ -168,7 +174,7 @@ export default function StaffDashboard() {
                           </div>
                         )}
                         <span className={`font-medium text-sm ${
-                          entry.status === "Available" ? "text-gray-600 italic" :
+                          entry.status === "Empty" ? "text-gray-600 italic" :
                           entry.status === "Broken Platform" ? "text-rose-400 italic" :
                           "text-gray-200"
                         }`}>
@@ -177,19 +183,23 @@ export default function StaffDashboard() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold border ${
-                        entry.status.includes("Active")
-                          ? "bg-teal-500/10 text-teal-400 border-teal-500/30"
-                          : entry.status === "Broken Platform"
-                          ? "bg-rose-500/10 text-rose-400 border-rose-500/30"
-                          : "bg-gray-800 text-gray-500 border-gray-700"
-                      }`}>
+                      <button
+                        title={`Cycle status for ${entry.slot} (currently: ${entry.status})`}
+                        onClick={() => updateParticipantStatus(entry.slot, cycleStatus(entry.status))}
+                        className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold border transition-all hover:scale-105 active:scale-95 cursor-pointer ${
+                          entry.status.includes("Active")
+                            ? "bg-teal-500/10 text-teal-400 border-teal-500/30 hover:bg-teal-500/20"
+                            : entry.status === "Broken Platform"
+                            ? "bg-rose-500/10 text-rose-400 border-rose-500/30 hover:bg-rose-500/20"
+                            : "bg-gray-800 text-gray-500 border-gray-700 hover:bg-gray-700"
+                        }`}
+                      >
                         {entry.status.includes("Active") && (
                           <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mr-1.5 animate-pulse cyber-dot-glow" />
                         )}
                         {entry.status === "Broken Platform" && <AlertCircle className="w-3 h-3 mr-1" />}
                         {entry.status}
-                      </span>
+                      </button>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap hidden md:table-cell">
                       <span className="text-xs text-gray-500 font-mono tracking-wider flex items-center gap-2">

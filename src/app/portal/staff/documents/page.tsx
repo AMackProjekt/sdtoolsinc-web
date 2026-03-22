@@ -21,6 +21,10 @@ export default function DocumentCenter() {
 
   // Close dropdown when typing outside
   useEffect(() => {
+    setDocuments(contextDocs);
+  }, [contextDocs]);
+
+  useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setShowDropdown(false);
@@ -70,9 +74,10 @@ export default function DocumentCenter() {
         size: "3.4 MB", // Simulated random size
         client: selectedClient || "Unassigned/General",
         date: "Just now",
-        uploader: "donyale@dreamsforchange.org"
+        uploader: "staff-user"
       };
       setDocuments([newDoc, ...documents]);
+      addDocument(newDoc);
       setIsUploading(false);
       
       // Reset form
@@ -176,7 +181,8 @@ export default function DocumentCenter() {
                         <span className="text-sm">{selectedClient}</span>
                       </div>
                       <button 
-                        onClick={() => setSelectedClient("")} 
+                        title="Clear selected participant"
+                        onClick={() => setSelectedClient("")}
                         className="text-teal-600 hover:text-teal-800 bg-teal-100 hover:bg-teal-200 p-1 rounded-md transition"
                       >
                         <X className="w-3 h-3" />
@@ -236,7 +242,7 @@ export default function DocumentCenter() {
 
                 <div>
                   <label className="block text-sm font-semibold text-charcoal-700 mb-1">Document Category</label>
-                  <select className="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-lg px-3 py-2 outline-none appearance-none cursor-pointer">
+                  <select title="Document Category" className="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-lg px-3 py-2 outline-none appearance-none cursor-pointer">
                     <option>SOP Audit Packet</option>
                     <option>Housing / Section 8</option>
                     <option>Medical Records</option>
@@ -253,7 +259,7 @@ export default function DocumentCenter() {
             <div>
               <h4 className="text-sm font-bold text-indigo-900">Secure Uploader Active</h4>
               <p className="text-xs text-indigo-700 mt-1 leading-relaxed">
-                All uploaded documents are instantly watermarked, encrypted, and tracked permanently under <strong>donyale@dreamsforchange.org</strong>.
+                All uploaded documents are encrypted and tracked under your authenticated account.
               </p>
             </div>
           </div>
@@ -326,8 +332,9 @@ export default function DocumentCenter() {
                               {doc.client}
                             </span>
                           ) : (
-                            <select 
-                              onChange={(e) => handleAssignFromTable(doc.id, e.target.value)}
+                            <select
+                title="Assign to participant"
+                onChange={(e) => handleAssignFromTable(doc.id, e.target.value)}
                               className="w-full max-w-[180px] bg-amber-50 border border-amber-200 text-amber-700 font-semibold rounded-md px-2 py-1 outline-none text-xs cursor-pointer focus:ring-2 focus:ring-amber-500/20"
                             >
                               <option value="">+ Assign Client</option>
@@ -350,7 +357,7 @@ export default function DocumentCenter() {
                             <button className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors focus:outline-none" title="Delete">
                               <Trash2 className="w-4 h-4" />
                             </button>
-                            <button className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors focus:outline-none ml-1">
+                            <button title="More options" className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors focus:outline-none ml-1">
                               <MoreHorizontal className="w-4 h-4" />
                             </button>
                           </div>

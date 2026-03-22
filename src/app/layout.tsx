@@ -11,6 +11,7 @@ export const metadata: Metadata = {
 };
 
 import { ThemeProvider } from '@/context/ThemeContext';
+import { AuthSessionProvider } from '@/components/AuthSessionProvider';
 
 export default function RootLayout({
   children,
@@ -20,9 +21,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ThemeProvider>
-          {children}
-        </ThemeProvider>
+        <AuthSessionProvider>
+          <ThemeProvider>
+            {children}
+          </ThemeProvider>
+        </AuthSessionProvider>
         <Analytics />
       </body>
     </html>

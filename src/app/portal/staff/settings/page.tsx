@@ -111,8 +111,9 @@ export default function SettingsPage() {
               </div>
               <input 
                 type="email" 
+                title="Primary Email Forwarding Address"
                 disabled 
-                value="donyale@dreamsforchange.org" 
+                value="staff@dreamsforchange.org" 
                 className="bg-slate-200 border border-slate-300 text-slate-600 font-bold px-4 py-2 rounded-lg cursor-not-allowed w-full md:w-auto text-sm"
               />
             </div>
@@ -162,7 +163,7 @@ export default function SettingsPage() {
                        <div className="absolute top-1 right-1 w-3 h-3 bg-white rounded-full"></div>
                     </div>
                  </div>
-                 <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest leading-relaxed">Status: Connected to donyale@dreamsforchange.org</p>
+                 <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest leading-relaxed">Status: Connected to workspace account</p>
               </div>
 
               {/* Plugin 2 */}

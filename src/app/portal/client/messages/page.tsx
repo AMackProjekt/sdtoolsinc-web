@@ -1,10 +1,80 @@
 "use client";
 
-import { MessageSquare, ExternalLink, Bot, CheckCircle2, User, Search, Send, Clock, Video } from "lucide-react";
+import { ExternalLink, MessageSquare, ShieldCheck, Users } from "lucide-react";
+
+const CHANNEL_URL = "https://chat.google.com/u/2/app/chat/AAQABMc-VMI";
 
 export default function ClientMessages() {
   return (
-    <div className="h-[calc(100vh-160px)] flex flex-col space-y-8 animate-in fade-in duration-700">
+    <div className="space-y-8 animate-in fade-in duration-700">
+
+      {/* Header */}
+      <div>
+        <h1 className="text-4xl font-black text-charcoal-900 tracking-tight">
+          Messaging <span className="text-blue-500">Channel</span>.
+        </h1>
+        <p className="text-slate-500 mt-2 font-medium">
+          Communicate with your Case Manager through the Dreams for Change Google Chat space.
+        </p>
+      </div>
+
+      {/* Channel Card */}
+      <div className="bg-white rounded-[2.5rem] border border-slate-200 shadow-xl p-10 flex flex-col md:flex-row items-center gap-10 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+
+        <div className="w-20 h-20 bg-blue-50 rounded-[1.75rem] flex items-center justify-center shrink-0 border border-blue-100 shadow-inner">
+          <MessageSquare className="w-10 h-10 text-blue-500" />
+        </div>
+
+        <div className="flex-1 relative z-10">
+          <p className="text-[10px] font-black text-blue-500 uppercase tracking-[0.25em] mb-2">Dreams for Change</p>
+          <h2 className="text-2xl font-black text-charcoal-900 tracking-tighter mb-2">
+            Champions
+          </h2>
+          <p className="text-sm text-slate-500 font-medium leading-relaxed max-w-xl">
+            Champions is your official Google Chat space with your Case Manager. Use it for housing updates, 
+            check-ins, document questions, and daily support.
+          </p>
+
+          <div className="flex flex-wrap gap-3 mt-6">
+            <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2">
+              <ShieldCheck className="w-4 h-4 text-teal-500" />
+              <span className="text-xs font-bold text-slate-600">Google Workspace Secured</span>
+            </div>
+            <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2">
+              <Users className="w-4 h-4 text-indigo-500" />
+              <span className="text-xs font-bold text-slate-600">Staff-Moderated</span>
+            </div>
+          </div>
+        </div>
+
+        <button
+          onClick={() => window.open(CHANNEL_URL, '_blank')}
+          className="shrink-0 flex items-center gap-3 px-10 py-5 bg-blue-600 text-white font-black rounded-2xl text-sm uppercase tracking-widest hover:bg-blue-700 shadow-xl shadow-blue-500/20 active:scale-95 transition-all group"
+        >
+          Open Channel
+          <ExternalLink className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+        </button>
+      </div>
+
+      {/* Invite Notice */}
+      <div className="bg-amber-50 border border-amber-200 rounded-[1.75rem] p-8 flex items-start gap-5">
+        <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0 mt-0.5">
+          <span className="text-lg">📩</span>
+        </div>
+        <div>
+          <p className="font-black text-amber-900 text-sm mb-1">Invitation Required</p>
+          <p className="text-amber-800 text-sm leading-relaxed font-medium">
+            Access to Champions requires a staff invitation to the channel. 
+            If you haven&apos;t been added yet, let your Case Manager know at your next check-in.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  );
+}
+
       
       {/* Header Area */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -29,10 +99,10 @@ export default function ClientMessages() {
               <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl -mr-10 -mt-10"></div>
               <div className="flex items-center gap-4 mb-6">
                  <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center font-bold shadow-sm">
-                    M
+                    CM
                  </div>
                  <div>
-                    <h3 className="font-bold text-charcoal-900 text-sm">Mack (The Champ)</h3>
+                    <h3 className="font-bold text-charcoal-900 text-sm">Case Manager</h3>
                     <div className="flex items-center gap-1.5 mt-1">
                        <span className="w-2 h-2 rounded-full bg-green-500"></span>
                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Online Hub</span>
@@ -90,15 +160,15 @@ export default function ClientMessages() {
               {/* Message groups */}
               <div className="space-y-6">
                  <div className="flex gap-4">
-                    <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center font-bold text-[10px] text-indigo-600 shrink-0">M</div>
+                    <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center font-bold text-[10px] text-indigo-600 shrink-0">CM</div>
                     <div className="max-w-xl bg-slate-50 p-5 rounded-3xl rounded-tl-lg text-sm text-slate-700 leading-relaxed border border-slate-100 shadow-inner">
-                       Hey Brett, I got the paperwork for Section 8 you left me. Great work on the stabilization audit. Can you make sure to sign the SDHC consent form tomorrow?
+                       I received your paperwork update. Please complete the required consent form before tomorrow's check-in.
                     </div>
                  </div>
 
                  <div className="flex gap-4 justify-end">
                     <div className="max-w-xl bg-blue-600 p-5 rounded-3xl rounded-tr-lg text-sm text-white leading-relaxed shadow-lg shadow-blue-500/10 font-medium">
-                       Will do, thanks Mack. I'll have it ready when you scoop it up at 2 PM.
+                       Thanks, I will have it ready before the scheduled follow-up.
                     </div>
                  </div>
               </div>
@@ -106,12 +176,13 @@ export default function ClientMessages() {
 
            <div className="p-8 border-t border-slate-100 bg-slate-50/50 flex items-center gap-6">
               <div className="flex-1 bg-white border border-slate-200 rounded-2xl p-4 flex items-center gap-4 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all shadow-inner">
-                 <input type="text" placeholder="Type a message to Mack (The Champ)..." className="flex-1 text-sm bg-transparent outline-none text-slate-700 placeholder:text-slate-400" />
-                 <button className="p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 transition">
+                 <input type="text" placeholder="Type a secure message..." className="flex-1 text-sm bg-transparent outline-none text-slate-700 placeholder:text-slate-400" />
+                 <button title="Send message" className="p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 transition">
                     <Send className="w-5 h-5" />
                  </button>
               </div>
               <button 
+                title="Open Google Chat"
                 onClick={() => window.open('https://chat.google.com/u/1/app/chat/AAQABMc-VMI', '_blank')}
                 className="p-4 bg-blue-600 text-white rounded-2xl hover:bg-blue-700 shadow-xl shadow-blue-500/20 transition active:scale-95 group"
               >

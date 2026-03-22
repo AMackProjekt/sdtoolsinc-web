@@ -115,28 +115,73 @@ interface StaffContextType {
 
 const StaffContext = createContext<StaffContextType | undefined>(undefined);
 
+const DATA_KEYS = {
+  notes: "notes",
+  docs: "docs",
+  journals: "journals",
+  feedback: "feedback",
+  shoutouts: "shoutouts",
+  smartgoals: "smartgoals",
+  requests: "requests",
+} as const;
+
+async function readSecureData<T>(key: string, fallback: T): Promise<T> {
+  try {
+    const response = await fetch(`/api/secure-data/${key}`, { method: "GET" });
+    if (!response.ok) return fallback;
+    const payload = (await response.json()) as { data?: T };
+    return payload.data ?? fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+async function writeSecureData<T>(key: string, value: T): Promise<void> {
+  try {
+    await fetch(`/api/secure-data/${key}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ data: value }),
+    });
+  } catch {
+    // No-op in UI for offline/dev errors.
+  }
+}
+
 export function StaffProvider({ children }: { children: React.ReactNode }) {
   // Initial Seed Data
   const [participants, setParticipants] = useState<Participant[]>([
-    { slot: 'A1', name: 'Christopher "Memphis" Greer', status: 'Active', environment: 'A-Block' },
-    { slot: 'A2', name: 'Calvin Hobby', status: 'Active', environment: 'A-Block' },
-    { slot: 'A3', name: 'Brett Purettman/ Sheila Martinez', status: 'Active (Shared)', environment: 'A-Block' },
-    { slot: 'A4', name: 'Tianna "Diamond" Hoover', status: 'Active', environment: 'A-Block' },
-    { slot: 'A5', name: 'Victor/ Rosanna Vasquez', status: 'Active (Shared)', environment: 'A-Block' },
-    { slot: 'A6', name: 'Empty Slot', status: 'Broken Platform', environment: 'A-Block' },
-    { slot: 'A7', name: 'Martin Navarette', status: 'Active', environment: 'A-Block' },
-    { slot: 'A8', name: 'Heather Navarette', status: 'Active', environment: 'A-Block' },
-    { slot: 'A9', name: 'Ian Buonamici', status: 'Active', environment: 'A-Block' },
-    { slot: 'A10', name: 'Orrin "Keith" Page', status: 'Active', environment: 'A-Block' },
+    { slot: 'A1', name: 'UID-A1', status: 'Active', environment: 'A-Block' },
+    { slot: 'A2', name: 'UID-A2', status: 'Active', environment: 'A-Block' },
+    { slot: 'A3', name: 'UID-A3', status: 'Active (Shared)', environment: 'A-Block' },
+    { slot: 'A4', name: 'UID-A4', status: 'Active', environment: 'A-Block' },
+    { slot: 'A5', name: 'UID-A5', status: 'Active (Shared)', environment: 'A-Block' },
+    { slot: 'A6', name: 'UID-A6', status: 'Empty', environment: 'A-Block' },
+    { slot: 'A7', name: 'UID-A7', status: 'Active', environment: 'A-Block' },
+    { slot: 'A8', name: 'UID-A8', status: 'Active', environment: 'A-Block' },
+    { slot: 'A9', name: 'UID-A9', status: 'Active', environment: 'A-Block' },
+    { slot: 'A10', name: 'UID-A10', status: 'Active', environment: 'A-Block' },
+    { slot: 'A11', name: 'UID-A11', status: 'Active', environment: 'A-Block' },
+    { slot: 'A12', name: 'UID-A12', status: 'Active', environment: 'A-Block' },
+    { slot: 'A13', name: 'UID-A13', status: 'Active', environment: 'A-Block' },
+    { slot: 'A14', name: 'UID-A14', status: 'Active', environment: 'A-Block' },
+    { slot: 'A15', name: 'UID-A15', status: 'Active', environment: 'A-Block' },
+    { slot: 'A16', name: 'UID-A16', status: 'Active', environment: 'A-Block' },
+    { slot: 'A17', name: 'UID-A17', status: 'Active', environment: 'A-Block' },
+    { slot: 'A18', name: 'UID-A18', status: 'Active (Shared)', environment: 'A-Block' },
     
-    // D & J BLOCK
-    { slot: 'D9', name: 'John Brackman', status: 'Active', environment: 'D-Block' },
-    { slot: 'D10', name: 'Anthony Jones', status: 'Active', environment: 'D-Block' },
-    { slot: 'J1', name: 'Waitlist J1', status: 'Pending', environment: 'J-Block' },
-    { slot: 'J2', name: 'Waitlist J2', status: 'Pending', environment: 'J-Block' },
-    { slot: 'J8', name: 'Alisa Foster', status: 'Active', environment: 'J-Block' },
-    { slot: 'J9', name: 'Anthony Garner', status: 'Active', environment: 'J-Block' },
-    { slot: 'J10', name: 'Ernestina Alvarado', status: 'Active', environment: 'J-Block' },
+    // D-BLOCK (D6-D12)
+    { slot: 'D6', name: 'UID-D6', status: 'Active', environment: 'D-Block' },
+    { slot: 'D7', name: 'UID-D7', status: 'Active', environment: 'D-Block' },
+    { slot: 'D8', name: 'UID-D8', status: 'Active', environment: 'D-Block' },
+    { slot: 'D9', name: 'UID-D9', status: 'Active', environment: 'D-Block' },
+    { slot: 'D10', name: 'UID-D10', status: 'Active', environment: 'D-Block' },
+    { slot: 'D11', name: 'UID-D11', status: 'Active', environment: 'D-Block' },
+    { slot: 'D12', name: 'UID-D12', status: 'Active', environment: 'D-Block' },
+    // J-BLOCK (J8-J10)
+    { slot: 'J8', name: 'UID-J8', status: 'Active', environment: 'J-Block' },
+    { slot: 'J9', name: 'UID-J9', status: 'Active', environment: 'J-Block' },
+    { slot: 'J10', name: 'UID-J10', status: 'Active', environment: 'J-Block' },
   ]);
 
   const [documents, setDocuments] = useState<Document[]>([]);
@@ -148,53 +193,76 @@ export function StaffProvider({ children }: { children: React.ReactNode }) {
   const [smartGoals, setSmartGoals] = useState<SharedSmartGoal[]>([]);
   const [requests, setRequests] = useState<ParticipantRequest[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [isHydrated, setIsHydrated] = useState(false);
 
-  // PERSISTENCE LOGIC
+  // Server-side encrypted persistence logic.
   useEffect(() => {
-    const savedNotes = localStorage.getItem("caseflow_notes");
-    const savedDocs = localStorage.getItem("caseflow_docs");
-    const savedJournals = localStorage.getItem("caseflow_journals");
-    const savedFeedback = localStorage.getItem("caseflow_feedback");
-    const savedShoutOuts = localStorage.getItem("caseflow_shoutouts");
-    const savedSmartGoals = localStorage.getItem("caseflow_smartgoals");
-    const savedRequests = localStorage.getItem("caseflow_requests");
+    let mounted = true;
 
-    if (savedNotes) setCaseNotes(JSON.parse(savedNotes));
-    if (savedDocs) setDocuments(JSON.parse(savedDocs));
-    if (savedJournals) setJournals(JSON.parse(savedJournals));
-    if (savedFeedback) setFeedback(JSON.parse(savedFeedback));
-    if (savedShoutOuts) setShoutOuts(JSON.parse(savedShoutOuts));
-    if (savedSmartGoals) setSmartGoals(JSON.parse(savedSmartGoals));
-    if (savedRequests) setRequests(JSON.parse(savedRequests));
+    async function hydrate() {
+      const [savedNotes, savedDocs, savedJournals, savedFeedback, savedShoutOuts, savedSmartGoals, savedRequests] = await Promise.all([
+        readSecureData<CaseNote[]>(DATA_KEYS.notes, []),
+        readSecureData<Document[]>(DATA_KEYS.docs, []),
+        readSecureData<JournalEntry[]>(DATA_KEYS.journals, []),
+        readSecureData<Feedback[]>(DATA_KEYS.feedback, []),
+        readSecureData<ShoutOut[]>(DATA_KEYS.shoutouts, []),
+        readSecureData<SharedSmartGoal[]>(DATA_KEYS.smartgoals, []),
+        readSecureData<ParticipantRequest[]>(DATA_KEYS.requests, []),
+      ]);
+
+      if (!mounted) return;
+
+      setCaseNotes(savedNotes);
+      setDocuments(savedDocs);
+      setJournals(savedJournals);
+      setFeedback(savedFeedback);
+      setShoutOuts(savedShoutOuts);
+      setSmartGoals(savedSmartGoals);
+      setRequests(savedRequests);
+      setIsHydrated(true);
+    }
+
+    hydrate();
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("caseflow_notes", JSON.stringify(caseNotes));
-  }, [caseNotes]);
+    if (!isHydrated) return;
+    writeSecureData(DATA_KEYS.notes, caseNotes);
+  }, [caseNotes, isHydrated]);
 
   useEffect(() => {
-    localStorage.setItem("caseflow_docs", JSON.stringify(documents));
-  }, [documents]);
+    if (!isHydrated) return;
+    writeSecureData(DATA_KEYS.docs, documents);
+  }, [documents, isHydrated]);
 
   useEffect(() => {
-    localStorage.setItem("caseflow_journals", JSON.stringify(journals));
-  }, [journals]);
+    if (!isHydrated) return;
+    writeSecureData(DATA_KEYS.journals, journals);
+  }, [journals, isHydrated]);
 
   useEffect(() => {
-    localStorage.setItem("caseflow_feedback", JSON.stringify(feedback));
-  }, [feedback]);
+    if (!isHydrated) return;
+    writeSecureData(DATA_KEYS.feedback, feedback);
+  }, [feedback, isHydrated]);
 
   useEffect(() => {
-    localStorage.setItem("caseflow_shoutouts", JSON.stringify(shoutOuts));
-  }, [shoutOuts]);
+    if (!isHydrated) return;
+    writeSecureData(DATA_KEYS.shoutouts, shoutOuts);
+  }, [shoutOuts, isHydrated]);
 
   useEffect(() => {
-    localStorage.setItem("caseflow_smartgoals", JSON.stringify(smartGoals));
-  }, [smartGoals]);
+    if (!isHydrated) return;
+    writeSecureData(DATA_KEYS.smartgoals, smartGoals);
+  }, [smartGoals, isHydrated]);
 
   useEffect(() => {
-    localStorage.setItem("caseflow_requests", JSON.stringify(requests));
-  }, [requests]);
+    if (!isHydrated) return;
+    writeSecureData(DATA_KEYS.requests, requests);
+  }, [requests, isHydrated]);
 
   // Actions
   const addDocument = (doc: Document) => {
@@ -227,7 +295,6 @@ export function StaffProvider({ children }: { children: React.ReactNode }) {
 
   const updateRequestStatus = (id: number, status: 'approved' | 'denied') => {
     setRequests(prev => prev.map(r => r.id === id ? { ...r, status } : r));
-    console.log(`Action Sync: Request ${id} ${status.toUpperCase()} trigger sent to donyale@dreamsforchange.org`);
   };
 
   const markNotificationRead = (index: number) => {
@@ -239,11 +306,11 @@ export function StaffProvider({ children }: { children: React.ReactNode }) {
   };
 
   const team: TeamMember[] = [
-    { id: 'S1', name: 'Spencer', role: 'Support Specialist' },
-    { id: 'T2', name: 'Tonya', role: 'Case Navigator' },
-    { id: 'A3', name: 'Abby', role: 'Stabilization Lead' },
-    { id: 'D4', name: 'Daniel', role: 'Intake Coordinator' },
-    { id: 'J5', name: 'Jonathan', role: 'Records Manager' }
+    { id: 'S1', name: 'Staff 01', role: 'Support Specialist' },
+    { id: 'T2', name: 'Staff 02', role: 'Case Navigator' },
+    { id: 'A3', name: 'Staff 03', role: 'Stabilization Lead' },
+    { id: 'D4', name: 'Staff 04', role: 'Intake Coordinator' },
+    { id: 'J5', name: 'Staff 05', role: 'Records Manager' }
   ];
 
   const mission = "The mission of Dreams for Change is to respond to the needs of communities by creating innovative and cost-effective programs to empower and stabilize the lives of underserved families and individuals.";

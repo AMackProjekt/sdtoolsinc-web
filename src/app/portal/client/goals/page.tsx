@@ -1,16 +1,10 @@
 "use client";
 
-import { Target, CheckCircle2, Circle, Clock, ArrowRight, ShieldCheck, Flag, Sparkles } from "lucide-react";
+import { Target, CheckCircle2, Clock, ArrowRight, ShieldCheck, Flag, Sparkles } from "lucide-react";
 import Link from "next/link";
 
 export default function ClientMilestones() {
-  const milestones = [
-    { title: "Intake & Stabilization", status: "completed", date: "Sep 01, 2025", desc: "Initial assessment and resource mapping completed." },
-    { title: "SOP Audit Compliance", status: "completed", date: "Sep 10, 2025", desc: "Dreams for Change standard operating procedures parity met." },
-    { title: "Section 8 Housing Voucher", status: "current", date: "In Progress", desc: "Submission for SDHC waitlist verification. Awaiting signature." },
-    { title: "Employment Placement", status: "future", date: "Oct 2025", desc: "Drafting resume and scheduling mock interview sessions." },
-    { title: "Permanent Housing Transition", status: "future", date: "Nov 2025", desc: "Final move-in and local community integration." }
-  ];
+  const milestones: { title: string; status: string; date: string; desc: string }[] = [];
 
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-6 duration-700">
@@ -42,6 +36,17 @@ export default function ClientMilestones() {
         
         {/* Left: Detailed Timeline */}
         <div className="lg:col-span-3 space-y-4">
+           {milestones.length === 0 && (
+             <div className="p-12 rounded-[2rem] border border-dashed border-slate-200 bg-slate-50/50 flex flex-col items-center justify-center text-center gap-4">
+               <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center border border-slate-100 shadow-sm">
+                 <Target className="w-8 h-8 text-slate-200" />
+               </div>
+               <div>
+                 <p className="text-sm font-bold text-slate-500">No milestones set yet.</p>
+                 <p className="text-xs text-slate-400 mt-1">Your case manager will add milestones during your next session.</p>
+               </div>
+             </div>
+           )}
            {milestones.map((m, i) => (
              <div key={i} className={`p-8 rounded-[2rem] border transition-all duration-500 relative overflow-hidden group ${
                m.status === 'completed' ? 'bg-white border-slate-100 opacity-60' : 
@@ -77,7 +82,7 @@ export default function ClientMilestones() {
                   <div className="mt-8 pt-8 border-t border-slate-100 flex items-center justify-between">
                      <div className="flex items-center gap-2">
                         <Sparkles className="w-4 h-4 text-amber-500" />
-                        <span className="text-xs font-bold text-slate-500">Tip: Contact Mack for e-signature logic.</span>
+                        <span className="text-xs font-bold text-slate-500">Contact your case manager to take action.</span>
                      </div>
                      <button className="bg-teal-600 hover:bg-teal-700 text-white font-bold px-6 py-2.5 rounded-xl text-xs transition flex items-center gap-2 group">
                         Take Action Now <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -99,30 +104,23 @@ export default function ClientMilestones() {
                  <div>
                     <div className="flex justify-between text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">
                        <span>Total Progress</span>
-                       <span>82%</span>
+                       <span>—</span>
                     </div>
                     <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
-                       <div className="h-full w-[82%] bg-teal-500 shadow-[0_0_12px_rgba(20,184,166,0.3)]"></div>
+                       <div className="h-full w-0 bg-teal-500"></div>
                     </div>
                  </div>
                  
                  <div className="p-4 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-between">
                     <span className="text-xs font-bold text-slate-300">Days Active</span>
-                    <span className="text-lg font-black text-white">42</span>
+                    <span className="text-lg font-black text-slate-500">—</span>
                  </div>
                  
                  <div className="p-4 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-between">
                     <span className="text-xs font-bold text-slate-300">Milestones Met</span>
-                    <span className="text-lg font-black text-white">2 <span className="text-slate-500 text-xs font-bold">/ 5</span></span>
+                    <span className="text-lg font-black text-slate-500">—</span>
                  </div>
               </div>
-           </div>
-
-           <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm text-center">
-              <Clock className="w-8 h-8 text-amber-100 mx-auto mb-4" />
-              <h4 className="text-sm font-bold text-charcoal-900">Awaiting Signature</h4>
-              <p className="text-xs text-slate-500 mt-1">Voucher Verification Form</p>
-              <button className="w-full mt-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl text-xs transition uppercase tracking-widest">Open Form</button>
            </div>
         </div>
 

@@ -1,16 +1,31 @@
 "use client";
 
 import Link from "next/link";
+import { useState, useEffect } from "react";
 import { 
   LogOut,
+  ShieldCheck,
+  ShieldAlert,
+  ShieldOff,
 } from "lucide-react";
 import { StaffProvider } from "@/context/StaffContext";
+import { signOut } from "next-auth/react";
+import type { SecuritySummary } from "@/app/api/compliance/status/route";
 
 export default function ClientLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [security, setSecurity] = useState<SecuritySummary | null>(null);
+
+  useEffect(() => {
+    fetch("/api/compliance/status")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data: SecuritySummary | null) => setSecurity(data))
+      .catch(() => setSecurity(null));
+  }, []);
+
   return (
     <StaffProvider>
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-teal-500 selection:text-white">
@@ -40,17 +55,52 @@ export default function ClientLayout({
           </nav>
 
           <div className="flex items-center gap-6">
+            {/* Security status badge */}
+            {security && (
+              <div
+                title={
+                  `Encryption: ${security.data_encrypted ? "Active" : "Not configured"} · ` +
+                  `Auth: ${security.auth_configured ? "Active" : "Not configured"} · ` +
+                  `Session: ${security.session_active ? "Active" : "Inactive"}`
+                }
+                className={`hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border ${
+                  security.status === "secured"
+                    ? "bg-teal-50 text-teal-700 border-teal-200"
+                    : security.status === "partial"
+                    ? "bg-amber-50 text-amber-700 border-amber-200"
+                    : "bg-rose-50 text-rose-700 border-rose-200"
+                }`}
+              >
+                {security.status === "secured" ? (
+                  <ShieldCheck className="w-3 h-3" />
+                ) : security.status === "partial" ? (
+                  <ShieldAlert className="w-3 h-3" />
+                ) : (
+                  <ShieldOff className="w-3 h-3" />
+                )}
+                {security.status === "secured"
+                  ? "Secured"
+                  : security.status === "partial"
+                  ? "Partial"
+                  : "Unsecured"}
+              </div>
+            )}
+
             <div className="hidden sm:flex items-center gap-3 pr-6 border-r border-slate-100">
               <div className="text-right">
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">My Case Manager</p>
-                <p className="text-sm font-bold text-charcoal-900 leading-none">Mack (The Champ)</p>
+                <p className="text-sm font-bold text-charcoal-900 leading-none">Assigned Staff</p>
               </div>
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-teal-500 to-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow-md">
                 M
               </div>
             </div>
             
-            <button className="flex items-center gap-2 p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all">
+            <button
+              onClick={() => signOut({ callbackUrl: "/login/client" })}
+              title="Sign out"
+              className="flex items-center gap-2 p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all"
+            >
               <LogOut className="w-6 h-6" />
             </button>
           </div>

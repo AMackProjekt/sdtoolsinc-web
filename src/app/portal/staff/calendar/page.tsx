@@ -20,7 +20,7 @@ export default function CalendarIntegrations() {
   const [activeTab, setActiveTab] = useState("calendar");
   const [chatInput, setChatInput] = useState("");
   const [chatMessages, setChatMessages] = useState([
-    { role: 'agent', content: "Hello Mack! I'm your CaseFlow AI Agent. I'm connected to your AppScripts, Forms, and Calendars. Do you need me to draft a summary, schedule an intervention, or analyze a participant's responses?" }
+    { role: 'agent', content: "Hello. I can help with workflow summaries, scheduling, and operational follow-ups using UID-only references." }
   ]);
 
   const handleSendMessage = (e: React.FormEvent) => {
@@ -92,7 +92,7 @@ export default function CalendarIntegrations() {
                 <div className="p-6 hover:bg-slate-50 transition border-l-4 border-l-emerald-500">
                   <div className="flex justify-between items-start">
                     <div>
-                      <h4 className="font-bold text-charcoal-900 text-lg">Section 8 Housing Commission Zoom</h4>
+                      <h4 className="font-bold text-charcoal-900 text-lg">Housing Program Coordination Zoom</h4>
                       <div className="mt-2 space-y-1.5">
                         <p className="text-sm font-medium text-slate-500 flex items-center gap-2">
                           <Clock className="w-4 h-4 text-slate-400" /> 10:00 AM - 11:30 AM
@@ -107,7 +107,7 @@ export default function CalendarIntegrations() {
                     </button>
                   </div>
                   <div className="mt-4 flex gap-2">
-                    <span className="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-md text-xs font-bold">Client: Brett Purettman (A3)</span>
+                    <span className="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-md text-xs font-bold">Client: UID-A3</span>
                   </div>
                 </div>
 
@@ -217,7 +217,7 @@ export default function CalendarIntegrations() {
                     </div>
                     <div>
                       <h2 className="text-2xl font-bold mb-2">Advanced Workflow Automation</h2>
-                      <p className="text-indigo-100/70 text-sm max-w-lg leading-relaxed">Microsoft Forms & Google AppScripts Engine are now bridged. Every participant submission is analyzed by AI and piped into your caseload via secure webhooks.</p>
+                      <p className="text-indigo-100/70 text-sm max-w-lg leading-relaxed">Microsoft Forms and Google AppScripts are connected for workflow automation with UID-only processing standards.</p>
                       <div className="flex flex-wrap gap-2 mt-4">
                         <span className="px-3 py-1.5 bg-white/10 border border-white/10 rounded-lg text-xs font-bold flex items-center gap-2">
                           <CheckCircle2 className="w-3.5 h-3.5 text-teal-400" /> Webhooks: Online
@@ -258,7 +258,7 @@ export default function CalendarIntegrations() {
                   </p>
                 </div>
               </div>
-              <button className="p-2 text-slate-400 hover:text-white transition">
+              <button title="More options" className="p-2 text-slate-400 hover:text-white transition">
                 <MoreVertical className="w-5 h-5" />
               </button>
             </div>
@@ -291,7 +291,7 @@ export default function CalendarIntegrations() {
                   placeholder="Ask about a client, script, or form..." 
                   className="w-full bg-slate-800 border border-slate-700 text-white placeholder:text-slate-500 rounded-xl pl-4 pr-12 py-3.5 focus:outline-none focus:ring-2 focus:ring-teal-500/50 transition text-sm"
                 />
-                <button type="submit" disabled={!chatInput.trim()} className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-teal-600 text-white rounded-lg hover:bg-teal-500 disabled:opacity-50 disabled:hover:bg-teal-600 transition shadow-lg shadow-teal-500/20">
+                <button type="submit" title="Send message" disabled={!chatInput.trim()} className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-teal-600 text-white rounded-lg hover:bg-teal-500 disabled:opacity-50 disabled:hover:bg-teal-600 transition shadow-lg shadow-teal-500/20">
                   <Send className="w-4 h-4" />
                 </button>
               </form>
@@ -299,7 +299,7 @@ export default function CalendarIntegrations() {
                 <button type="button" onClick={() => setChatInput("Look up D10 in Microsoft Forms")} className="shrink-0 text-xs px-3 py-1.5 rounded-full border border-slate-700 text-slate-400 hover:text-white hover:border-slate-500 transition whitespace-nowrap bg-slate-800/50">
                   Lookup Form Data
                 </button>
-                <button type="button" onClick={() => setChatInput("Draft email using AppScripts for A3")} className="shrink-0 text-xs px-3 py-1.5 rounded-full border border-slate-700 text-slate-400 hover:text-white hover:border-slate-500 transition whitespace-nowrap bg-slate-800/50">
+                <button type="button" onClick={() => setChatInput("Draft email using AppScripts for UID-A3")} className="shrink-0 text-xs px-3 py-1.5 rounded-full border border-slate-700 text-slate-400 hover:text-white hover:border-slate-500 transition whitespace-nowrap bg-slate-800/50">
                   Run AppScript
                 </button>
               </div>

@@ -21,17 +21,17 @@ const QUOTES = [
 ];
 
 const FINANCIAL_COURSES = [
-  { title: "Khan Academy Finance & Capital Markets", url: "https://www.khanacademy.org/economics-finance-domain/finance-and-capital-markets", description: "Free comprehensive finance fundamentals" },
-  { title: "GreenPath Financial Wellness", url: "https://www.greenpath.org/get-help/financial-counseling/", description: "Free credit counseling and workshops" },
-  { title: "NFCC Money Management", url: "https://www.nfcc.org/", description: "Free financial education and resources" },
-  { title: "Coursera: Finance for Everyone", url: "https://www.coursera.org/learn/finance-for-everyone-smart-tools-for-decision-making", description: "Free audit option available" }
+  { title: "Khan Academy Finance & Capital Markets", url: "https://www.khanacademy.org", description: "Free comprehensive finance fundamentals" },
+  { title: "GreenPath Financial Wellness", url: "https://www.greenpath.org", description: "Free credit counseling and workshops" },
+  { title: "NFCC Money Management", url: "https://www.nfcc.org", description: "Free financial education and resources" },
+  { title: "Coursera: Finance for Everyone", url: "https://www.coursera.org", description: "Free audit option available" }
 ];
 
 const ANGER_MANAGEMENT = [
-  { title: "MindBodyOnline Anger Management", url: "https://www.mindbodyonline.com", description: "Classes and programs in San Diego" },
-  { title: "San Diego County Mental Health", url: "https://www.sandiegocounty.gov/content/sdc/hhsa/programs_services/mhsa.html", description: "County anger management programs" },
-  { title: "NAMI San Diego - Support Groups", url: "https://nami.org/Get-Involved/Advocacy-Events/Find-a-NAMI-Group", description: "Free community support" },
-  { title: "Coursera: Emotional Intelligence", url: "https://www.coursera.org/learn/emotional-intelligence", description: "Free audit option" }
+  { title: "Mental Health America - Anger Management", url: "https://www.mhanational.org", description: "Free anger management tools and resources" },
+  { title: "San Diego County Mental Health", url: "https://www.sandiegocounty.gov", description: "County anger management programs" },
+  { title: "NAMI San Diego - Support Groups", url: "https://nami.org", description: "Free community support" },
+  { title: "Coursera: Emotional Intelligence", url: "https://www.coursera.org", description: "Free audit option" }
 ];
 
 const AA_NA_MEETINGS = [
@@ -410,7 +410,7 @@ export default function ClientDashboard() {
                     <div className="space-y-3">
                       <div>
                         <label className="text-xs font-bold text-slate-600 block mb-1">I need clothing for</label>
-                        <select value={clothingSizes.gender} onChange={e => setClothingSizes({...clothingSizes, gender: e.target.value})} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-rose-500/20">
+                        <select title="I need clothing for" value={clothingSizes.gender} onChange={e => setClothingSizes({...clothingSizes, gender: e.target.value})} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-rose-500/20">
                           <option value="male">Male</option>
                           <option value="female">Female</option>
                         </select>
@@ -418,7 +418,7 @@ export default function ClientDashboard() {
                       <div className="grid grid-cols-3 gap-2">
                         <div>
                           <label className="text-xs font-bold text-slate-600 block mb-1">Shirt</label>
-                          <select value={clothingSizes.shirt} onChange={e => setClothingSizes({...clothingSizes, shirt: e.target.value})} className="w-full px-2 py-2 border border-slate-200 rounded text-xs outline-none focus:ring-2 focus:ring-rose-500/20">
+                          <select title="Shirt size" value={clothingSizes.shirt} onChange={e => setClothingSizes({...clothingSizes, shirt: e.target.value})} className="w-full px-2 py-2 border border-slate-200 rounded text-xs outline-none focus:ring-2 focus:ring-rose-500/20">
                             <option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>2XL</option><option>3XL</option>
                           </select>
                         </div>
@@ -449,7 +449,7 @@ export default function ClientDashboard() {
 
                   <div className="p-4 bg-sky-50 border border-sky-200 rounded-lg">
                     <p  className="font-bold text-charcoal-900 text-sm mb-2">🏥 Healthcare Access</p>
-                    <a href="https://www.sandiegocounty.gov/content/sdc/hhsa/programs_services" target="_blank" rel="noopener noreferrer" className="text-xs text-sky-600 hover:underline font-bold flex items-center gap-1">
+                    <a href="https://www.sandiegocounty.gov" target="_blank" rel="noopener noreferrer" className="text-xs text-sky-600 hover:underline font-bold flex items-center gap-1">
                       San Diego County Health Services <ExternalLink className="w-3 h-3" />
                     </a>
                   </div>

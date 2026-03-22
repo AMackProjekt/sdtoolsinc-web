@@ -1,6 +1,23 @@
 import { NextResponse } from 'next/server';
+import { getAuthContext } from '@/lib/authz';
+import { logAudit } from '@/lib/audit';
+import { enforce } from '@/lib/policy';
 
 export async function POST(req: Request) {
+  const auth = await getAuthContext();
+  if (!auth.isAuthenticated || !auth.email) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const policy = enforce(auth.role, 'terminal', 'execute');
+  if (!policy.allowed) {
+    return NextResponse.json({ error: policy.error }, { status: policy.status });
+  }
+
+  if (process.env.PHI_WORKFLOW_APPROVED !== 'true') {
+    return NextResponse.json({ error: 'PHI workflow is not approved in this environment' }, { status: 503 });
+  }
+
   const { command } = await req.json();
   const cmd = command.toLowerCase().trim();
 
@@ -72,6 +89,15 @@ Copyright (c) Microsoft Corporation.
 ERROR: The term '${command}' was partially recognized as internal, but the bridge context is executing in Restricted Sandbox Mode.
 Please run '$PSVersionTable' or 'Get-Service' for supported system logic.`;
   }
+
+  await logAudit({
+    actor: auth.email,
+    role: auth.role,
+    action: 'terminal.command',
+    resource: '/api/terminal',
+    status: 'success',
+    details: { command: cmd.slice(0, 64) },
+  });
 
   return NextResponse.json({ output });
 }

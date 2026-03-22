@@ -89,7 +89,7 @@ export default function MainDashboard() {
                </div>
                <div className="max-w-xl">
                   <h3 className="text-2xl font-black tracking-tight mb-2">Case Manager <span className="text-teal-400">AI Insight</span></h3>
-                  <p className="text-white/50 text-sm leading-relaxed font-medium italic">"Analysis complete: 8 participants in Block A haven't updated their SOPs this week. I recommend a bulk check-in for stabilization audit compliance."</p>
+                  <p className="text-white/50 text-sm leading-relaxed font-medium italic">"Connect to the AI Case Manager to run caseload analysis, generate bulk follow-ups, and surface compliance gaps across all active participants."</p>
                </div>
             </div>
             <Link href="/portal/staff/terminal" className="px-8 py-4 bg-teal-500 text-charcoal-950 font-black rounded-2xl text-xs uppercase tracking-widest hover:bg-teal-400 shadow-xl shadow-teal-500/20 active:scale-95 transition-all">
@@ -117,7 +117,7 @@ export default function MainDashboard() {
                 </div>
                 <div className="flex items-center gap-2">
                    <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></div>
-                   <span className="text-[10px] font-black text-amber-600 uppercase tracking-widest">Awaiting Mack</span>
+                   <span className="text-[10px] font-black text-amber-600 uppercase tracking-widest">Pending Review</span>
                 </div>
              </div>
 

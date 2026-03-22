@@ -125,6 +125,7 @@ export default function NewCaseNote() {
             <div>
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">CaseNote Type</label>
               <select 
+                title="CaseNote Type"
                 value={formData.type}
                 onChange={(e) => setFormData({...formData, type: e.target.value})}
                 className="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition outline-none appearance-none"
@@ -136,7 +137,8 @@ export default function NewCaseNote() {
             <div>
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Date</label>
               <input 
-                type="date" 
+                type="date"
+                title="Date"
                 value={formData.date}
                 onChange={(e) => setFormData({...formData, date: e.target.value})}
                 className="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition outline-none" 
@@ -156,6 +158,7 @@ export default function NewCaseNote() {
             <div>
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Location</label>
               <select 
+                title="Location"
                 value={formData.location}
                 onChange={(e) => setFormData({...formData, location: e.target.value})}
                 className="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition outline-none appearance-none"
@@ -166,7 +169,7 @@ export default function NewCaseNote() {
             </div>
             <div>
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">CaseMgr</label>
-            <input type="text" defaultValue="Mack" readOnly className="w-full bg-slate-100 border border-slate-200 text-slate-500 font-medium rounded-xl px-4 py-2.5 outline-none cursor-not-allowed" />
+            <input type="text" title="Case Manager" defaultValue="Case Manager" readOnly className="w-full bg-slate-100 border border-slate-200 text-slate-500 font-medium rounded-xl px-4 py-2.5 outline-none cursor-not-allowed" />
           </div>
           {!isQuickMode && (
             <>
@@ -176,7 +179,7 @@ export default function NewCaseNote() {
               </div>
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Contact Type</label>
-                <select className="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition outline-none appearance-none">
+                <select title="Contact Type" className="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition outline-none appearance-none">
                   <option value="">Select Contact Type...</option>
                   {CONTACT_TYPES.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
@@ -281,7 +284,7 @@ export default function NewCaseNote() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-slate-500 mb-1">Next Date</label>
-                    <input type="date" className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 outline-none" />
+                    <input type="date" title="Next follow-up date" className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 outline-none" />
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-slate-500 mb-1">Follow-Up Type</label>
@@ -289,7 +292,7 @@ export default function NewCaseNote() {
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-slate-500 mb-1">Priority Level</label>
-                    <select className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 outline-none appearance-none">
+                    <select title="Priority Level" className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 outline-none appearance-none">
                       <option>Low / Routine</option>
                       <option>Medium / Time-Sensitive</option>
                       <option>High / Urgent</option>
@@ -357,7 +360,7 @@ export default function NewCaseNote() {
             <input type="checkbox" defaultChecked className="w-4 h-4 text-indigo-600 border-indigo-300 rounded focus:ring-indigo-500" />
             <div className="text-xs">
               <p className="font-bold text-indigo-900 leading-none">Email Forwarding Active</p>
-              <p className="text-indigo-600 mt-1 font-medium">Push copy to donyale@dreamsforchange.org</p>
+              <p className="text-indigo-600 mt-1 font-medium">Push copy to secure staff inbox</p>
             </div>
           </label>
 

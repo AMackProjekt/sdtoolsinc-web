@@ -15,10 +15,12 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useStaff } from "@/context/StaffContext";
+import { useSession } from "next-auth/react";
 
 export default function SmartGoalSheet() {
   const { addSmartGoal, smartGoals } = useStaff();
-  const mySlot = "A3"; // Mock for Brett Purettman
+  const { data: session } = useSession();
+  const mySlot = session?.user?.email ?? "unknown";
 
   const [form, setForm] = useState({
     specific: "",
@@ -40,7 +42,7 @@ export default function SmartGoalSheet() {
       status: 'active'
     });
     setForm({ specific: "", measurable: "", achievable: "", relevant: "", timebound: "" });
-    alert("Weekly S.M.A.R.T. Goal Saved! Mack will review this during your next session.");
+    alert("Weekly S.M.A.R.T. Goal Saved! Your case manager will review this during your next session.");
   };
 
   const myActiveGoals = smartGoals.filter(g => g.client === mySlot);
@@ -171,7 +173,7 @@ export default function SmartGoalSheet() {
                        }`}>
                           {goal.status}
                        </span>
-                       <button className="p-3 bg-slate-50 text-slate-400 rounded-xl hover:bg-slate-100 transition whitespace-nowrap">
+                       <button title="Mark goal complete" className="p-3 bg-slate-50 text-slate-400 rounded-xl hover:bg-slate-100 transition whitespace-nowrap">
                           <Check className="w-4 h-4" />
                        </button>
                     </div>
