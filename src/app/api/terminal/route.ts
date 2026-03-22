@@ -95,7 +95,7 @@ D-MACK-WS     forms.microsof… 13.107.4.52                   32       14
     output = `PowerShell 7.4.1
 Copyright (c) Microsoft Corporation.
 
-ERROR: The term '${command}' was partially recognized as internal, but the bridge context is executing in Restricted Sandbox Mode.
+ERROR: The term '${cmd}' was partially recognized as internal, but the bridge context is executing in Restricted Sandbox Mode.
 Please run '$PSVersionTable' or 'Get-Service' for supported system logic.`;
   }
 

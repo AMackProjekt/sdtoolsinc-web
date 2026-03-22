@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 
-export default auth((req: { url: string; nextUrl: { pathname: string }; auth?: { user?: { email?: string | null; role?: string | null } } }) => {
+export default auth((req) => {
   const pathname = req.nextUrl.pathname;
   const role = req.auth?.user?.role ?? "client";
   const isAuthenticated = Boolean(req.auth?.user?.email);
