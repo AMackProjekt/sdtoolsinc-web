@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
@@ -8,6 +8,13 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'CaseFlow Command',
   description: 'Modern case management platform',
+  manifest: '/manifest.json',
+};
+
+export const viewport: Viewport = {
+  themeColor: '#14b8a6',
+  width: 'device-width',
+  initialScale: 1,
 };
 
 import { ThemeProvider } from '@/context/ThemeContext';
@@ -21,6 +28,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+      </head>
       <body className={inter.className}>
         <AuthSessionProvider>
           <ConvexClientProvider>

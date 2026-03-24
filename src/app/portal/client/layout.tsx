@@ -23,6 +23,8 @@ import { signOut, useSession } from "next-auth/react";
 import type { SecuritySummary } from "@/app/api/compliance/status/route";
 import WelcomeModal from "@/components/WelcomeModal";
 import OnboardingTour, { type TourStep } from "@/components/OnboardingTour";
+import PWASetup from "@/components/PWASetup";
+import OfflineIndicator from "@/components/OfflineIndicator";
 
 function ClientBackButton() {
   const router = useRouter();
@@ -305,6 +307,8 @@ export default function ClientLayout({
         {showTour && (
           <OnboardingTour steps={CLIENT_STEPS} onComplete={completeOnboarding} />
         )}
+        <PWASetup />
+        <OfflineIndicator />
     </StaffProvider>
   );
 }
