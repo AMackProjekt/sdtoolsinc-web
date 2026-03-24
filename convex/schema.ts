@@ -139,4 +139,10 @@ export default defineSchema({
     expiresAt: v.number(),
     used: v.boolean(),
   }).index("by_email", ["email"]),
+
+  profilePhotos: defineTable({
+    userEmail: v.string(),
+    photoUrl: v.string(),
+    uploadedAt: v.number(),
+  }).index("by_email", ["userEmail"]),
 });

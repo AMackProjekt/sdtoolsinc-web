@@ -396,3 +396,51 @@ export const verifyAndConsumeOtp = mutation({
     return true;
   },
 });
+
+// ─── Profile Photos ──────────────────────────────────────────────────────────
+
+export const getProfilePhoto = query({
+  args: { userEmail: v.string() },
+  handler: async (ctx, { userEmail }) => {
+    return await ctx.db
+      .query("profilePhotos")
+      .withIndex("by_email", (q) => q.eq("userEmail", userEmail))
+      .first();
+  },
+});
+
+export const upsertProfilePhoto = mutation({
+  args: {
+    userEmail: v.string(),
+    photoUrl: v.string(),
+  },
+  handler: async (ctx, { userEmail, photoUrl }) => {
+    const existing = await ctx.db
+      .query("profilePhotos")
+      .withIndex("by_email", (q) => q.eq("userEmail", userEmail))
+      .first();
+    if (existing) {
+      await ctx.db.patch(existing._id, { photoUrl, uploadedAt: Date.now() });
+      return existing._id;
+    } else {
+      return await ctx.db.insert("profilePhotos", {
+        userEmail,
+        photoUrl,
+        uploadedAt: Date.now(),
+      });
+    }
+  },
+});
+
+export const deleteProfilePhoto = mutation({
+  args: { userEmail: v.string() },
+  handler: async (ctx, { userEmail }) => {
+    const existing = await ctx.db
+      .query("profilePhotos")
+      .withIndex("by_email", (q) => q.eq("userEmail", userEmail))
+      .first();
+    if (existing) {
+      await ctx.db.delete(existing._id);
+    }
+  },
+});

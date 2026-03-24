@@ -20,7 +20,6 @@ import {
 import Link from "next/link";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../../../../../convex/_generated/api";
-import type { CheckboxEvent } from "@/types/next-auth";
 
 export default function StaffSmartGoalSheet() {
   const { slot } = useParams();

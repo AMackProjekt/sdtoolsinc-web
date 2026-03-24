@@ -2,12 +2,28 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Mail, Badge, Clock, Shield, ExternalLink } from "lucide-react";
+import { ArrowLeft, Mail, Badge, Clock, Shield, ExternalLink, Upload, X, Loader2 } from "lucide-react";
 import Link from "next/link";
+import { useState, useRef, useEffect } from "react";
+import { useQuery } from "convex/react";
+import { api } from "../../../../../convex/_generated/api";
 
 export default function StaffProfilePage() {
   const { data: session } = useSession();
   const router = useRouter();
+  const [isUploading, setIsUploading] = useState(false);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const profilePhoto = useQuery(api.functions.getProfilePhoto, {
+    userEmail: session?.user?.email ?? "",
+  });
+
+  useEffect(() => {
+    if (profilePhoto?.photoUrl) {
+      setPhotoPreview(profilePhoto.photoUrl);
+    }
+  }, [profilePhoto]);
 
   if (!session?.user) {
     return (
@@ -23,6 +39,65 @@ export default function StaffProfilePage() {
     .join("")
     .toUpperCase()
     .slice(0, 2);
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setPhotoPreview(event.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+
+    // Upload
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("photo", file);
+
+      const response = await fetch("/api/profile-photo", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to upload photo");
+      }
+
+      alert("Profile photo updated successfully!");
+    } catch (error) {
+      console.error("Upload error:", error);
+      alert("Failed to upload photo. Please try again.");
+      setPhotoPreview(null);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleDeletePhoto = async () => {
+    if (confirm("Are you sure you want to delete your profile photo?")) {
+      setIsUploading(true);
+      try {
+        const response = await fetch("/api/profile-photo", {
+          method: "DELETE",
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to delete photo");
+        }
+
+        setPhotoPreview(null);
+        alert("Profile photo deleted successfully!");
+      } catch (error) {
+        console.error("Delete error:", error);
+        alert("Failed to delete photo. Please try again.");
+      } finally {
+        setIsUploading(false);
+      }
+    }
+  };
 
   return (
     <div className="max-w-2xl space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
@@ -54,9 +129,38 @@ export default function StaffProfilePage() {
         <div className="px-6 md:px-8 pb-8">
           {/* Avatar & Basic Info */}
           <div className="flex flex-col md:flex-row md:items-end md:gap-6 -mt-16 mb-8 relative z-10">
-            <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-teal-600 to-indigo-600 flex items-center justify-center text-white text-2xl font-bold shadow-lg ring-4 ring-white">
-              {initials}
+            {/* Photo with Upload */}
+            <div className="relative group">
+              <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-teal-600 to-indigo-600 flex items-center justify-center text-white text-2xl font-bold shadow-lg ring-4 ring-white overflow-hidden">
+                {photoPreview ? (
+                  <img src={photoPreview} alt={session.user.name ?? "User"} className="w-full h-full object-cover" />
+                ) : (
+                  initials
+                )}
+              </div>
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading}
+                className="absolute bottom-0 right-0 p-2 bg-teal-600 text-white rounded-full shadow-lg hover:bg-teal-700 transition opacity-0 group-hover:opacity-100 disabled:opacity-50"
+                title="Upload photo"
+              >
+                {isUploading ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Upload className="w-4 h-4" />
+                )}
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoUpload}
+                disabled={isUploading}
+                className="hidden"
+                aria-label="Upload profile photo"
+              />
             </div>
+
             <div className="mt-4 md:mt-0">
               <h2 className="text-2xl font-bold text-charcoal-900">{session.user.name ?? "Staff Member"}</h2>
               <p className="text-teal-600 font-bold uppercase tracking-tight text-sm mt-1">The Champ Is Here</p>
@@ -111,10 +215,25 @@ export default function StaffProfilePage() {
               <span className="font-bold text-charcoal-900">Settings & Preferences</span>
               <ExternalLink className="w-4 h-4 text-slate-400" />
             </Link>
-            <button className="w-full flex items-center justify-between p-4 rounded-xl bg-slate-50 hover:bg-slate-100 transition border border-slate-100 text-left font-bold text-charcoal-900">
-              Change Password
-              <ExternalLink className="w-4 h-4 text-slate-400" />
-            </button>
+            {photoPreview && (
+              <button
+                onClick={handleDeletePhoto}
+                disabled={isUploading}
+                className="w-full flex items-center justify-between p-4 rounded-xl bg-rose-50 hover:bg-rose-100 transition border border-rose-100 text-left font-bold text-rose-600 disabled:opacity-50"
+              >
+                {isUploading ? (
+                  <>
+                    <span>Deleting photo...</span>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  </>
+                ) : (
+                  <>
+                    <span>Delete Profile Photo</span>
+                    <X className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+            )}
           </div>
         </div>
       </div>
