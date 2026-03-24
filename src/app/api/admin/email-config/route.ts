@@ -23,7 +23,9 @@ export async function GET(req: NextRequest) {
         resendApiKeyStatus: hasResendKey ? "✅ Configured" : "❌ Missing",
         baseUrl,
         environment: process.env.NODE_ENV ?? "development",
-        fromEmail: "onboarding@resend.dev",
+        senderDomain: "dfc.dreamsforchange.org (verified)",
+        fromEmail: "noreply@dfc.dreamsforchange.org",
+        ccEmail: "donyale@dreamsforchange.org",
       },
       endpoints: {
         forgotPassword: "/api/auth/forgot-password",

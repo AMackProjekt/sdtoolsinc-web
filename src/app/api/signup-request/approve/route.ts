@@ -69,8 +69,9 @@ export async function GET(req: NextRequest) {
   const loginUrl = `${BASE_URL}/login/client`;
 
   await resend.emails.send({
-    from: "DFC Portal <onboarding@resend.dev>",
+    from: "DFC Portal <noreply@dfc.dreamsforchange.org>",
     to: request.email,
+    cc: ["donyale@dreamsforchange.org"],
     subject: "You're Approved — Access the Dreams for Change Client Portal",
     html: `
       <div style="font-family:sans-serif;max-width:620px;margin:0 auto;padding:32px 24px;background:#f8fafc;">

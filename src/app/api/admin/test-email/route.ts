@@ -33,8 +33,9 @@ export async function POST(req: NextRequest) {
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     const result = await resend.emails.send({
-      from: "DFC Portal <onboarding@resend.dev>",
+      from: "DFC Portal <noreply@dfc.dreamsforchange.org>",
       to: email,
+      cc: ["donyale@dreamsforchange.org"],
       subject,
       html: `
         <div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;background:#f8fafc;">

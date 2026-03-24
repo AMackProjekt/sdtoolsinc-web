@@ -3,6 +3,8 @@ import { getEncryptedRecord, setEncryptedRecord } from "@/lib/server-data-store"
 import { decryptJson, encryptJson } from "@/lib/crypto";
 import { upsertClientCredential } from "@/auth";
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "https://projekt-dfc.vercel.app";
+
 type PasswordResetToken = {
   email: string;
   expiresAt: string;
