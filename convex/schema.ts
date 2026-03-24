@@ -187,4 +187,11 @@ export default defineSchema({
     location: v.optional(v.string()),
     notes: v.optional(v.string()),
   }).index("by_staff", ["staffEmail"]),
+
+  // ── Generic KV store (used by server-side auth/credential storage) ─────────
+  keyValueStore: defineTable({
+    namespace: v.string(),
+    key: v.string(),
+    value: v.string(),
+  }).index("by_namespace_key", ["namespace", "key"]),
 });

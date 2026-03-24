@@ -1,6 +1,34 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 
+// ─── Generic KV Store ────────────────────────────────────────────────────────
+
+export const kvGet = query({
+  args: { namespace: v.string(), key: v.string() },
+  handler: async (ctx, { namespace, key }) => {
+    const record = await ctx.db
+      .query("keyValueStore")
+      .withIndex("by_namespace_key", (q) => q.eq("namespace", namespace).eq("key", key))
+      .first();
+    return record?.value ?? null;
+  },
+});
+
+export const kvSet = mutation({
+  args: { namespace: v.string(), key: v.string(), value: v.string() },
+  handler: async (ctx, { namespace, key, value }) => {
+    const existing = await ctx.db
+      .query("keyValueStore")
+      .withIndex("by_namespace_key", (q) => q.eq("namespace", namespace).eq("key", key))
+      .first();
+    if (existing) {
+      await ctx.db.patch(existing._id, { value });
+    } else {
+      await ctx.db.insert("keyValueStore", { namespace, key, value });
+    }
+  },
+});
+
 // ─── Participants ────────────────────────────────────────────────────────────
 
 export const listParticipants = query({

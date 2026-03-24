@@ -83,8 +83,10 @@ export default auth(async (req) => {
     return NextResponse.redirect(new URL("/portal/client", req.url));
   }
 
-  // ── 2FA gate: skip for the 2FA page itself and for API routes ────────────
-  if (!pathname.startsWith("/auth/2fa") && !pathname.startsWith("/api/")) {
+  // ── 2FA gate: skip for the 2FA page itself, API routes, and client-credentials users ────────────
+  // Clients who use password auth don't need 2FA (they already have password protection)
+  // Staff/Admin use Google OAuth and require 2FA
+  if (!pathname.startsWith("/auth/2fa") && !pathname.startsWith("/api/") && role !== "client") {
     const twofaCookie = req.cookies.get("twofa_verified")?.value ?? "";
     const twoFAValid = twofaCookie ? await verifyTwoFACookie(twofaCookie, userEmail) : false;
     if (!twoFAValid) {
