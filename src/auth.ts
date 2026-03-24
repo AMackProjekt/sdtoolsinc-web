@@ -48,7 +48,7 @@ function safeCompare(left: string, right: string) {
   return timingSafeEqual(leftBuffer, rightBuffer);
 }
 
-async function getClientCredential(identifier: string): Promise<StoredClientCredential | null> {
+export async function getClientCredential(identifier: string): Promise<StoredClientCredential | null> {
   const normalized = normalizeLoginIdentifier(identifier);
   const byEmail = await getEncryptedRecord("client-credentials", `email:${normalized}`);
   if (byEmail) {

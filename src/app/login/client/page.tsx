@@ -200,11 +200,17 @@ export default function ClientLogin() {
                 />
                 Remember me
               </label>
+              <Link href="/forgot-password" className="text-teal-400 hover:text-teal-300 font-medium transition">
+                Forgot password?
+              </Link>
+            </div>
+
+            <div className="flex justify-end">
               <button
                 type="button"
                 onClick={handleClearSharedDevice}
                 disabled={clearing}
-                className="text-slate-400 hover:text-teal-300 font-medium transition disabled:opacity-60"
+                className="text-xs text-slate-500 hover:text-slate-300 font-medium transition disabled:opacity-60"
               >
                 {clearing ? "Clearing…" : "Clear shared device"}
               </button>
