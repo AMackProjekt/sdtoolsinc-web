@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import { ScrollText, Search, Filter } from "lucide-react";
+import type { Doc } from "../../../../../convex/_generated/dataModel";
 
 const ACTION_COLOR: Record<string, string> = {
   login: "bg-blue-100 text-blue-700",
@@ -22,11 +23,11 @@ function actionColor(action: string) {
 }
 
 export default function AuditLogPage() {
-  const auditLogs = useQuery(api.functions.listAuditLogs) ?? [];
+  const auditLogs = (useQuery(api.functions.listAuditLogs) ?? []) as Doc<"auditLogs">[];
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
 
-  const roles = Array.from(new Set(auditLogs.map((l) => l.actorRole))).sort();
+  const roles = (Array.from(new Set(auditLogs.map((l) => l.actorRole))) as string[]).sort();
 
   const filtered = auditLogs.filter((l) => {
     const matchSearch =
@@ -60,6 +61,7 @@ export default function AuditLogPage() {
           />
         </div>
         <select
+          title="Filter by role"
           value={roleFilter}
           onChange={(e) => setRoleFilter(e.target.value)}
           className="px-3 py-1.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400"

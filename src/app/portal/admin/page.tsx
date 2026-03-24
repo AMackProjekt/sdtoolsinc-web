@@ -2,6 +2,7 @@
 
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
+import type { Doc } from "../../../../convex/_generated/dataModel";
 import {
   Users,
   UserCheck,
@@ -42,14 +43,14 @@ function KpiCard({
 }
 
 export default function AdminDashboard() {
-  const participants = useQuery(api.functions.listParticipants) ?? [];
+  const participants = (useQuery(api.functions.listParticipants) ?? []) as Doc<"participants">[];
   const caseNotes = useQuery(api.functions.listCaseNotes) ?? [];
   const documents = useQuery(api.functions.listDocuments) ?? [];
   const teamMembers = useQuery(api.functions.listTeamMembers) ?? [];
-  const housingMatches = useQuery(api.functions.listHousingMatches) ?? [];
-  const auditLogs = useQuery(api.functions.listAuditLogs) ?? [];
-  const demographics = useQuery(api.functions.listDemographics) ?? [];
-  const requests = useQuery(api.functions.listRequests) ?? [];
+  const housingMatches = (useQuery(api.functions.listHousingMatches) ?? []) as Doc<"housingMatches">[];
+  const auditLogs = (useQuery(api.functions.listAuditLogs) ?? []) as Doc<"auditLogs">[];
+  const demographics = (useQuery(api.functions.listDemographics) ?? []) as Doc<"demographics">[];
+  const requests = (useQuery(api.functions.listRequests) ?? []) as Doc<"requests">[];
 
   const totalClients = participants.length;
   const activeClients = participants.filter((p) => p.status === "active").length;

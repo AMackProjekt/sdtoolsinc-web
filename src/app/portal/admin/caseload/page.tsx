@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import { Users, Search, UserCheck, ChevronDown } from "lucide-react";
+import type { Doc } from "../../../../../convex/_generated/dataModel";
 
 const STATUS_COLORS: Record<string, string> = {
   active: "bg-emerald-100 text-emerald-700",
@@ -13,10 +14,10 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 export default function AdminCaseloadPage() {
-  const participants = useQuery(api.functions.listParticipants) ?? [];
-  const demographics = useQuery(api.functions.listDemographics) ?? [];
-  const teamMembers = useQuery(api.functions.listTeamMembers) ?? [];
-  const requests = useQuery(api.functions.listRequests) ?? [];
+  const participants = (useQuery(api.functions.listParticipants) ?? []) as Doc<"participants">[];
+  const demographics = (useQuery(api.functions.listDemographics) ?? []) as Doc<"demographics">[];
+  const teamMembers = (useQuery(api.functions.listTeamMembers) ?? []) as Doc<"teamMembers">[];
+  const requests = (useQuery(api.functions.listRequests) ?? []) as Doc<"requests">[];
   const updateRequestStatus = useMutation(api.functions.updateRequestStatus);
   const reassignCaseManager = useMutation(api.functions.reassignCaseManager);
 
@@ -70,6 +71,7 @@ export default function AdminCaseloadPage() {
           />
         </div>
         <select
+          title="Filter by status"
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
           className="px-3 py-1.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400"
@@ -114,6 +116,7 @@ export default function AdminCaseloadPage() {
                       {isAssigning ? (
                         <div className="flex items-center gap-2">
                           <select
+                            title="Select case manager"
                             value={newManager}
                             onChange={(e) => setNewManager(e.target.value)}
                             className="text-xs border border-violet-300 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-violet-400"

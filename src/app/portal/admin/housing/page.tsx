@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import { Home, Plus, Save, Search } from "lucide-react";
-import type { Id } from "../../../../../convex/_generated/dataModel";
+import type { Id, Doc } from "../../../../../convex/_generated/dataModel";
 
 const STATUS_COLORS = {
   pending: "bg-amber-100 text-amber-700",
@@ -13,8 +13,8 @@ const STATUS_COLORS = {
 };
 
 export default function HousingPage() {
-  const matches = useQuery(api.functions.listHousingMatches) ?? [];
-  const participants = useQuery(api.functions.listParticipants) ?? [];
+  const matches = (useQuery(api.functions.listHousingMatches) ?? []) as Doc<"housingMatches">[];
+  const participants = (useQuery(api.functions.listParticipants) ?? []) as Doc<"participants">[];
   const upsertMatch = useMutation(api.functions.upsertHousingMatch);
   const updateStatus = useMutation(api.functions.updateHousingMatchStatus);
 
@@ -90,6 +90,7 @@ export default function HousingPage() {
           <div className="flex flex-col gap-1">
             <label className="text-xs font-medium text-slate-600">Client Slot</label>
             <select value={form.clientSlot}
+              title="Client slot"
               onChange={(e) => {
                 const p = participants.find((p) => p.slot === e.target.value);
                 setForm((s) => ({ ...s, clientSlot: e.target.value, clientName: p?.name ?? "" }));
@@ -109,12 +110,14 @@ export default function HousingPage() {
               <label className="text-xs font-medium text-slate-600">{label}</label>
               <input type={type ?? "text"} value={(form as Record<string, string>)[key]}
                 onChange={(e) => setForm((s) => ({ ...s, [key]: e.target.value }))}
+                title={label} placeholder={label}
                 className={`px-3 py-1.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400 ${w}`} />
             </div>
           ))}
           <div className="flex flex-col gap-1">
             <label className="text-xs font-medium text-slate-600">Status</label>
             <select value={form.status} onChange={(e) => setForm((s) => ({ ...s, status: e.target.value as typeof form.status }))}
+              title="Housing match status"
               className="px-3 py-1.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400">
               <option value="pending">Pending</option>
               <option value="active">Active</option>
@@ -164,6 +167,7 @@ export default function HousingPage() {
                   <td className="px-4 py-3 text-slate-400 text-xs max-w-[140px] truncate">{m.notes ?? "—"}</td>
                   <td className="px-4 py-3">
                     <select
+                      title="Update status"
                       value={m.status}
                       onChange={(e) => updateStatus({ id: m._id as Id<"housingMatches">, status: e.target.value as "pending" | "active" | "exited" })}
                       className="text-xs border border-slate-200 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-violet-400"

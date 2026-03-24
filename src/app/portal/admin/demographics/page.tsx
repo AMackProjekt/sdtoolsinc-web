@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import { BarChart3, Search, Download } from "lucide-react";
+import type { Doc } from "../../../../../convex/_generated/dataModel";
 
 function Bar({ label, value, total, color }: { label: string; value: number; total: number; color: string }) {
   const pct = total > 0 ? Math.round((value / total) * 100) : 0;
@@ -34,8 +35,8 @@ function Section({ title, data, color }: { title: string; data: Record<string, n
 }
 
 export default function DemographicsPage() {
-  const demographics = useQuery(api.functions.listDemographics) ?? [];
-  const participants = useQuery(api.functions.listParticipants) ?? [];
+  const demographics = (useQuery(api.functions.listDemographics) ?? []) as Doc<"demographics">[];
+  const participants = (useQuery(api.functions.listParticipants) ?? []) as Doc<"participants">[];
   const [search, setSearch] = useState("");
 
   // Aggregate breakdowns

@@ -111,6 +111,7 @@ export default function ClientProfilePage() {
       <div className="flex items-center gap-4">
         <button
           onClick={() => router.back()}
+          title="Go back"
           className="p-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 transition text-slate-600"
         >
           <ArrowLeft className="w-5 h-5" />

@@ -4,11 +4,11 @@ import { useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import { UserCog, Plus, Trash2, Save, Search } from "lucide-react";
-import type { Id } from "../../../../../convex/_generated/dataModel";
+import type { Id, Doc } from "../../../../../convex/_generated/dataModel";
 
 export default function PersonnelPage() {
-  const teamMembers = useQuery(api.functions.listTeamMembers) ?? [];
-  const schedules = useQuery(api.functions.listStaffSchedules) ?? [];
+  const teamMembers = (useQuery(api.functions.listTeamMembers) ?? []) as Doc<"teamMembers">[];
+  const schedules = (useQuery(api.functions.listStaffSchedules) ?? []) as Doc<"staffSchedules">[];
   const addTeamMember = useMutation(api.functions.addTeamMember);
   const upsertSchedule = useMutation(api.functions.upsertStaffSchedule);
   const deleteSchedule = useMutation(api.functions.deleteStaffSchedule);
@@ -86,16 +86,19 @@ export default function PersonnelPage() {
             <div className="flex flex-col gap-1">
               <label className="text-xs text-slate-600 font-medium">Member ID</label>
               <input value={newMember.memberId} onChange={(e) => setNewMember((s) => ({ ...s, memberId: e.target.value }))}
+                title="Member ID" placeholder="e.g., DFC-001"
                 className="px-3 py-1.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400 w-36" />
             </div>
             <div className="flex flex-col gap-1">
               <label className="text-xs text-slate-600 font-medium">Name</label>
               <input value={newMember.name} onChange={(e) => setNewMember((s) => ({ ...s, name: e.target.value }))}
+                title="Staff member name" placeholder="Full name"
                 className="px-3 py-1.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400 w-44" />
             </div>
             <div className="flex flex-col gap-1">
               <label className="text-xs text-slate-600 font-medium">Role / Title</label>
               <input value={newMember.role} onChange={(e) => setNewMember((s) => ({ ...s, role: e.target.value }))}
+                title="Role or title" placeholder="e.g., Case Manager"
                 className="px-3 py-1.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400 w-44" />
             </div>
             <button onClick={handleAddMember}
@@ -160,13 +163,13 @@ export default function PersonnelPage() {
                 <label className="text-xs text-slate-600 font-medium">{label}</label>
                 <input value={(schedForm as Record<string, string>)[key]}
                   onChange={(e) => setSchedForm((s) => ({ ...s, [key]: e.target.value }))}
+                  title={label} placeholder={label}
                   className={`px-3 py-1.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400 ${w}`} />
               </div>
             ))}
             <div className="flex flex-col gap-1">
               <label className="text-xs text-slate-600 font-medium">Day</label>
-              <select value={schedForm.dayOfWeek} onChange={(e) => setSchedForm((s) => ({ ...s, dayOfWeek: e.target.value }))}
-                className="px-3 py-1.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400">
+              <select value={schedForm.dayOfWeek} onChange={(e) => setSchedForm((s) => ({ ...s, dayOfWeek: e.target.value }))}              title="Day of week"                className="px-3 py-1.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400">
                 {DAYS.map((d) => <option key={d}>{d}</option>)}
               </select>
             </div>
@@ -175,6 +178,7 @@ export default function PersonnelPage() {
                 <label className="text-xs text-slate-600 font-medium">{k === "startTime" ? "Start" : "End"}</label>
                 <input type="time" value={(schedForm as Record<string, string>)[k]}
                   onChange={(e) => setSchedForm((s) => ({ ...s, [k]: e.target.value }))}
+                  title={k === "startTime" ? "Start time" : "End time"}
                   className="px-3 py-1.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400 w-28" />
               </div>
             ))}
@@ -206,6 +210,7 @@ export default function PersonnelPage() {
                   <td className="px-4 py-3 text-slate-400 text-xs">{s.notes ?? "—"}</td>
                   <td className="px-4 py-3">
                     <button onClick={() => deleteSchedule({ id: s._id as Id<"staffSchedules"> })}
+                      title="Delete schedule entry"
                       className="text-slate-300 hover:text-red-400 transition">
                       <Trash2 className="w-4 h-4" />
                     </button>

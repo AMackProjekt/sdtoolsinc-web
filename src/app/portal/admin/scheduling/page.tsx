@@ -3,6 +3,7 @@
 import { useQuery } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import { CalendarDays } from "lucide-react";
+import type { Doc } from "../../../../../convex/_generated/dataModel";
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
@@ -17,11 +18,11 @@ const HOUR_COLORS = [
 ];
 
 export default function SchedulingPage() {
-  const schedules = useQuery(api.functions.listStaffSchedules) ?? [];
+  const schedules = (useQuery(api.functions.listStaffSchedules) ?? []) as Doc<"staffSchedules">[];
   const teamMembers = useQuery(api.functions.listTeamMembers) ?? [];
 
   // Map staff names to color index
-  const staffNames = Array.from(new Set(schedules.map((s) => s.staffName)));
+  const staffNames = Array.from(new Set(schedules.map((s) => s.staffName))) as string[];
   const staffColorMap = Object.fromEntries(
     staffNames.map((n, i) => [n, HOUR_COLORS[i % HOUR_COLORS.length]])
   );

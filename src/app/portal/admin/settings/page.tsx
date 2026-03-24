@@ -105,6 +105,7 @@ export default function SettingsPage() {
                 {item.type === "toggle" && (
                   <button
                     onClick={() => toggle(item.key)}
+                    title={item.label}
                     className={`w-10 h-5.5 rounded-full transition-colors relative shrink-0 ${
                       values[item.key] ? "bg-violet-600" : "bg-slate-200"
                     }`}
@@ -120,6 +121,7 @@ export default function SettingsPage() {
                 )}
                 {item.type === "select" && (
                   <select
+                    title={item.label}
                     value={String(values[item.key])}
                     onChange={(e) => set(item.key, e.target.value)}
                     className="px-3 py-1.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400 shrink-0"
@@ -129,6 +131,8 @@ export default function SettingsPage() {
                 )}
                 {item.type === "text" && (
                   <input
+                    title={item.label}
+                    placeholder={item.label}
                     value={String(values[item.key])}
                     onChange={(e) => set(item.key, e.target.value)}
                     className="px-3 py-1.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400 w-56 shrink-0"

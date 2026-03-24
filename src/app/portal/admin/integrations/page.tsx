@@ -160,6 +160,7 @@ export default function IntegrationsPage() {
                       </div>
                       {intg.docsUrl && (
                         <a href={intg.docsUrl} target="_blank" rel="noopener noreferrer"
+                          title="View documentation"
                           className="text-slate-400 hover:text-violet-600 transition shrink-0">
                           <ExternalLink className="w-4 h-4" />
                         </a>
