@@ -1,28 +1,86 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { signIn } from "next-auth/react";
-import { ShieldCheck, WifiOff } from "lucide-react";
-
-function GoogleG() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.717v2.258h2.908C16.658 14.017 17.64 11.71 17.64 9.2z" fill="#4285F4" />
-      <path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853" />
-      <path d="M3.964 10.707A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z" fill="#FBBC05" />
-      <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.961L3.964 7.293C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335" />
-    </svg>
-  );
-}
+import { Eye, EyeOff, ShieldCheck, UserRound, WifiOff } from "lucide-react";
 
 export default function ClientLogin() {
   const [loading, setLoading] = useState(false);
+  const [clearing, setClearing] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [identifier, setIdentifier] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
 
-  const handleGoogleSignIn = async () => {
+  useEffect(() => {
+    const remembered = localStorage.getItem("caseflow_client_remembered_identifier");
+    if (remembered) {
+      setIdentifier(remembered);
+      setRememberMe(true);
+    }
+  }, []);
+
+  const handleCredentialSignIn = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     setLoading(true);
-    await signIn("google", { callbackUrl: "/portal/client" });
-    setLoading(false);
+    setError("");
+    setNotice("");
+
+    try {
+      if (!rememberMe) {
+        await fetch("/api/auth/clear-client-session", { method: "POST" });
+        localStorage.removeItem("caseflow_client_onboarded");
+        sessionStorage.clear();
+      }
+
+      const result = await signIn("client-credentials", {
+        identifier,
+        password,
+        redirect: false,
+        callbackUrl: "/portal/client",
+      });
+
+      if (!result || result.error) {
+        setError("Incorrect email/username or password.");
+        return;
+      }
+
+      if (rememberMe) {
+        localStorage.setItem("caseflow_client_remembered_identifier", identifier.trim());
+      } else {
+        localStorage.removeItem("caseflow_client_remembered_identifier");
+      }
+
+      window.location.href = result.url ?? "/portal/client";
+    } catch {
+      setError("Unable to sign in right now. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleClearSharedDevice = async () => {
+    setClearing(true);
+    setError("");
+    setNotice("");
+
+    try {
+      await fetch("/api/auth/clear-client-session", { method: "POST" });
+      localStorage.removeItem("caseflow_client_onboarded");
+      localStorage.removeItem("caseflow_client_remembered_identifier");
+      sessionStorage.clear();
+      setIdentifier("");
+      setPassword("");
+      setRememberMe(false);
+      setNotice("Shared-device sign-in data cleared from this browser.");
+    } catch {
+      setError("Could not clear shared-device session data.");
+    } finally {
+      setClearing(false);
+    }
   };
 
   return (
@@ -84,17 +142,99 @@ export default function ClientLogin() {
           </div>
 
           <h1 className="text-2xl font-bold text-white mb-1">Welcome back</h1>
-          <p className="text-slate-400 text-sm mb-8">Sign in to continue to your portal.</p>
+          <p className="text-slate-400 text-sm mb-8">Sign in with your username or email and password.</p>
 
-          <button
-            type="button"
-            onClick={handleGoogleSignIn}
-            disabled={loading}
-            className="w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-100 active:scale-[0.98] text-slate-800 font-semibold py-3 px-4 rounded-xl transition-all shadow-md disabled:opacity-60 text-sm"
-          >
-            <GoogleG />
-            {loading ? "Signing in…" : "Continue with Google"}
-          </button>
+          <form onSubmit={handleCredentialSignIn} className="space-y-4">
+            <div>
+              <label htmlFor="identifier" className="block text-xs font-bold uppercase tracking-[0.18em] text-slate-400 mb-2">
+                Email / Username
+              </label>
+              <div className="relative">
+                <UserRound className="w-4 h-4 text-slate-500 absolute left-4 top-1/2 -translate-y-1/2" />
+                <input
+                  id="identifier"
+                  type="text"
+                  autoComplete="username"
+                  value={identifier}
+                  onChange={(event) => setIdentifier(event.target.value)}
+                  placeholder="name@example.com or username"
+                  className="w-full rounded-xl border border-slate-700 bg-slate-800/80 text-white placeholder:text-slate-500 pl-11 pr-4 py-3 text-sm outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition"
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="password" className="block text-xs font-bold uppercase tracking-[0.18em] text-slate-400 mb-2">
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete={rememberMe ? "current-password" : "off"}
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  placeholder="Enter your password"
+                  className="w-full rounded-xl border border-slate-700 bg-slate-800/80 text-white placeholder:text-slate-500 pl-4 pr-11 py-3 text-sm outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((value) => !value)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between gap-3 text-sm">
+              <label className="inline-flex items-center gap-2 text-slate-300 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(event) => setRememberMe(event.target.checked)}
+                  className="h-4 w-4 rounded border-slate-600 bg-slate-800 text-teal-500 focus:ring-teal-500/30"
+                />
+                Remember me
+              </label>
+              <button
+                type="button"
+                onClick={handleClearSharedDevice}
+                disabled={clearing}
+                className="text-slate-400 hover:text-teal-300 font-medium transition disabled:opacity-60"
+              >
+                {clearing ? "Clearing…" : "Clear shared device"}
+              </button>
+            </div>
+
+            {error ? (
+              <div className="rounded-xl border border-rose-900/80 bg-rose-950/40 px-4 py-3 text-sm text-rose-300">
+                {error}
+              </div>
+            ) : null}
+
+            {notice ? (
+              <div className="rounded-xl border border-teal-900/80 bg-teal-950/40 px-4 py-3 text-sm text-teal-300">
+                {notice}
+              </div>
+            ) : null}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-teal-500 hover:bg-teal-400 active:scale-[0.99] text-slate-950 font-bold py-3 px-4 rounded-xl transition-all shadow-md shadow-teal-900/40 disabled:opacity-60 text-sm"
+            >
+              {loading ? "Signing in…" : "Sign In"}
+            </button>
+          </form>
+
+          <div className="mt-4 rounded-2xl border border-slate-800 bg-slate-800/60 p-4 text-xs text-slate-400 leading-relaxed">
+            Use <span className="text-slate-200 font-semibold">Clear shared device</span> before leaving public or family devices.
+            Leave <span className="text-slate-200 font-semibold">Remember me</span> off on shared phones, tablets, and computers.
+          </div>
 
           <div className="mt-8 space-y-3 text-center text-sm text-slate-500">
             <p>

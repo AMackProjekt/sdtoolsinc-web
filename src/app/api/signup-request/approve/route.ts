@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../../../convex/_generated/api";
 import { Resend } from "resend";
+import { upsertClientCredential } from "@/auth";
+import { randomBytes } from "crypto";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "https://projekt-dfc.vercel.app";
 
@@ -55,6 +57,15 @@ export async function GET(req: NextRequest) {
 
   await convex.mutation(api.functions.updateSignupRequestStatus, { token, status: "approved" });
 
+  const temporaryPassword = randomBytes(6).toString("base64url");
+  const username = request.email.split("@")[0].toLowerCase();
+  await upsertClientCredential({
+    email: request.email,
+    username,
+    password: temporaryPassword,
+    name: request.name,
+  });
+
   const loginUrl = `${BASE_URL}/login/client`;
 
   await resend.emails.send({
@@ -75,15 +86,20 @@ export async function GET(req: NextRequest) {
             Welcome to the <strong>Dreams for Change</strong> client portal! Your access request has been approved and your account is now active.
           </p>
           <p style="color:#0f172a;font-size:15px;line-height:1.6;">
-            Click the button below to sign in using your Google account associated with <strong>${request.email}</strong>.
+            Use the credentials below to sign in to the client portal. For safety, change this password after your first secure session.
           </p>
+          <div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:10px;padding:16px 18px;margin:20px 0;">
+            <p style="margin:0 0 8px;color:#0f172a;font-size:14px;"><strong>Username</strong>: ${username}</p>
+            <p style="margin:0 0 8px;color:#0f172a;font-size:14px;"><strong>Email</strong>: ${request.email}</p>
+            <p style="margin:0;color:#0f172a;font-size:14px;"><strong>Temporary Password</strong>: ${temporaryPassword}</p>
+          </div>
           <div style="text-align:center;margin:32px 0;">
             <a href="${loginUrl}" style="display:inline-block;padding:16px 40px;background:#0d9488;color:#fff;border-radius:8px;text-decoration:none;font-weight:700;font-size:16px;">Access My Portal →</a>
           </div>
           <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:16px;margin-bottom:24px;">
             <p style="color:#166534;font-size:14px;margin:0 0 8px;"><strong>Getting Started</strong></p>
             <ul style="color:#166534;font-size:14px;margin:0;padding-left:20px;line-height:1.8;">
-              <li>Sign in with your Google account</li>
+              <li>Sign in with your username/email and temporary password</li>
               <li>Review your goals and progress with your case manager</li>
               <li>Use the secure messaging feature to communicate with staff</li>
               <li>Access your documents and resources at any time</li>
