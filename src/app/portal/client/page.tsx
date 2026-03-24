@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { 
   Heart, Smile, BookOpen, Megaphone, Lightbulb, Frown, Plus, Quote, Zap, Bot, AlertCircle,
   ExternalLink, ChevronRight, CheckCircle2, Clock, FileText, ShieldCheck, Upload, MessageSquare,
-  Trash2, Eye, EyeOff, Copy, Check, Send
+  Trash2, Eye, EyeOff, Copy, Check, Send, Users
 } from "lucide-react";
 import Link from "next/link";
 import { useStaff } from "@/context/StaffContext";
@@ -180,7 +180,7 @@ export default function ClientDashboard() {
              <button onClick={() => setQuote(QUOTES[Math.floor(Math.random() * QUOTES.length)])} className="text-xs font-bold text-teal-400 hover:text-white transition flex items-center gap-2">
                 Get New Quote <Zap className="w-3 h-3" />
              </button>
-             <a href="https://forms.microsoft.com/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAM__" target="_blank" rel="noopener noreferrer" className="text-xs font-bold bg-teal-500 text-charcoal-900 px-4 py-2 rounded-lg hover:bg-teal-400 transition flex items-center gap-1">
+            <a href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAMAAZQOUnpUMzFSVENWT1NFWUhIMFpPRUhKQVhPTkhTVy4u" target="_blank" rel="noopener noreferrer" className="text-xs font-bold bg-teal-500 text-charcoal-900 px-4 py-2 rounded-lg hover:bg-teal-400 transition flex items-center gap-1">
                Quick Survey <ExternalLink className="w-3 h-3" />
              </a>
           </div>
@@ -214,10 +214,13 @@ export default function ClientDashboard() {
                 <h2 className="text-2xl font-black text-charcoal-900 mb-3">Welcome to Your Portal</h2>
                 <p className="text-slate-600 leading-relaxed mb-4">This is your safe space to track your journey, access resources, and connect with support. Everything here is designed for your growth and wellbeing.</p>
                 <div className="flex flex-wrap gap-3">
-                  <a href="https://chat.google.com" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition text-sm font-bold">
+                  <a href="https://accounts.google.com/ServiceLogin?service=mail&continue=https://chat.google.com" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition text-sm font-bold">
                     <MessageSquare className="w-4 h-4" /> Chat with Mack
                   </a>
-                  <a href="https://forms.microsoft.com/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAM__" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 transition text-sm font-bold">
+                  <a href="https://chat.google.com/room/AAQABMc-VMI?cls=7" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition text-sm font-bold">
+                    <Users className="w-4 h-4" /> Join Champions Channel
+                  </a>
+                  <a href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAMAAZQOUnpUMzFSVENWT1NFWUhIMFpPRUhKQVhPTkhTVy4u" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 transition text-sm font-bold">
                     <Upload className="w-4 h-4" /> Submit Feedback Form
                   </a>
                 </div>

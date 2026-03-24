@@ -1,6 +1,40 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+// ─── HMIS Upload Queue ────────────────────────────────────────────────────────────
 
+export const listHmisQueueByDate = query({
+  args: { date: v.string() },
+  handler: async (ctx, { date }) => {
+    return await ctx.db
+      .query("hmisQueue")
+      .withIndex("by_date", (q) => q.eq("date", date))
+      .order("desc")
+      .collect();
+  },
+});
+
+export const addToHmisQueue = mutation({
+  args: {
+    clientName: v.string(),
+    date: v.string(),
+    type: v.string(),
+    summary: v.string(),
+    staff: v.string(),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.insert("hmisQueue", { ...args, checked: false });
+  },
+});
+
+export const markHmisChecked = mutation({
+  args: { id: v.id("hmisQueue"), checked: v.boolean() },
+  handler: async (ctx, { id, checked }) => {
+    await ctx.db.patch(id, {
+      checked,
+      checkedAt: checked ? new Date().toISOString() : undefined,
+    });
+  },
+});
 // ─── Generic KV Store ────────────────────────────────────────────────────────
 
 export const kvGet = query({

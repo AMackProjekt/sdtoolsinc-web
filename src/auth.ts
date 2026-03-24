@@ -34,6 +34,10 @@ function normalizeLoginIdentifier(value: string) {
   return value.trim().toLowerCase();
 }
 
+function isDfcEmail(email: string) {
+  return normalizeLoginIdentifier(email).endsWith(`@${dfcDomain}`);
+}
+
 function hashPassword(password: string) {
   const secret = process.env.AUTH_SECRET ?? "dev-only-change-me";
   return createHash("sha256").update(`${secret}:${password}`).digest("hex");
@@ -85,7 +89,79 @@ export async function upsertClientCredential(input: {
   return record;
 }
 
+export async function getStaffCredential(identifier: string): Promise<StoredClientCredential | null> {
+  const normalized = normalizeLoginIdentifier(identifier);
+  const byEmail = await getEncryptedRecord("staff-credentials", `email:${normalized}`);
+  if (byEmail) {
+    return decryptJson<StoredClientCredential>(byEmail);
+  }
+  const byUsername = await getEncryptedRecord("staff-credentials", `username:${normalized}`);
+  if (byUsername) {
+    return decryptJson<StoredClientCredential>(byUsername);
+  }
+  return null;
+}
+
+export async function upsertStaffCredential(input: {
+  email: string;
+  username?: string;
+  password: string;
+  name?: string;
+}) {
+  const email = normalizeLoginIdentifier(input.email);
+  if (!isDfcEmail(email)) {
+    throw new Error("Staff credentials must use a @dreamsforchange.org email address.");
+  }
+  const username = normalizeLoginIdentifier(input.username ?? email.split("@")[0]);
+  const record: StoredClientCredential = {
+    email,
+    username,
+    passwordHash: hashPassword(input.password),
+    name: input.name,
+    approvedAt: new Date().toISOString(),
+  };
+  const encrypted = encryptJson(record);
+  await setEncryptedRecord("staff-credentials", `email:${email}`, encrypted);
+  await setEncryptedRecord("staff-credentials", `username:${username}`, encrypted);
+  return record;
+}
+
+export async function getAdminCredential(identifier: string): Promise<StoredClientCredential | null> {
+  const normalized = normalizeLoginIdentifier(identifier);
+  const byEmail = await getEncryptedRecord("admin-credentials", `email:${normalized}`);
+  if (byEmail) {
+    return decryptJson<StoredClientCredential>(byEmail);
+  }
+  const byUsername = await getEncryptedRecord("admin-credentials", `username:${normalized}`);
+  if (byUsername) {
+    return decryptJson<StoredClientCredential>(byUsername);
+  }
+  return null;
+}
+
+export async function upsertAdminCredential(input: {
+  email: string;
+  username?: string;
+  password: string;
+  name?: string;
+}) {
+  const email = normalizeLoginIdentifier(input.email);
+  const username = normalizeLoginIdentifier(input.username ?? email.split("@")[0]);
+  const record: StoredClientCredential = {
+    email,
+    username,
+    passwordHash: hashPassword(input.password),
+    name: input.name,
+    approvedAt: new Date().toISOString(),
+  };
+  const encrypted = encryptJson(record);
+  await setEncryptedRecord("admin-credentials", `email:${email}`, encrypted);
+  await setEncryptedRecord("admin-credentials", `username:${username}`, encrypted);
+  return record;
+}
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  trustHost: true,
   session: { strategy: "jwt" },
   providers: [
     Credentials({
@@ -121,6 +197,76 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         };
       },
     }),
+    Credentials({
+      id: "staff-credentials",
+      name: "Staff Credentials",
+      credentials: {
+        identifier: { label: "Email or Username", type: "text" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        const identifier = typeof credentials?.identifier === "string" ? credentials.identifier : "";
+        const password = typeof credentials?.password === "string" ? credentials.password : "";
+
+        if (!identifier.trim() || !password) {
+          return null;
+        }
+
+        const stored = await getStaffCredential(identifier);
+        if (!stored) {
+          return null;
+        }
+
+        if (stored.email !== "donyale@dreamsforchange.org") {
+          return null;
+        }
+
+        const passwordHash = hashPassword(password);
+        if (!safeCompare(stored.passwordHash, passwordHash)) {
+          return null;
+        }
+
+        return {
+          id: stored.email,
+          email: stored.email,
+          name: stored.name ?? stored.username,
+          role: "staff",
+        };
+      },
+    }),
+    Credentials({
+      id: "admin-credentials",
+      name: "Admin Credentials",
+      credentials: {
+        identifier: { label: "Email or Username", type: "text" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        const identifier = typeof credentials?.identifier === "string" ? credentials.identifier : "";
+        const password = typeof credentials?.password === "string" ? credentials.password : "";
+
+        if (!identifier.trim() || !password) {
+          return null;
+        }
+
+        const stored = await getAdminCredential(identifier);
+        if (!stored) {
+          return null;
+        }
+
+        const passwordHash = hashPassword(password);
+        if (!safeCompare(stored.passwordHash, passwordHash)) {
+          return null;
+        }
+
+        return {
+          id: stored.email,
+          email: stored.email,
+          name: stored.name ?? stored.username,
+          role: "admin",
+        };
+      },
+    }),
     Google({
       clientId: process.env.AUTH_GOOGLE_ID ?? "",
       clientSecret: process.env.AUTH_GOOGLE_SECRET ?? "",
@@ -134,13 +280,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         return token;
       }
 
+      if (account?.provider === "staff-credentials") {
+        token.role = "staff";
+        return token;
+      }
+
+      if (account?.provider === "admin-credentials") {
+        token.role = "admin";
+        return token;
+      }
+
       if (account && profile && typeof profile.email === "string") {
         const email = profile.email.toLowerCase();
         const isAdmin = adminAllowlist.includes(email);
-        const isStaff =
-          !isAdmin &&
-          (staffAllowlist.includes(email) ||
-            (!clientAllowlist.includes(email) && email.endsWith(`@${dfcDomain}`)));
+        const isStaff = !isAdmin && email === "donyale@dreamsforchange.org";
         token.role = isAdmin ? "admin" : isStaff ? "staff" : "client";
       }
       return token;
@@ -152,7 +305,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session;
     },
     async signIn({ account, profile, user }) {
-      if (account?.provider === "client-credentials") {
+      if (
+        account?.provider === "client-credentials" ||
+        account?.provider === "staff-credentials" ||
+        account?.provider === "admin-credentials"
+      ) {
         return Boolean(user?.email);
       }
 

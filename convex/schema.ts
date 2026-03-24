@@ -188,6 +188,17 @@ export default defineSchema({
     notes: v.optional(v.string()),
   }).index("by_staff", ["staffEmail"]),
 
+  // ── HMIS Upload Queue ────────────────────────────────────────────────────────
+  hmisQueue: defineTable({
+    clientName: v.string(),   // UID / tent identifier
+    date: v.string(),         // YYYY-MM-DD
+    type: v.string(),
+    summary: v.string(),
+    staff: v.string(),
+    checked: v.boolean(),
+    checkedAt: v.optional(v.string()),
+  }).index("by_date", ["date"]).index("by_date_checked", ["date", "checked"]),
+
   // ── Generic KV store (used by server-side auth/credential storage) ─────────
   keyValueStore: defineTable({
     namespace: v.string(),

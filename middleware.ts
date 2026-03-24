@@ -98,5 +98,5 @@ export default auth(async (req) => {
 });
 
 export const config = {
-  matcher: ["/portal/:path*", "/api/:path*", "/auth/2fa"],
+  matcher: ["/portal/:path*", "/api/((?!auth/).*)", "/auth/2fa"],
 };

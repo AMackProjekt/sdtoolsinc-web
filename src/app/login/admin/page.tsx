@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { signIn, useSession } from "next-auth/react";
-import { Gem, ShieldCheck, Eye, ScrollText, Users, BarChart3 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { signIn } from "next-auth/react";
+import { Eye, EyeOff, Gem, ShieldCheck, UserRound, ScrollText, Users, BarChart3 } from "lucide-react";
 
 function GoogleG() {
   return (
@@ -26,21 +26,58 @@ const FEATURES = [
 ];
 
 export default function AdminLogin() {
-  const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [identifier, setIdentifier] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const handleGoogleSignIn = async () => {
+  useEffect(() => {
+    const remembered = localStorage.getItem("caseflow_admin_remembered_identifier");
+    if (remembered) {
+      setIdentifier(remembered);
+      setRememberMe(true);
+    }
+  }, []);
+
+  const handleCredentialSignIn = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     setLoading(true);
-    await signIn("google", { callbackUrl: "/portal/admin" });
-    setLoading(false);
+    setError("");
+
+    try {
+      const result = await signIn("admin-credentials", {
+        identifier,
+        password,
+        redirect: false,
+        callbackUrl: "/portal/admin",
+      });
+
+      if (!result || result.error) {
+        setError("Incorrect email/username or password.");
+        return;
+      }
+
+      if (rememberMe) {
+        localStorage.setItem("caseflow_admin_remembered_identifier", identifier.trim());
+      } else {
+        localStorage.removeItem("caseflow_admin_remembered_identifier");
+      }
+
+      window.location.href = result.url ?? "/portal/admin";
+    } catch {
+      setError("Unable to sign in right now. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-[#120520] flex">
-      {/* ── Left brand panel (desktop only) ── */}
+      {/* Left brand panel (desktop only) */}
       <aside className="hidden lg:flex flex-col justify-between w-[420px] shrink-0 bg-violet-950 border-r border-violet-900/50 p-10">
         <div>
-          {/* Logo */}
           <div className="flex items-center gap-3 mb-14">
             <div className="w-10 h-10 rounded-xl bg-violet-600 flex items-center justify-center shadow-lg shadow-violet-900/60">
               <Gem className="w-5 h-5 text-white" />
@@ -59,7 +96,6 @@ export default function AdminLogin() {
           </p>
         </div>
 
-        {/* Feature list */}
         <div className="space-y-3.5">
           {FEATURES.map((f) => (
             <div key={f.label} className="flex items-start gap-2.5 text-violet-300 text-sm">
@@ -73,7 +109,7 @@ export default function AdminLogin() {
         </div>
       </aside>
 
-      {/* ── Right: sign-in form ── */}
+      {/* Right: sign-in form */}
       <div className="flex-1 flex items-center justify-center p-6">
         <div className="w-full max-w-sm">
           {/* Mobile logo */}
@@ -88,40 +124,119 @@ export default function AdminLogin() {
           </div>
 
           <h1 className="text-2xl font-bold text-white mb-1">Admin Access</h1>
-          <p className="text-violet-300 text-sm mb-3">Restricted to authorized supervisors.</p>
+          <p className="text-violet-300 text-sm mb-3">Sign in with your admin credentials or Google account.</p>
 
           <div className="inline-flex items-center gap-1.5 bg-violet-950 border border-violet-800/70 text-violet-300 text-xs font-bold px-3 py-1.5 rounded-full mb-8">
             <ShieldCheck className="w-3 h-3" />
-            Allowlist-gated · All sessions audited
+            Allowlist-gated &middot; All sessions audited
+          </div>
+
+          <form onSubmit={handleCredentialSignIn} className="space-y-4">
+            <div>
+              <label htmlFor="identifier" className="block text-xs font-bold uppercase tracking-[0.18em] text-violet-400 mb-2">
+                Email / Username
+              </label>
+              <div className="relative">
+                <UserRound className="w-4 h-4 text-violet-600 absolute left-4 top-1/2 -translate-y-1/2" />
+                <input
+                  id="identifier"
+                  type="text"
+                  autoComplete="username"
+                  value={identifier}
+                  onChange={(event) => setIdentifier(event.target.value)}
+                  placeholder="name@dreamsforchange.org"
+                  className="w-full rounded-xl border border-violet-800/60 bg-violet-950/50 text-white placeholder:text-violet-700 pl-11 pr-4 py-3 text-sm outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition"
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="password" className="block text-xs font-bold uppercase tracking-[0.18em] text-violet-400 mb-2">
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  placeholder="Enter your password"
+                  className="w-full rounded-xl border border-violet-800/60 bg-violet-950/50 text-white placeholder:text-violet-700 pl-4 pr-11 py-3 text-sm outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((value) => !value)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-violet-600 hover:text-violet-300 transition"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between gap-3 text-sm">
+              <label className="inline-flex items-center gap-2 text-violet-300 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(event) => setRememberMe(event.target.checked)}
+                  className="h-4 w-4 rounded border-violet-700 bg-violet-950 text-violet-500 focus:ring-violet-500/30"
+                />
+                Remember me
+              </label>
+              <Link href="/forgot-password" className="text-violet-400 hover:text-violet-300 font-medium transition">
+                Forgot password?
+              </Link>
+            </div>
+
+            {error ? (
+              <div className="rounded-xl border border-rose-900/80 bg-rose-950/40 px-4 py-3 text-sm text-rose-300">
+                {error}
+              </div>
+            ) : null}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-violet-600 hover:bg-violet-500 active:scale-[0.99] text-white font-bold py-3 px-4 rounded-xl transition-all shadow-md shadow-violet-900/50 disabled:opacity-60 text-sm"
+            >
+              {loading ? "Signing in..." : "Sign In"}
+            </button>
+          </form>
+
+          {/* Divider */}
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-violet-900/60"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-[#120520] text-violet-700">or</span>
+            </div>
           </div>
 
           <button
             type="button"
-            onClick={handleGoogleSignIn}
-            disabled={loading}
-            className="w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-100 active:scale-[0.98] text-slate-800 font-semibold py-3 px-4 rounded-xl transition-all shadow-md disabled:opacity-60 text-sm"
+            onClick={() => signIn("google", { callbackUrl: "/portal/admin" })}
+            className="w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-100 active:scale-[0.98] text-slate-800 font-semibold py-3 px-4 rounded-xl transition-all shadow-md text-sm"
           >
             <GoogleG />
-            {loading ? "Signing in…" : "Continue with Google"}
+            Continue with Google
           </button>
-
-          {session?.user?.email && (
-            <p className="mt-4 text-xs text-violet-500 text-center">
-              Signed in as <span className="text-violet-300">{session.user.email}</span>
-            </p>
-          )}
 
           <div className="mt-8 space-y-3 text-center text-sm text-violet-600">
             <p>
               Staff member?{" "}
               <Link href="/login/staff" className="text-slate-400 hover:text-slate-200 font-semibold transition-colors">
-                Staff Login →
+                Staff Login
               </Link>
             </p>
             <p>
               Participant?{" "}
               <Link href="/login/client" className="text-teal-400 hover:text-teal-300 font-semibold transition-colors">
-                Client Login →
+                Client Login
               </Link>
             </p>
           </div>
