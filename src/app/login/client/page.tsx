@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { signIn } from "next-auth/react";
-import { Eye, EyeOff, ShieldCheck, UserRound, WifiOff } from "lucide-react";
+import { Eye, EyeOff, ShieldCheck, UserRound, WifiOff, Chrome } from "lucide-react";
 
 export default function ClientLogin() {
   const [loading, setLoading] = useState(false);
@@ -236,6 +236,26 @@ export default function ClientLogin() {
               {loading ? "Signing in…" : "Sign In"}
             </button>
           </form>
+
+          {/* Divider */}
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-slate-700"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-slate-900 text-slate-500">or</span>
+            </div>
+          </div>
+
+          {/* Google sign-in button */}
+          <button
+            type="button"
+            onClick={() => signIn("google", { callbackUrl: "/portal/client" })}
+            className="w-full border border-slate-700 hover:border-slate-600 hover:bg-slate-800/50 text-slate-300 hover:text-white font-semibold py-3 px-4 rounded-xl transition-all text-sm flex items-center justify-center gap-2"
+          >
+            <Chrome className="w-4 h-4" />
+            Sign in with Google
+          </button>
 
           <div className="mt-4 rounded-2xl border border-slate-800 bg-slate-800/60 p-4 text-xs text-slate-400 leading-relaxed">
             Use <span className="text-slate-200 font-semibold">Clear shared device</span> before leaving public or family devices.
