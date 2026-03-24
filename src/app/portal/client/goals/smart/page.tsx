@@ -35,7 +35,6 @@ export default function SmartGoalSheet() {
     if (!form.specific || !form.timebound) return;
 
     addSmartGoal({
-      id: Date.now(),
       client: mySlot,
       date: new Date().toLocaleDateString(),
       ...form,
@@ -155,7 +154,7 @@ export default function SmartGoalSheet() {
            <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest pl-4">Past S.M.A.R.T. Log</h2>
            <div className="grid gap-4">
               {myActiveGoals.map(goal => (
-                 <div key={goal.id} className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 group hover:border-indigo-500/30 transition">
+                 <div key={goal._id} className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 group hover:border-indigo-500/30 transition">
                     <div className="flex items-center gap-6">
                        <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center font-black group-hover:bg-indigo-600 group-hover:text-white transition-colors shadow-inner">G</div>
                        <div>

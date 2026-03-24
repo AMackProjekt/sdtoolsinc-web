@@ -3,9 +3,11 @@
 import { useState, useRef, useEffect } from "react";
 import { FileText, FileUp, Search, Filter, MoreHorizontal, FileImage, FileCode, CheckCircle2, Download, Trash2, FolderOpen, UserPlus, X } from "lucide-react";
 import { useStaff } from "@/context/StaffContext";
+import { useSession } from "next-auth/react";
 
 export default function DocumentCenter() {
-  const { documents: contextDocs, participants, addDocument } = useStaff();
+  const { documents: contextDocs, participants, addDocument, updateDocumentClient } = useStaff();
+  const { data: session } = useSession();
   const [documents, setDocuments] = useState(contextDocs);
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -38,7 +40,9 @@ export default function DocumentCenter() {
     ? CASELOAD_PARTICIPANTS.filter(c => c.toLowerCase().includes(clientSearch.toLowerCase())) 
     : CASELOAD_PARTICIPANTS;
 
-  // Handlers for simulated Drag and Drop
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
+  // Drag and Drop handlers
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(true);
@@ -52,43 +56,59 @@ export default function DocumentCenter() {
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
-    simulateUpload(e.dataTransfer.files[0]?.name || "New Scanned Document.pdf");
+    const file = e.dataTransfer.files[0];
+    if (file) uploadFile(file);
   };
 
   const handleManualUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      simulateUpload(e.target.files[0].name);
+    const file = e.target.files?.[0];
+    if (file) uploadFile(file);
+  };
+
+  const uploadFile = async (file: File) => {
+    setUploadError(null);
+    setIsUploading(true);
+
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      form.append("client", selectedClient || "Unassigned/General");
+
+      const res = await fetch("/api/upload", { method: "POST", body: form });
+      const json = await res.json();
+
+      if (!res.ok) {
+        setUploadError(json.error ?? "Upload failed.");
+        return;
+      }
+
+      const ext = file.name.split(".").pop()?.toUpperCase() ?? "FILE";
+      const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
+      const newDoc = {
+        _id: `pending-${Date.now()}`,
+        name: file.name,
+        type: ext,
+        size: `${sizeMb} MB`,
+        client: selectedClient || "Unassigned/General",
+        date: "Just now",
+        uploader: session?.user?.email ?? session?.user?.name ?? "staff",
+        url: json.url as string,
+      };
+      setDocuments(prev => [newDoc, ...prev]);
+      addDocument(newDoc);
+      setClientSearch("");
+      setSelectedClient("");
+    } catch {
+      setUploadError("Network error — please try again.");
+    } finally {
+      setIsUploading(false);
     }
   };
 
-  const simulateUpload = (fileName: string) => {
-    if (!fileName) return;
-    setIsUploading(true);
-    
-    // Simulate a 1.5 second network request
-    setTimeout(() => {
-      const newDoc = {
-        id: documents.length + 1,
-        name: fileName,
-        type: fileName.split('.').pop()?.toUpperCase() || "FILE",
-        size: "3.4 MB", // Simulated random size
-        client: selectedClient || "Unassigned/General",
-        date: "Just now",
-        uploader: "staff-user"
-      };
-      setDocuments([newDoc, ...documents]);
-      addDocument(newDoc);
-      setIsUploading(false);
-      
-      // Reset form
-      setClientSearch("");
-      setSelectedClient("");
-    }, 1500);
-  };
-
-  const handleAssignFromTable = (docId: number, newClient: string) => {
+  const handleAssignFromTable = (docId: string, newClient: string) => {
     if (!newClient) return;
-    setDocuments(docs => docs.map(d => d.id === docId ? { ...d, client: newClient } : d));
+    setDocuments(docs => docs.map(d => d._id === docId ? { ...d, client: newClient } : d));
+    updateDocumentClient(docId, newClient);
   };
 
   const getFileIcon = (type: string) => {
@@ -160,11 +180,17 @@ export default function DocumentCenter() {
 
                   <label className="px-6 py-2.5 bg-white border border-slate-200 rounded-lg text-sm font-bold text-slate-700 hover:bg-slate-50 cursor-pointer transition shadow-sm w-full">
                     Browse Files
-                    <input type="file" className="hidden" onChange={handleManualUpload} />
+                    <input type="file" accept=".pdf,.docx,.jpg,.jpeg,.png" className="hidden" onChange={handleManualUpload} />
                   </label>
                 </>
               )}
             </div>
+
+            {uploadError && (
+              <p className="mt-3 text-sm text-rose-600 font-medium bg-rose-50 border border-rose-200 rounded-lg px-3 py-2">
+                {uploadError}
+              </p>
+            )}
 
             <div className="mt-6">
               <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Direct Attachment Details</h3>
@@ -334,7 +360,7 @@ export default function DocumentCenter() {
                           ) : (
                             <select
                 title="Assign to participant"
-                onChange={(e) => handleAssignFromTable(doc.id, e.target.value)}
+                onChange={(e) => handleAssignFromTable(doc._id, e.target.value)}
                               className="w-full max-w-[180px] bg-amber-50 border border-amber-200 text-amber-700 font-semibold rounded-md px-2 py-1 outline-none text-xs cursor-pointer focus:ring-2 focus:ring-amber-500/20"
                             >
                               <option value="">+ Assign Client</option>
@@ -351,7 +377,16 @@ export default function DocumentCenter() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                           <div className="flex items-center justify-end gap-1">
-                            <button className="p-2 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors focus:outline-none" title="Download">
+                            <button
+                              className="p-2 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors focus:outline-none"
+                              title="Download"
+                              onClick={() => {
+                                if ((doc as { url?: string }).url) {
+                                  window.location.href = `/api/download?url=${encodeURIComponent((doc as { url?: string }).url!)}`;
+                                }
+                              }}
+                              disabled={!(doc as { url?: string }).url}
+                            >
                               <Download className="w-4 h-4" />
                             </button>
                             <button className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors focus:outline-none" title="Delete">

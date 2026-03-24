@@ -28,15 +28,11 @@ export default function CalendarIntegrations() {
     if (!chatInput.trim()) return;
     
     setChatMessages([...chatMessages, { role: 'user', content: chatInput }]);
-    const query = chatInput;
     setChatInput("");
-    
-    setTimeout(() => {
-      setChatMessages(prev => [...prev, { 
-        role: 'agent', 
-        content: `I've analyzed your request: "${query}". Searching AppScripts logs and cross-referencing Microsoft Forms data for client updates...` 
-      }]);
-    }, 1000);
+    setChatMessages(prev => [...prev, { 
+      role: 'agent', 
+      content: "AI integration is not yet connected. Check back once the workflow backend is configured."
+    }]);
   };
 
   return (

@@ -6,6 +6,7 @@ import { useStaff } from "@/context/StaffContext";
 
 export default function TerminalPage() {
   const { participants, caseNotes, documents } = useStaff();
+  const checkInFormUrl = "https://forms.cloud.microsoft/Pages/DesignPageV2.aspx?subpage=design&token=6ec69437e59a458687568715bd02e703&id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAMAAZQOUnpUNzdFMjk2VDVTSVBIQU80QlBBMkpYMVk3US4u&analysis=true";
   const [input, setInput] = useState("");
   const [history, setHistory] = useState<string[]>([
     "PowerShell 7.4.1",
@@ -44,9 +45,13 @@ export default function TerminalPage() {
         body: JSON.stringify({ command: cmd })
       });
       const data = await response.json();
-      
-      if (data.output) {
+
+      if (!response.ok) {
+        newHistory.push(`ERROR ${response.status}: ${data?.error ?? "Terminal request failed."}`);
+      } else if (data.output) {
         newHistory.push(...data.output.split('\n'));
+      } else {
+        newHistory.push("No output returned.");
       }
     } catch (err) {
       newHistory.push(`ERROR: API Connectivity failure. Local logic offline.`);
@@ -73,8 +78,8 @@ export default function TerminalPage() {
         <div className="flex items-center gap-4 text-xs font-bold text-slate-400">
           <span className="flex items-center gap-1.5"><Zap className="w-4 h-4 text-amber-500" /> V8 Core Ready</span>
           <span className="flex items-center gap-1.5"><ShieldAlert className="w-4 h-4 text-teal-500" /> Admin Restricted</span>
-          <span className="flex items-center gap-1.5 text-blue-600 underline font-bold cursor-pointer" onClick={() => window.open('https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAMAAZQOUnpUNzdFMjk2VDVTSVBIQU80QlBBMkpYMVk3US4u', '_blank')}>
-            <FileText className="w-4 h-4" /> Open MSFT Intake Form
+          <span className="flex items-center gap-1.5 text-blue-600 underline font-bold cursor-pointer" onClick={() => window.open(checkInFormUrl, '_blank')}>
+            <FileText className="w-4 h-4" /> Open MSFT Check-In Form
           </span>
         </div>
       </div>
@@ -119,11 +124,11 @@ export default function TerminalPage() {
         <button onClick={() => setInput("Git Status")} className="text-[10px] font-bold px-3 py-1.5 bg-white border border-slate-200 text-slate-500 rounded-lg hover:bg-slate-50 hover:text-charcoal-900 transition uppercase tracking-widest">Git Status</button>
         <button onClick={() => setInput("ls")} className="text-[10px] font-bold px-3 py-1.5 bg-white border border-slate-200 text-slate-500 rounded-lg hover:bg-slate-50 hover:text-charcoal-900 transition uppercase tracking-widest">List Directories</button>
         <button 
-          onClick={() => window.open('https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAMAAZQOUnpUNzdFMjk2VDVTSVBIQU80QlBBMkpYMVk3US4u', '_blank')}
+          onClick={() => window.open(checkInFormUrl, '_blank')}
           id="msft-intake-form"
           className="text-[10px] font-bold px-3 py-1.5 bg-indigo-600 text-white border border-indigo-700 rounded-lg hover:bg-indigo-700 transition uppercase tracking-wider shadow-lg shadow-indigo-500/20"
         >
-          MSFT Intake Form 🔗
+          MSFT Check-In Form 🔗
         </button>
       </div>
     </div>

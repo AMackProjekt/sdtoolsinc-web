@@ -1,9 +1,15 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../convex/_generated/api";
+import type { Id } from "../../convex/_generated/dataModel";
 
-// Types for our "Real Logic"
+// ─── Types ──────────────────────────────────────────────────────────────────
+
 export interface Participant {
+  _id?: string;
+  _creationTime?: number;
   slot: string;
   name: string;
   status: string;
@@ -11,17 +17,20 @@ export interface Participant {
 }
 
 export interface Document {
-  id: number;
+  _id: string;
+  _creationTime?: number;
   name: string;
   type: string;
   size: string;
   client: string;
   date: string;
   uploader: string;
+  url: string;
 }
 
 export interface CaseNote {
-  id: number;
+  _id: string;
+  _creationTime?: number;
   clientName: string;
   date: string;
   type: string;
@@ -39,7 +48,8 @@ export interface Notification {
 }
 
 export interface JournalEntry {
-  id: number;
+  _id: string;
+  _creationTime?: number;
   client: string;
   date: string;
   mood: string;
@@ -47,7 +57,8 @@ export interface JournalEntry {
 }
 
 export interface Feedback {
-  id: number;
+  _id: string;
+  _creationTime?: number;
   client: string;
   type: 'complaint' | 'suggestion';
   content: string;
@@ -55,7 +66,8 @@ export interface Feedback {
 }
 
 export interface ShoutOut {
-  id: number;
+  _id: string;
+  _creationTime?: number;
   from: string;
   to: string;
   message: string;
@@ -63,7 +75,8 @@ export interface ShoutOut {
 }
 
 export interface ParticipantRequest {
-  id: number;
+  _id: string;
+  _creationTime?: number;
   client: string;
   type: string;
   note: string;
@@ -72,7 +85,8 @@ export interface ParticipantRequest {
 }
 
 export interface SharedSmartGoal {
-  id: number;
+  _id: string;
+  _creationTime?: number;
   client: string;
   date: string;
   specific: string;
@@ -101,16 +115,19 @@ interface StaffContextType {
   requests: ParticipantRequest[];
   team: TeamMember[];
   mission: string;
-  addDocument: (doc: Document) => void;
-  addCaseNote: (note: CaseNote) => void;
-  addJournal: (entry: JournalEntry) => void;
-  addFeedback: (fb: Feedback) => void;
-  addShoutOut: (so: ShoutOut) => void;
-  addSmartGoal: (goal: SharedSmartGoal) => void;
-  addRequest: (req: ParticipantRequest) => void;
-  updateRequestStatus: (id: number, status: 'approved' | 'denied') => void;
+  addDocument: (doc: Omit<Document, '_id' | '_creationTime'>) => void;
+  addCaseNote: (note: Omit<CaseNote, '_id' | '_creationTime'>) => void;
+  addJournal: (entry: Omit<JournalEntry, '_id' | '_creationTime'>) => void;
+  addFeedback: (fb: Omit<Feedback, '_id' | '_creationTime'>) => void;
+  addShoutOut: (so: Omit<ShoutOut, '_id' | '_creationTime'>) => void;
+  addSmartGoal: (goal: Omit<SharedSmartGoal, '_id' | '_creationTime'>) => void;
+  addParticipant: (p: Omit<Participant, '_id' | '_creationTime'>) => void;
+  addRequest: (req: Omit<ParticipantRequest, '_id' | '_creationTime'>) => void;
+  updateRequestStatus: (id: string, status: 'approved' | 'denied') => void;
+  updateDocumentClient: (id: string, client: string) => void;
   markNotificationRead: (index: number) => void;
   updateParticipantStatus: (slot: string, newStatus: string) => void;
+  updateParticipant: (slot: string, name: string, environment: string, status: string) => void;
 }
 
 const StaffContext = createContext<StaffContextType | undefined>(undefined);
@@ -123,6 +140,8 @@ const DATA_KEYS = {
   shoutouts: "shoutouts",
   smartgoals: "smartgoals",
   requests: "requests",
+  participants: "participants",
+  team: "team",
 } as const;
 
 async function readSecureData<T>(key: string, fallback: T): Promise<T> {
@@ -149,177 +168,133 @@ async function writeSecureData<T>(key: string, value: T): Promise<void> {
 }
 
 export function StaffProvider({ children }: { children: React.ReactNode }) {
-  // Initial Seed Data
-  const [participants, setParticipants] = useState<Participant[]>([
-    { slot: 'A1', name: 'UID-A1', status: 'Active', environment: 'A-Block' },
-    { slot: 'A2', name: 'UID-A2', status: 'Active', environment: 'A-Block' },
-    { slot: 'A3', name: 'UID-A3', status: 'Active (Shared)', environment: 'A-Block' },
-    { slot: 'A4', name: 'UID-A4', status: 'Active', environment: 'A-Block' },
-    { slot: 'A5', name: 'UID-A5', status: 'Active (Shared)', environment: 'A-Block' },
-    { slot: 'A6', name: 'UID-A6', status: 'Empty', environment: 'A-Block' },
-    { slot: 'A7', name: 'UID-A7', status: 'Active', environment: 'A-Block' },
-    { slot: 'A8', name: 'UID-A8', status: 'Active', environment: 'A-Block' },
-    { slot: 'A9', name: 'UID-A9', status: 'Active', environment: 'A-Block' },
-    { slot: 'A10', name: 'UID-A10', status: 'Active', environment: 'A-Block' },
-    { slot: 'A11', name: 'UID-A11', status: 'Active', environment: 'A-Block' },
-    { slot: 'A12', name: 'UID-A12', status: 'Active', environment: 'A-Block' },
-    { slot: 'A13', name: 'UID-A13', status: 'Active', environment: 'A-Block' },
-    { slot: 'A14', name: 'UID-A14', status: 'Active', environment: 'A-Block' },
-    { slot: 'A15', name: 'UID-A15', status: 'Active', environment: 'A-Block' },
-    { slot: 'A16', name: 'UID-A16', status: 'Active', environment: 'A-Block' },
-    { slot: 'A17', name: 'UID-A17', status: 'Active', environment: 'A-Block' },
-    { slot: 'A18', name: 'UID-A18', status: 'Active (Shared)', environment: 'A-Block' },
-    
-    // D-BLOCK (D6-D12)
-    { slot: 'D6', name: 'UID-D6', status: 'Active', environment: 'D-Block' },
-    { slot: 'D7', name: 'UID-D7', status: 'Active', environment: 'D-Block' },
-    { slot: 'D8', name: 'UID-D8', status: 'Active', environment: 'D-Block' },
-    { slot: 'D9', name: 'UID-D9', status: 'Active', environment: 'D-Block' },
-    { slot: 'D10', name: 'UID-D10', status: 'Active', environment: 'D-Block' },
-    { slot: 'D11', name: 'UID-D11', status: 'Active', environment: 'D-Block' },
-    { slot: 'D12', name: 'UID-D12', status: 'Active', environment: 'D-Block' },
-    // J-BLOCK (J8-J10)
-    { slot: 'J8', name: 'UID-J8', status: 'Active', environment: 'J-Block' },
-    { slot: 'J9', name: 'UID-J9', status: 'Active', environment: 'J-Block' },
-    { slot: 'J10', name: 'UID-J10', status: 'Active', environment: 'J-Block' },
-  ]);
+  // Reactive Convex queries
+  const _participants = useQuery(api.functions.listParticipants) ?? [];
+  const _caseNotes = useQuery(api.functions.listCaseNotes) ?? [];
+  const _documents = useQuery(api.functions.listDocuments) ?? [];
+  const _journals = useQuery(api.functions.listJournals) ?? [];
+  const _feedback = useQuery(api.functions.listFeedback) ?? [];
+  const _shoutOuts = useQuery(api.functions.listShoutOuts) ?? [];
+  const _smartGoals = useQuery(api.functions.listSmartGoals) ?? [];
+  const _requests = useQuery(api.functions.listRequests) ?? [];
+  const _teamMembers = useQuery(api.functions.listTeamMembers) ?? [];
 
-  const [documents, setDocuments] = useState<Document[]>([]);
+  // Cast Convex doc types to interface types (_id / _creationTime added by Convex automatically)
+  const participants = _participants as unknown as Participant[];
+  const caseNotes = _caseNotes as unknown as CaseNote[];
+  const documents = _documents as unknown as Document[];
+  const journals = _journals as unknown as JournalEntry[];
+  const feedback = _feedback as unknown as Feedback[];
+  const shoutOuts = _shoutOuts as unknown as ShoutOut[];
+  const smartGoals = _smartGoals as unknown as SharedSmartGoal[];
+  const requests = _requests as unknown as ParticipantRequest[];
 
-  const [caseNotes, setCaseNotes] = useState<CaseNote[]>([]);
-  const [journals, setJournals] = useState<JournalEntry[]>([]);
-  const [feedback, setFeedback] = useState<Feedback[]>([]);
-  const [shoutOuts, setShoutOuts] = useState<ShoutOut[]>([]);
-  const [smartGoals, setSmartGoals] = useState<SharedSmartGoal[]>([]);
-  const [requests, setRequests] = useState<ParticipantRequest[]>([]);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [isHydrated, setIsHydrated] = useState(false);
+  // Map teamMembers → TeamMember (expose _id as id for backward-compat with dropdowns)
+  const team: TeamMember[] = _teamMembers.map((m) => ({
+    id: m._id as string,
+    name: m.name,
+    role: m.role,
+  }));
 
-  // Server-side encrypted persistence logic.
-  useEffect(() => {
-    let mounted = true;
+  // Mutations
+  const _addParticipant = useMutation(api.functions.addParticipant);
+  const _addCaseNote = useMutation(api.functions.addCaseNote);
+  const _addDocument = useMutation(api.functions.addDocument);
+  const _addJournal = useMutation(api.functions.addJournal);
+  const _addFeedback = useMutation(api.functions.addFeedback);
+  const _addShoutOut = useMutation(api.functions.addShoutOut);
+  const _addSmartGoal = useMutation(api.functions.addSmartGoal);
+  const _addRequest = useMutation(api.functions.addRequest);
+  const _updateRequestStatus = useMutation(api.functions.updateRequestStatus);
+  const _updateDocumentClient = useMutation(api.functions.updateDocumentClient);
+  const _updateParticipantStatus = useMutation(api.functions.updateParticipantStatus);
+  const _updateParticipant = useMutation(api.functions.updateParticipant);
 
-    async function hydrate() {
-      const [savedNotes, savedDocs, savedJournals, savedFeedback, savedShoutOuts, savedSmartGoals, savedRequests] = await Promise.all([
-        readSecureData<CaseNote[]>(DATA_KEYS.notes, []),
-        readSecureData<Document[]>(DATA_KEYS.docs, []),
-        readSecureData<JournalEntry[]>(DATA_KEYS.journals, []),
-        readSecureData<Feedback[]>(DATA_KEYS.feedback, []),
-        readSecureData<ShoutOut[]>(DATA_KEYS.shoutouts, []),
-        readSecureData<SharedSmartGoal[]>(DATA_KEYS.smartgoals, []),
-        readSecureData<ParticipantRequest[]>(DATA_KEYS.requests, []),
-      ]);
+  // Notifications not stored in Convex yet
+  const [notifications] = useState<Notification[]>([]);
 
-      if (!mounted) return;
+  // ─── Actions ────────────────────────────────────────────────────────────────
 
-      setCaseNotes(savedNotes);
-      setDocuments(savedDocs);
-      setJournals(savedJournals);
-      setFeedback(savedFeedback);
-      setShoutOuts(savedShoutOuts);
-      setSmartGoals(savedSmartGoals);
-      setRequests(savedRequests);
-      setIsHydrated(true);
-    }
-
-    hydrate();
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!isHydrated) return;
-    writeSecureData(DATA_KEYS.notes, caseNotes);
-  }, [caseNotes, isHydrated]);
-
-  useEffect(() => {
-    if (!isHydrated) return;
-    writeSecureData(DATA_KEYS.docs, documents);
-  }, [documents, isHydrated]);
-
-  useEffect(() => {
-    if (!isHydrated) return;
-    writeSecureData(DATA_KEYS.journals, journals);
-  }, [journals, isHydrated]);
-
-  useEffect(() => {
-    if (!isHydrated) return;
-    writeSecureData(DATA_KEYS.feedback, feedback);
-  }, [feedback, isHydrated]);
-
-  useEffect(() => {
-    if (!isHydrated) return;
-    writeSecureData(DATA_KEYS.shoutouts, shoutOuts);
-  }, [shoutOuts, isHydrated]);
-
-  useEffect(() => {
-    if (!isHydrated) return;
-    writeSecureData(DATA_KEYS.smartgoals, smartGoals);
-  }, [smartGoals, isHydrated]);
-
-  useEffect(() => {
-    if (!isHydrated) return;
-    writeSecureData(DATA_KEYS.requests, requests);
-  }, [requests, isHydrated]);
-
-  // Actions
-  const addDocument = (doc: Document) => {
-    setDocuments(prev => [doc, ...prev]);
+  const addParticipant = (p: Omit<Participant, '_id' | '_creationTime'>) => {
+    _addParticipant({ slot: p.slot, name: p.name, status: p.status, environment: p.environment });
   };
 
-  const addCaseNote = (note: CaseNote) => {
-    setCaseNotes(prev => [note, ...prev]);
+  const addCaseNote = async (note: Omit<CaseNote, '_id' | '_creationTime'>) => {
+    await _addCaseNote({ clientName: note.clientName, date: note.date, type: note.type, summary: note.summary, staff: note.staff });
+    // Send notification email
+    fetch("/api/notify/case-note", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(note),
+    }).catch(() => {});
   };
 
-  const addJournal = (entry: JournalEntry) => {
-    setJournals(prev => [entry, ...prev]);
+  const addDocument = async (doc: Omit<Document, '_id' | '_creationTime'>) => {
+    await _addDocument({ name: doc.name, type: doc.type, size: doc.size, client: doc.client, date: doc.date, uploader: doc.uploader, url: doc.url });
+    // Send notification email
+    fetch("/api/notify/document", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(doc),
+    }).catch(() => {});
   };
 
-  const addFeedback = (fb: Feedback) => {
-    setFeedback(prev => [fb, ...prev]);
+  const addJournal = (entry: Omit<JournalEntry, '_id' | '_creationTime'>) => {
+    _addJournal({ client: entry.client, date: entry.date, mood: entry.mood, content: entry.content });
   };
 
-  const addShoutOut = (so: ShoutOut) => {
-    setShoutOuts(prev => [so, ...prev]);
+  const addFeedback = (fb: Omit<Feedback, '_id' | '_creationTime'>) => {
+    _addFeedback({ client: fb.client, type: fb.type, content: fb.content, date: fb.date });
   };
 
-  const addSmartGoal = (goal: SharedSmartGoal) => {
-    setSmartGoals(prev => [goal, ...prev]);
+  const addShoutOut = (so: Omit<ShoutOut, '_id' | '_creationTime'>) => {
+    _addShoutOut({ from: so.from, to: so.to, message: so.message, date: so.date });
   };
 
-  const addRequest = (req: ParticipantRequest) => {
-    setRequests(prev => [req, ...prev]);
+  const addSmartGoal = (goal: Omit<SharedSmartGoal, '_id' | '_creationTime'>) => {
+    _addSmartGoal({
+      client: goal.client,
+      date: goal.date,
+      specific: goal.specific,
+      measurable: goal.measurable,
+      achievable: goal.achievable,
+      relevant: goal.relevant,
+      timebound: goal.timebound,
+      status: goal.status,
+    });
   };
 
-  const updateRequestStatus = (id: number, status: 'approved' | 'denied') => {
-    setRequests(prev => prev.map(r => r.id === id ? { ...r, status } : r));
+  const addRequest = (req: Omit<ParticipantRequest, '_id' | '_creationTime'>) => {
+    _addRequest({ client: req.client, type: req.type, note: req.note, status: req.status, date: req.date });
   };
 
-  const markNotificationRead = (index: number) => {
-    setNotifications(prev => prev.map((n, i) => i === index ? { ...n, read: true } : n));
+  const updateRequestStatus = (id: string, status: 'approved' | 'denied') => {
+    _updateRequestStatus({ id: id as Id<"requests">, status });
+  };
+
+  const updateDocumentClient = (id: string, client: string) => {
+    _updateDocumentClient({ id: id as Id<"documents">, client });
+  };
+
+  const markNotificationRead = (_index: number) => {
+    // Notifications not yet persisted in Convex
   };
 
   const updateParticipantStatus = (slot: string, newStatus: string) => {
-    setParticipants(prev => prev.map(p => p.slot === slot ? { ...p, status: newStatus } : p));
+    _updateParticipantStatus({ slot, status: newStatus });
   };
 
-  const team: TeamMember[] = [
-    { id: 'S1', name: 'Staff 01', role: 'Support Specialist' },
-    { id: 'T2', name: 'Staff 02', role: 'Case Navigator' },
-    { id: 'A3', name: 'Staff 03', role: 'Stabilization Lead' },
-    { id: 'D4', name: 'Staff 04', role: 'Intake Coordinator' },
-    { id: 'J5', name: 'Staff 05', role: 'Records Manager' }
-  ];
+  const updateParticipant = (slot: string, name: string, environment: string, status: string) => {
+    _updateParticipant({ slot, name, environment, status });
+  };
 
   const mission = "The mission of Dreams for Change is to respond to the needs of communities by creating innovative and cost-effective programs to empower and stabilize the lives of underserved families and individuals.";
 
   return (
-    <StaffContext.Provider value={{ 
-      participants, 
-      documents, 
-      caseNotes, 
+    <StaffContext.Provider value={{
+      participants,
+      documents,
+      caseNotes,
       notifications,
       journals,
       feedback,
@@ -328,6 +303,7 @@ export function StaffProvider({ children }: { children: React.ReactNode }) {
       requests,
       team,
       mission,
+      addParticipant,
       addDocument,
       addCaseNote,
       addJournal,
@@ -336,8 +312,10 @@ export function StaffProvider({ children }: { children: React.ReactNode }) {
       addSmartGoal,
       addRequest,
       updateRequestStatus,
+      updateDocumentClient,
       markNotificationRead,
-      updateParticipantStatus
+      updateParticipantStatus,
+      updateParticipant,
     }}>
       {children}
     </StaffContext.Provider>

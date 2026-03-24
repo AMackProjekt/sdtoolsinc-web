@@ -1,15 +1,51 @@
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 
-export default auth((req) => {
+
+const DFC_DOMAIN = "dreamsforchange.org";
+
+async function verifyTwoFACookie(cookieValue: string, email: string): Promise<boolean> {
+  try {
+    const parts = cookieValue.split("|");
+    if (parts.length !== 3) return false;
+    const [emailB64, expiryStr, sig] = parts;
+    const expiry = parseInt(expiryStr, 10);
+    if (isNaN(expiry) || Date.now() > expiry) return false;
+
+    const secret = process.env.TWO_FA_SECRET ?? "fallback-dev-secret";
+    const payload = `${emailB64}|${expiryStr}`;
+    const key = await crypto.subtle.importKey(
+      "raw",
+      new TextEncoder().encode(secret),
+      { name: "HMAC", hash: "SHA-256" },
+      false,
+      ["sign"]
+    );
+    const sigBytes = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(payload));
+    const expectedSig = btoa(String.fromCharCode(...new Uint8Array(sigBytes)))
+      .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+
+    if (sig !== expectedSig) return false;
+
+    // Decode email from base64url
+    const decodedEmail = atob(emailB64.replace(/-/g, "+").replace(/_/g, "/"));
+    return decodedEmail === email;
+  } catch {
+    return false;
+  }
+}
+
+// auth() from next-auth v5 wraps the handler; the callback can be async
+export default auth(async (req) => {
   const pathname = req.nextUrl.pathname;
   const role = req.auth?.user?.role ?? "client";
   const isAuthenticated = Boolean(req.auth?.user?.email);
+  const userEmail = req.auth?.user?.email ?? "";
 
   const isPortal = pathname.startsWith("/portal/");
   const isProtectedApi = pathname.startsWith("/api/") && !pathname.startsWith("/api/auth") && pathname !== "/api/health";
 
-  if (!isPortal && !isProtectedApi) {
+  if (!isPortal && !isProtectedApi && !pathname.startsWith("/auth/2fa")) {
     return NextResponse.next();
   }
 
@@ -17,24 +53,37 @@ export default auth((req) => {
     if (pathname.startsWith("/api/")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    return NextResponse.redirect(new URL("/login/staff", req.url));
+    return NextResponse.redirect(new URL(
+      pathname.startsWith("/portal/client") ? "/login/client" : "/login/staff",
+      req.url
+    ));
   }
 
+  // ── Enforce @dreamsforchange.org domain for staff portal ──────────────────
   const needsStaffRole =
     pathname.startsWith("/portal/staff") ||
     pathname === "/api/terminal" ||
     pathname.startsWith("/api/admin");
 
-  if (needsStaffRole && role !== "staff") {
+  if (needsStaffRole && (role !== "staff" || !userEmail.endsWith(`@${DFC_DOMAIN}`))) {
     if (pathname.startsWith("/api/")) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
     return NextResponse.redirect(new URL("/portal/client", req.url));
   }
 
+  // ── 2FA gate: skip for the 2FA page itself and for API routes ────────────
+  if (!pathname.startsWith("/auth/2fa") && !pathname.startsWith("/api/")) {
+    const twofaCookie = req.cookies.get("twofa_verified")?.value ?? "";
+    const twoFAValid = twofaCookie ? await verifyTwoFACookie(twofaCookie, userEmail) : false;
+    if (!twoFAValid) {
+      return NextResponse.redirect(new URL("/auth/2fa", req.url));
+    }
+  }
+
   return NextResponse.next();
 });
 
 export const config = {
-  matcher: ["/portal/:path*", "/api/:path*"],
+  matcher: ["/portal/:path*", "/api/:path*", "/auth/2fa"],
 };

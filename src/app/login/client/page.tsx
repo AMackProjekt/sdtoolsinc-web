@@ -35,8 +35,19 @@ export default function ClientLogin() {
           </button>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-slate-100 text-center text-sm text-slate-500">
-          Staff member? <Link href="/login/staff" className="text-charcoal-600 hover:text-charcoal-900 font-medium">Go to Staff Login</Link>
+        <div className="mt-8 pt-6 border-t border-slate-100 text-center space-y-2">
+          <p className="text-sm text-slate-500">
+            Don&apos;t have access yet?{" "}
+            <Link href="/request-access" className="text-teal-600 hover:text-teal-800 font-medium">
+              Request Access
+            </Link>
+          </p>
+          <p className="text-sm text-slate-500">
+            Staff member?{" "}
+            <Link href="/login/staff" className="text-charcoal-600 hover:text-charcoal-900 font-medium">
+              Go to Staff Login
+            </Link>
+          </p>
         </div>
       </div>
     </div>

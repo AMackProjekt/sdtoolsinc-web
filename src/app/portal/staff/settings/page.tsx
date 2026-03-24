@@ -113,7 +113,7 @@ export default function SettingsPage() {
                 type="email" 
                 title="Primary Email Forwarding Address"
                 disabled 
-                value="staff@dreamsforchange.org" 
+                value="donyale@dreamsforchange.org" 
                 className="bg-slate-200 border border-slate-300 text-slate-600 font-bold px-4 py-2 rounded-lg cursor-not-allowed w-full md:w-auto text-sm"
               />
             </div>

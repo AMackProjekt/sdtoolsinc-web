@@ -18,11 +18,17 @@ import {
   FileSpreadsheet,
   FileBox,
   Table,
-  Terminal
+  Terminal,
+  User,
+  ChevronDown,
+  HelpCircle,
+  Home,
+  ArrowLeft
 } from "lucide-react";
 import { ShieldCheck, ShieldAlert, ShieldOff } from "lucide-react";
 import { StaffProvider, useStaff } from "@/context/StaffContext";
 import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import type { ComplianceStatus } from "@/app/api/admin/compliance/route";
 
 export default function StaffLayout({
@@ -34,6 +40,20 @@ export default function StaffLayout({
     <StaffProvider>
       <StaffLayoutContent>{children}</StaffLayoutContent>
     </StaffProvider>
+  );
+}
+
+function BackButton() {
+  const router = useRouter();
+  return (
+    <button
+      onClick={() => router.back()}
+      title="Go back"
+      aria-label="Go back"
+      className="p-2 rounded-xl text-slate-400 hover:text-charcoal-900 hover:bg-slate-100 transition"
+    >
+      <ArrowLeft className="w-4 h-4" />
+    </button>
   );
 }
 
@@ -53,12 +73,21 @@ function StaffLayoutContent({ children }: { children: React.ReactNode }) {
   
   const [showNotifications, setShowNotifications] = useState(false);
   const notificationRef = useRef<HTMLDivElement>(null);
+  const [showProfile, setShowProfile] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown on click outside
+  const initials = session?.user?.name
+    ? session.user.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()
+    : 'M';
+
+  // Close dropdowns on click outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
         setShowNotifications(false);
+      }
+      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+        setShowProfile(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -154,6 +183,13 @@ function StaffLayoutContent({ children }: { children: React.ReactNode }) {
         {/* Top Header */}
         <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 shrink-0">
           <div className="relative w-96 flex items-center gap-4">
+            {/* Home + Back */}
+            <div className="flex items-center gap-1 shrink-0">
+              <Link href="/portal/staff" title="Home" className="p-2 rounded-xl text-slate-400 hover:text-charcoal-900 hover:bg-slate-100 transition">
+                <Home className="w-4 h-4" />
+              </Link>
+              <BackButton />
+            </div>
             <div className="relative flex-1">
               <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <input 
@@ -239,14 +275,72 @@ function StaffLayoutContent({ children }: { children: React.ReactNode }) {
               )}
             </div>
 
-            <div className="flex items-center gap-3 border-l border-slate-200 pl-4 ml-2">
-              <div className="text-right hidden sm:block">
-                <p className="text-sm font-bold text-charcoal-900 leading-none">{session?.user?.name ?? "Staff"}</p>
-                <p className="text-[10px] font-bold text-teal-600 uppercase tracking-tight mt-1">{session?.user?.role ?? "staff"}</p>
-              </div>
-              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-teal-600 to-indigo-600 flex items-center justify-center text-white text-sm font-bold shadow-sm ring-2 ring-white">
-                M
-              </div>
+            <div className="relative" ref={profileRef}>
+              <button
+                onClick={() => setShowProfile(!showProfile)}
+                className="flex items-center gap-3 border-l border-slate-200 pl-4 ml-2 focus:outline-none"
+                aria-label="Open profile menu"
+              >
+                <div className="text-right hidden sm:block">
+                  <p className="text-sm font-bold text-charcoal-900 leading-none">{session?.user?.name ?? "Staff"}</p>
+                  <p className="text-[10px] font-bold text-teal-600 uppercase tracking-tight mt-1">The Champ Is Here</p>
+                </div>
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-teal-600 to-indigo-600 flex items-center justify-center text-white text-sm font-bold shadow-sm ring-2 ring-white">
+                  {initials}
+                </div>
+                <ChevronDown className="w-3 h-3 text-slate-400 hidden sm:block" />
+              </button>
+
+              {showProfile && (
+                <div className="absolute right-0 mt-3 w-64 bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden z-[100] animate-in fade-in zoom-in-95 duration-200">
+                  <div className="px-5 py-5 border-b border-slate-100 bg-slate-50/50">
+                    <div className="flex items-center gap-3">
+                      <div className="w-11 h-11 rounded-full bg-gradient-to-br from-teal-600 to-indigo-600 flex items-center justify-center text-white font-bold shadow-md">
+                        {initials}
+                      </div>
+                      <div>
+                        <p className="font-bold text-charcoal-900 leading-tight">{session?.user?.name ?? "Staff"}</p>
+                        <p className="text-[10px] text-teal-600 font-bold uppercase tracking-widest">The Champ Is Here</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="py-2">
+                    <Link
+                      href="/portal/staff/settings"
+                      onClick={() => setShowProfile(false)}
+                      className="flex items-center gap-3 px-5 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-charcoal-900 transition"
+                    >
+                      <Settings className="w-4 h-4 text-slate-400" />
+                      Settings
+                    </Link>
+                    <Link
+                      href="/portal/staff/profile"
+                      onClick={() => setShowProfile(false)}
+                      className="flex items-center gap-3 px-5 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-charcoal-900 transition"
+                    >
+                      <User className="w-4 h-4 text-slate-400" />
+                      Profile
+                    </Link>
+                    <Link
+                      href="/portal/staff/help"
+                      onClick={() => setShowProfile(false)}
+                      className="flex items-center gap-3 px-5 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-charcoal-900 transition"
+                    >
+                      <HelpCircle className="w-4 h-4 text-slate-400" />
+                      Help &amp; Support
+                    </Link>
+                  </div>
+                  <div className="px-4 py-3 border-t border-slate-100 bg-slate-50/50">
+                    <button
+                      onClick={() => { setShowProfile(false); signOut({ callbackUrl: "/login/staff" }); }}
+                      className="w-full flex items-center gap-3 px-3 py-2 text-sm text-rose-500 hover:bg-rose-50 rounded-xl transition"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      Sign out
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </header>

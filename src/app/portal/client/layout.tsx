@@ -1,23 +1,61 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import { 
+import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import {
   LogOut,
   ShieldCheck,
   ShieldAlert,
   ShieldOff,
+  Home,
+  ArrowLeft,
+  User,
+  Settings,
+  HelpCircle,
+  ChevronDown,
 } from "lucide-react";
 import { StaffProvider } from "@/context/StaffContext";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import type { SecuritySummary } from "@/app/api/compliance/status/route";
+
+function ClientBackButton() {
+  const router = useRouter();
+  return (
+    <button
+      onClick={() => router.back()}
+      title="Go back"
+      aria-label="Go back"
+      className="p-2 rounded-xl text-slate-500 hover:text-charcoal-900 hover:bg-slate-100 transition"
+    >
+      <ArrowLeft className="w-4 h-4" />
+    </button>
+  );
+}
 
 export default function ClientLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { data: session } = useSession();
   const [security, setSecurity] = useState<SecuritySummary | null>(null);
+  const [showProfile, setShowProfile] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
+
+  const initials = session?.user?.name
+    ? session.user.name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()
+    : "?";
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+        setShowProfile(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
 
   useEffect(() => {
     fetch("/api/compliance/status")
@@ -43,6 +81,13 @@ export default function ClientLayout({
           </div>
           
           <nav className="hidden lg:flex items-center gap-8">
+            {/* Home + Back */}
+            <div className="flex items-center gap-1 border-r border-slate-200 pr-6">
+              <Link href="/portal/client" title="Home" className="p-2 rounded-xl text-slate-400 hover:text-charcoal-900 hover:bg-slate-100 transition">
+                <Home className="w-4 h-4" />
+              </Link>
+              <ClientBackButton />
+            </div>
             <Link href="/portal/client" className="text-sm font-bold text-teal-700 decoration-2 underline-offset-8 transition-all px-4 py-2 bg-teal-50 rounded-xl">
               Explorer
             </Link>
@@ -102,6 +147,74 @@ export default function ClientLayout({
               className="flex items-center gap-2 p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all"
             >
               <LogOut className="w-6 h-6" />
+                        {/* Profile dropdown */}
+                        <div className="relative" ref={profileRef}>
+                          <button
+                            onClick={() => setShowProfile(!showProfile)}
+                            className="flex items-center gap-2 focus:outline-none"
+                            aria-label="Open profile menu"
+                          >
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-teal-500 to-indigo-600 text-white flex items-center justify-center font-bold text-sm shadow-md">
+                              {initials}
+                            </div>
+                            <div className="hidden sm:block text-left">
+                              <p className="text-sm font-bold text-charcoal-900 leading-none">{session?.user?.name ?? "Participant"}</p>
+                              <p className="text-[10px] text-teal-600 font-bold uppercase tracking-widest mt-0.5">My Account</p>
+                            </div>
+                            <ChevronDown className="w-3 h-3 text-slate-400 hidden sm:block" />
+                          </button>
+
+                          {showProfile && (
+                            <div className="absolute right-0 mt-3 w-64 bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden z-[100] animate-in fade-in zoom-in-95 duration-200">
+                              <div className="px-5 py-5 border-b border-slate-100 bg-slate-50/50">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-11 h-11 rounded-full bg-gradient-to-br from-teal-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-md">
+                                    {initials}
+                                  </div>
+                                  <div>
+                                    <p className="font-bold text-charcoal-900 leading-tight">{session?.user?.name ?? "Participant"}</p>
+                                    <p className="text-xs text-slate-500 truncate max-w-[140px]">{session?.user?.email ?? ""}</p>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="py-2">
+                                <Link
+                                  href="/portal/client/profile"
+                                  onClick={() => setShowProfile(false)}
+                                  className="flex items-center gap-3 px-5 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-charcoal-900 transition"
+                                >
+                                  <User className="w-4 h-4 text-slate-400" />
+                                  Profile
+                                </Link>
+                                <Link
+                                  href="/portal/client/settings"
+                                  onClick={() => setShowProfile(false)}
+                                  className="flex items-center gap-3 px-5 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-charcoal-900 transition"
+                                >
+                                  <Settings className="w-4 h-4 text-slate-400" />
+                                  Settings
+                                </Link>
+                                <Link
+                                  href="/portal/client/help"
+                                  onClick={() => setShowProfile(false)}
+                                  className="flex items-center gap-3 px-5 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-charcoal-900 transition"
+                                >
+                                  <HelpCircle className="w-4 h-4 text-slate-400" />
+                                  Help &amp; Support
+                                </Link>
+                              </div>
+                              <div className="px-4 py-3 border-t border-slate-100 bg-slate-50/50">
+                                <button
+                                  onClick={() => { setShowProfile(false); signOut({ callbackUrl: "/login/client" }); }}
+                                  className="w-full flex items-center gap-3 px-3 py-2 text-sm text-rose-500 hover:bg-rose-50 rounded-xl transition"
+                                >
+                                  <LogOut className="w-4 h-4" />
+                                  Sign out
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
             </button>
           </div>
         </div>

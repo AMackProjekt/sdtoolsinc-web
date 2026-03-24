@@ -1,15 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useMemo } from "react";
-import { AlertCircle, Search, Filter, MoreHorizontal, Plus, Zap } from "lucide-react";
+import { useState, useMemo, useEffect } from "react";
+import { AlertCircle, Search, Filter, MoreHorizontal, Plus, User, Zap } from "lucide-react";
 import { useStaff } from "@/context/StaffContext";
+
+const INSPIRATIONAL_QUOTES = [
+  "We do this work because every stable day can become a turning point.",
+  "Dignity grows when care is consistent, not occasional.",
+  "Case management is hope made practical.",
+  "Progress is built one follow-up, one note, one person at a time.",
+  "When we stay present, people regain belief in what is possible.",
+  "Structure and empathy together can change outcomes.",
+];
 
 export default function StaffDashboard() {
   const { participants, updateParticipantStatus } = useStaff();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
+  const [quoteIndex, setQuoteIndex] = useState(0);
 
   function cycleStatus(current: string): string {
     if (current.includes("Active")) return "Broken Platform";
@@ -23,6 +33,36 @@ export default function StaffDashboard() {
     empty: participants.filter(c => c.status === "Empty").length,
     broken: participants.filter(c => c.status === "Broken Platform").length,
   }), [participants]);
+
+  const environmentStats = useMemo(() => {
+    const counts = participants.reduce<Record<string, number>>((acc, entry) => {
+      const key = entry.environment || "Unassigned";
+      acc[key] = (acc[key] ?? 0) + 1;
+      return acc;
+    }, {});
+
+    return Object.entries(counts)
+      .map(([label, count]) => ({ label, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 6);
+  }, [participants]);
+
+  const statusBreakdown = useMemo(() => {
+    const total = Math.max(1, participants.length);
+    return [
+      { label: "Active", count: metrics.active, color: "bg-teal-400", pct: Math.round((metrics.active / total) * 100) },
+      { label: "Broken", count: metrics.broken, color: "bg-rose-400", pct: Math.round((metrics.broken / total) * 100) },
+      { label: "Empty", count: metrics.empty, color: "bg-gray-400", pct: Math.round((metrics.empty / total) * 100) },
+    ];
+  }, [metrics, participants.length]);
+
+  useEffect(() => {
+    if (INSPIRATIONAL_QUOTES.length <= 1) return;
+    const id = setInterval(() => {
+      setQuoteIndex((current) => (current + 1) % INSPIRATIONAL_QUOTES.length);
+    }, 7000);
+    return () => clearInterval(id);
+  }, []);
 
   const filteredCaseload = useMemo(() => {
     return participants.filter((entry: any) => {
@@ -54,12 +94,20 @@ export default function StaffDashboard() {
           </div>
           <p className="text-gray-500 mt-1 pl-9">Active capacity and client roster — real time.</p>
         </div>
-        <Link
-          href="/portal/staff/casenote/new"
-          className="relative bg-teal-500/10 border border-teal-500/50 text-teal-400 px-5 py-2.5 rounded-xl font-semibold hover:bg-teal-500/20 hover:border-teal-400 transition-all active:scale-95 flex items-center gap-2 cursor-pointer cyber-btn-add"
-        >
-          <Plus className="w-5 h-5" /> New Case Note / Client
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/portal/staff/casenote/new"
+            className="relative bg-teal-500/10 border border-teal-500/50 text-teal-400 px-5 py-2.5 rounded-xl font-semibold hover:bg-teal-500/20 hover:border-teal-400 transition-all active:scale-95 flex items-center gap-2 cursor-pointer cyber-btn-add"
+          >
+            <Plus className="w-5 h-5" /> New Case Note
+          </Link>
+          <Link
+            href="/portal/staff/caseload/new"
+            className="relative bg-indigo-500/10 border border-indigo-500/50 text-indigo-400 px-5 py-2.5 rounded-xl font-semibold hover:bg-indigo-500/20 hover:border-indigo-400 transition-all active:scale-95 flex items-center gap-2 cursor-pointer"
+          >
+            <Plus className="w-5 h-5" /> New Client
+          </Link>
+        </div>
       </div>
 
       {/* Metrics Row */}
@@ -91,6 +139,71 @@ export default function StaffDashboard() {
           <p className="text-4xl font-bold text-rose-400">{metrics.broken}</p>
           <div className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-rose-500/40 to-transparent w-full" />
         </div>
+      </div>
+
+      {/* Insights + Motivation */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+        <section className="xl:col-span-2 bg-gray-900 rounded-2xl border border-teal-500/20 p-5 space-y-5">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-teal-400 uppercase tracking-widest">Analytics & Graphs</h2>
+            <span className="text-xs text-gray-500">Live snapshot</span>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <div className="rounded-xl border border-gray-800 bg-gray-950/50 p-4">
+              <p className="text-xs text-gray-500 uppercase tracking-widest mb-3">Status Distribution</p>
+              <div className="space-y-3">
+                {statusBreakdown.map((item) => (
+                  <div key={item.label}>
+                    <div className="flex items-center justify-between text-xs text-gray-400 mb-1">
+                      <span>{item.label}</span>
+                      <span>{item.count} ({item.pct}%)</span>
+                    </div>
+                    <div className="h-2 rounded-full bg-gray-800 overflow-hidden">
+                      <div className={`h-full ${item.color}`} style={{ width: `${item.pct}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-gray-800 bg-gray-950/50 p-4">
+              <p className="text-xs text-gray-500 uppercase tracking-widest mb-3">Environment Mix</p>
+              <div className="space-y-2.5">
+                {environmentStats.length === 0 ? (
+                  <p className="text-sm text-gray-500">No participant data yet.</p>
+                ) : (
+                  environmentStats.map((item) => {
+                    const max = Math.max(...environmentStats.map((x) => x.count));
+                    const pct = Math.max(8, Math.round((item.count / Math.max(max, 1)) * 100));
+                    return (
+                      <div key={item.label} className="flex items-center gap-3">
+                        <span className="w-24 text-xs text-gray-400 truncate">{item.label}</span>
+                        <div className="flex-1 h-2 rounded-full bg-gray-800 overflow-hidden">
+                          <div className="h-full bg-cyan-400/80" style={{ width: `${pct}%` }} />
+                        </div>
+                        <span className="w-6 text-right text-xs text-gray-300">{item.count}</span>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="bg-gray-900 rounded-2xl border border-indigo-500/20 p-5 flex flex-col justify-between min-h-[210px]">
+          <div>
+            <p className="text-xs font-semibold text-indigo-400 uppercase tracking-widest mb-3">Why We Do This Work</p>
+            <blockquote className="text-lg leading-relaxed text-gray-100 min-h-[115px] transition-opacity duration-500">
+              "{INSPIRATIONAL_QUOTES[quoteIndex]}"
+            </blockquote>
+          </div>
+          <div className="flex items-center justify-between text-xs text-gray-500 mt-4">
+            <span>Quote rotates every 7s</span>
+            <span>{quoteIndex + 1}/{INSPIRATIONAL_QUOTES.length}</span>
+          </div>
+        </section>
       </div>
 
       {/* Caseload Table */}
@@ -173,13 +286,20 @@ export default function StaffDashboard() {
                             {entry.name.charAt(0)}
                           </div>
                         )}
-                        <span className={`font-medium text-sm ${
-                          entry.status === "Empty" ? "text-gray-600 italic" :
-                          entry.status === "Broken Platform" ? "text-rose-400 italic" :
-                          "text-gray-200"
-                        }`}>
-                          {entry.name}
-                        </span>
+                        {entry.status === "Empty" || entry.status === "Broken Platform" ? (
+                          <span className={`font-medium text-sm ${
+                            entry.status === "Empty" ? "text-gray-600 italic" : "text-rose-400 italic"
+                          }`}>
+                            {entry.name}
+                          </span>
+                        ) : (
+                          <Link
+                            href={`/portal/staff/caseload/${entry.slot}`}
+                            className="font-medium text-sm text-gray-200 hover:text-teal-300 transition-colors"
+                          >
+                            {entry.name}
+                          </Link>
+                        )}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -212,12 +332,23 @@ export default function StaffDashboard() {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right">
-                      <button
-                        title={`Options for ${entry.name}`}
-                        className="p-2 text-gray-600 hover:text-teal-400 hover:bg-teal-500/10 rounded-lg transition-all focus:outline-none"
-                      >
-                        <MoreHorizontal className="w-5 h-5" />
-                      </button>
+                      <div className="flex items-center justify-end gap-2">
+                        {entry.status !== "Empty" && (
+                          <Link
+                            href={`/portal/staff/caseload/${entry.slot}/demographics`}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 hover:bg-indigo-500/20 hover:border-indigo-400 transition-all"
+                          >
+                            <User className="w-3 h-3" /> Demographics
+                          </Link>
+                        )}
+                        <Link
+                          href={`/portal/staff/caseload/${entry.slot}`}
+                          title={`Open profile for ${entry.name}`}
+                          className="p-2 text-gray-600 hover:text-teal-400 hover:bg-teal-500/10 rounded-lg transition-all focus:outline-none"
+                        >
+                          <MoreHorizontal className="w-5 h-5" />
+                        </Link>
+                      </div>
                     </td>
                   </tr>
                 ))}

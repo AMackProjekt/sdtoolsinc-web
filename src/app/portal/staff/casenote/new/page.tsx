@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ArrowLeft, Save, Bolt, FileText, CheckSquare, AlertCircle, Info, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { useStaff } from "@/context/StaffContext";
 
 const CASE_NOTE_TYPES = [
@@ -25,7 +26,9 @@ const LOCATIONS = [
 
 export default function NewCaseNote() {
   const router = useRouter();
-  const { addCaseNote } = useStaff();
+  const { addCaseNote, team } = useStaff();
+  const { data: session } = useSession();
+  const staffName = session?.user?.name ?? session?.user?.email ?? "Staff";
   const [isQuickMode, setIsQuickMode] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -34,30 +37,27 @@ export default function NewCaseNote() {
     type: "",
     date: new Date().toISOString().split('T')[0],
     uid: "",
+    caseManager: "",
     location: "O Lot",
     narrative: ""
   });
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.uid || !formData.narrative) return alert("Please fill in UID and Narrative.");
+    if (!formData.uid || !formData.narrative || !formData.caseManager) return alert("Please fill in UID, Case Manager, and Narrative.");
 
     setIsSaving(true);
-    
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 800));
 
     addCaseNote({
-      id: Date.now(),
       clientName: formData.uid.toUpperCase(),
-      date: "Just Now",
+      date: new Date().toLocaleDateString(),
       type: formData.type || "Participant Update",
       summary: formData.narrative,
-      staff: "Mack"
+      staff: staffName
     });
 
     setIsSaving(false);
-    router.push("/portal/staff");
+    router.push(`/portal/staff/caseload/${formData.uid}`);
   };
 
   return (
@@ -71,7 +71,7 @@ export default function NewCaseNote() {
           </Link>
           <div>
             <h1 className="text-2xl font-bold text-charcoal-900">New Case Note</h1>
-            <p className="text-sm text-slate-500 font-medium mt-1">Enhanced CaseNote Standard (Mack Version)</p>
+            <p className="text-sm text-slate-500 font-medium mt-1">Enhanced CaseNote Standard</p>
           </div>
         </div>
         
@@ -143,6 +143,19 @@ export default function NewCaseNote() {
                 onChange={(e) => setFormData({...formData, date: e.target.value})}
                 className="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition outline-none" 
               />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Assigned CaseMgr <span className="text-rose-500">*</span></label>
+              <select 
+                title="Assigned Case Manager"
+                value={formData.caseManager}
+                onChange={(e) => setFormData({...formData, caseManager: e.target.value})}
+                required
+                className="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition outline-none appearance-none"
+              >
+                <option value="">Select Manager...</option>
+                {team.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+              </select>
             </div>
             <div>
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">UID (Tent + Number)</label>

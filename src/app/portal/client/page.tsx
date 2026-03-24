@@ -17,7 +17,51 @@ const QUOTES = [
   "The only way to do great work is to love what you do. Or to start doing it today.",
   "Your progress is not a sprint, it's a journey. Every mile counts.",
   "It's okay not to be okay. Asking for help is strength.",
-  "Progress over perfection. You're doing better than you think."
+  "Progress over perfection. You're doing better than you think.",
+  "Believe in yourself. You have the power to change your story.",
+  "Your struggles are not your story. They're just a chapter. Write the next one boldly.",
+  "Every day is a new opportunity to turn your life around.",
+  "You deserve kindness and compassion—especially from yourself.",
+  "Small changes lead to big results. Stay committed.",
+  "Your past does not define your future. You do.",
+  "Celebrate the wins, no matter how small. You earned them.",
+  "What you do today can improve all your tomorrows.",
+  "You are braver than you believe, stronger than you seem, and smarter than you think.",
+  "Your story isn't over. Keep writing.",
+  "Obstacles are opportunities in disguise. You've got this.",
+  "Progress is progress, no matter how small. Be proud of yourself.",
+  "You are worthy of love, respect, and success.",
+  "Transform your pain into purpose. Your story can inspire others.",
+  "The best time to start was yesterday. The second best time is now.",
+  "You've survived 100% of your worst days. You're unstoppable.",
+  "Growth looks like discomfort, but it leads to freedom.",
+  "Don't compare your beginning to someone else's middle. You're exactly where you need to be.",
+  "Your resilience is your superpower.",
+  "One day at a time. That's all you need to focus on.",
+  "You are not alone in this journey. We're here for you.",
+  "Dreams don't happen by accident. They happen by action.",
+  "The only limitation is the one you accept.",
+  "You have the strength to face another day.",
+  "Your value is not determined by your circumstances.",
+  "Every mistake is a lesson. Keep learning, keep growing.",
+  "You are capable of more than you know.",
+  "Take it one moment at a time. You're doing just fine.",
+  "Your perseverance will pay off. Trust the process.",
+  "Be the change you want to see in your life.",
+  "You are enough. Right here, right now.",
+  "Your contribution matters. Your voice matters. You matter.",
+  "Challenges are just opportunities to prove your strength.",
+  "You deserve a life filled with joy and purpose.",
+  "Keep pushing forward. Great things await you.",
+  "Your comeback will be greater than your setback.",
+  "Focus on what you can control. Let go of the rest.",
+  "You are a work in progress, and that's perfectly okay.",
+  "Today is the perfect day to start believing in yourself.",
+  "Together we overcome obstacles and limitations — no one rises alone.",
+  "TOOL: Together Overcoming Obstacles & Limitations. That's what community looks like.",
+  "When we walk together, every barrier becomes smaller.",
+  "You are not alone in facing your limitations — together we rise.",
+  "The strength of the group lifts the individual. We are TOOL.",
 ];
 
 const FINANCIAL_COURSES = [
@@ -65,7 +109,6 @@ export default function ClientDashboard() {
   const handleAddJournal = () => {
     if (!journalContent.trim()) return;
     addJournal({
-      id: Date.now(),
       client: "Participant",
       date: new Date().toLocaleDateString(),
       mood,
@@ -78,7 +121,6 @@ export default function ClientDashboard() {
   const handleAddFeedback = () => {
     if (!feedbackContent.trim()) return;
     addFeedback({
-      id: Date.now(),
       client: "Participant",
       type: feedbackType,
       content: feedbackContent,

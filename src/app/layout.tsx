@@ -12,6 +12,7 @@ export const metadata: Metadata = {
 
 import { ThemeProvider } from '@/context/ThemeContext';
 import { AuthSessionProvider } from '@/components/AuthSessionProvider';
+import { ConvexClientProvider } from '@/components/ConvexClientProvider';
 
 export default function RootLayout({
   children,
@@ -22,9 +23,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <AuthSessionProvider>
-          <ThemeProvider>
-            {children}
-          </ThemeProvider>
+          <ConvexClientProvider>
+            <ThemeProvider>
+              {children}
+            </ThemeProvider>
+          </ConvexClientProvider>
         </AuthSessionProvider>
         <Analytics />
       </body>
