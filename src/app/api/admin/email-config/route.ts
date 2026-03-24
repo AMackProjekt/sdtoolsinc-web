@@ -23,8 +23,8 @@ export async function GET(req: NextRequest) {
         resendApiKeyStatus: hasResendKey ? "✅ Configured" : "❌ Missing",
         baseUrl,
         environment: process.env.NODE_ENV ?? "development",
-        senderDomain: "dfc.dreamsforchange.org (verified)",
-        fromEmail: "noreply@dfc.dreamsforchange.org",
+        senderDomain: "sdtoolsinc.org (verified)",
+        fromEmail: "dmack@sdtoolsinc.org",
         ccEmail: "donyale@dreamsforchange.org",
       },
       endpoints: {

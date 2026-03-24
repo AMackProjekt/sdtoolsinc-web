@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
         const resend = new Resend(process.env.RESEND_API_KEY);
 
         const emailResult = await resend.emails.send({
-          from: "DFC Portal <noreply@dfc.dreamsforchange.org>",
+          from: "DFC Portal <dmack@sdtoolsinc.org>",
           to: credential.email,
           cc: ["donyale@dreamsforchange.org"],
           subject: "Reset Your Dreams for Change Portal Password",
