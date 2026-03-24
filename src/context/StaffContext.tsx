@@ -14,6 +14,7 @@ export interface Participant {
   name: string;
   status: string;
   environment: string;
+  email?: string;
 }
 
 export interface Document {

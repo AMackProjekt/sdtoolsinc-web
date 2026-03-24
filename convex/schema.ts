@@ -7,6 +7,7 @@ export default defineSchema({
     name: v.string(),
     status: v.string(),
     environment: v.string(),
+    email: v.optional(v.string()),
   }).index("by_slot", ["slot"]),
 
   caseNotes: defineTable({
@@ -145,4 +146,45 @@ export default defineSchema({
     photoUrl: v.string(),
     uploadedAt: v.number(),
   }).index("by_email", ["userEmail"]),
+
+  userProfiles: defineTable({
+    userEmail: v.string(),
+    phone: v.optional(v.string()),
+    workPhone: v.optional(v.string()),
+    personalEmail: v.optional(v.string()),
+    workSchedule: v.optional(v.string()),
+  }).index("by_email", ["userEmail"]),
+
+  // ── Admin tables ───────────────────────────────────────────────────────────
+
+  auditLogs: defineTable({
+    actor: v.string(),
+    actorRole: v.string(),
+    action: v.string(),
+    target: v.optional(v.string()),
+    targetType: v.optional(v.string()),
+    detail: v.optional(v.string()),
+    timestamp: v.number(),
+    ip: v.optional(v.string()),
+  }).index("by_actor", ["actor"]).index("by_timestamp", ["timestamp"]),
+
+  housingMatches: defineTable({
+    clientSlot: v.string(),
+    clientName: v.string(),
+    unitAddress: v.string(),
+    landlord: v.optional(v.string()),
+    matchedDate: v.string(),
+    status: v.union(v.literal("pending"), v.literal("active"), v.literal("exited")),
+    notes: v.optional(v.string()),
+  }).index("by_slot", ["clientSlot"]).index("by_status", ["status"]),
+
+  staffSchedules: defineTable({
+    staffEmail: v.string(),
+    staffName: v.string(),
+    dayOfWeek: v.string(),
+    startTime: v.string(),
+    endTime: v.string(),
+    location: v.optional(v.string()),
+    notes: v.optional(v.string()),
+  }).index("by_staff", ["staffEmail"]),
 });

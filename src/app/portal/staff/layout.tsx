@@ -30,6 +30,18 @@ import { StaffProvider, useStaff } from "@/context/StaffContext";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import type { ComplianceStatus } from "@/app/api/admin/compliance/route";
+import WelcomeModal from "@/components/WelcomeModal";
+import OnboardingTour, { type TourStep } from "@/components/OnboardingTour";
+
+const STAFF_STEPS: TourStep[] = [
+  { target: '[data-tour="staff-dashboard"]', title: "Dashboard", body: "Your mission control — see case activity, team updates, and system alerts at a glance.", placement: "right" },
+  { target: '[data-tour="staff-caseload"]', title: "Caseload & Roster", body: "Add participants, update statuses, and manage detailed client profiles.", placement: "right" },
+  { target: '[data-tour="staff-documents"]', title: "Documents", body: "Upload, view, and share HIPAA-safe documents with clients and your team.", placement: "right" },
+  { target: '[data-tour="staff-messages"]', title: "Messages", body: "Communicate with clients and teammates via your integrated Google Chat workspace.", placement: "right" },
+  { target: '[data-tour="staff-calendar"]', title: "Calendar", body: "Schedule F2F visits, appointments, and team meetings all in one place.", placement: "right" },
+  { target: '[data-tour="staff-compliance"]', title: "Compliance", body: "Monitor HIPAA compliance status and review PHI workflow approvals in real time.", placement: "right" },
+  { target: '[data-tour="staff-settings"]', title: "Settings", body: "Customize your portal preferences, manage your profile, and configure notifications.", placement: "right" },
+];
 
 export default function StaffLayout({
   children,
@@ -75,6 +87,20 @@ function StaffLayoutContent({ children }: { children: React.ReactNode }) {
   const notificationRef = useRef<HTMLDivElement>(null);
   const [showProfile, setShowProfile] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
+  const [showWelcome, setShowWelcome] = useState(false);
+  const [showTour, setShowTour] = useState(false);
+
+  const completeOnboarding = () => {
+    localStorage.setItem("caseflow_staff_onboarded", "1");
+    setShowWelcome(false);
+    setShowTour(false);
+  };
+
+  useEffect(() => {
+    if (!localStorage.getItem("caseflow_staff_onboarded")) {
+      setShowWelcome(true);
+    }
+  }, []);
 
   const initials = session?.user?.name
     ? session.user.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()
@@ -104,23 +130,23 @@ function StaffLayoutContent({ children }: { children: React.ReactNode }) {
         </div>
         
         <nav className="flex-1 px-4 py-6 space-y-1">
-          <Link href="/portal/staff" className="flex items-center gap-3 px-3 py-2 rounded-lg bg-charcoal-800 text-white">
+          <Link href="/portal/staff" data-tour="staff-dashboard" className="flex items-center gap-3 px-3 py-2 rounded-lg bg-charcoal-800 text-white">
             <LayoutDashboard className="w-5 h-5" />
             Dashboard
           </Link>
-          <Link href="/portal/staff/caseload" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-charcoal-800 hover:text-white transition">
+          <Link href="/portal/staff/caseload" data-tour="staff-caseload" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-charcoal-800 hover:text-white transition">
             <Users className="w-5 h-5" />
             Caseload / Roster
           </Link>
-          <Link href="/portal/staff/documents" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-charcoal-800 hover:text-white transition">
+          <Link href="/portal/staff/documents" data-tour="staff-documents" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-charcoal-800 hover:text-white transition">
             <FileText className="w-5 h-5" />
             Documents
           </Link>
-          <Link href="/portal/staff/messages" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-charcoal-800 hover:text-white transition">
+          <Link href="/portal/staff/messages" data-tour="staff-messages" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-charcoal-800 hover:text-white transition">
             <MessageSquare className="w-5 h-5" />
             Messages
           </Link>
-          <Link href="/portal/staff/calendar" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-charcoal-800 hover:text-white transition">
+          <Link href="/portal/staff/calendar" data-tour="staff-calendar" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-charcoal-800 hover:text-white transition">
             <Calendar className="w-5 h-5" />
             Calendar
           </Link>
@@ -128,7 +154,7 @@ function StaffLayoutContent({ children }: { children: React.ReactNode }) {
             <Terminal className="w-5 h-5 text-teal-400" />
             Command Terminal
           </Link>
-          <Link href="/portal/staff/compliance" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-charcoal-800 hover:text-white transition">
+          <Link href="/portal/staff/compliance" data-tour="staff-compliance" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-charcoal-800 hover:text-white transition">
             <ShieldCheck className="w-5 h-5" />
             Compliance
           </Link>
@@ -163,7 +189,7 @@ function StaffLayoutContent({ children }: { children: React.ReactNode }) {
               </span>
             </div>
           )}
-          <Link href="/portal/staff/settings" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-charcoal-800 hover:text-white transition">
+          <Link href="/portal/staff/settings" data-tour="staff-settings" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-charcoal-800 hover:text-white transition">
             <Settings className="w-5 h-5" />
             Settings
           </Link>
@@ -350,6 +376,18 @@ function StaffLayoutContent({ children }: { children: React.ReactNode }) {
           {children}
         </main>
       </div>
+      {/* Onboarding */}
+      {showWelcome && (
+        <WelcomeModal
+          userName={session?.user?.name}
+          portalType="staff"
+          onStartTour={() => { setShowWelcome(false); setShowTour(true); }}
+          onSkip={completeOnboarding}
+        />
+      )}
+      {showTour && (
+        <OnboardingTour steps={STAFF_STEPS} onComplete={completeOnboarding} />
+      )}
     </div>
   );
 }

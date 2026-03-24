@@ -16,6 +16,7 @@ export const addParticipant = mutation({
     name: v.string(),
     status: v.string(),
     environment: v.string(),
+    email: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     return await ctx.db.insert("participants", args);
@@ -441,6 +442,155 @@ export const deleteProfilePhoto = mutation({
       .first();
     if (existing) {
       await ctx.db.delete(existing._id);
+    }
+  },
+});
+
+// ─── User Profiles (contact info, schedule) ──────────────────────────────────
+
+export const getUserProfile = query({
+  args: { userEmail: v.string() },
+  handler: async (ctx, { userEmail }) => {
+    return await ctx.db
+      .query("userProfiles")
+      .withIndex("by_email", (q) => q.eq("userEmail", userEmail))
+      .first();
+  },
+});
+
+export const upsertUserProfile = mutation({
+  args: {
+    userEmail: v.string(),
+    phone: v.optional(v.string()),
+    workPhone: v.optional(v.string()),
+    personalEmail: v.optional(v.string()),
+    workSchedule: v.optional(v.string()),
+  },
+  handler: async (ctx, { userEmail, phone, workPhone, personalEmail, workSchedule }) => {
+    const existing = await ctx.db
+      .query("userProfiles")
+      .withIndex("by_email", (q) => q.eq("userEmail", userEmail))
+      .first();
+    const fields = { phone, workPhone, personalEmail, workSchedule };
+    if (existing) {
+      await ctx.db.patch(existing._id, fields);
+      return existing._id;
+    } else {
+      return await ctx.db.insert("userProfiles", { userEmail, ...fields });
+    }
+  },
+});
+
+// ─── Audit Logs ──────────────────────────────────────────────────────────────
+
+export const listAuditLogs = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("auditLogs").withIndex("by_timestamp").order("desc").collect();
+  },
+});
+
+export const addAuditLog = mutation({
+  args: {
+    actor: v.string(),
+    actorRole: v.string(),
+    action: v.string(),
+    target: v.optional(v.string()),
+    targetType: v.optional(v.string()),
+    detail: v.optional(v.string()),
+    timestamp: v.number(),
+    ip: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.insert("auditLogs", args);
+  },
+});
+
+// ─── Housing Matches ─────────────────────────────────────────────────────────
+
+export const listHousingMatches = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("housingMatches").order("desc").collect();
+  },
+});
+
+export const upsertHousingMatch = mutation({
+  args: {
+    clientSlot: v.string(),
+    clientName: v.string(),
+    unitAddress: v.string(),
+    landlord: v.optional(v.string()),
+    matchedDate: v.string(),
+    status: v.union(v.literal("pending"), v.literal("active"), v.literal("exited")),
+    notes: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const existing = await ctx.db
+      .query("housingMatches")
+      .withIndex("by_slot", (q) => q.eq("clientSlot", args.clientSlot))
+      .first();
+    if (existing) {
+      await ctx.db.patch(existing._id, args);
+      return existing._id;
+    } else {
+      return await ctx.db.insert("housingMatches", args);
+    }
+  },
+});
+
+export const updateHousingMatchStatus = mutation({
+  args: {
+    id: v.id("housingMatches"),
+    status: v.union(v.literal("pending"), v.literal("active"), v.literal("exited")),
+  },
+  handler: async (ctx, { id, status }) => {
+    await ctx.db.patch(id, { status });
+  },
+});
+
+// ─── Staff Schedules ─────────────────────────────────────────────────────────
+
+export const listStaffSchedules = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("staffSchedules").collect();
+  },
+});
+
+export const upsertStaffSchedule = mutation({
+  args: {
+    staffEmail: v.string(),
+    staffName: v.string(),
+    dayOfWeek: v.string(),
+    startTime: v.string(),
+    endTime: v.string(),
+    location: v.optional(v.string()),
+    notes: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.insert("staffSchedules", args);
+  },
+});
+
+export const deleteStaffSchedule = mutation({
+  args: { id: v.id("staffSchedules") },
+  handler: async (ctx, { id }) => {
+    await ctx.db.delete(id);
+  },
+});
+
+// ─── Admin: Reassign Case Manager ────────────────────────────────────────────
+
+export const reassignCaseManager = mutation({
+  args: { slot: v.string(), caseManager: v.string() },
+  handler: async (ctx, { slot, caseManager }) => {
+    const demo = await ctx.db
+      .query("demographics")
+      .withIndex("by_slot", (q) => q.eq("slot", slot))
+      .first();
+    if (demo) {
+      await ctx.db.patch(demo._id, { caseManager });
     }
   },
 });

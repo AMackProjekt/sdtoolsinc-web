@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowLeft, Save, ShieldCheck, User, MapPin, AlertCircle, Loader2 } from "lucide-react";
+import { ArrowLeft, Save, ShieldCheck, User, MapPin, AlertCircle, Loader2, Mail } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useStaff } from "@/context/StaffContext";
@@ -32,6 +32,7 @@ export default function NewClientIntake() {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
+    email: "",
     slot: "",
     environment: "",
     status: "Active",
@@ -51,12 +52,33 @@ export default function NewClientIntake() {
 
     setIsSaving(true);
 
+    const clientName = `${formData.firstName} ${formData.lastName}`;
+    const clientSlot = formData.slot.toUpperCase();
+
     addParticipant({
-      slot: formData.slot.toUpperCase(),
-      name: `${formData.firstName} ${formData.lastName}`,
+      slot: clientSlot,
+      name: clientName,
       status: formData.status,
       environment: formData.environment,
+      email: formData.email || undefined,
     });
+
+    // If the client has a Gmail address, notify the Google Chat channel
+    if (formData.email && formData.email.toLowerCase().endsWith("@gmail.com")) {
+      try {
+        await fetch("/api/google-chat-invite", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: clientName,
+            email: formData.email,
+            slot: clientSlot,
+          }),
+        });
+      } catch {
+        // Non-blocking — don't prevent navigation if this fails
+      }
+    }
 
     setIsSaving(false);
     router.push("/portal/staff/caseload");
@@ -124,6 +146,29 @@ export default function NewClientIntake() {
                   placeholder="Last name"
                 />
               </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-1.5">
+                <span className="flex items-center gap-1.5">
+                  <Mail className="w-3.5 h-3.5 text-slate-400" />
+                  Email Address
+                  {formData.email.toLowerCase().endsWith("@gmail.com") && (
+                    <span className="ml-1 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-600 text-[10px] font-bold border border-blue-100">
+                      Gmail — will notify chat channel
+                    </span>
+                  )}
+                </span>
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                autoComplete="off"
+                className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500 bg-slate-50"
+                placeholder="client@gmail.com (optional)"
+              />
             </div>
           </section>
 

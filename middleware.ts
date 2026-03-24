@@ -59,6 +59,17 @@ export default auth(async (req) => {
     ));
   }
 
+  // ── Enforce admin role for admin portal ──────────────────────────────────
+  const needsAdminRole = pathname.startsWith("/portal/admin");
+  if (needsAdminRole && role !== "admin") {
+    if (pathname.startsWith("/api/")) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+    // Redirect based on their actual role
+    const fallback = role === "staff" ? "/portal/staff" : "/portal/client";
+    return NextResponse.redirect(new URL(fallback, req.url));
+  }
+
   // ── Enforce @dreamsforchange.org domain for staff portal ──────────────────
   const needsStaffRole =
     pathname.startsWith("/portal/staff") ||

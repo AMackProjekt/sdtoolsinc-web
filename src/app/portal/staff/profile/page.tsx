@@ -2,10 +2,10 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Mail, Badge, Clock, Shield, ExternalLink, Upload, X, Loader2 } from "lucide-react";
+import { ArrowLeft, Mail, Badge, Clock, Shield, ExternalLink, Upload, X, Loader2, Phone, Smartphone, AtSign, CalendarClock, Pencil, Check } from "lucide-react";
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
-import { useQuery } from "convex/react";
+import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 
 export default function StaffProfilePage() {
@@ -14,16 +14,39 @@ export default function StaffProfilePage() {
   const [isUploading, setIsUploading] = useState(false);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [form, setForm] = useState({
+    phone: "",
+    workPhone: "",
+    personalEmail: "",
+    workSchedule: "",
+  });
 
   const profilePhoto = useQuery(api.functions.getProfilePhoto, {
     userEmail: session?.user?.email ?? "",
   });
+  const userProfile = useQuery(api.functions.getUserProfile, {
+    userEmail: session?.user?.email ?? "",
+  });
+  const upsertUserProfile = useMutation(api.functions.upsertUserProfile);
 
   useEffect(() => {
     if (profilePhoto?.photoUrl) {
       setPhotoPreview(profilePhoto.photoUrl);
     }
   }, [profilePhoto]);
+
+  useEffect(() => {
+    if (userProfile) {
+      setForm({
+        phone: userProfile.phone ?? "",
+        workPhone: userProfile.workPhone ?? "",
+        personalEmail: userProfile.personalEmail ?? "",
+        workSchedule: userProfile.workSchedule ?? "",
+      });
+    }
+  }, [userProfile]);
 
   if (!session?.user) {
     return (
@@ -43,33 +66,19 @@ export default function StaffProfilePage() {
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
-    // Create preview
     const reader = new FileReader();
     reader.onload = (event) => {
       setPhotoPreview(event.target?.result as string);
     };
     reader.readAsDataURL(file);
-
-    // Upload
     setIsUploading(true);
     try {
       const formData = new FormData();
       formData.append("photo", file);
-
-      const response = await fetch("/api/profile-photo", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to upload photo");
-      }
-
-      alert("Profile photo updated successfully!");
+      const response = await fetch("/api/profile-photo", { method: "POST", body: formData });
+      if (!response.ok) throw new Error("Failed to upload photo");
     } catch (error) {
       console.error("Upload error:", error);
-      alert("Failed to upload photo. Please try again.");
       setPhotoPreview(null);
     } finally {
       setIsUploading(false);
@@ -77,25 +86,34 @@ export default function StaffProfilePage() {
   };
 
   const handleDeletePhoto = async () => {
-    if (confirm("Are you sure you want to delete your profile photo?")) {
-      setIsUploading(true);
-      try {
-        const response = await fetch("/api/profile-photo", {
-          method: "DELETE",
-        });
+    if (!confirm("Are you sure you want to delete your profile photo?")) return;
+    setIsUploading(true);
+    try {
+      const response = await fetch("/api/profile-photo", { method: "DELETE" });
+      if (!response.ok) throw new Error("Failed to delete photo");
+      setPhotoPreview(null);
+    } catch (error) {
+      console.error("Delete error:", error);
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
-        if (!response.ok) {
-          throw new Error("Failed to delete photo");
-        }
-
-        setPhotoPreview(null);
-        alert("Profile photo deleted successfully!");
-      } catch (error) {
-        console.error("Delete error:", error);
-        alert("Failed to delete photo. Please try again.");
-      } finally {
-        setIsUploading(false);
-      }
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await upsertUserProfile({
+        userEmail: session.user.email!,
+        phone: form.phone || undefined,
+        workPhone: form.workPhone || undefined,
+        personalEmail: form.personalEmail || undefined,
+        workSchedule: form.workSchedule || undefined,
+      });
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Save error:", error);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -118,18 +136,15 @@ export default function StaffProfilePage() {
 
       {/* Profile Card */}
       <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-        {/* Header Background */}
         <div className="h-32 bg-gradient-to-r from-teal-500 to-indigo-600 relative overflow-hidden">
           <div className="absolute inset-0 opacity-20">
             <div className="absolute top-0 right-0 w-40 h-40 bg-white rounded-full blur-3xl -mr-20 -mt-20"></div>
           </div>
         </div>
 
-        {/* Profile Content */}
         <div className="px-6 md:px-8 pb-8">
-          {/* Avatar & Basic Info */}
+          {/* Avatar & Name */}
           <div className="flex flex-col md:flex-row md:items-end md:gap-6 -mt-16 mb-8 relative z-10">
-            {/* Photo with Upload */}
             <div className="relative group">
               <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-teal-600 to-indigo-600 flex items-center justify-center text-white text-2xl font-bold shadow-lg ring-4 ring-white overflow-hidden">
                 {photoPreview ? (
@@ -144,11 +159,7 @@ export default function StaffProfilePage() {
                 className="absolute bottom-0 right-0 p-2 bg-teal-600 text-white rounded-full shadow-lg hover:bg-teal-700 transition opacity-0 group-hover:opacity-100 disabled:opacity-50"
                 title="Upload photo"
               >
-                {isUploading ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Upload className="w-4 h-4" />
-                )}
+                {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
               </button>
               <input
                 ref={fileInputRef}
@@ -160,25 +171,21 @@ export default function StaffProfilePage() {
                 aria-label="Upload profile photo"
               />
             </div>
-
             <div className="mt-4 md:mt-0">
               <h2 className="text-2xl font-bold text-charcoal-900">{session.user.name ?? "Staff Member"}</h2>
-              <p className="text-teal-600 font-bold uppercase tracking-tight text-sm mt-1">The Champ Is Here</p>
+              <p className="text-teal-600 font-bold uppercase tracking-tight text-sm mt-1">Staff Member</p>
             </div>
           </div>
 
-          {/* Info Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Email */}
+          {/* Account Info */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
               <div className="flex items-center gap-3 mb-2">
                 <Mail className="w-4 h-4 text-slate-400" />
-                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Email Address</p>
+                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Work Email</p>
               </div>
               <p className="text-sm font-bold text-charcoal-900">{session.user.email}</p>
             </div>
-
-            {/* Role */}
             <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
               <div className="flex items-center gap-3 mb-2">
                 <Badge className="w-4 h-4 text-slate-400" />
@@ -186,8 +193,6 @@ export default function StaffProfilePage() {
               </div>
               <p className="text-sm font-bold text-charcoal-900">Staff Member</p>
             </div>
-
-            {/* Account Status */}
             <div className="p-4 rounded-2xl bg-teal-50 border border-teal-100">
               <div className="flex items-center gap-3 mb-2">
                 <Shield className="w-4 h-4 text-teal-600" />
@@ -195,8 +200,6 @@ export default function StaffProfilePage() {
               </div>
               <p className="text-sm font-bold text-teal-900">Active & Verified</p>
             </div>
-
-            {/* Authentication */}
             <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
               <div className="flex items-center gap-3 mb-2">
                 <Clock className="w-4 h-4 text-slate-400" />
@@ -206,8 +209,118 @@ export default function StaffProfilePage() {
             </div>
           </div>
 
+          {/* Contact & Schedule Info */}
+          <div className="border-t border-slate-100 pt-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-bold text-charcoal-900">Contact & Schedule</h3>
+              {!isEditing ? (
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="flex items-center gap-2 px-3 py-1.5 text-sm font-bold text-teal-600 border border-teal-200 bg-teal-50 rounded-xl hover:bg-teal-100 transition"
+                >
+                  <Pencil className="w-3.5 h-3.5" /> Edit
+                </button>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => { setIsEditing(false); if (userProfile) setForm({ phone: userProfile.phone ?? "", workPhone: userProfile.workPhone ?? "", personalEmail: userProfile.personalEmail ?? "", workSchedule: userProfile.workSchedule ?? "" }); }}
+                    className="px-3 py-1.5 text-sm font-bold text-slate-500 border border-slate-200 rounded-xl hover:bg-slate-100 transition"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSave}
+                    disabled={isSaving}
+                    className="flex items-center gap-2 px-3 py-1.5 text-sm font-bold text-white bg-teal-600 rounded-xl hover:bg-teal-700 transition disabled:opacity-50"
+                  >
+                    {isSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
+                    Save
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Phone */}
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                <div className="flex items-center gap-3 mb-2">
+                  <Smartphone className="w-4 h-4 text-slate-400" />
+                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Cell Phone</p>
+                </div>
+                {isEditing ? (
+                  <input
+                    type="tel"
+                    value={form.phone}
+                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                    placeholder="(555) 000-0000"
+                    className="w-full text-sm font-bold text-charcoal-900 bg-white border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  />
+                ) : (
+                  <p className="text-sm font-bold text-charcoal-900">{form.phone || <span className="text-slate-400 font-normal italic">Not set</span>}</p>
+                )}
+              </div>
+
+              {/* Work Phone */}
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                <div className="flex items-center gap-3 mb-2">
+                  <Phone className="w-4 h-4 text-slate-400" />
+                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Work Number</p>
+                </div>
+                {isEditing ? (
+                  <input
+                    type="tel"
+                    value={form.workPhone}
+                    onChange={(e) => setForm({ ...form, workPhone: e.target.value })}
+                    placeholder="(555) 000-0000"
+                    className="w-full text-sm font-bold text-charcoal-900 bg-white border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  />
+                ) : (
+                  <p className="text-sm font-bold text-charcoal-900">{form.workPhone || <span className="text-slate-400 font-normal italic">Not set</span>}</p>
+                )}
+              </div>
+
+              {/* Personal Email */}
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                <div className="flex items-center gap-3 mb-2">
+                  <AtSign className="w-4 h-4 text-slate-400" />
+                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Personal Email</p>
+                </div>
+                {isEditing ? (
+                  <input
+                    type="email"
+                    value={form.personalEmail}
+                    onChange={(e) => setForm({ ...form, personalEmail: e.target.value })}
+                    placeholder="you@personal.com"
+                    className="w-full text-sm font-bold text-charcoal-900 bg-white border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  />
+                ) : (
+                  <p className="text-sm font-bold text-charcoal-900">{form.personalEmail || <span className="text-slate-400 font-normal italic">Not set</span>}</p>
+                )}
+              </div>
+
+              {/* Work Schedule */}
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                <div className="flex items-center gap-3 mb-2">
+                  <CalendarClock className="w-4 h-4 text-slate-400" />
+                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Work Schedule</p>
+                </div>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={form.workSchedule}
+                    onChange={(e) => setForm({ ...form, workSchedule: e.target.value })}
+                    placeholder="Mon–Fri, 9am–5pm"
+                    className="w-full text-sm font-bold text-charcoal-900 bg-white border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  />
+                ) : (
+                  <p className="text-sm font-bold text-charcoal-900">{form.workSchedule || <span className="text-slate-400 font-normal italic">Not set</span>}</p>
+                )}
+              </div>
+            </div>
+          </div>
+
           {/* Actions */}
-          <div className="mt-8 space-y-3 border-t border-slate-100 pt-6">
+          <div className="mt-6 space-y-3 border-t border-slate-100 pt-6">
             <Link
               href="/portal/staff/settings"
               className="flex items-center justify-between p-4 rounded-xl bg-slate-50 hover:bg-slate-100 transition border border-slate-100"
@@ -222,15 +335,9 @@ export default function StaffProfilePage() {
                 className="w-full flex items-center justify-between p-4 rounded-xl bg-rose-50 hover:bg-rose-100 transition border border-rose-100 text-left font-bold text-rose-600 disabled:opacity-50"
               >
                 {isUploading ? (
-                  <>
-                    <span>Deleting photo...</span>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  </>
+                  <><span>Deleting photo...</span><Loader2 className="w-4 h-4 animate-spin" /></>
                 ) : (
-                  <>
-                    <span>Delete Profile Photo</span>
-                    <X className="w-4 h-4" />
-                  </>
+                  <><span>Delete Profile Photo</span><X className="w-4 h-4" /></>
                 )}
               </button>
             )}
@@ -245,7 +352,7 @@ export default function StaffProfilePage() {
           <div>
             <h3 className="font-bold text-indigo-900 mb-1">Security & 2FA</h3>
             <p className="text-sm text-indigo-800">
-              Your account is protected by two-factor authentication (2FA). A verification code is sent to your email whenever you sign in.
+              Your account is protected by two-factor authentication. Personal email is used as a backup verification method if you can&apos;t access your work email.
             </p>
           </div>
         </div>
