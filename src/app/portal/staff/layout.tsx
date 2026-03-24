@@ -32,6 +32,7 @@ import { useRouter } from "next/navigation";
 import type { ComplianceStatus } from "@/app/api/admin/compliance/route";
 import WelcomeModal from "@/components/WelcomeModal";
 import OnboardingTour, { type TourStep } from "@/components/OnboardingTour";
+import HmisUploadSidebar from "@/components/HmisUploadSidebar";
 
 const STAFF_STEPS: TourStep[] = [
   { target: '[data-tour="staff-dashboard"]', title: "Dashboard", body: "Your mission control — see case activity, team updates, and system alerts at a glance.", placement: "right" },
@@ -371,10 +372,13 @@ function StaffLayoutContent({ children }: { children: React.ReactNode }) {
           </div>
         </header>
         
-        {/* Page Content */}
-        <main className="flex-1 overflow-auto p-8">
-          {children}
-        </main>
+        {/* Page Content + HMIS Sidebar */}
+        <div className="flex-1 flex overflow-hidden">
+          <main className="flex-1 overflow-auto p-8">
+            {children}
+          </main>
+          <HmisUploadSidebar />
+        </div>
       </div>
       {/* Onboarding */}
       {showWelcome && (

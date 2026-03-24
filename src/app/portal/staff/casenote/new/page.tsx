@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useStaff } from "@/context/StaffContext";
+import { useMutation } from "convex/react";
+import { api } from "../../../../../../convex/_generated/api";
 
 const CASE_NOTE_TYPES = [
   "Participant Update", "Weekly Check-In", "Housing Navigation", 
@@ -31,6 +33,7 @@ export default function NewCaseNote() {
   const staffName = session?.user?.name ?? session?.user?.email ?? "Staff";
   const [isQuickMode, setIsQuickMode] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const addToHmisQueue = useMutation(api.functions.addToHmisQueue);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -48,12 +51,20 @@ export default function NewCaseNote() {
 
     setIsSaving(true);
 
-    addCaseNote({
+    await addCaseNote({
       clientName: formData.uid.toUpperCase(),
       date: new Date().toLocaleDateString(),
       type: formData.type || "Participant Update",
       summary: formData.narrative,
       staff: staffName
+    });
+
+    await addToHmisQueue({
+      clientName: formData.uid.toUpperCase(),
+      date: formData.date,
+      type: formData.type || "Participant Update",
+      summary: formData.narrative,
+      staff: staffName,
     });
 
     setIsSaving(false);

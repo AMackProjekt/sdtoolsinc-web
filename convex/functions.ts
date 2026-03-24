@@ -116,6 +116,31 @@ export const updateParticipant = mutation({
   },
 });
 
+export const upsertParticipant = mutation({
+  args: {
+    slot: v.string(),
+    name: v.string(),
+    status: v.string(),
+    environment: v.string(),
+    email: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const existing = await ctx.db
+      .query("participants")
+      .withIndex("by_slot", (q) => q.eq("slot", args.slot))
+      .first();
+    if (existing) {
+      await ctx.db.patch(existing._id, {
+        name: args.name,
+        status: args.status,
+        environment: args.environment,
+      });
+      return existing._id;
+    }
+    return await ctx.db.insert("participants", args);
+  },
+});
+
 // ─── Case Notes ─────────────────────────────────────────────────────────────
 
 export const listCaseNotes = query({
