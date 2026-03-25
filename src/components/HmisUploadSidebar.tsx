@@ -11,7 +11,7 @@ function todayISO() {
 }
 
 export default function HmisUploadSidebar() {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [sendError, setSendError] = useState("");
@@ -57,13 +57,13 @@ export default function HmisUploadSidebar() {
 
   if (collapsed) {
     return (
-      <div className="w-10 bg-charcoal-900 border-l border-charcoal-800 flex flex-col items-center py-4 gap-3 shrink-0">
+      <div className="w-10 bg-charcoal-900 border-r border-charcoal-800 flex flex-col items-center py-4 gap-3 shrink-0">
         <button
           onClick={() => setCollapsed(false)}
           className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-charcoal-800 transition"
           title="Open HMIS Upload Queue"
         >
-          <ChevronLeft className="w-4 h-4" />
+          <ChevronRight className="w-4 h-4" />
         </button>
         <div
           className="writing-vertical text-[9px] font-bold uppercase tracking-[0.2em] text-slate-500 mt-2"
@@ -85,7 +85,7 @@ export default function HmisUploadSidebar() {
   }
 
   return (
-    <aside className="w-72 bg-charcoal-900 border-l border-charcoal-800 flex flex-col shrink-0 overflow-hidden">
+    <aside className="w-72 bg-charcoal-900 border-r border-charcoal-800 flex flex-col shrink-0 overflow-hidden">
       {/* Header */}
       <div className="h-16 flex items-center justify-between px-4 border-b border-charcoal-800 shrink-0">
         <a
@@ -104,7 +104,7 @@ export default function HmisUploadSidebar() {
           className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-charcoal-800 transition"
           title="Collapse"
         >
-          <ChevronRight className="w-4 h-4" />
+          <ChevronLeft className="w-4 h-4" />
         </button>
       </div>
 

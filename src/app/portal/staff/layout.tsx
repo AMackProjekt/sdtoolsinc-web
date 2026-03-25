@@ -395,10 +395,10 @@ function StaffLayoutContent({ children }: { children: React.ReactNode }) {
         
         {/* Page Content + HMIS Sidebar */}
         <div className="flex-1 flex overflow-hidden">
+          <HmisUploadSidebar />
           <main className="flex-1 overflow-auto p-4 pb-28 md:p-8 md:pb-8">
             {children}
           </main>
-          <HmisUploadSidebar />
         </div>
       </div>
       {/* Onboarding */}
