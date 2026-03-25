@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { ArrowLeft, Save, Bolt, FileText, CheckSquare, AlertCircle, Info, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ArrowLeft, Save, Bolt, FileText, CheckSquare, AlertCircle, Info, Loader2, BookmarkCheck } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -33,7 +33,10 @@ export default function NewCaseNote() {
   const staffName = session?.user?.name ?? session?.user?.email ?? "Staff";
   const [isQuickMode, setIsQuickMode] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [draftSaved, setDraftSaved] = useState(false);
   const addToHmisQueue = useMutation(api.functions.addToHmisQueue);
+
+  const DRAFT_KEY = "casenote_draft";
 
   // Form State
   const [formData, setFormData] = useState({
@@ -44,6 +47,20 @@ export default function NewCaseNote() {
     location: "O Lot",
     narrative: ""
   });
+
+  // Restore draft on mount
+  useEffect(() => {
+    const saved = localStorage.getItem(DRAFT_KEY);
+    if (saved) {
+      try { setFormData(JSON.parse(saved)); } catch {}
+    }
+  }, []);
+
+  const handleSaveDraft = () => {
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(formData));
+    setDraftSaved(true);
+    setTimeout(() => setDraftSaved(false), 2000);
+  };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,6 +85,7 @@ export default function NewCaseNote() {
     });
 
     setIsSaving(false);
+    localStorage.removeItem(DRAFT_KEY);
     router.push(`/portal/staff/caseload/${formData.uid}`);
   };
 
@@ -87,6 +105,13 @@ export default function NewCaseNote() {
         </div>
         
         <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={handleSaveDraft}
+            className="border border-slate-200 bg-white text-slate-600 px-5 py-2.5 rounded-xl font-semibold hover:bg-slate-50 transition flex items-center gap-2 text-sm"
+          >
+            {draftSaved ? <><BookmarkCheck className="w-4 h-4 text-teal-600" /> Draft Saved!</> : <><BookmarkCheck className="w-4 h-4" /> Save Draft</>}
+          </button>
           <button 
             onClick={handleSave}
             disabled={isSaving}
@@ -392,6 +417,13 @@ export default function NewCaseNote() {
             <Link href="/portal/staff" className="flex-1 md:flex-none px-6 py-3 rounded-xl border border-slate-200 text-slate-600 font-semibold hover:bg-slate-50 transition text-center text-sm md:text-base">
               Cancel
             </Link>
+            <button
+              type="button"
+              onClick={handleSaveDraft}
+              className="px-6 py-3 rounded-xl border border-slate-200 bg-white text-slate-600 font-semibold hover:bg-slate-50 transition flex items-center justify-center gap-2 text-sm md:text-base"
+            >
+              {draftSaved ? <><BookmarkCheck className="w-5 h-5 text-teal-600" /> Draft Saved!</> : <><BookmarkCheck className="w-5 h-5" /> Save Draft</>}
+            </button>
             <button 
               type="submit"
               disabled={isSaving}

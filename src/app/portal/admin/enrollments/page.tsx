@@ -10,8 +10,7 @@ const LOCATIONS = ["Tier 3", "Tier 4", "B Lot", "Safe Parking"] as const;
 type Location = (typeof LOCATIONS)[number];
 
 const CASE_MANAGERS = [
-  "Abby", "Amalia", "Coco", "Jonathan", "Lawanda",
-  "Mack", "Spencer", "Tey", "Tonya", "William",
+  "Abby", "Coco", "Jonathan", "Mack", "Spencer", "Tonya",
 ];
 
 const LOCATION_COLORS: Record<string, string> = {

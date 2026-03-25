@@ -146,7 +146,7 @@ const REFERRAL_SOURCES = [
 ];
 
 const CASE_MANAGERS = [
-  "Abby", "Amalia", "Coco", "Jonathan", "Lawanda", "Mack", "Spencer", "Tey", "Tonya", "William",
+  "Abby", "Coco", "Jonathan", "Mack", "Spencer", "Tonya",
 ];
 
 const US_STATES = [

@@ -22,8 +22,7 @@ const EXIT_REASONS = [
 ];
 
 const CASE_MANAGERS = [
-  "Abby", "Amalia", "Coco", "Jonathan", "Lawanda",
-  "Mack", "Spencer", "Tey", "Tonya", "William",
+  "Abby", "Coco", "Jonathan", "Mack", "Spencer", "Tonya",
 ];
 
 const LOCATION_COLORS: Record<string, string> = {
