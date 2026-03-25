@@ -33,6 +33,8 @@ import { useRouter } from "next/navigation";
 import WellnessCorner from "@/components/WellnessCorner";
 import HmisUploadSidebar from "@/components/HmisUploadSidebar";
 import WelcomeModal from "@/components/WelcomeModal";
+import OnboardingTour, { type TourStep } from "@/components/OnboardingTour";
+import PortalChat from "@/components/PortalChat";
 
 type ComplianceStatus = {
   overall: string;
@@ -40,6 +42,16 @@ type ComplianceStatus = {
   score: number;
   checks: Record<string, { status: string; message: string }>;
 };
+
+  const STAFF_STEPS: TourStep[] = [
+    { target: '[data-tour="staff-dashboard"]', title: "Dashboard", body: "Your command center — see today's tasks, KPIs, and participant updates at a glance.", placement: "right" },
+    { target: '[data-tour="staff-caseload"]', title: "Caseload", body: "Manage all your active participants, view profiles, and update case notes here.", placement: "right" },
+    { target: '[data-tour="staff-documents"]', title: "Documents", body: "Upload, access, and manage participant documents and HMIS records.", placement: "right" },
+    { target: '[data-tour="staff-messages"]', title: "Messages", body: "Communicate with participants and team members securely.", placement: "right" },
+    { target: '[data-tour="staff-calendar"]', title: "Calendar", body: "View and schedule appointments, check-ins, and team events.", placement: "right" },
+    { target: '[data-tour="staff-compliance"]', title: "Compliance", body: "Monitor your compliance status, upload required docs, and track deadlines.", placement: "right" },
+    { target: '[data-tour="staff-settings"]', title: "Settings", body: "Manage your account, notification preferences, and portal configuration.", placement: "right" },
+  ];
 
 export default function StaffLayout({
   children,

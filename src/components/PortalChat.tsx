@@ -358,10 +358,12 @@ export default function PortalChat({ role }: { role: "staff" | "client" }) {
   const [selected, setSelected] = useState<Contact | null>(null);
 
   // My identity
-  const myName = session?.user?.name ?? (role === "staff" ? "Mack" : "Participant");
-  const myId = myName;
+    // Stable chat IDs — client hardcodes receiverId "Mack", so staff must always use "Mack".
+    // Client always identifies as "the Champ" so the sender name is consistent.
+    const myId = role === "staff" ? "Mack" : "the Champ";
+    const myName = role === "staff" ? (session?.user?.name ?? "Mack") : "the Champ";
 
-  // Load contacts from Convex
+    // Load contacts from Convex
   const participantsRaw = useQuery(api.functions.listParticipants);
   const participants = (participantsRaw ?? []) as Participant[];
 
@@ -377,6 +379,10 @@ export default function PortalChat({ role }: { role: "staff" | "client" }) {
         role: "client" as const,
         online: p.status === "Active",
       }));
+      // Always include "the Champ" (the pinned client identity) even if not in participants table
+      if (!contacts.find((c) => c.id === "the Champ")) {
+        contacts = [{ id: "the Champ", name: "the Champ", role: "client" as const, online: true }, ...contacts];
+      }
   } else {
     // Clients only see their case manager
     contacts = [
