@@ -24,9 +24,53 @@ import {
   Play,
   Pause,
   RotateCcw,
-  Coffee
+  Coffee,
+  Quote,
+  UserCheck,
+  Inbox,
+  ShieldCheck,
+  Video,
+  ExternalLink,
+  Brain,
+  Wind,
+  Music,
+  Activity,
+  Sparkles,
+  Flame,
+  Dumbbell,
+  Info,
+  Star
 } from "lucide-react";
 import { useStaff } from "@/context/StaffContext";
+import IntegrationHub from "@/components/IntegrationHub";
+
+const STAFF_QUOTES = [
+  "The most important thing you can do for your clients is show up — fully, consistently, and with purpose.",
+  "Every case note you write is an act of advocacy. Make it count.",
+  "Burnout is real. Protect your energy so you can protect others.",
+  "You are not just a caseworker — you are a bridge to possibility.",
+  "Strong documentation today prevents crises tomorrow.",
+  "Your compassion is a professional skill. Never apologize for it.",
+  "The work is hard because the people matter.",
+  "Every small win you celebrate with a client is a building block for their future.",
+  "Consistency is the most underrated form of care.",
+  "You chose this work. That says everything about your character.",
+  "A warm handoff can change someone's entire trajectory.",
+  "You don't have to have all the answers — just the commitment to find them.",
+  "Your caseload is made of real people with real dreams. Never lose sight of that.",
+  "Rest is part of the mission. You can't pour from an empty cup.",
+  "The notes you take today are the evidence that someone's life changed.",
+  "Excellence in service starts with clarity in purpose.",
+  "Every referral you make is a seed planted. Some bloom later than you expect.",
+  "Trauma-informed is not a buzzword — it's a commitment to seeing the whole person.",
+  "Your follow-through builds the trust that your clients have never had before.",
+  "Progress in case management is measured one milestone at a time.",
+  "You are doing work that most people couldn't comprehend. Be proud of that.",
+  "A single conversation can shift someone's belief that change is possible.",
+  "Document the journey, not just the outcome. The process tells the full story.",
+  "Meeting people where they are — that is the foundation of everything.",
+  "Your presence in this work is making the invisible visible.",
+];
 
 type Priority = "high" | "med" | "low";
 interface TodoItem { id: number; text: string; priority: Priority; done: boolean; }
@@ -40,6 +84,10 @@ export default function MainDashboard() {
   const activeCount = participants.filter(p => (p as any).status.includes('Active')).length;
   const inProgressCount = participants.filter(p => (p as any).status === 'Active - SOP Audit').length;
   const placementCount = participants.filter(p => (p as any).status === 'Active - Housing Match').length;
+  const pendingCount = requests.filter(r => (r as any).status === 'pending').length;
+  const approvedCount = requests.filter(r => (r as any).status === 'approved').length;
+
+  const [staffQuote, setStaffQuote] = useState(() => STAFF_QUOTES[Math.floor(Math.random() * STAFF_QUOTES.length)]);
 
   // ── Todos & Tasks ──────────────────────────────────────────────────────────
   const [todos, setTodos] = useState<TodoItem[]>([
@@ -129,78 +177,200 @@ export default function MainDashboard() {
   const pomMins  = String(Math.floor(pomSeconds / 60)).padStart(2, "0");
   const pomSecs  = String(pomSeconds % 60).padStart(2, "0");
 
+  // ── Productivity Corner ───────────────────────────────────────────────────
+  const [brainDump, setBrainDump] = useState("");
+  const [breathStep, setBreathStep] = useState<"idle"|"inhale"|"hold1"|"exhale"|"hold2">("idle");
+  const breathTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const startBoxBreath = () => {
+    if (breathStep !== "idle") return;
+    breathTimers.current.forEach(clearTimeout);
+    setBreathStep("inhale");
+    breathTimers.current = [
+      setTimeout(() => setBreathStep("hold1"),  4000),
+      setTimeout(() => setBreathStep("exhale"), 8000),
+      setTimeout(() => setBreathStep("hold2"),  12000),
+      setTimeout(() => setBreathStep("idle"),   16000),
+    ];
+  };
+  const AFFIRMATIONS_STAFF = [
+    "I am making a real difference today.",
+    "I show up fully for the people in my care.",
+    "My work changes lives, even when I can't see it.",
+    "I protect my energy so I can protect others.",
+    "I am trauma-informed, compassionate, and effective.",
+    "I am doing extraordinary work in ordinary moments.",
+    "Rest is not laziness — it is how I stay effective.",
+    "I lead with empathy and follow through with action.",
+    "My consistency builds the trust my clients have never had.",
+    "I chose this work because the people matter.",
+  ];
+  const [staffAffirmIdx, setStaffAffirmIdx] = useState(0);
+  const STRETCHES = [
+    "Roll your shoulders back 5 times. Breathe deep.",
+    "Drop your chin slowly to your chest. Hold 10 sec.",
+    "Reach both arms overhead. Stretch and hold 10 sec.",
+    "Rotate your neck gently left-to-right 3 times.",
+    "Stand up and shake out your hands and arms. Reset.",
+    "Interlace fingers, push palms outward. Hold 10 sec.",
+    "Look away from your screen. Focus far away 20 sec.",
+  ];
+  const [stretchIdx, setStretchIdx] = useState(0);
+  const FOCUS_PLAYLISTS = [
+    { name: "Lo-Fi Hip Hop",   url: "https://www.youtube.com/watch?v=jfKfPfyJRdk", emoji: "🎧" },
+    { name: "Ambient Focus",   url: "https://open.spotify.com/playlist/37i9dQZF1DX3Ogo9pFvBkY", emoji: "🌊" },
+    { name: "Deep Work Mix",   url: "https://open.spotify.com/playlist/37i9dQZF1DWZeKCadgRdKQ", emoji: "🔥" },
+    { name: "Nature Sounds",   url: "https://www.youtube.com/watch?v=eKFTSSKCzWA", emoji: "🌿" },
+    { name: "Jazz for Focus",  url: "https://open.spotify.com/playlist/37i9dQZF1DXbITWG1ZJKYt", emoji: "🎷" },
+  ];
+  const DEBRIEF_PROMPTS = [
+    "What's one win from today — big or small?",
+    "What's one thing I'm intentionally leaving at work?",
+    "How did I show up for my clients today?",
+    "What would I do differently tomorrow?",
+    "Who on my caseload deserves extra attention next shift?",
+  ];
+  const [debriefIdx, setDebriefIdx] = useState(0);
+  const [debriefText, setDebriefText] = useState("");
+
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       
-      {/* MISSION BRANDING HUB */}
-      <div className="bg-white/80 backdrop-blur-xl border border-slate-200 rounded-[2.5rem] p-10 shadow-sm relative overflow-hidden">
-         <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-2xl -mr-16 -mt-16"></div>
-         <div className="flex flex-col md:flex-row items-start justify-between gap-8 relative z-10">
-            <div className="max-w-3xl">
-               <h1 className="text-4xl font-black text-charcoal-900 tracking-tighter mb-4 uppercase italic">Dreams for Change <span className="text-indigo-600">Case Management</span></h1>
-               <p className="text-slate-500 font-bold leading-relaxed italic border-l-4 border-indigo-500 pl-6 text-sm">
-                  "{mission}"
-               </p>
+      {/* ── HERO BAR ────────────────────────────────────────────────────────── */}
+      <div className="bg-gradient-to-r from-charcoal-900 via-indigo-950 to-slate-900 rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_top_right,_#6366f1_0%,_transparent_60%)]" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-teal-500/5 rounded-full blur-3xl -ml-16 -mb-16" />
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-2 h-8 bg-indigo-500 rounded-full" />
+              <span className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em]">Dreams for Change · Case Management</span>
             </div>
+            <h1 className="text-3xl md:text-4xl font-black text-white tracking-tighter uppercase italic mb-2">
+              Staff <span className="text-teal-400">Operations</span> Hub
+            </h1>
+            <p className="text-white/40 text-sm font-medium italic leading-relaxed border-l-2 border-indigo-500/50 pl-4 max-w-xl">
+              "{mission}"
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3 shrink-0">
             <Link 
               href="https://sites.google.com/d/1kyg4znPtXffPekhf49Q67uCYNi4C4r_A/p/1EkcGjy2FDmczm0Y48qGQJlxNh0U6UBtk/edit" 
               target="_blank"
-              className="whitespace-nowrap flex items-center gap-3 px-8 py-4 bg-charcoal-900 text-white font-black rounded-2xl text-[10px] uppercase tracking-[0.2em] hover:bg-slate-800 transition shadow-2xl shadow-charcoal-900/20"
+              className="flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 text-white font-black rounded-2xl text-[10px] uppercase tracking-[0.2em] transition"
             >
-               Google Site Bridge <ArrowRight className="w-4 h-4" />
+              Google Site <ArrowRight className="w-3 h-3" />
             </Link>
-         </div>
-      </div>
-
-      {/* Header Area */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-           <h2 className="text-lg font-black text-slate-400 uppercase tracking-[0.3em] mb-1">Operational Pulse</h2>
-           <p className="text-xs font-bold text-slate-300">San Diego Case Management Division</p>
-        </div>
-        
-        <div className="flex flex-col md:flex-row items-end md:items-center gap-4">
-          {/* Team Snapshot */}
-          <div className="flex -space-x-3 hover:space-x-1 transition-all">
-             {team.map((m, i) => (
-                <div key={i} className="w-10 h-10 bg-indigo-600 border-2 border-white rounded-full flex items-center justify-center text-[10px] font-black text-white shadow-lg cursor-default group" title={`${m.name} - ${m.role}`}>
-                   {m.name[0]}
-                </div>
-             ))}
-          </div>
-          
-          {/* System Health Pulse */}
-          <div className="flex items-center gap-4 bg-white/80 backdrop-blur-sm border border-slate-200 px-5 py-2.5 rounded-[1.5rem] shadow-sm">
-             <div className="relative">
-                <div className="w-3 h-3 bg-emerald-500 rounded-full animate-ping"></div>
-                <div className="w-3 h-3 bg-emerald-500 rounded-full absolute inset-0"></div>
-             </div>
-             <div>
-                <p className="text-[10px] font-black text-charcoal-900 uppercase tracking-widest leading-none">Reliability Agent</p>
-                <p className="text-[10px] text-slate-400 font-bold mt-1">Status: Monitoring Ecosystem for Runtime Errors</p>
-             </div>
+            <Link
+              href="/portal/staff/compliance"
+              className="flex items-center gap-2 px-6 py-3 bg-teal-500 hover:bg-teal-400 text-charcoal-950 font-black rounded-2xl text-[10px] uppercase tracking-[0.2em] transition shadow-xl shadow-teal-500/20"
+            >
+              <ShieldCheck className="w-3 h-3" /> Compliance
+            </Link>
           </div>
         </div>
-      </div>
-
-      {/* AI CASE MANAGER ASSISTANT */}
-      <div className="bg-gradient-to-br from-charcoal-900 to-indigo-950 rounded-[2.5rem] p-10 text-white shadow-2xl relative overflow-hidden group">
-         <div className="absolute top-0 right-0 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
-         <div className="flex flex-col md:flex-row md:items-center justify-between gap-10 relative z-10">
-            <div className="flex items-center gap-6">
-               <div className="w-16 h-16 bg-white/10 border border-white/20 rounded-[1.5rem] flex items-center justify-center text-teal-400 shadow-inner group-hover:scale-110 transition-transform">
-                  <Bot className="w-8 h-8 animate-pulse" />
-               </div>
-               <div className="max-w-xl">
-                  <h3 className="text-2xl font-black tracking-tight mb-2">Case Manager <span className="text-teal-400">AI Insight</span></h3>
-                  <p className="text-white/50 text-sm leading-relaxed font-medium italic">"Connect to the AI Case Manager to run caseload analysis, generate bulk follow-ups, and surface compliance gaps across all active participants."</p>
-               </div>
+        {/* Inline quick stats */}
+        <div className="relative z-10 mt-6 grid grid-cols-3 sm:grid-cols-6 gap-2">
+          {[
+            { label: "Active",     val: activeCount,          color: "text-teal-400" },
+            { label: "Caseload",   val: participants.length,  color: "text-indigo-400" },
+            { label: "Case Notes", val: caseNotes.length,     color: "text-purple-400" },
+            { label: "Documents",  val: documents.length,     color: "text-blue-400" },
+            { label: "Pending",    val: pendingCount,         color: "text-amber-400" },
+            { label: "Approved",   val: approvedCount,        color: "text-emerald-400" },
+          ].map(s => (
+            <div key={s.label} className="bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-center">
+              <p className={`text-xl font-black ${s.color} tracking-tighter`}>{s.val}</p>
+              <p className="text-[9px] font-bold text-white/40 uppercase tracking-widest leading-tight mt-0.5">{s.label}</p>
             </div>
-            <Link href="/portal/staff/terminal" className="px-8 py-4 bg-teal-500 text-charcoal-950 font-black rounded-2xl text-xs uppercase tracking-widest hover:bg-teal-400 shadow-xl shadow-teal-500/20 active:scale-95 transition-all">
-               Execute Bulk Follow-up
-            </Link>
-         </div>
+          ))}
+        </div>
       </div>
+
+      {/* ── OPERATIONAL ROW: Team + Health + AI ──────────────────────────── */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Team Snapshot */}
+        <div className="bg-white border border-slate-200 rounded-[2rem] p-6 shadow-sm flex flex-col gap-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-indigo-50 rounded-xl flex items-center justify-center">
+              <Users className="w-4 h-4 text-indigo-600" />
+            </div>
+            <h3 className="font-black text-sm text-charcoal-900 uppercase tracking-tight">Team</h3>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {team.map((m, i) => (
+              <div key={i} title={`${m.name} — ${m.role}`}
+                className="flex items-center gap-1.5 bg-indigo-50 border border-indigo-100 rounded-xl px-2.5 py-1.5 cursor-default hover:bg-indigo-100 transition">
+                <div className="w-5 h-5 bg-indigo-600 rounded-full flex items-center justify-center text-[8px] font-black text-white">{m.name[0]}</div>
+                <span className="text-[10px] font-bold text-indigo-800">{m.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* System Health */}
+        <div className="bg-white border border-slate-200 rounded-[2rem] p-6 shadow-sm flex flex-col gap-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-emerald-50 rounded-xl flex items-center justify-center">
+              <div className="relative">
+                <div className="w-3 h-3 bg-emerald-500 rounded-full animate-ping absolute inset-0" />
+                <div className="w-3 h-3 bg-emerald-500 rounded-full" />
+              </div>
+            </div>
+            <h3 className="font-black text-sm text-charcoal-900 uppercase tracking-tight">System Health</h3>
+          </div>
+          <div className="space-y-2">
+            {[
+              { label: "API Status",       status: "Online",     ok: true },
+              { label: "Convex DB",        status: "Synced",     ok: true },
+              { label: "Auth Provider",    status: "Active",     ok: true },
+              { label: "File Storage",     status: "Healthy",    ok: true },
+            ].map(item => (
+              <div key={item.label} className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-slate-500">{item.label}</span>
+                <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${item.ok ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-700"}`}>{item.status}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* AI Block compact */}
+        <div className="bg-gradient-to-br from-charcoal-900 to-indigo-950 rounded-[2rem] p-6 shadow-xl relative overflow-hidden flex flex-col gap-4">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-teal-400/10 rounded-full blur-2xl -mr-8 -mt-8" />
+          <div className="relative z-10 flex items-center gap-3">
+            <div className="w-10 h-10 bg-white/10 border border-white/20 rounded-2xl flex items-center justify-center">
+              <Bot className="w-5 h-5 text-teal-400 animate-pulse" />
+            </div>
+            <div>
+              <h3 className="text-sm font-black text-white tracking-tight">AI Case Manager</h3>
+              <p className="text-[10px] text-white/40 font-medium">Insight · Analysis · Bulk Actions</p>
+            </div>
+          </div>
+          <p className="relative z-10 text-white/50 text-[11px] leading-relaxed italic">
+            Run caseload analysis, generate follow-ups, and surface compliance gaps.
+          </p>
+          <Link href="/portal/staff/terminal" className="relative z-10 mt-auto px-4 py-2.5 bg-teal-500 hover:bg-teal-400 text-charcoal-950 font-black rounded-xl text-[10px] uppercase tracking-widest transition shadow-lg shadow-teal-500/20 text-center">
+            Open AI Terminal →
+          </Link>
+        </div>
+      </div>
+
+      {/* ── STAFF QUOTE CARD ─────────────────────────────────────────────── */}
+      <div className="bg-gradient-to-r from-indigo-950 to-charcoal-900 rounded-[2rem] px-8 py-5 flex items-center justify-between gap-6 shadow-lg">
+        <div className="flex items-start gap-4 min-w-0">
+          <Quote className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5" />
+          <p className="text-sm text-indigo-100 italic font-medium leading-relaxed">{staffQuote}</p>
+        </div>
+        <button
+          onClick={() => setStaffQuote(STAFF_QUOTES[Math.floor(Math.random() * STAFF_QUOTES.length)])}
+          title="New quote"
+          className="shrink-0 text-[10px] font-black text-indigo-400 hover:text-white uppercase tracking-widest flex items-center gap-1.5 transition whitespace-nowrap"
+        >
+          <Zap className="w-3 h-3" /> New
+        </button>
+      </div>
+
+      {/* ── INTEGRATION HUB ───────────────────────────────────────────────── */}
+      <IntegrationHub role="staff" />
 
       {/* ── KPI WIDGET CARDS ─────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
@@ -357,7 +527,10 @@ export default function MainDashboard() {
               <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${pomMode === "work" ? "bg-indigo-50" : "bg-teal-50"}`}>
                 {pomMode === "work" ? <Timer className="w-4 h-4 text-indigo-600" /> : <Coffee className="w-4 h-4 text-teal-600" />}
               </div>
-              <h3 className="font-black text-sm text-charcoal-900 tracking-tight uppercase">Pomodoro</h3>
+              <div>
+                <h3 className="font-black text-sm text-charcoal-900 tracking-tight uppercase">Pomodoro</h3>
+                <p className="text-[10px] text-slate-400 leading-snug mt-0.5">Work 25 min, rest 5 min. Reduces mental fatigue &amp; sharpens focus.</p>
+              </div>
             </div>
             <div className="flex items-center gap-1">
               {Array.from({ length: Math.min(pomSessions, 4) }).map((_, i) => (
@@ -395,6 +568,167 @@ export default function MainDashboard() {
           </p>
         </div>
 
+      </div>
+
+      {/* ── STAFF WELLNESS & PRODUCTIVITY CORNER ─────────────────────────── */}
+      <div className="bg-white border border-slate-200 rounded-[2rem] overflow-hidden shadow-sm">
+        <div className="px-6 py-4 flex items-center justify-between border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 bg-violet-50 rounded-xl flex items-center justify-center">
+              <Sparkles className="w-4 h-4 text-violet-600" />
+            </div>
+            <div>
+              <h3 className="font-black text-sm text-charcoal-900 uppercase tracking-tight">Wellness &amp; Productivity Corner</h3>
+              <p className="text-[10px] text-slate-400 font-medium">Recharge, refocus, and reset between sessions</p>
+            </div>
+          </div>
+        </div>
+        <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+          {/* Brain Dump */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Brain className="w-4 h-4 text-indigo-500" />
+              <h4 className="text-xs font-black text-charcoal-900 uppercase tracking-wide">Brain Dump</h4>
+              <span className="text-[9px] text-slate-400 font-medium">Clear your mind before a session</span>
+            </div>
+            <textarea
+              value={brainDump}
+              onChange={e => setBrainDump(e.target.value)}
+              placeholder="Dump everything on your mind here — worries, tasks, random thoughts. Get it out so you can focus fully."
+              className="w-full h-32 text-xs p-3 rounded-xl border border-slate-200 bg-slate-50/60 resize-none focus:outline-none focus:border-indigo-300 focus:bg-white transition leading-relaxed"
+            />
+            <button
+              onClick={() => setBrainDump("")}
+              className="text-[10px] font-black text-slate-400 hover:text-rose-500 uppercase tracking-widest transition"
+            >
+              ✕ Clear &amp; Release
+            </button>
+          </div>
+
+          {/* Box Breathing */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Wind className="w-4 h-4 text-teal-500" />
+              <h4 className="text-xs font-black text-charcoal-900 uppercase tracking-wide">Box Breathing</h4>
+              <span className="text-[9px] text-slate-400 font-medium">4-4-4-4 for calm &amp; clarity</span>
+            </div>
+            <div className={`rounded-xl p-5 text-center transition-all duration-700 ${
+              breathStep === "idle"   ? "bg-slate-50 border border-slate-200" :
+              breathStep === "inhale" ? "bg-blue-50 border border-blue-200" :
+              breathStep === "hold1"  ? "bg-amber-50 border border-amber-200" :
+              breathStep === "exhale" ? "bg-teal-50 border border-teal-200" :
+              "bg-purple-50 border border-purple-200"
+            }`}>
+              <p className="text-3xl mb-1.5">
+                {breathStep === "idle" ? "🌬️" : breathStep === "inhale" ? "⬆️" : breathStep === "hold1" ? "⏸️" : breathStep === "exhale" ? "⬇️" : "⏸️"}
+              </p>
+              <p className={`text-xs font-black uppercase tracking-widest ${
+                breathStep === "idle"   ? "text-slate-400" :
+                breathStep === "inhale" ? "text-blue-600" :
+                breathStep === "hold1"  ? "text-amber-600" :
+                breathStep === "exhale" ? "text-teal-600" : "text-purple-600"
+              }`}>
+                {breathStep === "idle" ? "Ready when you are" :
+                 breathStep === "inhale" ? "Inhale… 4 counts" :
+                 breathStep === "hold1"  ? "Hold… 4 counts" :
+                 breathStep === "exhale" ? "Exhale… 4 counts" : "Hold… 4 counts"}
+              </p>
+            </div>
+            <button
+              onClick={startBoxBreath}
+              disabled={breathStep !== "idle"}
+              className="w-full text-[11px] font-black uppercase tracking-widest py-2.5 rounded-xl bg-teal-600 text-white hover:bg-teal-700 disabled:opacity-40 disabled:cursor-not-allowed transition"
+            >
+              {breathStep === "idle" ? "Begin Breath Cycle" : "Breathing…"}
+            </button>
+          </div>
+
+          {/* Focus Playlists */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Music className="w-4 h-4 text-purple-500" />
+              <h4 className="text-xs font-black text-charcoal-900 uppercase tracking-wide">Focus Playlists</h4>
+              <span className="text-[9px] text-slate-400 font-medium">Music for deep work</span>
+            </div>
+            <div className="space-y-2">
+              {FOCUS_PLAYLISTS.map((pl, i) => (
+                <a key={i} href={pl.url} target="_blank" rel="noopener noreferrer"
+                  className="flex items-center gap-2.5 p-2.5 rounded-xl border border-slate-100 hover:border-purple-200 hover:bg-purple-50/50 transition text-xs font-bold text-charcoal-900 group"
+                >
+                  <span className="text-base">{pl.emoji}</span>
+                  <span className="flex-1">{pl.name}</span>
+                  <ExternalLink className="w-3 h-3 text-slate-300 group-hover:text-purple-500 transition" />
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Micro Stretch */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Activity className="w-4 h-4 text-amber-500" />
+              <h4 className="text-xs font-black text-charcoal-900 uppercase tracking-wide">Micro Stretch</h4>
+              <span className="text-[9px] text-slate-400 font-medium">30-sec desk breaks</span>
+            </div>
+            <div className="p-5 bg-amber-50 rounded-xl border border-amber-100 text-center">
+              <p className="text-3xl mb-2">🤸</p>
+              <p className="text-sm font-bold text-charcoal-900 leading-snug">{STRETCHES[stretchIdx]}</p>
+            </div>
+            <button
+              onClick={() => setStretchIdx(i => (i + 1) % STRETCHES.length)}
+              className="w-full text-[11px] font-black uppercase tracking-widest py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white transition"
+            >
+              Next Stretch →
+            </button>
+          </div>
+
+          {/* Staff Affirmation */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-rose-400" />
+              <h4 className="text-xs font-black text-charcoal-900 uppercase tracking-wide">Your Affirmation</h4>
+              <span className="text-[9px] text-slate-400 font-medium">Tap to refresh</span>
+            </div>
+            <div className="p-5 bg-gradient-to-br from-rose-50 to-pink-50 rounded-xl border border-rose-100 min-h-[88px] flex items-center justify-center">
+              <p className="text-sm text-center font-bold text-rose-800 italic leading-snug">
+                &ldquo;{AFFIRMATIONS_STAFF[staffAffirmIdx]}&rdquo;
+              </p>
+            </div>
+            <button
+              onClick={() => setStaffAffirmIdx(i => (i + 1) % AFFIRMATIONS_STAFF.length)}
+              className="w-full text-[11px] font-black uppercase tracking-widest py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white transition"
+            >
+              New Affirmation ✦
+            </button>
+          </div>
+
+          {/* Shift Debrief */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Flame className="w-4 h-4 text-orange-500" />
+              <h4 className="text-xs font-black text-charcoal-900 uppercase tracking-wide">Shift Debrief</h4>
+              <span className="text-[9px] text-slate-400 font-medium">Reflect before you log off</span>
+            </div>
+            <div className="p-4 bg-orange-50 rounded-xl border border-orange-100">
+              <p className="text-[10px] font-black text-orange-600 uppercase tracking-wider mb-2">Prompt {debriefIdx + 1}/{DEBRIEF_PROMPTS.length}</p>
+              <p className="text-xs font-bold text-charcoal-900 leading-snug">{DEBRIEF_PROMPTS[debriefIdx]}</p>
+            </div>
+            <textarea
+              value={debriefText}
+              onChange={e => setDebriefText(e.target.value)}
+              placeholder="Your reflection…"
+              className="w-full h-16 text-xs p-3 rounded-xl border border-slate-200 bg-slate-50/60 resize-none focus:outline-none focus:border-orange-300 focus:bg-white transition"
+            />
+            <button
+              onClick={() => { setDebriefIdx(i => (i + 1) % DEBRIEF_PROMPTS.length); setDebriefText(""); }}
+              className="w-full text-[11px] font-black uppercase tracking-widest py-2 rounded-xl border border-orange-200 text-orange-600 hover:bg-orange-50 transition"
+            >
+              Next Prompt →
+            </button>
+          </div>
+
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

@@ -212,6 +212,9 @@ export default function Home() {
                   This platform is intended for authorized users only. Unauthorized access is prohibited and may be subject to legal action.
                   All user activity is logged and audited.
                 </p>
+                <p className="mt-2 text-amber-600/70 font-semibold uppercase tracking-widest text-[10px]">
+                  ⚠ Demo / Prototype — for evaluation purposes only
+                </p>
               </div>
 
               {/* AMP branding */}
@@ -237,6 +240,12 @@ export default function Home() {
               HIPAA (45 CFR Parts 160 and 164). Unauthorized disclosure of PHI may result in civil and criminal penalties. All data is
               encrypted in transit and at rest. This platform uses cookies essential to site security and session management. By continuing
               to use this platform you consent to our Cookie Policy.
+            </p>
+            <p className="mt-3 text-[10px] text-slate-800 text-center leading-relaxed max-w-3xl mx-auto border border-slate-800 rounded-xl px-4 py-2">
+              This platform — including its design, architecture, source code, workflows, and all associated intellectual property — was
+              conceived, designed, and built solely by <span className="text-slate-500 font-bold">Donyale Mack / A MackProjekt</span>.
+              It is shared with Dreams For Change strictly for demonstration and evaluation purposes. No license, assignment, or transfer
+              of ownership is granted or implied. All rights reserved.
             </p>
           </div>
         </div>

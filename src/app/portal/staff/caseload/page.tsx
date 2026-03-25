@@ -34,19 +34,6 @@ export default function StaffDashboard() {
     broken: participants.filter(c => c.status === "Broken Platform").length,
   }), [participants]);
 
-  const environmentStats = useMemo(() => {
-    const counts = participants.reduce<Record<string, number>>((acc, entry) => {
-      const key = entry.environment || "Unassigned";
-      acc[key] = (acc[key] ?? 0) + 1;
-      return acc;
-    }, {});
-
-    return Object.entries(counts)
-      .map(([label, count]) => ({ label, count }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 6);
-  }, [participants]);
-
   const statusBreakdown = useMemo(() => {
     const total = Math.max(1, participants.length);
     return [
@@ -78,7 +65,7 @@ export default function StaffDashboard() {
   }, [participants, searchQuery, activeFilter]);
 
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 p-6">
+    <div className="bg-gray-950 text-gray-100 space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-500 p-6">
 
       {/* Cyberpunk grid overlay */}
       <div className="fixed inset-0 pointer-events-none cyber-grid-bg" />
@@ -141,69 +128,25 @@ export default function StaffDashboard() {
         </div>
       </div>
 
-      {/* Insights + Motivation */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
-        <section className="xl:col-span-2 bg-gray-900 rounded-2xl border border-teal-500/20 p-5 space-y-5">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-teal-400 uppercase tracking-widest">Analytics & Graphs</h2>
-            <span className="text-xs text-gray-500">Live snapshot</span>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            <div className="rounded-xl border border-gray-800 bg-gray-950/50 p-4">
-              <p className="text-xs text-gray-500 uppercase tracking-widest mb-3">Status Distribution</p>
-              <div className="space-y-3">
-                {statusBreakdown.map((item) => (
-                  <div key={item.label}>
-                    <div className="flex items-center justify-between text-xs text-gray-400 mb-1">
-                      <span>{item.label}</span>
-                      <span>{item.count} ({item.pct}%)</span>
-                    </div>
-                    <div className="h-2 rounded-full bg-gray-800 overflow-hidden">
-                      <div className={`h-full ${item.color}`} style={{ width: `${item.pct}%` }} />
-                    </div>
-                  </div>
-                ))}
-              </div>
+      {/* Insights strip — compact single row */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        {statusBreakdown.map((item) => (
+          <div key={item.label} className="bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 flex items-center gap-3">
+            <div className="flex-1">
+              <p className="text-[10px] text-gray-500 uppercase tracking-widest">{item.label}</p>
+              <p className="text-xl font-bold text-white">{item.count}</p>
             </div>
-
-            <div className="rounded-xl border border-gray-800 bg-gray-950/50 p-4">
-              <p className="text-xs text-gray-500 uppercase tracking-widest mb-3">Environment Mix</p>
-              <div className="space-y-2.5">
-                {environmentStats.length === 0 ? (
-                  <p className="text-sm text-gray-500">No participant data yet.</p>
-                ) : (
-                  environmentStats.map((item) => {
-                    const max = Math.max(...environmentStats.map((x) => x.count));
-                    const pct = Math.max(8, Math.round((item.count / Math.max(max, 1)) * 100));
-                    return (
-                      <div key={item.label} className="flex items-center gap-3">
-                        <span className="w-24 text-xs text-gray-400 truncate">{item.label}</span>
-                        <div className="flex-1 h-2 rounded-full bg-gray-800 overflow-hidden">
-                          <div className="h-full bg-cyan-400/80" style={{ width: `${pct}%` }} />
-                        </div>
-                        <span className="w-6 text-right text-xs text-gray-300">{item.count}</span>
-                      </div>
-                    );
-                  })
-                )}
-              </div>
+            <div className="w-1.5 h-10 rounded-full bg-gray-800 overflow-hidden flex flex-col-reverse">
+              <div className={`${item.color} rounded-full transition-all`} style={{ height: `${item.pct}%` }} />
             </div>
           </div>
-        </section>
-
-        <section className="bg-gray-900 rounded-2xl border border-indigo-500/20 p-5 flex flex-col justify-between min-h-[210px]">
-          <div>
-            <p className="text-xs font-semibold text-indigo-400 uppercase tracking-widest mb-3">Why We Do This Work</p>
-            <blockquote className="text-lg leading-relaxed text-gray-100 min-h-[115px] transition-opacity duration-500">
-              "{INSPIRATIONAL_QUOTES[quoteIndex]}"
-            </blockquote>
-          </div>
-          <div className="flex items-center justify-between text-xs text-gray-500 mt-4">
-            <span>Quote rotates every 7s</span>
-            <span>{quoteIndex + 1}/{INSPIRATIONAL_QUOTES.length}</span>
-          </div>
-        </section>
+        ))}
+        <div className="bg-gray-900 border border-indigo-500/20 rounded-xl px-4 py-3 col-span-2 lg:col-span-1 flex flex-col justify-center">
+          <p className="text-[10px] text-indigo-400 uppercase tracking-widest mb-1">Motivation</p>
+          <blockquote className="text-[11px] leading-relaxed text-gray-300 italic line-clamp-2">
+            &ldquo;{INSPIRATIONAL_QUOTES[quoteIndex]}&rdquo;
+          </blockquote>
+        </div>
       </div>
 
       {/* Caseload Table */}
@@ -242,8 +185,8 @@ export default function StaffDashboard() {
           </div>
         </div>
 
-        {/* Table */}
-        <div className="overflow-x-auto min-h-[400px]">
+        {/* Table — fixed height, internal scroll */}
+        <div className="overflow-x-auto overflow-y-auto max-h-[calc(100vh-320px)]">
           {filteredCaseload.length === 0 ? (
             <div className="flex flex-col items-center justify-center p-12 text-gray-600">
               <Search className="w-12 h-12 mb-3 text-gray-700" />
@@ -252,13 +195,13 @@ export default function StaffDashboard() {
             </div>
           ) : (
             <table className="w-full text-left border-collapse">
-              <thead>
+              <thead className="sticky top-0 z-10 bg-gray-900">
                 <tr className="border-b border-gray-800 text-xs uppercase tracking-widest text-teal-500/60 font-semibold">
-                  <th className="px-6 py-4">Slot</th>
-                  <th className="px-6 py-4">Client Name</th>
-                  <th className="px-6 py-4">Status</th>
-                  <th className="px-6 py-4 hidden md:table-cell">Block</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
+                  <th className="px-4 py-3">Slot</th>
+                  <th className="px-4 py-3">Client Name</th>
+                  <th className="px-4 py-3">Status</th>
+                  <th className="px-4 py-3 hidden md:table-cell">Block</th>
+                  <th className="px-4 py-3 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -269,7 +212,7 @@ export default function StaffDashboard() {
                       entry.status === "Empty" ? "bg-gray-900/40" : "hover:bg-teal-500/5"
                     }`}
                   >
-                    <td className="px-6 py-4 text-sm font-bold whitespace-nowrap">
+                    <td className="px-4 py-2.5 font-bold whitespace-nowrap">
                       <Link
                         href={`/portal/staff/caseload/${entry.slot}`}
                         className="text-teal-400 hover:text-teal-300 transition-colors font-mono tracking-widest text-xs cyber-slot-glow"
@@ -277,12 +220,12 @@ export default function StaffDashboard() {
                         [{entry.slot}]
                       </Link>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center gap-3">
+                    <td className="px-4 py-2.5 whitespace-nowrap">
+                      <div className="flex items-center gap-2.5">
                         {entry.status === "Empty" ? (
-                          <div className="w-8 h-8 rounded-full border border-dashed border-gray-700 flex items-center justify-center bg-gray-800/50" />
+                          <div className="w-7 h-7 rounded-full border border-dashed border-gray-700 flex items-center justify-center bg-gray-800/50 shrink-0" />
                         ) : (
-                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-teal-500 to-cyan-600 flex items-center justify-center text-white font-bold text-xs shrink-0 cyber-avatar-glow">
+                          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-teal-500 to-cyan-600 flex items-center justify-center text-white font-bold text-[10px] shrink-0 cyber-avatar-glow">
                             {entry.name.charAt(0)}
                           </div>
                         )}
@@ -302,7 +245,7 @@ export default function StaffDashboard() {
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 py-2.5 whitespace-nowrap">
                       <button
                         title={`Cycle status for ${entry.slot} (currently: ${entry.status})`}
                         onClick={() => updateParticipantStatus(entry.slot, cycleStatus(entry.status))}
@@ -321,7 +264,7 @@ export default function StaffDashboard() {
                         {entry.status}
                       </button>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap hidden md:table-cell">
+                    <td className="px-4 py-2.5 whitespace-nowrap hidden md:table-cell">
                       <span className="text-xs text-gray-500 font-mono tracking-wider flex items-center gap-2">
                         <span className={`w-1.5 h-1.5 rounded-full ${
                           entry.environment === "A-Block" ? "bg-teal-400 cyber-dot-glow" :
@@ -331,7 +274,7 @@ export default function StaffDashboard() {
                         {entry.environment}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right">
+                    <td className="px-4 py-2.5 whitespace-nowrap text-right">
                       <div className="flex items-center justify-end gap-2">
                         {entry.status !== "Empty" && (
                           <Link

@@ -23,7 +23,9 @@ import {
   ChevronDown,
   HelpCircle,
   Home,
-  ArrowLeft
+  ArrowLeft,
+  Menu,
+  X
 } from "lucide-react";
 import { ShieldCheck, ShieldAlert, ShieldOff } from "lucide-react";
 import { StaffProvider, useStaff } from "@/context/StaffContext";
@@ -33,6 +35,7 @@ import type { ComplianceStatus } from "@/app/api/admin/compliance/route";
 import WelcomeModal from "@/components/WelcomeModal";
 import OnboardingTour, { type TourStep } from "@/components/OnboardingTour";
 import HmisUploadSidebar from "@/components/HmisUploadSidebar";
+import PortalChat from "@/components/PortalChat";
 
 const STAFF_STEPS: TourStep[] = [
   { target: '[data-tour="staff-dashboard"]', title: "Dashboard", body: "Your mission control — see case activity, team updates, and system alerts at a glance.", placement: "right" },
@@ -121,11 +124,20 @@ function StaffLayoutContent({ children }: { children: React.ReactNode }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   const alerts: { title: string; client: string; time: string; priority: string; type: string }[] = [];
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="min-h-screen bg-slate-50 flex relative overflow-hidden">
+      {/* Mobile sidebar backdrop */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
       {/* Sidebar */}
-      <aside className="w-64 bg-charcoal-900 text-slate-300 flex flex-col">
+      <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-charcoal-900 text-slate-300 flex flex-col transition-transform duration-300 md:static md:translate-x-0 md:z-auto ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="h-16 flex items-center px-6 border-b border-charcoal-800">
           <span className="font-bold text-white text-lg tracking-wide">CaseFlow Command</span>
         </div>
@@ -206,10 +218,19 @@ function StaffLayoutContent({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-w-0">
         {/* Top Header */}
-        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 shrink-0">
-          <div className="relative w-96 flex items-center gap-4">
+        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-3 md:px-6 shrink-0">
+          <div className="flex items-center gap-2 md:gap-4 min-w-0">
+            {/* Hamburger (mobile only) */}
+            <button
+              title="Toggle menu"
+              aria-label="Toggle sidebar"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="md:hidden p-2 rounded-xl text-slate-400 hover:text-charcoal-900 hover:bg-slate-100 transition shrink-0"
+            >
+              {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
             {/* Home + Back */}
             <div className="flex items-center gap-1 shrink-0">
               <Link href="/portal/staff" title="Home" className="p-2 rounded-xl text-slate-400 hover:text-charcoal-900 hover:bg-slate-100 transition">
@@ -217,7 +238,7 @@ function StaffLayoutContent({ children }: { children: React.ReactNode }) {
               </Link>
               <BackButton />
             </div>
-            <div className="relative flex-1">
+            <div className="relative hidden sm:flex flex-1">
               <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <input 
                 type="text" 
@@ -225,7 +246,7 @@ function StaffLayoutContent({ children }: { children: React.ReactNode }) {
                 className="w-full bg-slate-100 rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
               />
             </div>
-            <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-100">
+            <div className="hidden sm:flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-100">
               <button title="New Google Doc" className="p-1.5 hover:bg-white hover:shadow-sm rounded-lg transition text-blue-600">
                 <FileText className="w-4 h-4" />
               </button>
@@ -374,7 +395,7 @@ function StaffLayoutContent({ children }: { children: React.ReactNode }) {
         
         {/* Page Content + HMIS Sidebar */}
         <div className="flex-1 flex overflow-hidden">
-          <main className="flex-1 overflow-auto p-8">
+          <main className="flex-1 overflow-auto p-4 pb-28 md:p-8 md:pb-8">
             {children}
           </main>
           <HmisUploadSidebar />
@@ -392,6 +413,7 @@ function StaffLayoutContent({ children }: { children: React.ReactNode }) {
       {showTour && (
         <OnboardingTour steps={STAFF_STEPS} onComplete={completeOnboarding} />
       )}
+      <PortalChat role="staff" />
     </div>
   );
 }

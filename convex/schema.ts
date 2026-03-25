@@ -205,4 +205,23 @@ export default defineSchema({
     key: v.string(),
     value: v.string(),
   }).index("by_namespace_key", ["namespace", "key"]),
+
+  // ── Portal Chat (broadcast) ────────────────────────────────────────────────
+  chatMessages: defineTable({
+    author: v.string(),
+    role: v.string(),   // "staff" | "client"
+    body: v.string(),
+    ts: v.string(),
+  }),
+
+  // ── Direct Messages ────────────────────────────────────────────────────────
+  directMessages: defineTable({
+    senderId: v.string(),      // sender name (e.g. "Mack" or participant name)
+    receiverId: v.string(),    // recipient name
+    convKey: v.string(),       // sorted "A|B" for fast lookup
+    senderRole: v.string(),    // "staff" | "client"
+    body: v.optional(v.string()),
+    image: v.optional(v.string()),  // base64 data URL
+    ts: v.string(),
+  }).index("by_convKey", ["convKey"]),
 });

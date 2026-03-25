@@ -17,6 +17,8 @@ import {
   Target,
   LayoutDashboard,
   ChevronDown,
+  Menu,
+  X,
 } from "lucide-react";
 import { StaffProvider } from "@/context/StaffContext";
 import { signOut, useSession } from "next-auth/react";
@@ -24,6 +26,7 @@ import type { SecuritySummary } from "@/app/api/compliance/status/route";
 import WelcomeModal from "@/components/WelcomeModal";
 import OnboardingTour, { type TourStep } from "@/components/OnboardingTour";
 import PWASetup from "@/components/PWASetup";
+import PortalChat from "@/components/PortalChat";
 import OfflineIndicator from "@/components/OfflineIndicator";
 
 function ClientBackButton() {
@@ -88,6 +91,7 @@ export default function ClientLayout({
 }) {
   const { data: session } = useSession();
   const [security, setSecurity] = useState<SecuritySummary | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
   const [showTour, setShowTour] = useState(false);
@@ -128,10 +132,18 @@ export default function ClientLayout({
 
   return (
     <StaffProvider>
-      <div className="min-h-screen bg-slate-50 flex font-sans selection:bg-teal-500 selection:text-white">
+      <div className="min-h-screen bg-slate-50 flex font-sans selection:bg-teal-500 selection:text-white relative overflow-hidden">
+
+        {/* Mobile sidebar backdrop */}
+        {sidebarOpen && (
+          <div
+            className="fixed inset-0 z-40 bg-black/50 md:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
 
         {/* Sidebar */}
-        <aside className="w-60 bg-slate-800 text-slate-300 flex flex-col shrink-0">
+        <aside className={`fixed inset-y-0 left-0 z-50 w-60 bg-slate-800 text-slate-300 flex flex-col shrink-0 transition-transform duration-300 md:static md:translate-x-0 md:z-auto ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
           {/* Brand */}
           <div className="h-16 flex items-center px-5 border-b border-slate-700/60">
             <div>
@@ -172,8 +184,17 @@ export default function ClientLayout({
         <div className="flex-1 flex flex-col min-w-0">
 
           {/* Top header */}
-          <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 shrink-0">
-            <div className="flex items-center gap-2">
+          <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-3 md:px-6 shrink-0">
+            <div className="flex items-center gap-1">
+              {/* Hamburger (mobile only) */}
+              <button
+                title="Toggle menu"
+                aria-label="Toggle sidebar"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="md:hidden p-2 rounded-xl text-slate-400 hover:text-charcoal-900 hover:bg-slate-100 transition"
+              >
+                {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
               <Link
                 href="/portal/client"
                 title="Home"
@@ -288,7 +309,7 @@ export default function ClientLayout({
           </header>
 
           {/* Main content */}
-          <main className="flex-1 overflow-y-auto p-6 md:p-10 relative">
+          <main className="flex-1 overflow-y-auto p-4 pb-28 md:p-10 md:pb-10 relative">
             <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-teal-500/[0.03] rounded-full blur-[120px] pointer-events-none" />
             <div className="relative z-10 max-w-5xl mx-auto w-full">
               {children}
@@ -307,6 +328,7 @@ export default function ClientLayout({
         {showTour && (
           <OnboardingTour steps={CLIENT_STEPS} onComplete={completeOnboarding} />
         )}
+        <PortalChat role="client" />
         <PWASetup />
         <OfflineIndicator />
     </StaffProvider>

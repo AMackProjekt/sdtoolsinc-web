@@ -13,15 +13,16 @@ const ENVIRONMENTS = [
 const STATUSES = ["Active", "Inactive", "On Hold", "Exited"];
 
 const CASE_MANAGERS = [
-  { id: "abby", name: "Abby" },
-  { id: "amalia", name: "Amalia" },
+  { id: "abby",     name: "Abby" },
+  { id: "amalia",   name: "Amalia" },
+  { id: "coco",     name: "Coco" },
   { id: "jonathan", name: "Jonathan" },
-  { id: "lawanda", name: "Lawanda" },
-  { id: "mack", name: "Mack" },
-  { id: "spencer", name: "Spencer" },
-  { id: "tey", name: "Tey" },
-  { id: "tonya", name: "Tonya" },
-  { id: "william", name: "William" },
+  { id: "lawanda",  name: "Lawanda" },
+  { id: "mack",     name: "Mack" },
+  { id: "spencer",  name: "Spencer" },
+  { id: "tey",      name: "Tey" },
+  { id: "tonya",    name: "Tonya" },
+  { id: "william",  name: "William" },
 ];
 
 export default function NewClientIntake() {

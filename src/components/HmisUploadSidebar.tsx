@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
-import { CheckSquare, Square, Upload, ChevronRight, ChevronLeft, Loader2, MailCheck, AlertCircle } from "lucide-react";
+import { CheckSquare, Square, Upload, ChevronRight, ChevronLeft, Loader2, MailCheck, AlertCircle, ExternalLink } from "lucide-react";
 
 function todayISO() {
   return new Date().toISOString().split("T")[0];
@@ -88,10 +88,17 @@ export default function HmisUploadSidebar() {
     <aside className="w-72 bg-charcoal-900 border-l border-charcoal-800 flex flex-col shrink-0 overflow-hidden">
       {/* Header */}
       <div className="h-16 flex items-center justify-between px-4 border-b border-charcoal-800 shrink-0">
-        <div className="flex items-center gap-2">
-          <Upload className="w-4 h-4 text-teal-400" />
-          <span className="font-bold text-white text-sm">Upload to Clarity HMIS</span>
-        </div>
+        <a
+          href="https://sandiego.clarityhs.com/login"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Open Clarity HMIS"
+          className="flex items-center gap-2 group"
+        >
+          <Upload className="w-4 h-4 text-teal-400 group-hover:text-teal-300 transition" />
+          <span className="font-bold text-white text-sm group-hover:text-teal-300 transition">Upload to Clarity HMIS</span>
+          <ExternalLink className="w-3 h-3 text-slate-500 group-hover:text-teal-400 transition" />
+        </a>
         <button
           onClick={() => setCollapsed(true)}
           className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-charcoal-800 transition"

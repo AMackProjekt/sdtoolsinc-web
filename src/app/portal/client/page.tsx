@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { 
   Heart, Smile, BookOpen, Megaphone, Lightbulb, Frown, Plus, Quote, Zap, Bot, AlertCircle,
   ExternalLink, ChevronRight, CheckCircle2, Clock, FileText, ShieldCheck, Upload, MessageSquare,
-  Trash2, Eye, EyeOff, Copy, Check, Send, Users
+  Trash2, Eye, EyeOff, Copy, Check, Send, Users, Video
 } from "lucide-react";
 import Link from "next/link";
 import { useStaff } from "@/context/StaffContext";
@@ -62,6 +62,36 @@ const QUOTES = [
   "When we walk together, every barrier becomes smaller.",
   "You are not alone in facing your limitations — together we rise.",
   "The strength of the group lifts the individual. We are TOOL.",
+  "Every sunrise is a reminder that you survived yesterday.",
+  "The courage it takes to ask for help is the same courage that changes lives.",
+  "Your healing doesn't have to look like anyone else's.",
+  "Setbacks are setups for comebacks. You are still in the story.",
+  "You are worth every resource, every conversation, every second chance.",
+  "Stability isn't built in a day — it's built in thousands of small decisions.",
+  "The fact that you're here means you haven't given up. That matters enormously.",
+  "Housing is not the end — it's the beginning. You're just getting started.",
+  "Your needs are valid. Your voice matters. Your future is real.",
+  "What you've been through doesn't diminish who you are — it reveals your strength.",
+  "Every conversation with your case manager is a step in the right direction.",
+  "You don't have to have it all figured out. Just figure out today.",
+  "Asking for help is not weakness — it's the bravest, most strategic move you can make.",
+  "Momentum starts with one step. You already took it by walking through the door.",
+  "Your comeback story is being written right now, in every choice you make.",
+  "A stable home creates the space for everything else to grow.",
+  "You are the author of your next chapter. Let it be hopeful.",
+  "Hard days don't erase your progress. They test your commitment to it.",
+  "There is dignity in your journey — every part of it.",
+  "Rest is not the same as giving up. Rest, and then keep going.",
+  "No storm lasts forever. You are stronger than this season.",
+  "People who have been through the fire know what warmth really means.",
+  "Celebrate every win — the small ones add up to something incredible.",
+  "You are more than your circumstances. You are your vision of the future.",
+  "Community is not just a place — it's a promise that no one walks alone.",
+  "What feels impossible today becomes possible tomorrow when you don't quit tonight.",
+  "Your dreams deserve a real foundation. That's what you're building, right now.",
+  "Grace is available right now — extend it to yourself first.",
+  "You have overcome things that others would never understand. Give yourself credit.",
+  "Support is not charity — it's what humans were designed to give each other."
 ];
 
 const FINANCIAL_COURSES = [
@@ -185,6 +215,100 @@ export default function ClientDashboard() {
              </a>
           </div>
         </div>
+      </div>
+
+      {/* QUICK STATS ─────────────────────────────────────────────────── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <a href="/portal/client/goals" className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col gap-1 hover:shadow-md hover:border-teal-300 transition group">
+          <div className="w-8 h-8 bg-teal-50 rounded-xl flex items-center justify-center group-hover:bg-teal-100 transition">
+            <CheckCircle2 className="w-4 h-4 text-teal-600" />
+          </div>
+          <p className="text-xl font-black text-charcoal-900 tracking-tighter mt-1">Goals</p>
+          <p className="text-[10px] font-bold text-teal-600 uppercase tracking-widest leading-tight">Track Progress →</p>
+        </a>
+        <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col gap-1 hover:shadow-md transition">
+          <div className="w-8 h-8 bg-purple-50 rounded-xl flex items-center justify-center">
+            <BookOpen className="w-4 h-4 text-purple-600" />
+          </div>
+          <p className="text-2xl font-black text-charcoal-900 tracking-tighter mt-1">{ventMessages.length}</p>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-tight">Vents Shared</p>
+        </div>
+        <a href="/portal/client/messages" className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col gap-1 hover:shadow-md hover:border-indigo-300 transition group">
+          <div className="w-8 h-8 bg-indigo-50 rounded-xl flex items-center justify-center group-hover:bg-indigo-100 transition">
+            <MessageSquare className="w-4 h-4 text-indigo-600" />
+          </div>
+          <div className="flex items-center gap-1.5 mt-1">
+            <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+            <p className="text-xl font-black text-charcoal-900 tracking-tighter">Live</p>
+          </div>
+          <p className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest leading-tight">Messages →</p>
+        </a>
+        <button onClick={() => setActiveTab("needs")} className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col gap-1 hover:shadow-md hover:border-amber-300 transition group text-left w-full">
+          <div className="w-8 h-8 bg-amber-50 rounded-xl flex items-center justify-center group-hover:bg-amber-100 transition">
+            <AlertCircle className="w-4 h-4 text-amber-600" />
+          </div>
+          <p className="text-xl font-black text-charcoal-900 tracking-tighter mt-1">Needs</p>
+          <p className="text-[10px] font-bold text-amber-600 uppercase tracking-widest leading-tight">Request Help →</p>
+        </button>
+      </div>
+
+      {/* QUICK STATS ───────────────────────────────────────────── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <a href="/portal/client/goals" className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col gap-1 hover:shadow-md hover:border-teal-300 transition group">
+          <div className="w-8 h-8 bg-teal-50 rounded-xl flex items-center justify-center group-hover:bg-teal-100 transition">
+            <CheckCircle2 className="w-4 h-4 text-teal-600" />
+          </div>
+          <p className="text-xl font-black text-charcoal-900 tracking-tighter mt-1">Goals</p>
+          <p className="text-[10px] font-bold text-teal-600 uppercase tracking-widest leading-tight">Track Progress →</p>
+        </a>
+        <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col gap-1 hover:shadow-md transition">
+          <div className="w-8 h-8 bg-purple-50 rounded-xl flex items-center justify-center">
+            <BookOpen className="w-4 h-4 text-purple-600" />
+          </div>
+          <p className="text-2xl font-black text-charcoal-900 tracking-tighter mt-1">{ventMessages.length}</p>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-tight">Vents Shared</p>
+        </div>
+        <a href="/portal/client/messages" className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col gap-1 hover:shadow-md hover:border-indigo-300 transition group">
+          <div className="w-8 h-8 bg-indigo-50 rounded-xl flex items-center justify-center group-hover:bg-indigo-100 transition">
+            <MessageSquare className="w-4 h-4 text-indigo-600" />
+          </div>
+          <div className="flex items-center gap-1.5 mt-1">
+            <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+            <p className="text-xl font-black text-charcoal-900 tracking-tighter">Live</p>
+          </div>
+          <p className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest leading-tight">Messages →</p>
+        </a>
+        <button onClick={() => setActiveTab("needs")} className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col gap-1 hover:shadow-md hover:border-amber-300 transition group text-left w-full">
+          <div className="w-8 h-8 bg-amber-50 rounded-xl flex items-center justify-center group-hover:bg-amber-100 transition">
+            <AlertCircle className="w-4 h-4 text-amber-600" />
+          </div>
+          <p className="text-xl font-black text-charcoal-900 tracking-tighter mt-1">Needs</p>
+          <p className="text-[10px] font-bold text-amber-600 uppercase tracking-widest leading-tight">Request Help →</p>
+        </button>
+      </div>
+
+      {/* QUICK LAUNCH ────────────────────────────────────────── */}
+      <div className="flex flex-wrap gap-3">
+        <a
+          href={process.env.NEXT_PUBLIC_TEAMS_URL ?? "https://teams.microsoft.com"}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#6264A7] hover:bg-[#4f51a3] text-white text-sm font-semibold rounded-2xl shadow-sm transition-all active:scale-95"
+        >
+          <Video className="w-4 h-4" />
+          Microsoft Teams
+          <ExternalLink className="w-3 h-3 opacity-70" />
+        </a>
+        <a
+          href={process.env.NEXT_PUBLIC_ZOOM_URL ?? "https://zoom.us/join"}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#2D8CFF] hover:bg-[#1a7aee] text-white text-sm font-semibold rounded-2xl shadow-sm transition-all active:scale-95"
+        >
+          <Video className="w-4 h-4" />
+          Zoom
+          <ExternalLink className="w-3 h-3 opacity-70" />
+        </a>
       </div>
 
       {/* TABS */}

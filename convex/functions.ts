@@ -116,6 +116,15 @@ export const updateParticipant = mutation({
   },
 });
 
+export const clearAllParticipants = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const all = await ctx.db.query("participants").collect();
+    await Promise.all(all.map((p) => ctx.db.delete(p._id)));
+    return { deleted: all.length };
+  },
+});
+
 export const upsertParticipant = mutation({
   args: {
     slot: v.string(),
@@ -679,5 +688,109 @@ export const reassignCaseManager = mutation({
     if (demo) {
       await ctx.db.patch(demo._id, { caseManager });
     }
+  },
+});
+
+// ─── Portal Chat ─────────────────────────────────────────────────────────────
+
+export const listChatMessages = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("chatMessages").order("asc").take(200);
+  },
+});
+
+export const sendChatMessage = mutation({
+  args: { author: v.string(), role: v.string(), body: v.string() },
+  handler: async (ctx, args) => {
+    return await ctx.db.insert("chatMessages", {
+      ...args,
+      ts: new Date().toISOString(),
+    });
+  },
+});
+
+// ─── Direct Messages ──────────────────────────────────────────────────────────
+
+export const getDirectMessages = query({
+  args: { userA: v.string(), userB: v.string() },
+  handler: async (ctx, { userA, userB }) => {
+    const key = [userA, userB].sort().join("|");
+    return await ctx.db
+      .query("directMessages")
+      .withIndex("by_convKey", (q) => q.eq("convKey", key))
+      .order("asc")
+      .take(300);
+  },
+});
+
+export const sendDirectMessage = mutation({
+  args: {
+    senderId: v.string(),
+    receiverId: v.string(),
+    senderRole: v.string(),
+    body: v.optional(v.string()),
+    image: v.optional(v.string()),
+  },
+  handler: async (ctx, { senderId, receiverId, senderRole, body, image }) => {
+    const convKey = [senderId, receiverId].sort().join("|");
+    return await ctx.db.insert("directMessages", {
+      senderId,
+      receiverId,
+      convKey,
+      senderRole,
+      body,
+      image,
+      ts: new Date().toISOString(),
+    });
+  },
+});
+
+// ─── Team Member Seeding ──────────────────────────────────────────────────────
+
+export const clearTeamMembers = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const all = await ctx.db.query("teamMembers").collect();
+    await Promise.all(all.map((m) => ctx.db.delete(m._id)));
+    return { deleted: all.length };
+  },
+});
+
+export const upsertTeamMember = mutation({
+  args: {
+    memberId: v.string(),
+    name: v.string(),
+    role: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const existing = await ctx.db
+      .query("teamMembers")
+      .withIndex("by_memberId", (q) => q.eq("memberId", args.memberId))
+      .first();
+    if (existing) {
+      await ctx.db.patch(existing._id, { name: args.name, role: args.role });
+    } else {
+      await ctx.db.insert("teamMembers", args);
+    }
+  },
+});
+
+// ─── Bulk Export (for Google Sheets sync) ────────────────────────────────────
+
+export const exportCaseload = query({
+  args: {},
+  handler: async (ctx) => {
+    const [participants, demographics, caseNotes, documents, smartGoals, requests, housingMatches] =
+      await Promise.all([
+        ctx.db.query("participants").collect(),
+        ctx.db.query("demographics").collect(),
+        ctx.db.query("caseNotes").order("desc").collect(),
+        ctx.db.query("documents").collect(),
+        ctx.db.query("smartGoals").collect(),
+        ctx.db.query("requests").collect(),
+        ctx.db.query("housingMatches").collect(),
+      ]);
+    return { participants, demographics, caseNotes, documents, smartGoals, requests, housingMatches };
   },
 });
