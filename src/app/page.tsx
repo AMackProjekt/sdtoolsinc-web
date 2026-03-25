@@ -61,7 +61,7 @@ export default function Home() {
           </div>
 
           <h1 className="text-5xl md:text-7xl font-black leading-[1.05] tracking-tight mb-6">
-            <span className="text-white">Case management</span>
+            <span className="text-white">Case Management</span>
             <br />
             <span className="bg-gradient-to-r from-teal-400 to-teal-300 bg-clip-text text-transparent">
               built for Dreams
