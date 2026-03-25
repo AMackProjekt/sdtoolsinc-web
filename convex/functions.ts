@@ -776,6 +776,165 @@ export const upsertTeamMember = mutation({
   },
 });
 
+// ─── Enrollments ─────────────────────────────────────────────────────────────
+
+export const listEnrollments = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("enrollments").order("desc").collect();
+  },
+});
+
+export const addEnrollment = mutation({
+  args: {
+    slot: v.string(),
+    clientName: v.string(),
+    location: v.string(),
+    enrolledDate: v.string(),
+    caseManager: v.string(),
+    status: v.union(v.literal("active"), v.literal("exited"), v.literal("on-hold")),
+    notes: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.insert("enrollments", args);
+  },
+});
+
+export const updateEnrollment = mutation({
+  args: {
+    id: v.id("enrollments"),
+    status: v.union(v.literal("active"), v.literal("exited"), v.literal("on-hold")),
+  },
+  handler: async (ctx, { id, status }) => {
+    await ctx.db.patch(id, { status });
+  },
+});
+
+export const deleteEnrollment = mutation({
+  args: { id: v.id("enrollments") },
+  handler: async (ctx, { id }) => {
+    await ctx.db.delete(id);
+  },
+});
+
+// ─── Exits ────────────────────────────────────────────────────────────────────
+
+export const listExits = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("exits").order("desc").collect();
+  },
+});
+
+export const addExit = mutation({
+  args: {
+    slot: v.string(),
+    clientName: v.string(),
+    location: v.string(),
+    exitDate: v.string(),
+    exitReason: v.string(),
+    exitDestination: v.optional(v.string()),
+    caseManager: v.string(),
+    notes: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    // Also mark the matching enrollment as exited
+    const enrollment = await ctx.db
+      .query("enrollments")
+      .withIndex("by_slot", (q) => q.eq("slot", args.slot))
+      .first();
+    if (enrollment && enrollment.status === "active") {
+      await ctx.db.patch(enrollment._id, { status: "exited" });
+    }
+    return await ctx.db.insert("exits", args);
+  },
+});
+
+export const deleteExit = mutation({
+  args: { id: v.id("exits") },
+  handler: async (ctx, { id }) => {
+    await ctx.db.delete(id);
+  },
+});
+
+// ─── Grievances ───────────────────────────────────────────────────────────────
+
+export const listGrievances = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("grievances").order("desc").collect();
+  },
+});
+
+export const addGrievance = mutation({
+  args: {
+    reportedBy: v.string(),
+    reporterType: v.union(v.literal("client"), v.literal("staff")),
+    category: v.string(),
+    description: v.string(),
+    status: v.union(v.literal("open"), v.literal("under-review"), v.literal("resolved")),
+    date: v.string(),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.insert("grievances", args);
+  },
+});
+
+export const updateGrievanceStatus = mutation({
+  args: {
+    id: v.id("grievances"),
+    status: v.union(v.literal("open"), v.literal("under-review"), v.literal("resolved")),
+    resolution: v.optional(v.string()),
+  },
+  handler: async (ctx, { id, status, resolution }) => {
+    const patch: Record<string, unknown> = { status };
+    if (status === "resolved") patch.resolvedAt = new Date().toISOString();
+    if (resolution) patch.resolution = resolution;
+    await ctx.db.patch(id, patch);
+  },
+});
+
+// ─── Training Log ─────────────────────────────────────────────────────────────
+
+export const listTrainingLog = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("trainingLog").order("desc").collect();
+  },
+});
+
+export const listMyTrainingLog = query({
+  args: { staffEmail: v.string() },
+  handler: async (ctx, { staffEmail }) => {
+    return await ctx.db
+      .query("trainingLog")
+      .withIndex("by_staff", (q) => q.eq("staffEmail", staffEmail))
+      .order("desc")
+      .collect();
+  },
+});
+
+export const addTrainingLog = mutation({
+  args: {
+    staffEmail: v.string(),
+    staffName: v.string(),
+    courseName: v.string(),
+    platform: v.string(),
+    completedDate: v.string(),
+    certificateUrl: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.insert("trainingLog", args);
+  },
+});
+
+export const deleteTrainingLog = mutation({
+  args: { id: v.id("trainingLog") },
+  handler: async (ctx, { id }) => {
+    await ctx.db.delete(id);
+  },
+});
+
 // ─── Bulk Export (for Google Sheets sync) ────────────────────────────────────
 
 export const exportCaseload = query({

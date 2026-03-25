@@ -18,6 +18,13 @@ import {
   ScrollText,
   ChevronRight,
   Gem,
+  UserPlus,
+  UserMinus,
+  Network,
+  Phone,
+  Send,
+  GraduationCap,
+  Flag,
 } from "lucide-react";
 
 const NAV = [
@@ -27,8 +34,14 @@ const NAV = [
   { href: "/portal/admin/demographics", label: "Demographics", icon: BarChart3 },
   { href: "/portal/admin/housing", label: "Housing Matches", icon: Home },
   { href: "/portal/admin/scheduling", label: "Scheduling", icon: CalendarDays },
+  { href: "/portal/admin/enrollments", label: "Enrollments", icon: UserPlus },
+  { href: "/portal/admin/exits", label: "Exits", icon: UserMinus },
   { href: "/portal/admin/compliance", label: "Compliance", icon: ShieldCheck },
   { href: "/portal/admin/audit", label: "Audit Log", icon: ScrollText },
+  { href: "/portal/admin/org-chart", label: "Org Chart", icon: Network },
+  { href: "/portal/admin/hotlines", label: "Hotlines", icon: Phone },
+  { href: "/portal/admin/email-blast", label: "Email Blast", icon: Send },
+  { href: "/portal/admin/trainings", label: "Trainings", icon: GraduationCap },
   { href: "/portal/admin/integrations", label: "Integrations", icon: Plug },
   { href: "/portal/admin/settings", label: "Settings", icon: Settings },
 ];

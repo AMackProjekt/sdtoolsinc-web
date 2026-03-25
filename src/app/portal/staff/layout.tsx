@@ -26,6 +26,7 @@ import {
   Sparkles,
   ChevronDown,
   ChevronUp,
+  GraduationCap,
 } from "lucide-react";
 import { StaffProvider, useStaff } from "@/context/StaffContext";
 import { signOut, useSession } from "next-auth/react";
@@ -169,6 +170,10 @@ function StaffLayoutContent({ children }: { children: React.ReactNode }) {
           <Link href="/portal/staff/calendar" data-tour="staff-calendar" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-charcoal-800 hover:text-white transition">
             <Calendar className="w-5 h-5" />
             Calendar
+          </Link>
+          <Link href="/portal/staff/trainings" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-charcoal-800 hover:text-white transition">
+            <GraduationCap className="w-5 h-5" />
+            Workforce Trainings
           </Link>
           <Link href="/portal/staff/terminal" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-charcoal-800 hover:text-white transition border border-teal-500/20 bg-teal-500/5">
             <Terminal className="w-5 h-5 text-teal-400" />
