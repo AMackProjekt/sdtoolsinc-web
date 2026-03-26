@@ -143,10 +143,26 @@ export const upsertParticipant = mutation({
         name: args.name,
         status: args.status,
         environment: args.environment,
+        ...(args.email !== undefined ? { email: args.email } : {}),
       });
       return existing._id;
     }
     return await ctx.db.insert("participants", args);
+  },
+});
+
+// Returns participants enriched with email from demographics when the participant
+// record itself does not have one stored (supports real caseload + test clients).
+export const listParticipantsWithEmail = query({
+  args: {},
+  handler: async (ctx) => {
+    const participants = await ctx.db.query("participants").collect();
+    const allDemographics = await ctx.db.query("demographics").collect();
+    const demoBySlot = new Map(allDemographics.map((d) => [d.slot, d]));
+    return participants.map((p) => ({
+      ...p,
+      email: p.email ?? demoBySlot.get(p.slot)?.email ?? undefined,
+    }));
   },
 });
 

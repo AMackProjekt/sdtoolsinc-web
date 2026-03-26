@@ -15,13 +15,13 @@ export default function WelcomeModal({ userName, portalType, onStartTour, onSkip
   const staffFeatures = [
     "📋  Manage your full caseload and client profiles",
     "📁  Upload and share HIPAA-safe documents",
-    "💬  Message clients via Google Chat",
+    "💬  Message clients in the live Champions Channel",
     "🛡️  Monitor compliance status in real time",
   ];
 
   const clientFeatures = [
     "🎯  Set and track your personal goals",
-    "💬  Stay in touch with your case manager",
+    "💬  Message the staff team in the Champions Channel",
     "👤  Update your profile and contact info",
   ];
 

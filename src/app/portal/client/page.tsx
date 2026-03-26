@@ -338,11 +338,8 @@ export default function ClientDashboard() {
                 <h2 className="text-2xl font-black text-charcoal-900 mb-3">Welcome to Your Portal</h2>
                 <p className="text-slate-600 leading-relaxed mb-4">This is your safe space to track your journey, access resources, and connect with support. Everything here is designed for your growth and wellbeing.</p>
                 <div className="flex flex-wrap gap-3">
-                  <a href="https://accounts.google.com/ServiceLogin?service=mail&continue=https://chat.google.com" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition text-sm font-bold">
-                    <MessageSquare className="w-4 h-4" /> Chat with Mack
-                  </a>
-                  <a href="https://chat.google.com/room/AAQABMc-VMI?cls=7" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition text-sm font-bold">
-                    <Users className="w-4 h-4" /> Join Champions Channel
+                  <a href="/portal/client/messages" className="inline-flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition text-sm font-bold">
+                    <MessageSquare className="w-4 h-4" /> Open Champions Channel
                   </a>
                   <a href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAMAAZQOUnpUMzFSVENWT1NFWUhIMFpPRUhKQVhPTkhTVy4u" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 transition text-sm font-bold">
                     <Upload className="w-4 h-4" /> Submit Feedback Form

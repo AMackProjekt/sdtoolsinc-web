@@ -48,6 +48,8 @@ type TrainingEntry = {
   certificateUrl?: string;
 };
 
+type LogView = "mine" | "all";
+
 const EMPTY_FORM = {
   courseName: "",
   platform: "Niche Academy",
@@ -57,15 +59,19 @@ const EMPTY_FORM = {
 
 export default function StaffTrainingsPage() {
   const { data: session } = useSession();
-  const myLog = (useQuery(api.functions.listMyTrainingLog, {
+  const myLog  = (useQuery(api.functions.listMyTrainingLog, {
     staffEmail: session?.user?.email ?? "",
   }) ?? []) as TrainingEntry[];
+  const allLog = (useQuery(api.functions.listTrainingLog) ?? []) as TrainingEntry[];
   const addTraining    = useMutation(api.functions.addTrainingLog);
   const deleteTraining = useMutation(api.functions.deleteTrainingLog);
 
+  const [logView, setLogView] = useState<LogView>("mine");
   const [adding, setAdding] = useState(false);
   const [form, setForm]     = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
+
+  const visibleLog = logView === "mine" ? myLog : allLog;
 
   async function handleAdd() {
     if (!form.courseName || !session?.user) return;
@@ -153,22 +159,39 @@ export default function StaffTrainingsPage() {
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-bold text-slate-800 flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-500" /> My Training Log
-            <span className="text-xs font-normal text-slate-400">({myLog.length} completed)</span>
+            <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Training Log
+            <span className="text-xs font-normal text-slate-400">({visibleLog.length} completed)</span>
           </h2>
-          <button
-            onClick={() => setAdding(true)}
-            className="flex items-center gap-2 px-3 py-1.5 bg-teal-600 text-white rounded-xl text-xs font-semibold hover:bg-teal-700 transition"
-          >
-            <Plus className="w-3.5 h-3.5" /> Log Training
-          </button>
+          <div className="flex items-center gap-2">
+            {/* Mine / All toggle */}
+            <div className="flex rounded-lg overflow-hidden border border-slate-200 text-xs font-semibold">
+              <button
+                onClick={() => setLogView("mine")}
+                className={`px-3 py-1.5 transition ${logView === "mine" ? "bg-teal-600 text-white" : "bg-white text-slate-500 hover:bg-slate-50"}`}
+              >
+                Mine
+              </button>
+              <button
+                onClick={() => setLogView("all")}
+                className={`px-3 py-1.5 transition ${logView === "all" ? "bg-teal-600 text-white" : "bg-white text-slate-500 hover:bg-slate-50"}`}
+              >
+                All Staff
+              </button>
+            </div>
+            <button
+              onClick={() => setAdding(true)}
+              className="flex items-center gap-2 px-3 py-1.5 bg-teal-600 text-white rounded-xl text-xs font-semibold hover:bg-teal-700 transition"
+            >
+              <Plus className="w-3.5 h-3.5" /> Log Training
+            </button>
+          </div>
         </div>
 
-        {myLog.length === 0 ? (
+        {visibleLog.length === 0 ? (
           <div className="bg-white rounded-xl border border-slate-200 p-10 text-center text-slate-400">
             <GraduationCap className="w-8 h-8 mx-auto mb-3 text-slate-300" />
-            <p className="text-sm">No trainings logged yet.</p>
-            <p className="text-xs mt-1">Complete a course and log it here to track your progress.</p>
+            <p className="text-sm">{logView === "mine" ? "No trainings logged yet." : "No trainings on record."}</p>
+            <p className="text-xs mt-1">{logView === "mine" ? "Complete a course and log it here to track your progress." : "Staff training entries will appear here once logged."}</p>
           </div>
         ) : (
           <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
@@ -176,7 +199,7 @@ export default function StaffTrainingsPage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-50 border-b border-slate-200">
                   <tr>
-                    {["Course", "Platform", "Completed", "Certificate", ""].map((h) => (
+                    {[...(logView === "all" ? ["Staff"] : []), "Course", "Platform", "Completed", "Certificate", ""].map((h) => (
                       <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">
                         {h}
                       </th>
@@ -184,8 +207,11 @@ export default function StaffTrainingsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {myLog.map((entry) => (
+                  {visibleLog.map((entry) => (
                     <tr key={entry._id} className="hover:bg-slate-50 transition">
+                      {logView === "all" && (
+                        <td className="px-4 py-3 text-xs font-medium text-slate-600 whitespace-nowrap">{entry.staffName}</td>
+                      )}
                       <td className="px-4 py-3 font-medium text-slate-800 text-xs">{entry.courseName}</td>
                       <td className="px-4 py-3">
                         <span className="text-xs bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full">

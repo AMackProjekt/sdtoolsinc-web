@@ -340,7 +340,7 @@ export default function ClientProfile() {
           >
             <Table className="w-4 h-4" /> Google Sheet
           </a>
-          <Link href={`/portal/staff/messages?client=${encodeURIComponent(client.name)}`} className="bg-white border border-slate-200 text-indigo-700 px-4 py-2 rounded-xl font-bold hover:bg-indigo-50 transition flex items-center gap-2 text-sm">
+          <Link href={`/portal/staff/messages?client=${encodeURIComponent(client.name)}&clientEmail=${encodeURIComponent(demo?.email ?? "")}`} className="bg-white border border-slate-200 text-indigo-700 px-4 py-2 rounded-xl font-bold hover:bg-indigo-50 transition flex items-center gap-2 text-sm">
             <MessageSquare className="w-4 h-4" /> Message Client
           </Link>
           <Link href={`/portal/staff/casenote/new?uid=${encodeURIComponent(profileSlot)}&caseManager=${encodeURIComponent(demo?.caseManager ?? '')}`} className="bg-teal-600 text-white px-5 py-2 rounded-xl font-bold hover:bg-teal-700 shadow-lg shadow-teal-500/20 transition flex items-center gap-2 text-sm">
@@ -730,7 +730,7 @@ export default function ClientProfile() {
                   {clientFeedback[0]?.content ?? "No direct feedback from this participant yet."}
                 </p>
               </div>
-              <Link href={`/portal/staff/messages?client=${encodeURIComponent(client.name)}`} className="w-full inline-flex items-center justify-center gap-2 bg-indigo-600 text-white font-bold px-4 py-3 rounded-xl hover:bg-indigo-700 transition shadow-lg shadow-indigo-500/20">
+              <Link href={`/portal/staff/messages?client=${encodeURIComponent(client.name)}&clientEmail=${encodeURIComponent(demo?.email ?? "")}`} className="w-full inline-flex items-center justify-center gap-2 bg-indigo-600 text-white font-bold px-4 py-3 rounded-xl hover:bg-indigo-700 transition shadow-lg shadow-indigo-500/20">
                 <MessageSquare className="w-4 h-4" /> Message the Client
               </Link>
             </div>
