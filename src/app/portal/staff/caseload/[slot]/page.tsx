@@ -343,7 +343,7 @@ export default function ClientProfile() {
           <Link href={`/portal/staff/messages?client=${encodeURIComponent(client.name)}`} className="bg-white border border-slate-200 text-indigo-700 px-4 py-2 rounded-xl font-bold hover:bg-indigo-50 transition flex items-center gap-2 text-sm">
             <MessageSquare className="w-4 h-4" /> Message Client
           </Link>
-          <Link href="/portal/staff/casenote/new" className="bg-teal-600 text-white px-5 py-2 rounded-xl font-bold hover:bg-teal-700 shadow-lg shadow-teal-500/20 transition flex items-center gap-2 text-sm">
+          <Link href={`/portal/staff/casenote/new?uid=${encodeURIComponent(profileSlot)}&caseManager=${encodeURIComponent(demo?.caseManager ?? '')}`} className="bg-teal-600 text-white px-5 py-2 rounded-xl font-bold hover:bg-teal-700 shadow-lg shadow-teal-500/20 transition flex items-center gap-2 text-sm">
             <Plus className="w-4 h-4" /> New Case Note
           </Link>
           <button
@@ -436,7 +436,7 @@ export default function ClientProfile() {
           <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
             <div className="flex items-center justify-between gap-4 mb-5">
               <h2 className="text-xl font-bold text-charcoal-900">Case Notes</h2>
-              <Link href="/portal/staff/casenote/new" className="text-sm font-bold text-teal-600 hover:text-teal-700">+ Add Note</Link>
+              <Link href={`/portal/staff/casenote/new?uid=${encodeURIComponent(profileSlot)}&caseManager=${encodeURIComponent(demo?.caseManager ?? '')}`} className="text-sm font-bold text-teal-600 hover:text-teal-700">+ Add Note</Link>
             </div>
             <div className="space-y-4">
               {clientNotes.length === 0 ? (
@@ -489,7 +489,7 @@ export default function ClientProfile() {
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
               <div className="flex items-center justify-between gap-4 mb-5">
                 <h2 className="text-xl font-bold text-charcoal-900">Follow-Ups</h2>
-                <Link href={`/portal/staff/casenote/new?type=Follow-Up&client=${encodeURIComponent(client.name)}`} className="text-sm font-bold text-teal-600 hover:text-teal-700">+ Add Follow-Up</Link>
+                <Link href={`/portal/staff/casenote/new?uid=${encodeURIComponent(profileSlot)}&caseManager=${encodeURIComponent(demo?.caseManager ?? '')}&type=Follow-Up&client=${encodeURIComponent(client.name)}`} className="text-sm font-bold text-teal-600 hover:text-teal-700">+ Add Follow-Up</Link>
               </div>
               <div className="space-y-4">
                 {followUps.length === 0 ? (

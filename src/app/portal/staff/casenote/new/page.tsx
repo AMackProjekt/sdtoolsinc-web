@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { ArrowLeft, Save, Bolt, FileText, CheckSquare, AlertCircle, Info, Loader2, BookmarkCheck } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useStaff } from "@/context/StaffContext";
 import { useMutation } from "convex/react";
@@ -26,8 +26,9 @@ const LOCATIONS = [
   "Outreach", "Offsite Appointment", "Housing Commission", "Hospital / ER", "Agency Partner Site"
 ];
 
-export default function NewCaseNote() {
+function NewCaseNoteInner() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { addCaseNote, team } = useStaff();
   const { data: session } = useSession();
   const staffName = session?.user?.name ?? session?.user?.email ?? "Staff";
@@ -37,6 +38,12 @@ export default function NewCaseNote() {
   const addToHmisQueue = useMutation(api.functions.addToHmisQueue);
 
   const DRAFT_KEY = "casenote_draft";
+
+  // Fast Field section state
+  const [fastSituation, setFastSituation] = useState("");
+  const [fastIntervention, setFastIntervention] = useState("");
+  const [fastResponse, setFastResponse] = useState("");
+  const [fastNextStep, setFastNextStep] = useState("");
 
   // Form State
   const [formData, setFormData] = useState({
@@ -48,12 +55,21 @@ export default function NewCaseNote() {
     narrative: ""
   });
 
-  // Restore draft on mount
+  // Restore draft on mount, then overlay URL params (uid/caseManager/type from caseload)
   useEffect(() => {
     const saved = localStorage.getItem(DRAFT_KEY);
-    if (saved) {
-      try { setFormData(JSON.parse(saved)); } catch {}
-    }
+    let base = saved ? (() => { try { return JSON.parse(saved); } catch { return {}; } })() : {};
+    const urlUid = searchParams.get("uid") ?? "";
+    const urlCaseManager = searchParams.get("caseManager") ?? "";
+    const urlType = searchParams.get("type") ?? "";
+    setFormData(prev => ({
+      ...prev,
+      ...base,
+      ...(urlUid ? { uid: urlUid } : {}),
+      ...(urlCaseManager ? { caseManager: urlCaseManager } : {}),
+      ...(urlType ? { type: urlType } : {}),
+    }));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSaveDraft = () => {
@@ -64,7 +80,23 @@ export default function NewCaseNote() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.uid || !formData.narrative || !formData.caseManager) return alert("Please fill in UID, Case Manager, and Narrative.");
+
+    // In fast-field mode build narrative from the 4 section textareas
+    let narrative = formData.narrative;
+    if (isQuickMode) {
+      const parts = [
+        fastSituation && `Situation: ${fastSituation}`,
+        fastIntervention && `Intervention: ${fastIntervention}`,
+        fastResponse && `Client Response: ${fastResponse}`,
+        fastNextStep && `Next Step: ${fastNextStep}`,
+      ].filter(Boolean);
+      narrative = parts.join("\n\n");
+      setFormData(prev => ({ ...prev, narrative }));
+    }
+
+    if (!formData.uid.trim()) return alert("Please fill in the UID (Tent + Number).");
+    if (!formData.caseManager.trim()) return alert("Please select the Assigned Case Manager.");
+    if (!narrative.trim()) return alert("Please fill in at least one narrative section.");
 
     setIsSaving(true);
 
@@ -72,7 +104,7 @@ export default function NewCaseNote() {
       clientName: formData.uid.toUpperCase(),
       date: new Date().toLocaleDateString(),
       type: formData.type || "Participant Update",
-      summary: formData.narrative,
+      summary: narrative,
       staff: staffName
     });
 
@@ -245,19 +277,19 @@ export default function NewCaseNote() {
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-semibold text-charcoal-900 mb-2">Client Concern / Situation</label>
-              <textarea placeholder="Document why contact occurred, context, participant reports..." className="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-3 h-24 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition outline-none resize-y"></textarea>
+              <textarea value={fastSituation} onChange={e => setFastSituation(e.target.value)} placeholder="Document why contact occurred, context, participant reports..." className="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-3 h-24 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition outline-none resize-y"></textarea>
             </div>
             <div>
               <label className="block text-sm font-semibold text-charcoal-900 mb-2">Staff Intervention</label>
-              <textarea placeholder="Document what you did (advocacy, referrals, boundary setting)..." className="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-3 h-24 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition outline-none resize-y"></textarea>
+              <textarea value={fastIntervention} onChange={e => setFastIntervention(e.target.value)} placeholder="Document what you did (advocacy, referrals, boundary setting)..." className="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-3 h-24 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition outline-none resize-y"></textarea>
             </div>
             <div>
               <label className="block text-sm font-semibold text-charcoal-900 mb-2">Client Response</label>
-              <textarea placeholder="Document response, demeanor, engagement level, statements..." className="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-3 h-24 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition outline-none resize-y"></textarea>
+              <textarea value={fastResponse} onChange={e => setFastResponse(e.target.value)} placeholder="Document response, demeanor, engagement level, statements..." className="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-3 h-24 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition outline-none resize-y"></textarea>
             </div>
             <div>
               <label className="block text-sm font-semibold text-charcoal-900 mb-2">Next Step / Follow-Up</label>
-              <textarea placeholder="Clear actionable next steps..." className="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-3 h-20 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition outline-none resize-y"></textarea>
+              <textarea value={fastNextStep} onChange={e => setFastNextStep(e.target.value)} placeholder="Clear actionable next steps..." className="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-3 h-20 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition outline-none resize-y"></textarea>
             </div>
           </div>
         </div>
@@ -435,5 +467,13 @@ export default function NewCaseNote() {
         </div>
       </form>
     </div>
+  );
+}
+
+export default function NewCaseNote() {
+  return (
+    <Suspense fallback={<div className="p-8 text-slate-500">Loading…</div>}>
+      <NewCaseNoteInner />
+    </Suspense>
   );
 }
