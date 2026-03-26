@@ -3,6 +3,10 @@ import { NextResponse } from "next/server";
 
 
 const DFC_DOMAIN = "dreamsforchange.org";
+const PRIVILEGED_PORTAL_EMAILS = new Set([
+  "donyale@dreamsforchange.org",
+  "dmack@sdtoolsinc.org",
+]);
 
 async function verifyTwoFACookie(cookieValue: string, email: string): Promise<boolean> {
   try {
@@ -40,7 +44,8 @@ export default auth(async (req) => {
   const pathname = req.nextUrl.pathname;
   const role = req.auth?.user?.role ?? "client";
   const isAuthenticated = Boolean(req.auth?.user?.email);
-  const userEmail = req.auth?.user?.email ?? "";
+  const userEmail = (req.auth?.user?.email ?? "").toLowerCase();
+  const isPrivilegedPortalUser = PRIVILEGED_PORTAL_EMAILS.has(userEmail);
 
   const isPortal = pathname.startsWith("/portal/");
   const isProtectedApi = pathname.startsWith("/api/") && !pathname.startsWith("/api/auth") && pathname !== "/api/health";
@@ -53,10 +58,28 @@ export default auth(async (req) => {
     if (pathname.startsWith("/api/")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+    if (pathname.startsWith("/portal/admin") || pathname.startsWith("/portal/staff")) {
+      return NextResponse.redirect(new URL("/login/staff", req.url));
+    }
     return NextResponse.redirect(new URL(
       pathname.startsWith("/portal/client") ? "/login/client" : "/login/staff",
       req.url
     ));
+  }
+
+  // Staff/admin portals and admin APIs require a privileged email.
+  // The client portal is open to anyone with a valid provisioned client credential.
+  const isStaffOrAdminPath =
+    pathname.startsWith("/portal/staff") ||
+    pathname.startsWith("/portal/admin") ||
+    pathname.startsWith("/api/admin") ||
+    pathname === "/api/terminal";
+
+  if (isStaffOrAdminPath && !isPrivilegedPortalUser) {
+    if (pathname.startsWith("/api/")) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+    return NextResponse.redirect(new URL("/login/staff", req.url));
   }
 
   // ── Force password change for clients with mustChangePassword flag ───────
@@ -73,21 +96,27 @@ export default auth(async (req) => {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
     // Redirect based on their actual role
-    const fallback = role === "staff" ? "/portal/staff" : "/portal/client";
+    const fallback = role === "staff" ? "/portal/staff" : "/login/staff";
     return NextResponse.redirect(new URL(fallback, req.url));
   }
 
-  // ── Enforce @dreamsforchange.org domain for staff portal ──────────────────
-  const needsStaffRole =
-    pathname.startsWith("/portal/staff") ||
-    pathname === "/api/terminal" ||
-    pathname.startsWith("/api/admin");
-
-  if (needsStaffRole && (role !== "staff" || !userEmail.endsWith(`@${DFC_DOMAIN}`))) {
+  // ── Enforce client role for client portal ────────────────────────────────
+  const needsClientRole = pathname.startsWith("/portal/client");
+  if (needsClientRole && role !== "client") {
     if (pathname.startsWith("/api/")) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
-    return NextResponse.redirect(new URL("/portal/client", req.url));
+    const fallback = role === "admin" ? "/portal/admin" : "/portal/staff";
+    return NextResponse.redirect(new URL(fallback, req.url));
+  }
+
+  // ── Enforce staff role for staff portal pages ────────────────────────────
+  // (Privileged-email gate already fired above; this ensures the JWT role is also "staff".)
+  if (pathname.startsWith("/portal/staff") && role !== "staff") {
+    if (pathname.startsWith("/api/")) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+    return NextResponse.redirect(new URL("/login/staff", req.url));
   }
 
   // ── 2FA gate: skip for the 2FA page itself, API routes, and client-credentials users ────────────

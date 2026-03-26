@@ -21,6 +21,10 @@ const clientAllowlist = (process.env.CLIENT_ALLOWLIST ?? "")
   .filter(Boolean);
 
 const dfcDomain = (process.env.WORKSPACE_DOMAIN ?? "dreamsforchange.org").toLowerCase();
+const privilegedPortalEmails = new Set([
+  "donyale@dreamsforchange.org",
+  "dmack@sdtoolsinc.org",
+]);
 
 type StoredClientCredential = {
   email: string;
@@ -37,6 +41,10 @@ function normalizeLoginIdentifier(value: string) {
 
 function isDfcEmail(email: string) {
   return normalizeLoginIdentifier(email).endsWith(`@${dfcDomain}`);
+}
+
+function isPrivilegedPortalEmail(email: string) {
+  return privilegedPortalEmails.has(normalizeLoginIdentifier(email));
 }
 
 function hashPassword(password: string) {
@@ -187,6 +195,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           return null;
         }
 
+        // Client access is gated by having a provisioned credential record — no email allowlist check here.
         const passwordHash = hashPassword(password);
         if (!safeCompare(stored.passwordHash, passwordHash)) {
           return null;
@@ -221,7 +230,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           return null;
         }
 
-        if (stored.email !== "donyale@dreamsforchange.org") {
+        if (!isPrivilegedPortalEmail(stored.email)) {
           return null;
         }
 
@@ -255,6 +264,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         const stored = await getAdminCredential(identifier);
         if (!stored) {
+          return null;
+        }
+
+        if (!isPrivilegedPortalEmail(stored.email)) {
           return null;
         }
 
@@ -297,9 +310,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
       if (account && profile && typeof profile.email === "string") {
         const email = profile.email.toLowerCase();
-        const isAdmin = adminAllowlist.includes(email);
-        const isStaff = !isAdmin && email === "donyale@dreamsforchange.org";
+        const isPrivileged = isPrivilegedPortalEmail(email);
+        const isAdmin = isPrivileged;
+        const isStaff = isPrivileged;
         token.role = isAdmin ? "admin" : isStaff ? "staff" : "client";
+        token.email = email;
       }
       return token;
     },
@@ -311,19 +326,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session;
     },
     async signIn({ account, profile, user }) {
+      // Client portal: any provisioned credential is sufficient.
+      if (account?.provider === "client-credentials") {
+        return Boolean(user?.email);
+      }
+
+      // Staff / admin credentials and Google OAuth are restricted to privileged emails.
       if (
-        account?.provider === "client-credentials" ||
         account?.provider === "staff-credentials" ||
         account?.provider === "admin-credentials"
       ) {
-        return Boolean(user?.email);
+        return Boolean(user?.email) && isPrivilegedPortalEmail(user.email ?? "");
       }
 
       if (!profile?.email) return false;
       const email = profile.email.toLowerCase();
-      const isAllowedDomain = email.endsWith(`@${dfcDomain}`);
-      const isAllowlisted = adminAllowlist.includes(email) || staffAllowlist.includes(email) || clientAllowlist.includes(email);
-      return isAllowedDomain || isAllowlisted;
+      return isPrivilegedPortalEmail(email);
     },
   },
 });
