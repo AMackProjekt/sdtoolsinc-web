@@ -59,6 +59,13 @@ export default auth(async (req) => {
     ));
   }
 
+  // ── Force password change for clients with mustChangePassword flag ───────
+  const mustChangePassword = (req.auth as { user?: { mustChangePassword?: boolean } })?.user?.mustChangePassword === true;
+  const isChangePasswordPage = pathname === "/portal/client/change-password";
+  if (mustChangePassword && role === "client" && !isChangePasswordPage && !pathname.startsWith("/api/")) {
+    return NextResponse.redirect(new URL("/portal/client/change-password", req.url));
+  }
+
   // ── Enforce admin role for admin portal ──────────────────────────────────
   const needsAdminRole = pathname.startsWith("/portal/admin");
   if (needsAdminRole && role !== "admin") {

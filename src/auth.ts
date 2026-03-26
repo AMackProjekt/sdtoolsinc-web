@@ -28,6 +28,7 @@ type StoredClientCredential = {
   passwordHash: string;
   name?: string;
   approvedAt: string;
+  mustChangePassword?: boolean;
 };
 
 function normalizeLoginIdentifier(value: string) {
@@ -72,6 +73,7 @@ export async function upsertClientCredential(input: {
   username?: string;
   password: string;
   name?: string;
+  mustChangePassword?: boolean;
 }) {
   const email = normalizeLoginIdentifier(input.email);
   const username = normalizeLoginIdentifier(input.username ?? email.split("@")[0]);
@@ -81,6 +83,7 @@ export async function upsertClientCredential(input: {
     passwordHash: hashPassword(input.password),
     name: input.name,
     approvedAt: new Date().toISOString(),
+    mustChangePassword: input.mustChangePassword ?? false,
   };
 
   const encrypted = encryptJson(record);
@@ -194,6 +197,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           email: stored.email,
           name: stored.name ?? stored.username,
           role: "client",
+          mustChangePassword: stored.mustChangePassword ?? false,
         };
       },
     }),
@@ -274,9 +278,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, account, profile }) {
+    async jwt({ token, account, profile, user }) {
       if (account?.provider === "client-credentials") {
         token.role = "client";
+        token.mustChangePassword = (user as Record<string, unknown>)?.mustChangePassword === true;
         return token;
       }
 
@@ -301,6 +306,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async session({ session, token }) {
       if (session.user) {
         session.user.role = (token.role as "staff" | "client" | "admin" | undefined) ?? "client";
+        session.user.mustChangePassword = token.mustChangePassword === true;
       }
       return session;
     },
