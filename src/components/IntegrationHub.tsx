@@ -24,7 +24,7 @@ const GOOGLE_STAFF: App[] = [
   { name: "Sheets",          desc: "Spreadsheets",           url: "https://sheets.google.com",                    bg: "bg-emerald-50",text: "text-emerald-700",logo: "S" },
   { name: "Forms",           desc: "Surveys & intake forms", url: "https://forms.google.com",                     bg: "bg-purple-50", text: "text-purple-700", logo: "F" },
   { name: "Slides",          desc: "Presentations",          url: "https://slides.google.com",                    bg: "bg-orange-50", text: "text-orange-700", logo: "P" },
-  { name: "DFC Sites",       desc: "Internal org site",      url: "https://sites.google.com/d/1kyg4znPtXffPekhf49Q67uCYNi4C4r_A/p/1EkcGjy2FDmczm0Y48qGQJlxNh0U6UBtk/edit", bg: "bg-teal-50", text: "text-teal-700", logo: "🏠", badge: "DFC" },
+  { name: "Internal Site",       desc: "Internal org site",      url: "https://sites.google.com/your-org-site", bg: "bg-teal-50", text: "text-teal-700", logo: "🏠", badge: "ORG" },
   { name: "Workspace Admin", desc: "User & app management",  url: "https://admin.google.com",                     bg: "bg-slate-100", text: "text-slate-700",  logo: "⚙" },
   { name: "Gemini",          desc: "Google AI assistant",    url: "https://gemini.google.com",                    bg: "bg-violet-50", text: "text-violet-700", logo: "✦" },
   { name: "Keep",            desc: "Notes & reminders",      url: "https://keep.google.com",                      bg: "bg-yellow-50", text: "text-yellow-700", logo: "📝" },

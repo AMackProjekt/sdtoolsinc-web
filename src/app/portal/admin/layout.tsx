@@ -7,7 +7,6 @@ import {
   LayoutDashboard,
   Users,
   UserCog,
-  ClipboardList,
   ShieldCheck,
   BarChart3,
   Home,
@@ -18,13 +17,7 @@ import {
   ScrollText,
   ChevronRight,
   Gem,
-  UserPlus,
-  UserMinus,
-  Network,
-  Phone,
-  Send,
-  GraduationCap,
-  Flag,
+  Shield,
 } from "lucide-react";
 
 const NAV = [
@@ -34,14 +27,8 @@ const NAV = [
   { href: "/portal/admin/demographics", label: "Demographics", icon: BarChart3 },
   { href: "/portal/admin/housing", label: "Housing Matches", icon: Home },
   { href: "/portal/admin/scheduling", label: "Scheduling", icon: CalendarDays },
-  { href: "/portal/admin/enrollments", label: "Enrollments", icon: UserPlus },
-  { href: "/portal/admin/exits", label: "Exits", icon: UserMinus },
   { href: "/portal/admin/compliance", label: "Compliance", icon: ShieldCheck },
   { href: "/portal/admin/audit", label: "Audit Log", icon: ScrollText },
-  { href: "/portal/admin/org-chart", label: "Org Chart", icon: Network },
-  { href: "/portal/admin/hotlines", label: "Hotlines", icon: Phone },
-  { href: "/portal/admin/email-blast", label: "Email Blast", icon: Send },
-  { href: "/portal/admin/trainings", label: "Trainings", icon: GraduationCap },
   { href: "/portal/admin/integrations", label: "Integrations", icon: Plug },
   { href: "/portal/admin/settings", label: "Settings", icon: Settings },
 ];
@@ -131,7 +118,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <main className="ml-64 flex-1 flex flex-col min-h-screen">
         {/* Top bar */}
         <header className="h-14 bg-white border-b border-slate-200 flex items-center px-6 gap-4 sticky top-0 z-20">
-          <div className="flex-1" />
+          <div className="flex-1">
+            <Link
+              href="/portal/enterprise"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold text-cyan-700 bg-cyan-50 border border-cyan-200 hover:bg-cyan-100"
+            >
+              <Shield className="w-3.5 h-3.5" /> Workspace Control Plane
+            </Link>
+          </div>
           <div className="flex items-center gap-2 text-xs text-slate-500">
             <ShieldCheck className="w-4 h-4 text-violet-500" />
             <span>Champion Admin — Full Access</span>

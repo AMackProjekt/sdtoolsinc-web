@@ -78,7 +78,7 @@ function NavLink({
 const CLIENT_STEPS: TourStep[] = [
   { target: '[data-tour="client-dashboard"]', title: "Dashboard", body: "Your home base — see your goals, messages, and important updates at a glance.", placement: "right" },
   { target: '[data-tour="client-goals"]', title: "My Goals", body: "Set SMART goals and track your progress. Celebrate milestones as you achieve them.", placement: "right" },
-  { target: '[data-tour="client-messages"]', title: "Messages", body: "Use the Champions Channel to message the staff team directly inside your portal.", placement: "right" },
+  { target: '[data-tour="client-messages"]', title: "Messages", body: "Stay in touch with your case manager and support team via Google Chat.", placement: "right" },
   { target: '[data-tour="client-profile"]', title: "Profile", body: "Update your photo, phone number, and contact information any time.", placement: "right" },
   { target: '[data-tour="client-settings"]', title: "Settings", body: "Manage your account preferences and notification settings.", placement: "right" },
   { target: '[data-tour="client-help"]', title: "Help & Support", body: "Need help? Find answers and reach your support team here.", placement: "right" },

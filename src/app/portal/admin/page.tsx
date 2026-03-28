@@ -10,10 +10,8 @@ import {
   FileText,
   ClipboardList,
   ScrollText,
-  ShieldCheck,
   TrendingUp,
   AlertCircle,
-  Flag,
 } from "lucide-react";
 
 function KpiCard({
@@ -45,7 +43,6 @@ function KpiCard({
 
 export default function AdminDashboard() {
   const participants = (useQuery(api.functions.listParticipants) ?? []) as Doc<"participants">[];
-  const grievances = (useQuery(api.functions.listGrievances) ?? []) as { reporterType: string; status: string }[];
   const caseNotes = useQuery(api.functions.listCaseNotes) ?? [];
   const documents = useQuery(api.functions.listDocuments) ?? [];
   const teamMembers = useQuery(api.functions.listTeamMembers) ?? [];
@@ -73,7 +70,7 @@ export default function AdminDashboard() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-slate-800">Champion Admin Dashboard</h1>
-        <p className="text-slate-500 text-sm mt-1">Full-access supervisor view — Dreams For Change</p>
+          <p className="text-slate-500 text-sm mt-1">Full-access supervisor view — T.O.O.LS INC</p>
       </div>
 
       {/* KPIs */}
@@ -86,20 +83,6 @@ export default function AdminDashboard() {
         <KpiCard label="Documents" value={documents.length} icon={FileText} color="bg-amber-100 text-amber-700" />
         <KpiCard label="Pending Requests" value={pending} icon={AlertCircle} color="bg-rose-100 text-rose-700" sub="Awaiting review" />
         <KpiCard label="Audit Events" value={auditLogs.length} icon={ScrollText} color="bg-slate-100 text-slate-600" />
-        <KpiCard
-          label="Client Grievances"
-          value={grievances.filter((g) => g.reporterType === "client" && g.status === "open").length}
-          icon={Flag}
-          color="bg-rose-100 text-rose-600"
-          sub="open grievances"
-        />
-        <KpiCard
-          label="Staff Grievances"
-          value={grievances.filter((g) => g.reporterType === "staff" && g.status === "open").length}
-          icon={Flag}
-          color="bg-amber-100 text-amber-600"
-          sub="open grievances"
-        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

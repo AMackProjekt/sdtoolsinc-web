@@ -31,9 +31,9 @@ export default function Home() {
       <nav className="flex items-center justify-between px-6 md:px-12 h-16 border-b border-slate-800/60 shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-teal-500 flex items-center justify-center shadow-lg shadow-teal-900/40">
-            <span className="text-teal-950 font-black text-[10px] tracking-tight">DFC</span>
+            <span className="text-teal-950 font-black text-[10px] tracking-tight">CF</span>
           </div>
-          <span className="font-bold text-white text-sm leading-none">CaseFlow Command</span>
+          <span className="font-bold text-white text-sm leading-none">CaseFlow Operations</span>
         </div>
         <div className="flex items-center gap-3">
           <Link href="/login/client" className="text-slate-400 hover:text-white text-sm font-medium transition-colors">
@@ -61,7 +61,7 @@ export default function Home() {
           </div>
 
           <h1 className="text-5xl md:text-7xl font-black leading-[1.05] tracking-tight mb-6">
-            <span className="text-white">Case Management</span>
+            <span className="text-white">Case management</span>
             <br />
             <span className="bg-gradient-to-r from-teal-400 to-teal-300 bg-clip-text text-transparent">
               built for Dreams
@@ -170,16 +170,16 @@ export default function Home() {
         <div className="max-w-6xl mx-auto">
           {/* Top row */}
           <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-8 mb-8">
-            {/* DFC brand */}
+            {/* Org brand */}
             <div>
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-8 h-8 rounded-lg bg-teal-500 flex items-center justify-center">
-                  <span className="text-teal-950 font-black text-[10px]">DFC</span>
+                  <span className="text-teal-950 font-black text-[10px]">CF</span>
                 </div>
-                <span className="font-bold text-white text-sm">Dreams For Change</span>
+                <span className="font-bold text-white text-sm">T.O.O.LS INC</span>
               </div>
               <p className="text-slate-500 text-xs max-w-xs leading-relaxed">
-                A nonprofit organization dedicated to ending homelessness through housing-first case management and wraparound services.
+                T.O.O.LS INC builds intelligent tools for social services and case management organizations.
               </p>
             </div>
 
@@ -207,19 +207,16 @@ export default function Home() {
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
               {/* Copyright */}
               <div className="text-xs text-slate-600 text-center md:text-left leading-relaxed">
-                <p>© {new Date().getFullYear()} Dreams For Change. All rights reserved.</p>
+                <p>© {new Date().getFullYear()} T.O.O.LS INC. All rights reserved.</p>
                 <p className="mt-1">
                   This platform is intended for authorized users only. Unauthorized access is prohibited and may be subject to legal action.
                   All user activity is logged and audited.
-                </p>
-                <p className="mt-2 text-amber-600/70 font-semibold uppercase tracking-widest text-[10px]">
-                  ⚠ Demo / Prototype — for evaluation purposes only
                 </p>
               </div>
 
               {/* AMP branding */}
               <div className="flex items-center gap-3 shrink-0">
-                <span className="text-slate-600 text-[10px] font-semibold uppercase tracking-widest">Powered by</span>
+                <span className="text-slate-600 text-[10px] font-semibold uppercase tracking-widest">Powered By</span>
                 <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 px-3 py-2 rounded-xl">
                   <Image
                     src="/amp-logo.jpeg"
@@ -235,7 +232,7 @@ export default function Home() {
 
             {/* Legal notice */}
             <p className="mt-6 text-[10px] text-slate-700 text-center leading-relaxed max-w-4xl mx-auto">
-              CaseFlow Command is a proprietary platform developed by A MackProjekt for Dreams For Change. Use of this platform constitutes
+              CaseFlow Operations is a proprietary platform developed by A MackProjekt for T.O.O.LS INC. Use of this platform constitutes
               acceptance of the Terms of Use and Privacy Policy. This system processes Protected Health Information (PHI) in accordance with
               HIPAA (45 CFR Parts 160 and 164). Unauthorized disclosure of PHI may result in civil and criminal penalties. All data is
               encrypted in transit and at rest. This platform uses cookies essential to site security and session management. By continuing
@@ -243,9 +240,8 @@ export default function Home() {
             </p>
             <p className="mt-3 text-[10px] text-slate-800 text-center leading-relaxed max-w-3xl mx-auto border border-slate-800 rounded-xl px-4 py-2">
               This platform — including its design, architecture, source code, workflows, and all associated intellectual property — was
-              conceived, designed, and built solely by <span className="text-slate-500 font-bold">Donyale Mack / A MackProjekt</span>.
-              It is shared with Dreams For Change strictly for demonstration and evaluation purposes. No license, assignment, or transfer
-              of ownership is granted or implied. All rights reserved.
+              conceived, designed, and built solely by <span className="text-slate-500 font-bold">A MackProjekt</span>.
+              Deployed by T.O.O.LS INC. No license, assignment, or transfer of ownership is granted or implied. All rights reserved.
             </p>
           </div>
         </div>

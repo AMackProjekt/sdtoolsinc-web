@@ -133,41 +133,6 @@ interface StaffContextType {
 
 const StaffContext = createContext<StaffContextType | undefined>(undefined);
 
-const DATA_KEYS = {
-  notes: "notes",
-  docs: "docs",
-  journals: "journals",
-  feedback: "feedback",
-  shoutouts: "shoutouts",
-  smartgoals: "smartgoals",
-  requests: "requests",
-  participants: "participants",
-  team: "team",
-} as const;
-
-async function readSecureData<T>(key: string, fallback: T): Promise<T> {
-  try {
-    const response = await fetch(`/api/secure-data/${key}`, { method: "GET" });
-    if (!response.ok) return fallback;
-    const payload = (await response.json()) as { data?: T };
-    return payload.data ?? fallback;
-  } catch {
-    return fallback;
-  }
-}
-
-async function writeSecureData<T>(key: string, value: T): Promise<void> {
-  try {
-    await fetch(`/api/secure-data/${key}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ data: value }),
-    });
-  } catch {
-    // No-op in UI for offline/dev errors.
-  }
-}
-
 export function StaffProvider({ children }: { children: React.ReactNode }) {
   // Reactive Convex queries
   const _participants = useQuery(api.functions.listParticipants) ?? [];
@@ -289,7 +254,7 @@ export function StaffProvider({ children }: { children: React.ReactNode }) {
     _updateParticipant({ slot, name, environment, status });
   };
 
-  const mission = "The mission of Dreams for Change is to respond to the needs of communities by creating innovative and cost-effective programs to empower and stabilize the lives of underserved families and individuals.";
+  const mission = "T.O.O.LS INC provides intelligent tools and platforms for social services and case management organizations, empowering frontline workers to deliver better outcomes.";
 
   return (
     <StaffContext.Provider value={{

@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
+import { ORG } from "@/config/org";
+import { getBaseUrl } from "@/lib/runtime-config";
 
 /**
  * GET /api/admin/email-config
  * Show email configuration status (admin only)
  */
-export async function GET(req: NextRequest) {
+export async function GET(_req: NextRequest) {
   try {
     // Verify user is authenticated and admin
     const session = await auth();
@@ -14,7 +16,7 @@ export async function GET(req: NextRequest) {
     }
 
     const hasResendKey = !!process.env.RESEND_API_KEY;
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "https://projekt-dfc.vercel.app";
+    const baseUrl = getBaseUrl();
 
     return NextResponse.json({
       success: true,
@@ -23,9 +25,9 @@ export async function GET(req: NextRequest) {
         resendApiKeyStatus: hasResendKey ? "✅ Configured" : "❌ Missing",
         baseUrl,
         environment: process.env.NODE_ENV ?? "development",
-        senderDomain: "sdtoolsinc.org (verified)",
-        fromEmail: "dmack@sdtoolsinc.org",
-        ccEmail: "donyale@dreamsforchange.org",
+        senderDomain: ORG.domain,
+        fromEmail: ORG.fromEmail,
+        adminNotifyEmail: process.env.ADMIN_NOTIFY_EMAIL ?? ORG.supportEmail,
       },
       endpoints: {
         forgotPassword: "/api/auth/forgot-password",

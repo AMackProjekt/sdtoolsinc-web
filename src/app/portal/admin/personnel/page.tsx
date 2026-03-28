@@ -86,7 +86,7 @@ export default function PersonnelPage() {
             <div className="flex flex-col gap-1">
               <label className="text-xs text-slate-600 font-medium">Member ID</label>
               <input value={newMember.memberId} onChange={(e) => setNewMember((s) => ({ ...s, memberId: e.target.value }))}
-                title="Member ID" placeholder="e.g., DFC-001"
+                title="Member ID" placeholder="e.g., ORG-001"
                 className="px-3 py-1.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400 w-36" />
             </div>
             <div className="flex flex-col gap-1">

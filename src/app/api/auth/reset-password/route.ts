@@ -3,7 +3,6 @@ import { getEncryptedRecord, setEncryptedRecord } from "@/lib/server-data-store"
 import { decryptJson, encryptJson } from "@/lib/crypto";
 import { upsertClientCredential } from "@/auth";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "https://projekt-dfc.vercel.app";
 
 type PasswordResetToken = {
   email: string;
@@ -11,7 +10,7 @@ type PasswordResetToken = {
   usedAt?: string;
 };
 
-const MIN_PASSWORD_LENGTH = 8;
+const MIN_PASSWORD_LENGTH = 12;
 
 export async function POST(req: NextRequest) {
   try {

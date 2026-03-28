@@ -2,57 +2,48 @@
 
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
-import {
-  LayoutDashboard,
-  Users,
-  User,
-  FileText,
-  HelpCircle,
-  Calendar,
+import { 
+  LayoutDashboard, 
+  Users, 
+  FileText, 
+  Calendar, 
   Settings,
   Bell,
   Search,
   LogOut,
   MessageSquare,
   AlertCircle,
+  FileSpreadsheet,
+  FileBox,
+  Table,
   Terminal,
+  User,
+  ChevronDown,
+  HelpCircle,
   Home,
   ArrowLeft,
   Menu,
-  X,
-  ShieldCheck,
-  ShieldAlert,
-  ShieldOff,
-  Sparkles,
-  ChevronDown,
-  ChevronUp,
-  GraduationCap,
+  X
 } from "lucide-react";
+import { ShieldCheck, ShieldAlert, ShieldOff } from "lucide-react";
 import { StaffProvider, useStaff } from "@/context/StaffContext";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import WellnessCorner from "@/components/WellnessCorner";
-import HmisUploadSidebar from "@/components/HmisUploadSidebar";
+import type { ComplianceStatus } from "@/app/api/admin/compliance/route";
 import WelcomeModal from "@/components/WelcomeModal";
 import OnboardingTour, { type TourStep } from "@/components/OnboardingTour";
+import HmisUploadSidebar from "@/components/HmisUploadSidebar";
 import PortalChat from "@/components/PortalChat";
 
-type ComplianceStatus = {
-  overall: string;
-  overallStatus: string;
-  score: number;
-  checks: Record<string, { status: string; message: string }>;
-};
-
-  const STAFF_STEPS: TourStep[] = [
-    { target: '[data-tour="staff-dashboard"]', title: "Dashboard", body: "Your command center — see today's tasks, KPIs, and participant updates at a glance.", placement: "right" },
-    { target: '[data-tour="staff-caseload"]', title: "Caseload", body: "Manage all your active participants, view profiles, and update case notes here.", placement: "right" },
-    { target: '[data-tour="staff-documents"]', title: "Documents", body: "Upload, access, and manage participant documents and HMIS records.", placement: "right" },
-    { target: '[data-tour="staff-messages"]', title: "Messages", body: "Communicate with participants and team members securely.", placement: "right" },
-    { target: '[data-tour="staff-calendar"]', title: "Calendar", body: "View and schedule appointments, check-ins, and team events.", placement: "right" },
-    { target: '[data-tour="staff-compliance"]', title: "Compliance", body: "Monitor your compliance status, upload required docs, and track deadlines.", placement: "right" },
-    { target: '[data-tour="staff-settings"]', title: "Settings", body: "Manage your account, notification preferences, and portal configuration.", placement: "right" },
-  ];
+const STAFF_STEPS: TourStep[] = [
+  { target: '[data-tour="staff-dashboard"]', title: "Dashboard", body: "Your mission control — see case activity, team updates, and system alerts at a glance.", placement: "right" },
+  { target: '[data-tour="staff-caseload"]', title: "Caseload & Roster", body: "Add participants, update statuses, and manage detailed client profiles.", placement: "right" },
+  { target: '[data-tour="staff-documents"]', title: "Documents", body: "Upload, view, and share HIPAA-safe documents with clients and your team.", placement: "right" },
+  { target: '[data-tour="staff-messages"]', title: "Messages", body: "Communicate with clients and teammates via your integrated Google Chat workspace.", placement: "right" },
+  { target: '[data-tour="staff-calendar"]', title: "Calendar", body: "Schedule F2F visits, appointments, and team meetings all in one place.", placement: "right" },
+  { target: '[data-tour="staff-compliance"]', title: "Compliance", body: "Monitor HIPAA compliance status and review PHI workflow approvals in real time.", placement: "right" },
+  { target: '[data-tour="staff-settings"]', title: "Settings", body: "Customize your portal preferences, manage your profile, and configure notifications.", placement: "right" },
+];
 
 export default function StaffLayout({
   children,
@@ -81,7 +72,7 @@ function BackButton() {
 }
 
 function StaffLayoutContent({ children }: { children: React.ReactNode }) {
-  const { notifications, markNotificationRead } = useStaff();
+  const { notifications, markNotificationRead: _markNotificationRead } = useStaff();
   const { data: session } = useSession();
   const unreadCount = notifications.filter(n => !n.read).length;
 
@@ -132,7 +123,6 @@ function StaffLayoutContent({ children }: { children: React.ReactNode }) {
   }, []);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [wellnessOpen, setWellnessOpen] = useState(false);
 
   const alerts: { title: string; client: string; time: string; priority: string; type: string }[] = [];
   return (
@@ -147,10 +137,10 @@ function StaffLayoutContent({ children }: { children: React.ReactNode }) {
       {/* Sidebar */}
       <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-charcoal-900 text-slate-300 flex flex-col transition-transform duration-300 md:static md:translate-x-0 md:z-auto ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="h-16 flex items-center px-6 border-b border-charcoal-800">
-          <span className="font-bold text-white text-lg tracking-wide">CaseFlow Command</span>
+          <span className="font-bold text-white text-lg tracking-wide">CaseFlow Operations</span>
         </div>
         
-        <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+        <nav className="flex-1 px-4 py-6 space-y-1">
           <Link href="/portal/staff" data-tour="staff-dashboard" className="flex items-center gap-3 px-3 py-2 rounded-lg bg-charcoal-800 text-white">
             <LayoutDashboard className="w-5 h-5" />
             Dashboard
@@ -171,10 +161,6 @@ function StaffLayoutContent({ children }: { children: React.ReactNode }) {
             <Calendar className="w-5 h-5" />
             Calendar
           </Link>
-          <Link href="/portal/staff/trainings" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-charcoal-800 hover:text-white transition">
-            <GraduationCap className="w-5 h-5" />
-            Workforce Trainings
-          </Link>
           <Link href="/portal/staff/terminal" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-charcoal-800 hover:text-white transition border border-teal-500/20 bg-teal-500/5">
             <Terminal className="w-5 h-5 text-teal-400" />
             Command Terminal
@@ -183,30 +169,6 @@ function StaffLayoutContent({ children }: { children: React.ReactNode }) {
             <ShieldCheck className="w-5 h-5" />
             Compliance
           </Link>
-
-          {/* Wellness Corner collapsible KPI card */}
-          <div className="mt-2">
-            <button
-              onClick={() => setWellnessOpen(o => !o)}
-              className="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-charcoal-800 hover:text-white transition group"
-            >
-              <div className="flex items-center gap-3">
-                <Sparkles className="w-5 h-5 text-violet-400" />
-                <span className="text-sm">Wellness Corner</span>
-              </div>
-              {wellnessOpen
-                ? <ChevronUp className="w-4 h-4 text-slate-500 group-hover:text-slate-300 transition" />
-                : <ChevronDown className="w-4 h-4 text-slate-500 group-hover:text-slate-300 transition" />
-              }
-            </button>
-            {wellnessOpen && (
-              <div className="mt-1 px-2 pb-2">
-                <div className="bg-charcoal-800/60 rounded-xl border border-charcoal-700 px-3 py-1">
-                  <WellnessCorner compact />
-                </div>
-              </div>
-            )}
-          </div>
         </nav>
 
         <div className="p-4 border-t border-charcoal-800">
@@ -283,6 +245,18 @@ function StaffLayoutContent({ children }: { children: React.ReactNode }) {
               />
             </div>
             <div className="hidden sm:flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-100">
+              <button title="New Google Doc" className="p-1.5 hover:bg-white hover:shadow-sm rounded-lg transition text-blue-600">
+                <FileText className="w-4 h-4" />
+              </button>
+              <button title="New Google Sheet" className="p-1.5 hover:bg-white hover:shadow-sm rounded-lg transition text-emerald-600">
+                <FileSpreadsheet className="w-4 h-4" />
+              </button>
+              <button title="New MSFT Word" className="p-1.5 hover:bg-white hover:shadow-sm rounded-lg transition text-indigo-600">
+                <FileBox className="w-4 h-4" />
+              </button>
+              <button title="New MSFT Excel" className="p-1.5 hover:bg-white hover:shadow-sm rounded-lg transition text-green-700">
+                <Table className="w-4 h-4" />
+              </button>
             </div>
           </div>
           

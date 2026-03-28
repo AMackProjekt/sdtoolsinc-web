@@ -89,7 +89,7 @@ export default function HmisUploadSidebar() {
       {/* Header */}
       <div className="h-16 flex items-center justify-between px-4 border-b border-charcoal-800 shrink-0">
         <a
-          href="https://sandiego.clarityhs.com/login"
+          href="https://your-org.hmis-system.com/login"
           target="_blank"
           rel="noopener noreferrer"
           title="Open Clarity HMIS"
@@ -200,7 +200,7 @@ export default function HmisUploadSidebar() {
               )}
             </button>
             <p className="text-[10px] text-slate-600 text-center mt-2 leading-relaxed">
-              Sends to donyale@dreamsforchange.org<br />cc dmack@sdtoolsinc.org
+                  Recipient configured via HMIS_REPORT_EMAIL env var
             </p>
           </>
         )}

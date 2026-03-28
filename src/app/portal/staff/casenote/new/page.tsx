@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
-import { ArrowLeft, Save, Bolt, FileText, CheckSquare, AlertCircle, Info, Loader2, BookmarkCheck } from "lucide-react";
+import { useState } from "react";
+import { ArrowLeft, Save, Bolt, FileText, CheckSquare, Info, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useStaff } from "@/context/StaffContext";
 import { useMutation } from "convex/react";
@@ -26,24 +26,14 @@ const LOCATIONS = [
   "Outreach", "Offsite Appointment", "Housing Commission", "Hospital / ER", "Agency Partner Site"
 ];
 
-function NewCaseNoteInner() {
+export default function NewCaseNote() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { addCaseNote, team } = useStaff();
   const { data: session } = useSession();
   const staffName = session?.user?.name ?? session?.user?.email ?? "Staff";
   const [isQuickMode, setIsQuickMode] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [draftSaved, setDraftSaved] = useState(false);
   const addToHmisQueue = useMutation(api.functions.addToHmisQueue);
-
-  const DRAFT_KEY = "casenote_draft";
-
-  // Fast Field section state
-  const [fastSituation, setFastSituation] = useState("");
-  const [fastIntervention, setFastIntervention] = useState("");
-  const [fastResponse, setFastResponse] = useState("");
-  const [fastNextStep, setFastNextStep] = useState("");
 
   // Form State
   const [formData, setFormData] = useState({
@@ -55,48 +45,9 @@ function NewCaseNoteInner() {
     narrative: ""
   });
 
-  // Restore draft on mount, then overlay URL params (uid/caseManager/type from caseload)
-  useEffect(() => {
-    const saved = localStorage.getItem(DRAFT_KEY);
-    let base = saved ? (() => { try { return JSON.parse(saved); } catch { return {}; } })() : {};
-    const urlUid = searchParams.get("uid") ?? "";
-    const urlCaseManager = searchParams.get("caseManager") ?? "";
-    const urlType = searchParams.get("type") ?? "";
-    setFormData(prev => ({
-      ...prev,
-      ...base,
-      ...(urlUid ? { uid: urlUid } : {}),
-      ...(urlCaseManager ? { caseManager: urlCaseManager } : {}),
-      ...(urlType ? { type: urlType } : {}),
-    }));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const handleSaveDraft = () => {
-    localStorage.setItem(DRAFT_KEY, JSON.stringify(formData));
-    setDraftSaved(true);
-    setTimeout(() => setDraftSaved(false), 2000);
-  };
-
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // In fast-field mode build narrative from the 4 section textareas
-    let narrative = formData.narrative;
-    if (isQuickMode) {
-      const parts = [
-        fastSituation && `Situation: ${fastSituation}`,
-        fastIntervention && `Intervention: ${fastIntervention}`,
-        fastResponse && `Client Response: ${fastResponse}`,
-        fastNextStep && `Next Step: ${fastNextStep}`,
-      ].filter(Boolean);
-      narrative = parts.join("\n\n");
-      setFormData(prev => ({ ...prev, narrative }));
-    }
-
-    if (!formData.uid.trim()) return alert("Please fill in the UID (Tent + Number).");
-    if (!formData.caseManager.trim()) return alert("Please select the Assigned Case Manager.");
-    if (!narrative.trim()) return alert("Please fill in at least one narrative section.");
+    if (!formData.uid || !formData.narrative || !formData.caseManager) return alert("Please fill in UID, Case Manager, and Narrative.");
 
     setIsSaving(true);
 
@@ -104,7 +55,7 @@ function NewCaseNoteInner() {
       clientName: formData.uid.toUpperCase(),
       date: new Date().toLocaleDateString(),
       type: formData.type || "Participant Update",
-      summary: narrative,
+      summary: formData.narrative,
       staff: staffName
     });
 
@@ -117,7 +68,6 @@ function NewCaseNoteInner() {
     });
 
     setIsSaving(false);
-    localStorage.removeItem(DRAFT_KEY);
     router.push(`/portal/staff/caseload/${formData.uid}`);
   };
 
@@ -137,13 +87,6 @@ function NewCaseNoteInner() {
         </div>
         
         <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={handleSaveDraft}
-            className="border border-slate-200 bg-white text-slate-600 px-5 py-2.5 rounded-xl font-semibold hover:bg-slate-50 transition flex items-center gap-2 text-sm"
-          >
-            {draftSaved ? <><BookmarkCheck className="w-4 h-4 text-teal-600" /> Draft Saved!</> : <><BookmarkCheck className="w-4 h-4" /> Save Draft</>}
-          </button>
           <button 
             onClick={handleSave}
             disabled={isSaving}
@@ -277,19 +220,19 @@ function NewCaseNoteInner() {
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-semibold text-charcoal-900 mb-2">Client Concern / Situation</label>
-              <textarea value={fastSituation} onChange={e => setFastSituation(e.target.value)} placeholder="Document why contact occurred, context, participant reports..." className="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-3 h-24 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition outline-none resize-y"></textarea>
+              <textarea placeholder="Document why contact occurred, context, participant reports..." className="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-3 h-24 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition outline-none resize-y"></textarea>
             </div>
             <div>
               <label className="block text-sm font-semibold text-charcoal-900 mb-2">Staff Intervention</label>
-              <textarea value={fastIntervention} onChange={e => setFastIntervention(e.target.value)} placeholder="Document what you did (advocacy, referrals, boundary setting)..." className="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-3 h-24 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition outline-none resize-y"></textarea>
+              <textarea placeholder="Document what you did (advocacy, referrals, boundary setting)..." className="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-3 h-24 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition outline-none resize-y"></textarea>
             </div>
             <div>
               <label className="block text-sm font-semibold text-charcoal-900 mb-2">Client Response</label>
-              <textarea value={fastResponse} onChange={e => setFastResponse(e.target.value)} placeholder="Document response, demeanor, engagement level, statements..." className="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-3 h-24 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition outline-none resize-y"></textarea>
+              <textarea placeholder="Document response, demeanor, engagement level, statements..." className="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-3 h-24 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition outline-none resize-y"></textarea>
             </div>
             <div>
               <label className="block text-sm font-semibold text-charcoal-900 mb-2">Next Step / Follow-Up</label>
-              <textarea value={fastNextStep} onChange={e => setFastNextStep(e.target.value)} placeholder="Clear actionable next steps..." className="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-3 h-20 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition outline-none resize-y"></textarea>
+              <textarea placeholder="Clear actionable next steps..." className="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-3 h-20 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition outline-none resize-y"></textarea>
             </div>
           </div>
         </div>
@@ -449,13 +392,6 @@ function NewCaseNoteInner() {
             <Link href="/portal/staff" className="flex-1 md:flex-none px-6 py-3 rounded-xl border border-slate-200 text-slate-600 font-semibold hover:bg-slate-50 transition text-center text-sm md:text-base">
               Cancel
             </Link>
-            <button
-              type="button"
-              onClick={handleSaveDraft}
-              className="px-6 py-3 rounded-xl border border-slate-200 bg-white text-slate-600 font-semibold hover:bg-slate-50 transition flex items-center justify-center gap-2 text-sm md:text-base"
-            >
-              {draftSaved ? <><BookmarkCheck className="w-5 h-5 text-teal-600" /> Draft Saved!</> : <><BookmarkCheck className="w-5 h-5" /> Save Draft</>}
-            </button>
             <button 
               type="submit"
               disabled={isSaving}
@@ -467,13 +403,5 @@ function NewCaseNoteInner() {
         </div>
       </form>
     </div>
-  );
-}
-
-export default function NewCaseNote() {
-  return (
-    <Suspense fallback={<div className="p-8 text-slate-500">Loading…</div>}>
-      <NewCaseNoteInner />
-    </Suspense>
   );
 }

@@ -85,7 +85,7 @@ export default function StaffLogin() {
               <Lock className="w-5 h-5 text-slate-200" />
             </div>
             <div>
-              <span className="font-bold text-white block text-sm leading-none">Dreams For Change</span>
+              <span className="font-bold text-white block text-sm leading-none">T.O.O.LS INC</span>
               <span className="text-[10px] text-teal-400 font-bold uppercase tracking-widest">Staff Portal</span>
             </div>
           </div>
@@ -107,7 +107,7 @@ export default function StaffLogin() {
             </div>
           ))}
           <div className="pt-4 mt-1 border-t border-slate-800 text-xs text-slate-600">
-            DFC Google Workspace domain required.
+            Org Google Workspace domain required.
           </div>
         </div>
       </aside>
@@ -121,27 +121,27 @@ export default function StaffLogin() {
               <Lock className="w-5 h-5 text-slate-300" />
             </div>
             <div>
-              <span className="font-bold text-white block text-sm leading-none">Dreams For Change</span>
+              <span className="font-bold text-white block text-sm leading-none">T.O.O.LS INC</span>
               <span className="text-[10px] text-teal-400 font-bold uppercase tracking-widest">Staff Portal</span>
             </div>
           </div>
 
           <h1 className="text-2xl font-bold text-white mb-1">Staff Sign In</h1>
-          <p className="text-slate-400 text-sm mb-3">Use your @dreamsforchange.org handle or your DFC Google account.</p>
+          <p className="text-slate-400 text-sm mb-3">Use your @sdtoolsinc.org handle or your Org Google account.</p>
 
           <div className="inline-flex items-center gap-1.5 bg-teal-950 border border-teal-800/70 text-teal-400 text-xs font-bold px-3 py-1.5 rounded-full mb-8">
             <ShieldCheck className="w-3 h-3" />
-            DFC domain · 2FA enforced
+            Org domain · 2FA enforced
           </div>
 
           <div className="mb-6 rounded-xl border border-teal-900/70 bg-teal-950/30 px-4 py-3 text-sm text-teal-200">
-            Staff access requires a <span className="font-semibold">@dreamsforchange.org</span> handle.
+            Staff access requires a <span className="font-semibold">@sdtoolsinc.org</span> handle.
           </div>
 
           <form onSubmit={handleCredentialSignIn} className="space-y-4">
             <div>
               <label htmlFor="identifier" className="block text-xs font-bold uppercase tracking-[0.18em] text-slate-400 mb-2">
-                DFC Email / Username
+                Org Email / Username
               </label>
               <div className="relative">
                 <UserRound className="w-4 h-4 text-slate-500 absolute left-4 top-1/2 -translate-y-1/2" />
@@ -151,7 +151,7 @@ export default function StaffLogin() {
                   autoComplete="username"
                   value={identifier}
                   onChange={(event) => setIdentifier(event.target.value)}
-                  placeholder="yourname@dreamsforchange.org"
+                  placeholder="yourname@sdtoolsinc.org"
                   className="w-full rounded-xl border border-slate-700 bg-slate-800/80 text-white placeholder:text-slate-500 pl-11 pr-4 py-3 text-sm outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition"
                   required
                 />

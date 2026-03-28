@@ -1,12 +1,10 @@
 "use client";
 
-"use client";
-
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
-import {
-  TrendingUp,
-  CheckCircle2,
+import { 
+  TrendingUp, 
+  CheckCircle2, 
   Clock,
   ArrowRight,
   FileText,
@@ -24,12 +22,17 @@ import {
   RotateCcw,
   Coffee,
   Quote,
-  Settings,
   ShieldCheck,
+  ExternalLink,
+  Brain,
+  Wind,
+  Music,
+  Activity,
+  Sparkles,
+  Flame,
 } from "lucide-react";
 import { useStaff } from "@/context/StaffContext";
 import IntegrationHub from "@/components/IntegrationHub";
-import WellnessCorner from "@/components/WellnessCorner";
 
 const STAFF_QUOTES = [
   "The most important thing you can do for your clients is show up — fully, consistently, and with purpose.",
@@ -65,12 +68,12 @@ const WORK_SECS = 25 * 60;
 const BREAK_SECS = 5 * 60;
 
 export default function MainDashboard() {
-  const { participants, documents, caseNotes, notifications, requests, updateRequestStatus, team, mission } = useStaff();
+  const { participants, documents, caseNotes, requests, updateRequestStatus, team, mission } = useStaff();
   
   // Real Logic for Metrics
   const activeCount = participants.filter(p => (p as any).status.includes('Active')).length;
-  const inProgressCount = participants.filter(p => (p as any).status === 'Active - SOP Audit').length;
-  const placementCount = participants.filter(p => (p as any).status === 'Active - Housing Match').length;
+  const _inProgressCount = participants.filter(p => (p as any).status === 'Active - SOP Audit').length;
+  const _placementCount = participants.filter(p => (p as any).status === 'Active - Housing Match').length;
   const pendingCount = requests.filter(r => (r as any).status === 'pending').length;
   const approvedCount = requests.filter(r => (r as any).status === 'approved').length;
 
@@ -164,18 +167,60 @@ export default function MainDashboard() {
   const pomMins  = String(Math.floor(pomSeconds / 60)).padStart(2, "0");
   const pomSecs  = String(pomSeconds % 60).padStart(2, "0");
 
-  // ── Dashboard customization ────────────────────────────────────────────────
-  const [dashHidden, setDashHidden] = useState<Set<string>>(() => {
-    try { return new Set(JSON.parse(localStorage.getItem("dash_hidden") ?? "[]")); }
-    catch { return new Set(); }
-  });
-  const [showCustomize, setShowCustomize] = useState(false);
-  const toggleSection = (key: string) => setDashHidden(prev => {
-    const next = new Set(prev);
-    next.has(key) ? next.delete(key) : next.add(key);
-    localStorage.setItem("dash_hidden", JSON.stringify([...next]));
-    return next;
-  });
+  // ── Productivity Corner ───────────────────────────────────────────────────
+  const [brainDump, setBrainDump] = useState("");
+  const [breathStep, setBreathStep] = useState<"idle"|"inhale"|"hold1"|"exhale"|"hold2">("idle");
+  const breathTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const startBoxBreath = () => {
+    if (breathStep !== "idle") return;
+    breathTimers.current.forEach(clearTimeout);
+    setBreathStep("inhale");
+    breathTimers.current = [
+      setTimeout(() => setBreathStep("hold1"),  4000),
+      setTimeout(() => setBreathStep("exhale"), 8000),
+      setTimeout(() => setBreathStep("hold2"),  12000),
+      setTimeout(() => setBreathStep("idle"),   16000),
+    ];
+  };
+  const AFFIRMATIONS_STAFF = [
+    "I am making a real difference today.",
+    "I show up fully for the people in my care.",
+    "My work changes lives, even when I can't see it.",
+    "I protect my energy so I can protect others.",
+    "I am trauma-informed, compassionate, and effective.",
+    "I am doing extraordinary work in ordinary moments.",
+    "Rest is not laziness — it is how I stay effective.",
+    "I lead with empathy and follow through with action.",
+    "My consistency builds the trust my clients have never had.",
+    "I chose this work because the people matter.",
+  ];
+  const [staffAffirmIdx, setStaffAffirmIdx] = useState(0);
+  const STRETCHES = [
+    "Roll your shoulders back 5 times. Breathe deep.",
+    "Drop your chin slowly to your chest. Hold 10 sec.",
+    "Reach both arms overhead. Stretch and hold 10 sec.",
+    "Rotate your neck gently left-to-right 3 times.",
+    "Stand up and shake out your hands and arms. Reset.",
+    "Interlace fingers, push palms outward. Hold 10 sec.",
+    "Look away from your screen. Focus far away 20 sec.",
+  ];
+  const [stretchIdx, setStretchIdx] = useState(0);
+  const FOCUS_PLAYLISTS = [
+    { name: "Lo-Fi Hip Hop",   url: "https://www.youtube.com/watch?v=jfKfPfyJRdk", emoji: "🎧" },
+    { name: "Ambient Focus",   url: "https://open.spotify.com/playlist/37i9dQZF1DX3Ogo9pFvBkY", emoji: "🌊" },
+    { name: "Deep Work Mix",   url: "https://open.spotify.com/playlist/37i9dQZF1DWZeKCadgRdKQ", emoji: "🔥" },
+    { name: "Nature Sounds",   url: "https://www.youtube.com/watch?v=eKFTSSKCzWA", emoji: "🌿" },
+    { name: "Jazz for Focus",  url: "https://open.spotify.com/playlist/37i9dQZF1DXbITWG1ZJKYt", emoji: "🎷" },
+  ];
+  const DEBRIEF_PROMPTS = [
+    "What's one win from today — big or small?",
+    "What's one thing I'm intentionally leaving at work?",
+    "How did I show up for my clients today?",
+    "What would I do differently tomorrow?",
+    "Who on my caseload deserves extra attention next shift?",
+  ];
+  const [debriefIdx, setDebriefIdx] = useState(0);
+  const [debriefText, setDebriefText] = useState("");
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -188,7 +233,7 @@ export default function MainDashboard() {
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-3">
               <div className="w-2 h-8 bg-indigo-500 rounded-full" />
-              <span className="text-[10px] font-black text-teal-400 uppercase tracking-[0.3em]">Dreams for Change · Case Management</span>
+              <span className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em]">T.O.O.LS INC · Case Management</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-black text-white tracking-tighter uppercase italic mb-2">
               Staff <span className="text-teal-400">Operations</span> Hub
@@ -197,9 +242,9 @@ export default function MainDashboard() {
               "{mission}"
             </p>
           </div>
-          <div className="flex flex-col sm:flex-row gap-3 shrink-0 relative">
+          <div className="flex flex-col sm:flex-row gap-3 shrink-0">
             <Link 
-              href="https://sites.google.com/d/1kyg4znPtXffPekhf49Q67uCYNi4C4r_A/p/1EkcGjy2FDmczm0Y48qGQJlxNh0U6UBtk/edit" 
+              href="https://sites.google.com/your-org-site" 
               target="_blank"
               className="flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 text-white font-black rounded-2xl text-[10px] uppercase tracking-[0.2em] transition"
             >
@@ -211,40 +256,6 @@ export default function MainDashboard() {
             >
               <ShieldCheck className="w-3 h-3" /> Compliance
             </Link>
-            <button
-              onClick={() => setShowCustomize(c => !c)}
-              title="Customize dashboard"
-              className="flex items-center gap-2 px-4 py-3 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-black rounded-2xl text-[10px] uppercase tracking-[0.2em] transition"
-            >
-              <Settings className="w-3.5 h-3.5" /> Customize
-            </button>
-            {showCustomize && (
-              <div className="absolute top-full mt-2 right-0 z-50 bg-white rounded-2xl shadow-2xl border border-slate-200 p-5 w-72">
-                <div className="flex items-center justify-between mb-3">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Dashboard Sections</p>
-                  <button onClick={() => setShowCustomize(false)} title="Close" aria-label="Close customize panel" className="text-slate-300 hover:text-slate-600 transition"><X className="w-4 h-4" /></button>
-                </div>
-                {[
-                  { key: "ops",      label: "Team / Health / AI" },
-                  { key: "quote",    label: "Staff Quote" },
-                  { key: "hub",      label: "Integration Hub" },
-                  { key: "kpi",      label: "KPI Widget Cards" },
-                  { key: "wellness", label: "Wellness Corner" },
-                ].map(({ key, label }) => (
-                  <div key={key} className="flex items-center justify-between py-2.5 border-b border-slate-50 last:border-0">
-                    <span className="text-xs font-bold text-slate-700">{label}</span>
-                    <button
-                      onClick={() => toggleSection(key)}
-                      title={`Toggle ${label}`}
-                      aria-label={`Toggle ${label} section`}
-                      className={`w-10 h-5 rounded-full transition-colors relative ${dashHidden.has(key) ? "bg-slate-200" : "bg-teal-500"}`}
-                    >
-                      <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all duration-200 ${dashHidden.has(key) ? "left-0.5" : "left-5"}`} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
         </div>
         {/* Inline quick stats */}
@@ -266,7 +277,7 @@ export default function MainDashboard() {
       </div>
 
       {/* ── OPERATIONAL ROW: Team + Health + AI ──────────────────────────── */}
-      {!dashHidden.has("ops") && <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Team Snapshot */}
         <div className="bg-white border border-slate-200 rounded-[2rem] p-6 shadow-sm flex flex-col gap-3">
           <div className="flex items-center gap-2">
@@ -331,10 +342,10 @@ export default function MainDashboard() {
             Open AI Terminal →
           </Link>
         </div>
-      </div>}
+      </div>
 
       {/* ── STAFF QUOTE CARD ─────────────────────────────────────────────── */}
-      {!dashHidden.has("quote") && <div className="bg-gradient-to-r from-indigo-950 to-charcoal-900 rounded-[2rem] px-8 py-5 flex items-center justify-between gap-6 shadow-lg">
+      <div className="bg-gradient-to-r from-indigo-950 to-charcoal-900 rounded-[2rem] px-8 py-5 flex items-center justify-between gap-6 shadow-lg">
         <div className="flex items-start gap-4 min-w-0">
           <Quote className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5" />
           <p className="text-sm text-indigo-100 italic font-medium leading-relaxed">{staffQuote}</p>
@@ -346,300 +357,369 @@ export default function MainDashboard() {
         >
           <Zap className="w-3 h-3" /> New
         </button>
-      </div>}
+      </div>
 
       {/* ── INTEGRATION HUB ───────────────────────────────────────────────── */}
-      {!dashHidden.has("hub") && <IntegrationHub role="staff" />}
+      <IntegrationHub role="staff" />
 
       {/* ── KPI WIDGET CARDS ─────────────────────────────────────────────── */}
-      {!dashHidden.has("kpi") && <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
 
         {/* TODOS */}
-        <div className="group/flip h-[28rem] [perspective:1200px]">
-          <div className="relative h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover/flip:[transform:rotateY(180deg)]">
-            {/* FRONT — summary */}
-            <div className="absolute inset-0 [backface-visibility:hidden] bg-white border border-indigo-100 rounded-[2rem] p-6 shadow-sm flex flex-col items-center justify-center gap-5 select-none">
-              <div className="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center">
-                <ListTodo className="w-8 h-8 text-indigo-500" />
+        <div className="bg-white border border-slate-200 rounded-[2rem] p-6 shadow-sm flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-9 h-9 bg-indigo-50 rounded-xl flex items-center justify-center">
+                <ListTodo className="w-4 h-4 text-indigo-600" />
               </div>
-              <div className="text-center">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-1">My Todos</p>
-                <p className="text-5xl font-black text-charcoal-900 tabular-nums leading-none">{todos.filter(t => !t.done).length}</p>
-                <p className="text-xs text-slate-400 font-medium mt-1">open items</p>
-              </div>
-              <div className="flex gap-2 w-full max-w-[12rem]">
-                <span className="flex-1 text-center py-1.5 rounded-xl bg-rose-50 text-rose-600 text-[11px] font-black border border-rose-100">H {priorityCounts(todos).high}</span>
-                <span className="flex-1 text-center py-1.5 rounded-xl bg-amber-50 text-amber-600 text-[11px] font-black border border-amber-100">M {priorityCounts(todos).med}</span>
-                <span className="flex-1 text-center py-1.5 rounded-xl bg-slate-50 text-slate-500 text-[11px] font-black border border-slate-200">L {priorityCounts(todos).low}</span>
-              </div>
-              <p className="text-[10px] text-slate-300 font-medium italic">hover to manage →</p>
+              <h3 className="font-black text-sm text-charcoal-900 tracking-tight uppercase">Todos</h3>
             </div>
-            {/* BACK — interactive */}
-            <div className="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] bg-white border border-slate-200 rounded-[2rem] p-6 shadow-sm flex flex-col gap-4 overflow-y-auto">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-9 h-9 bg-indigo-50 rounded-xl flex items-center justify-center">
-                    <ListTodo className="w-4 h-4 text-indigo-600" />
-                  </div>
-                  <h3 className="font-black text-sm text-charcoal-900 tracking-tight uppercase">Todos</h3>
-                </div>
-                <span className="text-xs font-bold text-slate-400">{todos.filter(t => !t.done).length} open</span>
-              </div>
-              <div className="flex gap-2">
-                <span className="flex-1 text-center py-1 rounded-lg bg-rose-50 text-rose-600 text-[11px] font-black border border-rose-100">H {priorityCounts(todos).high}</span>
-                <span className="flex-1 text-center py-1 rounded-lg bg-amber-50 text-amber-600 text-[11px] font-black border border-amber-100">M {priorityCounts(todos).med}</span>
-                <span className="flex-1 text-center py-1 rounded-lg bg-slate-50 text-slate-500 text-[11px] font-black border border-slate-200">L {priorityCounts(todos).low}</span>
-              </div>
-              <div className="space-y-1.5 max-h-40 overflow-y-auto pr-1">
-                {todos.map(t => (
-                  <div key={t.id} className={`flex items-start gap-2 group/item ${t.done ? "opacity-40" : ""}`}>
-                    <button onClick={() => toggleTodo(t.id)} aria-label="Toggle todo" className="mt-0.5 shrink-0">
-                      <CheckCircle2 className={`w-4 h-4 ${t.done ? "text-emerald-500" : "text-slate-200 group-hover/item:text-slate-300"}`} />
-                    </button>
-                    <span className={`text-[12px] flex-1 leading-snug ${t.done ? "line-through text-slate-400" : "text-slate-700"}`}>{t.text}</span>
-                    <div className="flex items-center gap-1 shrink-0">
-                      <span className={`text-[9px] font-black px-1.5 rounded-full ${
-                        t.priority === "high" ? "bg-rose-100 text-rose-600" :
-                        t.priority === "med"  ? "bg-amber-100 text-amber-600" :
-                        "bg-slate-100 text-slate-500"
-                      }`}>{t.priority[0].toUpperCase()}</span>
-                      <button onClick={() => removeTodo(t.id)} aria-label="Remove todo" className="opacity-0 group-hover/item:opacity-100 transition">
-                        <X className="w-3 h-3 text-slate-400 hover:text-rose-500" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="border-t border-slate-100 pt-3 space-y-2">
-                <div className="flex gap-1">
-                  {(["high", "med", "low"] as Priority[]).map(p => (
-                    <button key={p} onClick={() => setNewTodoPriority(p)}
-                      className={`flex-1 text-[10px] font-black py-1 rounded-lg uppercase tracking-wide transition ${
-                        newTodoPriority === p
-                          ? p === "high" ? "bg-rose-500 text-white" : p === "med" ? "bg-amber-500 text-white" : "bg-slate-500 text-white"
-                          : "bg-slate-50 text-slate-400 hover:bg-slate-100"
-                      }`}>{p}</button>
-                  ))}
-                </div>
-                <div className="flex gap-2">
-                  <input value={newTodo} onChange={e => setNewTodo(e.target.value)}
-                    onKeyDown={e => e.key === "Enter" && addTodo()} placeholder="Add todo…"
-                    className="flex-1 text-xs px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-400 bg-slate-50" />
-                  <button onClick={addTodo} aria-label="Add todo" className="w-8 h-8 bg-indigo-600 text-white rounded-xl flex items-center justify-center hover:bg-indigo-700 transition shrink-0">
-                    <Plus className="w-3.5 h-3.5" />
+            <span className="text-xs font-bold text-slate-400">{todos.filter(t => !t.done).length} open</span>
+          </div>
+          <div className="flex gap-2">
+            <span className="flex-1 text-center py-1 rounded-lg bg-rose-50 text-rose-600 text-[11px] font-black border border-rose-100">H {priorityCounts(todos).high}</span>
+            <span className="flex-1 text-center py-1 rounded-lg bg-amber-50 text-amber-600 text-[11px] font-black border border-amber-100">M {priorityCounts(todos).med}</span>
+            <span className="flex-1 text-center py-1 rounded-lg bg-slate-50 text-slate-500 text-[11px] font-black border border-slate-200">L {priorityCounts(todos).low}</span>
+          </div>
+          <div className="space-y-1.5 max-h-40 overflow-y-auto pr-1">
+            {todos.map(t => (
+              <div key={t.id} className={`flex items-start gap-2 group ${t.done ? "opacity-40" : ""}`}>
+                <button onClick={() => toggleTodo(t.id)} aria-label="Toggle todo" className="mt-0.5 shrink-0">
+                  <CheckCircle2 className={`w-4 h-4 ${t.done ? "text-emerald-500" : "text-slate-200 group-hover:text-slate-300"}`} />
+                </button>
+                <span className={`text-[12px] flex-1 leading-snug ${t.done ? "line-through text-slate-400" : "text-slate-700"}`}>{t.text}</span>
+                <div className="flex items-center gap-1 shrink-0">
+                  <span className={`text-[9px] font-black px-1.5 rounded-full ${
+                    t.priority === "high" ? "bg-rose-100 text-rose-600" :
+                    t.priority === "med"  ? "bg-amber-100 text-amber-600" :
+                    "bg-slate-100 text-slate-500"
+                  }`}>{t.priority[0].toUpperCase()}</span>
+                  <button onClick={() => removeTodo(t.id)} aria-label="Remove todo" className="opacity-0 group-hover:opacity-100 transition">
+                    <X className="w-3 h-3 text-slate-400 hover:text-rose-500" />
                   </button>
                 </div>
               </div>
+            ))}
+          </div>
+          <div className="border-t border-slate-100 pt-3 space-y-2">
+            <div className="flex gap-1">
+              {(["high", "med", "low"] as Priority[]).map(p => (
+                <button key={p} onClick={() => setNewTodoPriority(p)}
+                  className={`flex-1 text-[10px] font-black py-1 rounded-lg uppercase tracking-wide transition ${
+                    newTodoPriority === p
+                      ? p === "high" ? "bg-rose-500 text-white" : p === "med" ? "bg-amber-500 text-white" : "bg-slate-500 text-white"
+                      : "bg-slate-50 text-slate-400 hover:bg-slate-100"
+                  }`}>{p}</button>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <input value={newTodo} onChange={e => setNewTodo(e.target.value)}
+                onKeyDown={e => e.key === "Enter" && addTodo()} placeholder="Add todo…"
+                className="flex-1 text-xs px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-400 bg-slate-50" />
+              <button onClick={addTodo} aria-label="Add todo" className="w-8 h-8 bg-indigo-600 text-white rounded-xl flex items-center justify-center hover:bg-indigo-700 transition shrink-0">
+                <Plus className="w-3.5 h-3.5" />
+              </button>
             </div>
           </div>
         </div>
 
         {/* TASKS */}
-        <div className="group/flip h-[28rem] [perspective:1200px]">
-          <div className="relative h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover/flip:[transform:rotateY(180deg)]">
-            {/* FRONT — summary */}
-            <div className="absolute inset-0 [backface-visibility:hidden] bg-white border border-teal-100 rounded-[2rem] p-6 shadow-sm flex flex-col items-center justify-center gap-5 select-none">
-              <div className="w-16 h-16 bg-teal-50 rounded-2xl flex items-center justify-center">
-                <CheckSquare className="w-8 h-8 text-teal-500" />
+        <div className="bg-white border border-slate-200 rounded-[2rem] p-6 shadow-sm flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-9 h-9 bg-teal-50 rounded-xl flex items-center justify-center">
+                <CheckSquare className="w-4 h-4 text-teal-600" />
               </div>
-              <div className="text-center">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-1">Tasks</p>
-                <p className="text-5xl font-black text-charcoal-900 tabular-nums leading-none">{tasks.filter(t => !t.done).length}</p>
-                <p className="text-xs text-slate-400 font-medium mt-1">open items</p>
-              </div>
-              <div className="flex gap-2 w-full max-w-[12rem]">
-                <span className="flex-1 text-center py-1.5 rounded-xl bg-rose-50 text-rose-600 text-[11px] font-black border border-rose-100">H {priorityCounts(tasks).high}</span>
-                <span className="flex-1 text-center py-1.5 rounded-xl bg-amber-50 text-amber-600 text-[11px] font-black border border-amber-100">M {priorityCounts(tasks).med}</span>
-                <span className="flex-1 text-center py-1.5 rounded-xl bg-slate-50 text-slate-500 text-[11px] font-black border border-slate-200">L {priorityCounts(tasks).low}</span>
-              </div>
-              <p className="text-[10px] text-slate-300 font-medium italic">hover to manage →</p>
+              <h3 className="font-black text-sm text-charcoal-900 tracking-tight uppercase">Tasks</h3>
             </div>
-            {/* BACK — interactive */}
-            <div className="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] bg-white border border-slate-200 rounded-[2rem] p-6 shadow-sm flex flex-col gap-4 overflow-y-auto">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-9 h-9 bg-teal-50 rounded-xl flex items-center justify-center">
-                    <CheckSquare className="w-4 h-4 text-teal-600" />
-                  </div>
-                  <h3 className="font-black text-sm text-charcoal-900 tracking-tight uppercase">Tasks</h3>
-                </div>
-                <span className="text-xs font-bold text-slate-400">{tasks.filter(t => !t.done).length} open</span>
-              </div>
-              <div className="flex gap-2">
-                <span className="flex-1 text-center py-1 rounded-lg bg-rose-50 text-rose-600 text-[11px] font-black border border-rose-100">H {priorityCounts(tasks).high}</span>
-                <span className="flex-1 text-center py-1 rounded-lg bg-amber-50 text-amber-600 text-[11px] font-black border border-amber-100">M {priorityCounts(tasks).med}</span>
-                <span className="flex-1 text-center py-1 rounded-lg bg-slate-50 text-slate-500 text-[11px] font-black border border-slate-200">L {priorityCounts(tasks).low}</span>
-              </div>
-              <div className="space-y-1.5 max-h-40 overflow-y-auto pr-1">
-                {tasks.map(t => (
-                  <div key={t.id} className={`flex items-start gap-2 group/item ${t.done ? "opacity-40" : ""}`}>
-                    <button onClick={() => toggleTask(t.id)} aria-label="Toggle task" className="mt-0.5 shrink-0">
-                      <CheckCircle2 className={`w-4 h-4 ${t.done ? "text-emerald-500" : "text-slate-200 group-hover/item:text-slate-300"}`} />
-                    </button>
-                    <span className={`text-[12px] flex-1 leading-snug ${t.done ? "line-through text-slate-400" : "text-slate-700"}`}>{t.text}</span>
-                    <div className="flex items-center gap-1 shrink-0">
-                      <span className={`text-[9px] font-black px-1.5 rounded-full ${
-                        t.priority === "high" ? "bg-rose-100 text-rose-600" :
-                        t.priority === "med"  ? "bg-amber-100 text-amber-600" :
-                        "bg-slate-100 text-slate-500"
-                      }`}>{t.priority[0].toUpperCase()}</span>
-                      <button onClick={() => removeTask(t.id)} aria-label="Remove task" className="opacity-0 group-hover/item:opacity-100 transition">
-                        <X className="w-3 h-3 text-slate-400 hover:text-rose-500" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="border-t border-slate-100 pt-3 space-y-2">
-                <div className="flex gap-1">
-                  {(["high", "med", "low"] as Priority[]).map(p => (
-                    <button key={p} onClick={() => setNewTaskPriority(p)}
-                      className={`flex-1 text-[10px] font-black py-1 rounded-lg uppercase tracking-wide transition ${
-                        newTaskPriority === p
-                          ? p === "high" ? "bg-rose-500 text-white" : p === "med" ? "bg-amber-500 text-white" : "bg-slate-500 text-white"
-                          : "bg-slate-50 text-slate-400 hover:bg-slate-100"
-                      }`}>{p}</button>
-                  ))}
-                </div>
-                <div className="flex gap-2">
-                  <input value={newTask} onChange={e => setNewTask(e.target.value)}
-                    onKeyDown={e => e.key === "Enter" && addTask()} placeholder="Add task…"
-                    className="flex-1 text-xs px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-teal-400 bg-slate-50" />
-                  <button onClick={addTask} aria-label="Add task" className="w-8 h-8 bg-teal-600 text-white rounded-xl flex items-center justify-center hover:bg-teal-700 transition shrink-0">
-                    <Plus className="w-3.5 h-3.5" />
+            <span className="text-xs font-bold text-slate-400">{tasks.filter(t => !t.done).length} open</span>
+          </div>
+          <div className="flex gap-2">
+            <span className="flex-1 text-center py-1 rounded-lg bg-rose-50 text-rose-600 text-[11px] font-black border border-rose-100">H {priorityCounts(tasks).high}</span>
+            <span className="flex-1 text-center py-1 rounded-lg bg-amber-50 text-amber-600 text-[11px] font-black border border-amber-100">M {priorityCounts(tasks).med}</span>
+            <span className="flex-1 text-center py-1 rounded-lg bg-slate-50 text-slate-500 text-[11px] font-black border border-slate-200">L {priorityCounts(tasks).low}</span>
+          </div>
+          <div className="space-y-1.5 max-h-40 overflow-y-auto pr-1">
+            {tasks.map(t => (
+              <div key={t.id} className={`flex items-start gap-2 group ${t.done ? "opacity-40" : ""}`}>
+                <button onClick={() => toggleTask(t.id)} aria-label="Toggle task" className="mt-0.5 shrink-0">
+                  <CheckCircle2 className={`w-4 h-4 ${t.done ? "text-emerald-500" : "text-slate-200 group-hover:text-slate-300"}`} />
+                </button>
+                <span className={`text-[12px] flex-1 leading-snug ${t.done ? "line-through text-slate-400" : "text-slate-700"}`}>{t.text}</span>
+                <div className="flex items-center gap-1 shrink-0">
+                  <span className={`text-[9px] font-black px-1.5 rounded-full ${
+                    t.priority === "high" ? "bg-rose-100 text-rose-600" :
+                    t.priority === "med"  ? "bg-amber-100 text-amber-600" :
+                    "bg-slate-100 text-slate-500"
+                  }`}>{t.priority[0].toUpperCase()}</span>
+                  <button onClick={() => removeTask(t.id)} aria-label="Remove task" className="opacity-0 group-hover:opacity-100 transition">
+                    <X className="w-3 h-3 text-slate-400 hover:text-rose-500" />
                   </button>
                 </div>
               </div>
+            ))}
+          </div>
+          <div className="border-t border-slate-100 pt-3 space-y-2">
+            <div className="flex gap-1">
+              {(["high", "med", "low"] as Priority[]).map(p => (
+                <button key={p} onClick={() => setNewTaskPriority(p)}
+                  className={`flex-1 text-[10px] font-black py-1 rounded-lg uppercase tracking-wide transition ${
+                    newTaskPriority === p
+                      ? p === "high" ? "bg-rose-500 text-white" : p === "med" ? "bg-amber-500 text-white" : "bg-slate-500 text-white"
+                      : "bg-slate-50 text-slate-400 hover:bg-slate-100"
+                  }`}>{p}</button>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <input value={newTask} onChange={e => setNewTask(e.target.value)}
+                onKeyDown={e => e.key === "Enter" && addTask()} placeholder="Add task…"
+                className="flex-1 text-xs px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-teal-400 bg-slate-50" />
+              <button onClick={addTask} aria-label="Add task" className="w-8 h-8 bg-teal-600 text-white rounded-xl flex items-center justify-center hover:bg-teal-700 transition shrink-0">
+                <Plus className="w-3.5 h-3.5" />
+              </button>
             </div>
           </div>
         </div>
 
         {/* UPCOMING EVENTS */}
-        <div className="group/flip h-[28rem] [perspective:1200px]">
-          <div className="relative h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover/flip:[transform:rotateY(180deg)]">
-            {/* FRONT — summary */}
-            <div className="absolute inset-0 [backface-visibility:hidden] bg-white border border-amber-100 rounded-[2rem] p-6 shadow-sm flex flex-col items-center justify-center gap-5 select-none">
-              <div className="w-16 h-16 bg-amber-50 rounded-2xl flex items-center justify-center">
-                <CalendarCheck className="w-8 h-8 text-amber-500" />
-              </div>
-              <div className="text-center">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-1">Upcoming Events</p>
-                <p className="text-5xl font-black text-charcoal-900 tabular-nums leading-none">{upcomingEvents.length}</p>
-                <p className="text-xs text-slate-400 font-medium mt-1">scheduled</p>
-              </div>
-              {upcomingEvents[0] && (
-                <div className="w-full max-w-[14rem] bg-amber-50 border border-amber-100 rounded-2xl p-3 text-center">
-                  <p className="text-[9px] font-black text-amber-600 uppercase tracking-widest mb-0.5">Next Up</p>
-                  <p className="text-xs font-bold text-charcoal-900 leading-snug line-clamp-2">{upcomingEvents[0].title}</p>
-                  <p className="text-[10px] text-slate-400 mt-0.5">{upcomingEvents[0].date} · {upcomingEvents[0].time}</p>
-                </div>
-              )}
-              <p className="text-[10px] text-slate-300 font-medium italic">hover to view all →</p>
+        <div className="bg-white border border-slate-200 rounded-[2rem] p-6 shadow-sm flex flex-col gap-4">
+          <div className="flex items-center gap-2">
+            <div className="w-9 h-9 bg-amber-50 rounded-xl flex items-center justify-center">
+              <CalendarCheck className="w-4 h-4 text-amber-600" />
             </div>
-            {/* BACK — interactive */}
-            <div className="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] bg-white border border-slate-200 rounded-[2rem] p-6 shadow-sm flex flex-col gap-4 overflow-y-auto">
-              <div className="flex items-center gap-2">
-                <div className="w-9 h-9 bg-amber-50 rounded-xl flex items-center justify-center">
-                  <CalendarCheck className="w-4 h-4 text-amber-600" />
+            <h3 className="font-black text-sm text-charcoal-900 tracking-tight uppercase">Upcoming Events</h3>
+          </div>
+          <div className="space-y-1 flex-1 max-h-52 overflow-y-auto pr-1">
+            {upcomingEvents.map((ev, i) => (
+              <div key={i} className="flex items-start gap-3 py-2 border-b border-slate-50 last:border-0">
+                <div className="text-center shrink-0 w-14">
+                  <p className="text-[9px] font-black text-slate-400 uppercase leading-tight">{ev.date}</p>
+                  <p className="text-[10px] font-bold text-slate-500 mt-0.5">{ev.time}</p>
                 </div>
-                <h3 className="font-black text-sm text-charcoal-900 tracking-tight uppercase">Upcoming Events</h3>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[12px] font-bold text-charcoal-900 leading-snug truncate">{ev.title}</p>
+                  <span className={`text-[9px] font-black uppercase tracking-wide px-1.5 py-0.5 rounded-full ${eventTypeColor[ev.type]}`}>{ev.type}</span>
+                </div>
               </div>
-              <div className="space-y-1 flex-1 max-h-52 overflow-y-auto pr-1">
-                {upcomingEvents.map((ev, i) => (
-                  <div key={i} className="flex items-start gap-3 py-2 border-b border-slate-50 last:border-0">
-                    <div className="text-center shrink-0 w-14">
-                      <p className="text-[9px] font-black text-slate-400 uppercase leading-tight">{ev.date}</p>
-                      <p className="text-[10px] font-bold text-slate-500 mt-0.5">{ev.time}</p>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[12px] font-bold text-charcoal-900 leading-snug truncate">{ev.title}</p>
-                      <span className={`text-[9px] font-black uppercase tracking-wide px-1.5 py-0.5 rounded-full ${eventTypeColor[ev.type]}`}>{ev.type}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="pt-1 border-t border-slate-100">
-                <Link href="/portal/staff/calendar" className="text-[10px] font-black text-amber-600 uppercase tracking-widest hover:text-amber-700 flex items-center gap-1 transition">
-                  View Full Calendar <ArrowRight className="w-3 h-3" />
-                </Link>
-              </div>
-            </div>
+            ))}
+          </div>
+          <div className="pt-1 border-t border-slate-100">
+            <Link href="/portal/staff/calendar" className="text-[10px] font-black text-amber-600 uppercase tracking-widest hover:text-amber-700 flex items-center gap-1 transition">
+              View Full Calendar <ArrowRight className="w-3 h-3" />
+            </Link>
           </div>
         </div>
 
         {/* POMODORO */}
-        <div className="group/flip h-[28rem] [perspective:1200px]">
-          <div className="relative h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover/flip:[transform:rotateY(180deg)]">
-            {/* FRONT — summary */}
-            <div className="absolute inset-0 [backface-visibility:hidden] bg-white border border-slate-200 rounded-[2rem] p-6 shadow-sm flex flex-col items-center justify-center gap-5 select-none">
-              <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${pomMode === "work" ? "bg-indigo-50" : "bg-teal-50"}`}>
-                {pomMode === "work" ? <Timer className="w-8 h-8 text-indigo-500" /> : <Coffee className="w-8 h-8 text-teal-500" />}
+        <div className="bg-white border border-slate-200 rounded-[2rem] p-6 shadow-sm flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${pomMode === "work" ? "bg-indigo-50" : "bg-teal-50"}`}>
+                {pomMode === "work" ? <Timer className="w-4 h-4 text-indigo-600" /> : <Coffee className="w-4 h-4 text-teal-600" />}
               </div>
-              <div className="text-center">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-1">Pomodoro</p>
-                <p className={`text-5xl font-black tabular-nums leading-none ${pomMode === "work" ? "text-indigo-700" : "text-teal-600"}`}>{pomMins}:{pomSecs}</p>
-                <p className="text-xs text-slate-400 font-medium mt-1">{pomMode === "work" ? "focus session" : "short break"}</p>
+              <div>
+                <h3 className="font-black text-sm text-charcoal-900 tracking-tight uppercase">Pomodoro</h3>
+                <p className="text-[10px] text-slate-400 leading-snug mt-0.5">Work 25 min, rest 5 min. Reduces mental fatigue &amp; sharpens focus.</p>
               </div>
-              <div className="w-full max-w-[12rem] bg-slate-100 rounded-full h-2 overflow-hidden">
-                <div className={`h-full rounded-full transition-all duration-1000 ${pomMode === "work" ? "bg-indigo-500" : "bg-teal-500"}`} style={{ width: `${pomPct}%` }} />
-              </div>
-              <p className="text-[10px] text-slate-400 font-medium">{pomSessions} session{pomSessions !== 1 ? "s" : ""} completed</p>
-              <p className="text-[10px] text-slate-300 font-medium italic">hover to control →</p>
             </div>
-            {/* BACK — interactive */}
-            <div className="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] bg-white border border-slate-200 rounded-[2rem] p-6 shadow-sm flex flex-col gap-4 overflow-y-auto">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${pomMode === "work" ? "bg-indigo-50" : "bg-teal-50"}`}>
-                    {pomMode === "work" ? <Timer className="w-4 h-4 text-indigo-600" /> : <Coffee className="w-4 h-4 text-teal-600" />}
-                  </div>
-                  <div>
-                    <h3 className="font-black text-sm text-charcoal-900 tracking-tight uppercase">Pomodoro</h3>
-                    <p className="text-[10px] text-slate-400 leading-snug mt-0.5">Work 25 min, rest 5 min. Reduces mental fatigue &amp; sharpens focus.</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1">
-                  {Array.from({ length: Math.min(pomSessions, 4) }).map((_, i) => (
-                    <div key={i} className="w-2 h-2 rounded-full bg-indigo-400" />
-                  ))}
-                  {pomSessions > 4 && <span className="text-[10px] font-black text-indigo-500 ml-1">+{pomSessions - 4}</span>}
-                </div>
-              </div>
-              <div className={`text-center py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest ${pomMode === "work" ? "bg-indigo-50 text-indigo-600" : "bg-teal-50 text-teal-600"}`}>
-                {pomMode === "work" ? "🎯 Focus Session" : "☕ Short Break"}
-              </div>
-              <div className="flex flex-col items-center gap-3">
-                <span className={`text-5xl font-black tracking-tighter tabular-nums ${pomMode === "work" ? "text-indigo-700" : "text-teal-600"}`}>
-                  {pomMins}:{pomSecs}
-                </span>
-                <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                  <div className={`h-full rounded-full transition-all duration-1000 ${pomMode === "work" ? "bg-indigo-500" : "bg-teal-500"}`}
-                    style={{ width: `${pomPct}%` }} />
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <button onClick={() => setPomRunning(r => !r)}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest transition shadow-sm ${
-                    pomMode === "work" ? "bg-indigo-600 hover:bg-indigo-700 text-white" : "bg-teal-600 hover:bg-teal-700 text-white"
-                  }`}>
-                  {pomRunning ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-                  {pomRunning ? "Pause" : "Start"}
-                </button>
-                <button onClick={pomReset} aria-label="Reset timer" className="w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-xl flex items-center justify-center transition">
-                  <RotateCcw className="w-3.5 h-3.5" />
-                </button>
-              </div>
-              <p className="text-center text-[10px] text-slate-400 font-medium">
-                {pomSessions} session{pomSessions !== 1 ? "s" : ""} completed today
-              </p>
+            <div className="flex items-center gap-1">
+              {Array.from({ length: Math.min(pomSessions, 4) }).map((_, i) => (
+                <div key={i} className="w-2 h-2 rounded-full bg-indigo-400" />
+              ))}
+              {pomSessions > 4 && <span className="text-[10px] font-black text-indigo-500 ml-1">+{pomSessions - 4}</span>}
+            </div>
+          </div>
+          <div className={`text-center py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest ${pomMode === "work" ? "bg-indigo-50 text-indigo-600" : "bg-teal-50 text-teal-600"}`}>
+            {pomMode === "work" ? "🎯 Focus Session" : "☕ Short Break"}
+          </div>
+          <div className="flex flex-col items-center gap-3">
+            <span className={`text-5xl font-black tracking-tighter tabular-nums ${pomMode === "work" ? "text-indigo-700" : "text-teal-600"}`}>
+              {pomMins}:{pomSecs}
+            </span>
+            <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+              <div className={`h-full rounded-full transition-all duration-1000 ${pomMode === "work" ? "bg-indigo-500" : "bg-teal-500"}`}
+                style={{ width: `${pomPct}%` }} />
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <button onClick={() => setPomRunning(r => !r)}
+              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest transition shadow-sm ${
+                pomMode === "work" ? "bg-indigo-600 hover:bg-indigo-700 text-white" : "bg-teal-600 hover:bg-teal-700 text-white"
+              }`}>
+              {pomRunning ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+              {pomRunning ? "Pause" : "Start"}
+            </button>
+            <button onClick={pomReset} aria-label="Reset timer" className="w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-xl flex items-center justify-center transition">
+              <RotateCcw className="w-3.5 h-3.5" />
+            </button>
+          </div>
+          <p className="text-center text-[10px] text-slate-400 font-medium">
+            {pomSessions} session{pomSessions !== 1 ? "s" : ""} completed today
+          </p>
+        </div>
+
+      </div>
+
+      {/* ── STAFF WELLNESS & PRODUCTIVITY CORNER ─────────────────────────── */}
+      <div className="bg-white border border-slate-200 rounded-[2rem] overflow-hidden shadow-sm">
+        <div className="px-6 py-4 flex items-center justify-between border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 bg-violet-50 rounded-xl flex items-center justify-center">
+              <Sparkles className="w-4 h-4 text-violet-600" />
+            </div>
+            <div>
+              <h3 className="font-black text-sm text-charcoal-900 uppercase tracking-tight">Wellness &amp; Productivity Corner</h3>
+              <p className="text-[10px] text-slate-400 font-medium">Recharge, refocus, and reset between sessions</p>
             </div>
           </div>
         </div>
+        <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
-      </div>}
+          {/* Brain Dump */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Brain className="w-4 h-4 text-indigo-500" />
+              <h4 className="text-xs font-black text-charcoal-900 uppercase tracking-wide">Brain Dump</h4>
+              <span className="text-[9px] text-slate-400 font-medium">Clear your mind before a session</span>
+            </div>
+            <textarea
+              value={brainDump}
+              onChange={e => setBrainDump(e.target.value)}
+              placeholder="Dump everything on your mind here — worries, tasks, random thoughts. Get it out so you can focus fully."
+              className="w-full h-32 text-xs p-3 rounded-xl border border-slate-200 bg-slate-50/60 resize-none focus:outline-none focus:border-indigo-300 focus:bg-white transition leading-relaxed"
+            />
+            <button
+              onClick={() => setBrainDump("")}
+              className="text-[10px] font-black text-slate-400 hover:text-rose-500 uppercase tracking-widest transition"
+            >
+              ✕ Clear &amp; Release
+            </button>
+          </div>
 
-      {/* ── STAFF WELLNESS & PRODUCTIVITY CORNER ─────────────────────────── */}
-      {!dashHidden.has("wellness") && <WellnessCorner />}
+          {/* Box Breathing */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Wind className="w-4 h-4 text-teal-500" />
+              <h4 className="text-xs font-black text-charcoal-900 uppercase tracking-wide">Box Breathing</h4>
+              <span className="text-[9px] text-slate-400 font-medium">4-4-4-4 for calm &amp; clarity</span>
+            </div>
+            <div className={`rounded-xl p-5 text-center transition-all duration-700 ${
+              breathStep === "idle"   ? "bg-slate-50 border border-slate-200" :
+              breathStep === "inhale" ? "bg-blue-50 border border-blue-200" :
+              breathStep === "hold1"  ? "bg-amber-50 border border-amber-200" :
+              breathStep === "exhale" ? "bg-teal-50 border border-teal-200" :
+              "bg-purple-50 border border-purple-200"
+            }`}>
+              <p className="text-3xl mb-1.5">
+                {breathStep === "idle" ? "🌬️" : breathStep === "inhale" ? "⬆️" : breathStep === "hold1" ? "⏸️" : breathStep === "exhale" ? "⬇️" : "⏸️"}
+              </p>
+              <p className={`text-xs font-black uppercase tracking-widest ${
+                breathStep === "idle"   ? "text-slate-400" :
+                breathStep === "inhale" ? "text-blue-600" :
+                breathStep === "hold1"  ? "text-amber-600" :
+                breathStep === "exhale" ? "text-teal-600" : "text-purple-600"
+              }`}>
+                {breathStep === "idle" ? "Ready when you are" :
+                 breathStep === "inhale" ? "Inhale… 4 counts" :
+                 breathStep === "hold1"  ? "Hold… 4 counts" :
+                 breathStep === "exhale" ? "Exhale… 4 counts" : "Hold… 4 counts"}
+              </p>
+            </div>
+            <button
+              onClick={startBoxBreath}
+              disabled={breathStep !== "idle"}
+              className="w-full text-[11px] font-black uppercase tracking-widest py-2.5 rounded-xl bg-teal-600 text-white hover:bg-teal-700 disabled:opacity-40 disabled:cursor-not-allowed transition"
+            >
+              {breathStep === "idle" ? "Begin Breath Cycle" : "Breathing…"}
+            </button>
+          </div>
+
+          {/* Focus Playlists */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Music className="w-4 h-4 text-purple-500" />
+              <h4 className="text-xs font-black text-charcoal-900 uppercase tracking-wide">Focus Playlists</h4>
+              <span className="text-[9px] text-slate-400 font-medium">Music for deep work</span>
+            </div>
+            <div className="space-y-2">
+              {FOCUS_PLAYLISTS.map((pl, i) => (
+                <a key={i} href={pl.url} target="_blank" rel="noopener noreferrer"
+                  className="flex items-center gap-2.5 p-2.5 rounded-xl border border-slate-100 hover:border-purple-200 hover:bg-purple-50/50 transition text-xs font-bold text-charcoal-900 group"
+                >
+                  <span className="text-base">{pl.emoji}</span>
+                  <span className="flex-1">{pl.name}</span>
+                  <ExternalLink className="w-3 h-3 text-slate-300 group-hover:text-purple-500 transition" />
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Micro Stretch */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Activity className="w-4 h-4 text-amber-500" />
+              <h4 className="text-xs font-black text-charcoal-900 uppercase tracking-wide">Micro Stretch</h4>
+              <span className="text-[9px] text-slate-400 font-medium">30-sec desk breaks</span>
+            </div>
+            <div className="p-5 bg-amber-50 rounded-xl border border-amber-100 text-center">
+              <p className="text-3xl mb-2">🤸</p>
+              <p className="text-sm font-bold text-charcoal-900 leading-snug">{STRETCHES[stretchIdx]}</p>
+            </div>
+            <button
+              onClick={() => setStretchIdx(i => (i + 1) % STRETCHES.length)}
+              className="w-full text-[11px] font-black uppercase tracking-widest py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white transition"
+            >
+              Next Stretch →
+            </button>
+          </div>
+
+          {/* Staff Affirmation */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-rose-400" />
+              <h4 className="text-xs font-black text-charcoal-900 uppercase tracking-wide">Your Affirmation</h4>
+              <span className="text-[9px] text-slate-400 font-medium">Tap to refresh</span>
+            </div>
+            <div className="p-5 bg-gradient-to-br from-rose-50 to-pink-50 rounded-xl border border-rose-100 min-h-[88px] flex items-center justify-center">
+              <p className="text-sm text-center font-bold text-rose-800 italic leading-snug">
+                &ldquo;{AFFIRMATIONS_STAFF[staffAffirmIdx]}&rdquo;
+              </p>
+            </div>
+            <button
+              onClick={() => setStaffAffirmIdx(i => (i + 1) % AFFIRMATIONS_STAFF.length)}
+              className="w-full text-[11px] font-black uppercase tracking-widest py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white transition"
+            >
+              New Affirmation ✦
+            </button>
+          </div>
+
+          {/* Shift Debrief */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Flame className="w-4 h-4 text-orange-500" />
+              <h4 className="text-xs font-black text-charcoal-900 uppercase tracking-wide">Shift Debrief</h4>
+              <span className="text-[9px] text-slate-400 font-medium">Reflect before you log off</span>
+            </div>
+            <div className="p-4 bg-orange-50 rounded-xl border border-orange-100">
+              <p className="text-[10px] font-black text-orange-600 uppercase tracking-wider mb-2">Prompt {debriefIdx + 1}/{DEBRIEF_PROMPTS.length}</p>
+              <p className="text-xs font-bold text-charcoal-900 leading-snug">{DEBRIEF_PROMPTS[debriefIdx]}</p>
+            </div>
+            <textarea
+              value={debriefText}
+              onChange={e => setDebriefText(e.target.value)}
+              placeholder="Your reflection…"
+              className="w-full h-16 text-xs p-3 rounded-xl border border-slate-200 bg-slate-50/60 resize-none focus:outline-none focus:border-orange-300 focus:bg-white transition"
+            />
+            <button
+              onClick={() => { setDebriefIdx(i => (i + 1) % DEBRIEF_PROMPTS.length); setDebriefText(""); }}
+              className="w-full text-[11px] font-black uppercase tracking-widest py-2 rounded-xl border border-orange-200 text-orange-600 hover:bg-orange-50 transition"
+            >
+              Next Prompt →
+            </button>
+          </div>
+
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         

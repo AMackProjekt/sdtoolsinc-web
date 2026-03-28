@@ -67,7 +67,7 @@ export default function RequestAccessPage() {
         {/* Header */}
         <div className="flex flex-col items-center mb-8">
           <div className="w-12 h-12 bg-teal-600 text-white rounded-full flex items-center justify-center mb-4 text-xl font-bold">
-            DFC
+            Org
           </div>
           <h1 className="text-2xl font-bold text-slate-900">Request Access</h1>
           <p className="text-slate-500 text-sm mt-2 text-center">

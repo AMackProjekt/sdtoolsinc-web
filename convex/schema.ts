@@ -224,49 +224,4 @@ export default defineSchema({
     image: v.optional(v.string()),  // base64 data URL
     ts: v.string(),
   }).index("by_convKey", ["convKey"]),
-
-  // ── Program Enrollments ────────────────────────────────────────────────────
-  enrollments: defineTable({
-    slot: v.string(),
-    clientName: v.string(),
-    location: v.string(), // "Tier 3" | "Tier 4" | "B Lot" | "Safe Parking"
-    enrolledDate: v.string(),
-    caseManager: v.string(),
-    status: v.union(v.literal("active"), v.literal("exited"), v.literal("on-hold")),
-    notes: v.optional(v.string()),
-  }).index("by_location", ["location"]).index("by_slot", ["slot"]).index("by_status", ["status"]),
-
-  // ── Program Exits ─────────────────────────────────────────────────────────
-  exits: defineTable({
-    slot: v.string(),
-    clientName: v.string(),
-    location: v.string(), // "Tier 3" | "Tier 4" | "B Lot" | "Safe Parking"
-    exitDate: v.string(),
-    exitReason: v.string(),
-    exitDestination: v.optional(v.string()),
-    caseManager: v.string(),
-    notes: v.optional(v.string()),
-  }).index("by_location", ["location"]).index("by_slot", ["slot"]),
-
-  // ── Grievances ────────────────────────────────────────────────────────────
-  grievances: defineTable({
-    reportedBy: v.string(),
-    reporterType: v.union(v.literal("client"), v.literal("staff")),
-    category: v.string(),
-    description: v.string(),
-    status: v.union(v.literal("open"), v.literal("under-review"), v.literal("resolved")),
-    date: v.string(),
-    resolvedAt: v.optional(v.string()),
-    resolution: v.optional(v.string()),
-  }).index("by_reporterType", ["reporterType"]).index("by_status", ["status"]),
-
-  // ── Staff Training Log ────────────────────────────────────────────────────
-  trainingLog: defineTable({
-    staffEmail: v.string(),
-    staffName: v.string(),
-    courseName: v.string(),
-    platform: v.string(), // "Niche Academy" | "Other"
-    completedDate: v.string(),
-    certificateUrl: v.optional(v.string()),
-  }).index("by_staff", ["staffEmail"]),
 });

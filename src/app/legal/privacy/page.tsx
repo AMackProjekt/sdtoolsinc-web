@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export const metadata = { title: "Privacy Policy — CaseFlow Command" };
+export const metadata = { title: "Privacy Policy — CaseFlow Operations" };
 
 export default function PrivacyPage() {
   const year = new Date().getFullYear();
@@ -18,7 +18,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-white font-bold text-base mb-2">1. Who We Are</h2>
-            <p>Dreams For Change ("DFC," "we," "us," or "our") operates CaseFlow Command, a case management platform developed by A MackProjekt. This Privacy Policy explains how we collect, use, store, and protect personal information and Protected Health Information (PHI) in connection with the Platform.</p>
+            <p>T.O.O.LS INC ("Org," "we," "us," or "our") operates CaseFlow Operations, a case management platform developed by A MackProjekt. This Privacy Policy explains how we collect, use, store, and protect personal information and Protected Health Information (PHI) in connection with the Platform.</p>
           </section>
 
           <section>
@@ -57,14 +57,14 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-white font-bold text-base mb-2">4. HIPAA Compliance</h2>
-            <p>DFC is a covered entity and/or business associate under HIPAA. PHI collected on this Platform is handled in accordance with the HIPAA Privacy Rule (45 CFR Part 164, Subpart E) and the HIPAA Security Rule (45 CFR Part 164, Subparts A and C). We maintain a Business Associate Agreement (BAA) with all third-party services that process PHI on our behalf, including our cloud infrastructure providers.</p>
+            <p>The Organization is a covered entity and/or business associate under HIPAA. PHI collected on this Platform is handled in accordance with the HIPAA Privacy Rule (45 CFR Part 164, Subpart E) and the HIPAA Security Rule (45 CFR Part 164, Subparts A and C). We maintain a Business Associate Agreement (BAA) with all third-party services that process PHI on our behalf, including our cloud infrastructure providers.</p>
           </section>
 
           <section>
             <h2 className="text-white font-bold text-base mb-2">5. Data Sharing &amp; Disclosure</h2>
             <p>We do not sell your personal information. We may share data only as follows:</p>
             <ul className="mt-2 ml-5 list-disc space-y-1 text-slate-400">
-              <li><strong className="text-slate-300">Within DFC:</strong> Staff and supervisors access client data only as required for their authorized role.</li>
+              <li><strong className="text-slate-300">Within the Organization:</strong> Staff and supervisors access client data only as required for their authorized role.</li>
               <li><strong className="text-slate-300">Service Providers:</strong> Vercel (hosting), Convex (database), Vercel KV (session storage), Google (authentication/chat), Resend (email) — all under appropriate data processing agreements.</li>
               <li><strong className="text-slate-300">Legal Requirements:</strong> If required by law, court order, or government authority.</li>
               <li><strong className="text-slate-300">Emergency Situations:</strong> To prevent imminent harm to you or others.</li>
@@ -97,7 +97,7 @@ export default function PrivacyPage() {
               <li>Restrict how your information is used or shared in certain circumstances.</li>
               <li>File a complaint with the U.S. Department of Health &amp; Human Services Office for Civil Rights.</li>
             </ul>
-            <p className="mt-3">To exercise these rights, contact: <a href="mailto:privacy@dreamsforchange.org" className="text-teal-400 hover:underline">privacy@dreamsforchange.org</a></p>
+            <p className="mt-3">To exercise these rights, contact: <a href="mailto:privacy@sdtoolsinc.org" className="text-teal-400 hover:underline">privacy@sdtoolsinc.org</a></p>
           </section>
 
           <section>
@@ -113,8 +113,8 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-white font-bold text-base mb-2">11. Contact Us</h2>
             <p>For privacy-related questions or to submit a request:<br />
-              <a href="mailto:privacy@dreamsforchange.org" className="text-teal-400 hover:underline">privacy@dreamsforchange.org</a><br />
-              Dreams For Change · San Diego, California
+              <a href="mailto:privacy@sdtoolsinc.org" className="text-teal-400 hover:underline">privacy@sdtoolsinc.org</a><br />
+              T.O.O.LS INC · San Diego, California
             </p>
           </section>
 
@@ -124,7 +124,7 @@ export default function PrivacyPage() {
           <Link href="/legal/terms" className="hover:text-slate-400 transition-colors">Terms of Use</Link>
           <Link href="/legal/cookies" className="hover:text-slate-400 transition-colors">Cookie Policy</Link>
           <Link href="/" className="hover:text-slate-400 transition-colors">Home</Link>
-          <span className="ml-auto">© {year} Dreams For Change</span>
+          <span className="ml-auto">© {year} T.O.O.LS INC</span>
         </div>
       </div>
     </div>

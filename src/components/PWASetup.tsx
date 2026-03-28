@@ -70,10 +70,10 @@ export default function PWASetup() {
   return (
     <div
       role="alertdialog"
-      aria-label="Install DFC Portal"
+      aria-label="Install Portal"
       className="fixed bottom-5 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-3 bg-slate-800 text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-slate-600/60 backdrop-blur-sm max-w-sm w-[calc(100%-2.5rem)]"
     >
-      {/* DFC icon placeholder */}
+      {/* Org icon placeholder */}
       <div className="shrink-0 w-10 h-10 rounded-xl bg-teal-500/20 border border-teal-500/30 flex items-center justify-center">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
@@ -81,7 +81,7 @@ export default function PWASetup() {
       </div>
 
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold leading-tight text-white">Install DFC Portal</p>
+        <p className="text-sm font-semibold leading-tight text-white">Install Portal</p>
         <p className="text-xs text-slate-400 mt-0.5 leading-snug">
           Add to your home screen for offline access
         </p>

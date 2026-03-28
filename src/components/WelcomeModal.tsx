@@ -15,13 +15,13 @@ export default function WelcomeModal({ userName, portalType, onStartTour, onSkip
   const staffFeatures = [
     "📋  Manage your full caseload and client profiles",
     "📁  Upload and share HIPAA-safe documents",
-    "💬  Message clients in the live Champions Channel",
+    "💬  Message clients via Google Chat",
     "🛡️  Monitor compliance status in real time",
   ];
 
   const clientFeatures = [
     "🎯  Set and track your personal goals",
-    "💬  Message the staff team in the Champions Channel",
+    "💬  Stay in touch with your case manager",
     "👤  Update your profile and contact info",
   ];
 
@@ -50,7 +50,7 @@ export default function WelcomeModal({ userName, portalType, onStartTour, onSkip
             }`}
           >
             {portalType === "staff"
-              ? "You're in CaseFlow Command — your full case management hub. Let us show you around."
+              ? "You're in CaseFlow Operations — your full case management hub. Let us show you around."
               : "You're in your CaseFlow Participant Portal. Here's what you can do here."}
           </p>
         </div>

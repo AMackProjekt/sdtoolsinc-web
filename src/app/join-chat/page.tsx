@@ -43,7 +43,7 @@ export default function JoinChatPage() {
           </div>
           <h1 className="text-2xl font-black text-slate-900 mb-3">Request Sent!</h1>
           <p className="text-slate-500 text-sm leading-relaxed">
-            Your request to join the Champions Channel has been sent to the DFC team. We&apos;ll add you to the space shortly.
+            Your request to join the Team Channel has been sent to the Org team. We&apos;ll add you to the space shortly.
           </p>
           <div className="mt-8 p-4 bg-teal-50 rounded-xl border border-teal-200 text-sm text-teal-800 leading-relaxed">
             <strong>What happens next:</strong> A staff member will send you a Google Chat invitation to <strong>{email}</strong>. Check your inbox and accept the invite.
@@ -65,15 +65,15 @@ export default function JoinChatPage() {
             <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center shrink-0">
               <Image
                 src="/amp-logo.jpeg"
-                alt="Dreams For Change"
+                alt="T.O.O.LS INC"
                 width={36}
                 height={36}
                 className="rounded-xl object-cover"
               />
             </div>
             <div>
-              <p className="text-teal-100 text-xs font-bold uppercase tracking-widest">Dreams For Change</p>
-              <h1 className="text-white text-xl font-black leading-tight">Join the Champions Channel</h1>
+              <p className="text-teal-100 text-xs font-bold uppercase tracking-widest">T.O.O.LS INC</p>
+              <h1 className="text-white text-xl font-black leading-tight">Join the Team Channel</h1>
             </div>
           </div>
 
@@ -82,7 +82,7 @@ export default function JoinChatPage() {
             <div className="flex items-start gap-3 bg-teal-50 border border-teal-200 rounded-xl p-4 mb-7">
               <MessageSquare className="w-4 h-4 text-teal-600 mt-0.5 shrink-0" />
               <p className="text-sm text-teal-800 leading-relaxed">
-                Fill out this form and a DFC staff member will send a Google Chat invite to your email address.
+                Fill out this form and a Org staff member will send a Google Chat invite to your email address.
               </p>
             </div>
 
@@ -149,7 +149,7 @@ export default function JoinChatPage() {
           </div>
 
           <div className="px-8 pb-6 text-center text-xs text-slate-400">
-            Dreams For Change · Champions Channel · Google Chat
+            T.O.O.LS INC · Team Channel · Google Chat
           </div>
         </div>
       </div>

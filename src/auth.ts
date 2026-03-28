@@ -1,7 +1,8 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
-import { createHash, timingSafeEqual } from "crypto";
+import { createHash, timingSafeEqual, scrypt, randomBytes } from "crypto";
+import { promisify } from "util";
 import { decryptJson, encryptJson } from "@/lib/crypto";
 import { getEncryptedRecord, setEncryptedRecord } from "@/lib/server-data-store";
 
@@ -20,11 +21,7 @@ const clientAllowlist = (process.env.CLIENT_ALLOWLIST ?? "")
   .map((email) => email.trim().toLowerCase())
   .filter(Boolean);
 
-const dfcDomain = (process.env.WORKSPACE_DOMAIN ?? "dreamsforchange.org").toLowerCase();
-const privilegedPortalEmails = new Set([
-  "donyale@dreamsforchange.org",
-  "dmack@sdtoolsinc.org",
-]);
+const orgDomain = (process.env.WORKSPACE_DOMAIN ?? "sdtoolsinc.org").toLowerCase();
 
 type StoredClientCredential = {
   email: string;
@@ -32,33 +29,54 @@ type StoredClientCredential = {
   passwordHash: string;
   name?: string;
   approvedAt: string;
-  mustChangePassword?: boolean;
 };
 
 function normalizeLoginIdentifier(value: string) {
   return value.trim().toLowerCase();
 }
 
-function isDfcEmail(email: string) {
-  return normalizeLoginIdentifier(email).endsWith(`@${dfcDomain}`);
+function isOrgEmail(email: string) {
+  return normalizeLoginIdentifier(email).endsWith(`@${orgDomain}`);
 }
 
-function isPrivilegedPortalEmail(email: string) {
-  return privilegedPortalEmails.has(normalizeLoginIdentifier(email));
+// ── Password hashing — scrypt (memory-hard, enterprise-grade) ───────────────
+const scryptAsync = promisify<string | NodeJS.ArrayBufferView, string | NodeJS.ArrayBufferView, number, { N: number; r: number; p: number }, Buffer>(scrypt);
+const SCRYPT_KEYLEN = 64;
+const SCRYPT_PARAMS = { N: 16384, r: 8, p: 1 };
+
+async function hashPasswordAsync(password: string): Promise<string> {
+  const salt = randomBytes(32).toString("hex");
+  const hash = await scryptAsync(password, salt, SCRYPT_KEYLEN, SCRYPT_PARAMS);
+  return `scrypt$${salt}$${hash.toString("hex")}`;
 }
 
-function hashPassword(password: string) {
-  const secret = process.env.AUTH_SECRET ?? "dev-only-change-me";
-  return createHash("sha256").update(`${secret}:${password}`).digest("hex");
-}
-
-function safeCompare(left: string, right: string) {
-  const leftBuffer = Buffer.from(left, "utf8");
-  const rightBuffer = Buffer.from(right, "utf8");
-  if (leftBuffer.length !== rightBuffer.length) {
-    return false;
+/**
+ * Verifies a password against a stored hash.
+ * Supports:
+ *   - New format: "scrypt$<hex-salt>$<hex-hash>"
+ *   - Legacy format: plain SHA-256 hex (migration path — rehash on next password reset)
+ */
+async function verifyPassword(password: string, stored: string): Promise<boolean> {
+  if (stored.startsWith("scrypt$")) {
+    const parts = stored.split("$");
+    if (parts.length !== 3) return false;
+    const [, saltHex, hashHex] = parts;
+    try {
+      const hash = await scryptAsync(password, saltHex, SCRYPT_KEYLEN, SCRYPT_PARAMS);
+      const storedHash = Buffer.from(hashHex, "hex");
+      if (hash.length !== storedHash.length) return false;
+      return timingSafeEqual(hash, storedHash);
+    } catch {
+      return false;
+    }
   }
-  return timingSafeEqual(leftBuffer, rightBuffer);
+  // Legacy SHA-256 path: rehash will occur on next password reset
+  const secret = process.env.AUTH_SECRET ?? "dev-only-change-me";
+  const legacyHash = createHash("sha256").update(`${secret}:${password}`).digest("hex");
+  const left = Buffer.from(legacyHash, "utf8");
+  const right = Buffer.from(stored, "utf8");
+  if (left.length !== right.length) return false;
+  return timingSafeEqual(left, right);
 }
 
 export async function getClientCredential(identifier: string): Promise<StoredClientCredential | null> {
@@ -81,17 +99,15 @@ export async function upsertClientCredential(input: {
   username?: string;
   password: string;
   name?: string;
-  mustChangePassword?: boolean;
 }) {
   const email = normalizeLoginIdentifier(input.email);
   const username = normalizeLoginIdentifier(input.username ?? email.split("@")[0]);
   const record: StoredClientCredential = {
     email,
     username,
-    passwordHash: hashPassword(input.password),
+    passwordHash: await hashPasswordAsync(input.password),
     name: input.name,
     approvedAt: new Date().toISOString(),
-    mustChangePassword: input.mustChangePassword ?? false,
   };
 
   const encrypted = encryptJson(record);
@@ -120,14 +136,14 @@ export async function upsertStaffCredential(input: {
   name?: string;
 }) {
   const email = normalizeLoginIdentifier(input.email);
-  if (!isDfcEmail(email)) {
-    throw new Error("Staff credentials must use a @dreamsforchange.org email address.");
+  if (!isOrgEmail(email)) {
+    throw new Error(`Staff credentials must use a @${orgDomain} email address.`);
   }
   const username = normalizeLoginIdentifier(input.username ?? email.split("@")[0]);
   const record: StoredClientCredential = {
     email,
     username,
-    passwordHash: hashPassword(input.password),
+    passwordHash: await hashPasswordAsync(input.password),
     name: input.name,
     approvedAt: new Date().toISOString(),
   };
@@ -161,7 +177,7 @@ export async function upsertAdminCredential(input: {
   const record: StoredClientCredential = {
     email,
     username,
-    passwordHash: hashPassword(input.password),
+    passwordHash: await hashPasswordAsync(input.password),
     name: input.name,
     approvedAt: new Date().toISOString(),
   };
@@ -172,6 +188,7 @@ export async function upsertAdminCredential(input: {
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  secret: process.env.AUTH_SECRET,
   trustHost: true,
   session: { strategy: "jwt" },
   providers: [
@@ -195,18 +212,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           return null;
         }
 
-        // Client access is gated by having a provisioned credential record — no email allowlist check here.
-        const passwordHash = hashPassword(password);
-        if (!safeCompare(stored.passwordHash, passwordHash)) {
-          return null;
-        }
+        const valid = await verifyPassword(password, stored.passwordHash);
+        if (!valid) return null;
 
         return {
           id: stored.email,
           email: stored.email,
           name: stored.name ?? stored.username,
           role: "client",
-          mustChangePassword: stored.mustChangePassword ?? false,
         };
       },
     }),
@@ -230,14 +243,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           return null;
         }
 
-        if (!isPrivilegedPortalEmail(stored.email)) {
-          return null;
-        }
+        // Verify the stored email is an allowed staff member
+        const storedEmailNorm = stored.email.toLowerCase();
+        const isAllowedStaff =
+          storedEmailNorm.endsWith(`@${orgDomain}`) ||
+          staffAllowlist.includes(storedEmailNorm) ||
+          adminAllowlist.includes(storedEmailNorm);
+        if (!isAllowedStaff) return null;
 
-        const passwordHash = hashPassword(password);
-        if (!safeCompare(stored.passwordHash, passwordHash)) {
-          return null;
-        }
+        const valid = await verifyPassword(password, stored.passwordHash);
+        if (!valid) return null;
 
         return {
           id: stored.email,
@@ -267,14 +282,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           return null;
         }
 
-        if (!isPrivilegedPortalEmail(stored.email)) {
-          return null;
-        }
+        // Verify admin is on the allowlist
+        if (!adminAllowlist.includes(stored.email.toLowerCase())) return null;
 
-        const passwordHash = hashPassword(password);
-        if (!safeCompare(stored.passwordHash, passwordHash)) {
-          return null;
-        }
+        const valid = await verifyPassword(password, stored.passwordHash);
+        if (!valid) return null;
 
         return {
           id: stored.email,
@@ -291,10 +303,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, account, profile, user }) {
+    async jwt({ token, account, profile }) {
       if (account?.provider === "client-credentials") {
         token.role = "client";
-        token.mustChangePassword = (user as Record<string, unknown>)?.mustChangePassword === true;
         return token;
       }
 
@@ -310,38 +321,32 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
       if (account && profile && typeof profile.email === "string") {
         const email = profile.email.toLowerCase();
-        const isPrivileged = isPrivilegedPortalEmail(email);
-        const isAdmin = isPrivileged;
-        const isStaff = isPrivileged;
+        const isAdmin = adminAllowlist.includes(email);
+        const isStaff = !isAdmin && (staffAllowlist.includes(email) || email.endsWith(`@${orgDomain}`));
         token.role = isAdmin ? "admin" : isStaff ? "staff" : "client";
-        token.email = email;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
         session.user.role = (token.role as "staff" | "client" | "admin" | undefined) ?? "client";
-        session.user.mustChangePassword = token.mustChangePassword === true;
       }
       return session;
     },
     async signIn({ account, profile, user }) {
-      // Client portal: any provisioned credential is sufficient.
-      if (account?.provider === "client-credentials") {
-        return Boolean(user?.email);
-      }
-
-      // Staff / admin credentials and Google OAuth are restricted to privileged emails.
       if (
+        account?.provider === "client-credentials" ||
         account?.provider === "staff-credentials" ||
         account?.provider === "admin-credentials"
       ) {
-        return Boolean(user?.email) && isPrivilegedPortalEmail(user.email ?? "");
+        return Boolean(user?.email);
       }
 
       if (!profile?.email) return false;
       const email = profile.email.toLowerCase();
-      return isPrivilegedPortalEmail(email);
+      const isAllowedDomain = email.endsWith(`@${orgDomain}`);
+      const isAllowlisted = adminAllowlist.includes(email) || staffAllowlist.includes(email) || clientAllowlist.includes(email);
+      return isAllowedDomain || isAllowlisted;
     },
   },
 });

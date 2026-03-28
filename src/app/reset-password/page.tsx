@@ -258,7 +258,7 @@ export default function ResetPasswordPage() {
         <div>
           <div className="flex items-center gap-3 mb-14">
             <div className="w-10 h-10 rounded-xl bg-teal-500 flex items-center justify-center shadow-lg shadow-teal-900/40">
-              <span className="text-teal-950 font-black text-xs tracking-tight">DFC</span>
+              <span className="text-teal-950 font-black text-xs tracking-tight">ORG</span>
             </div>
             <div>
               <span className="font-bold text-white block text-sm leading-none">CaseFlow</span>
@@ -299,7 +299,7 @@ export default function ResetPasswordPage() {
           {/* Mobile logo */}
           <div className="flex items-center gap-3 mb-10 lg:hidden">
             <div className="w-10 h-10 rounded-xl bg-teal-500 flex items-center justify-center">
-              <span className="text-teal-950 font-black text-xs">DFC</span>
+              <span className="text-teal-950 font-black text-xs">ORG</span>
             </div>
             <div>
               <span className="font-bold text-white block text-sm leading-none">CaseFlow</span>
