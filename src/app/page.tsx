@@ -17,50 +17,50 @@ const FEATURES = [
   {
     icon: ShieldCheck,
     label: "HIPAA Compliant",
-    preview: "Security & compliance foundation",
-    value: "Encrypts PHI, enforces access controls, and supports approved workflow governance.",
+    front: "Security & compliance foundation",
+    back: "Encrypts PHI, enforces access controls, and supports approved workflow governance.",
   },
   {
     icon: Users,
     label: "Caseload Management",
-    preview: "Client lifecycle command center",
-    value: "Tracks roster, demographics, housing placements, and case status in one timeline.",
+    front: "Client lifecycle command center",
+    back: "Tracks roster, demographics, housing placements, and case status in one timeline.",
   },
   {
     icon: FileText,
     label: "Secure Documents",
-    preview: "Protected records vault",
-    value: "Stores and shares participant documents with role-gated permissions and audit visibility.",
+    front: "Protected records vault",
+    back: "Stores and shares participant documents with role-gated permissions and audit visibility.",
   },
   {
     icon: MessageSquare,
     label: "Google Chat Built-In",
-    preview: "Real-time communication layer",
-    value: "Routes updates and support messages through integrated Google Workspace channels.",
+    front: "Real-time communication layer",
+    back: "Routes updates and support messages through integrated Google Workspace channels.",
   },
   {
     icon: CalendarDays,
     label: "Scheduling & Calendar",
-    preview: "Appointment coordination hub",
-    value: "Plans visits, team coverage, and client appointments with shared scheduling context.",
+    front: "Appointment coordination hub",
+    back: "Plans visits, team coverage, and client appointments with shared scheduling context.",
   },
   {
     icon: BarChart3,
     label: "Demographics & Analytics",
-    preview: "Live KPI intelligence",
-    value: "Surfaces trends across population, housing, employment, and service outcomes.",
+    front: "Live KPI intelligence",
+    back: "Surfaces trends across population, housing, employment, and service outcomes.",
   },
   {
     icon: Gem,
     label: "Champion Admin",
-    preview: "Leadership oversight console",
-    value: "Provides audit, compliance, staffing, and integration visibility for supervisors.",
+    front: "Leadership oversight console",
+    back: "Provides audit, compliance, staffing, and integration visibility for supervisors.",
   },
   {
     icon: WifiOff,
     label: "Offline Access",
-    preview: "Continuity without internet",
-    value: "Keeps participant workflows usable offline after initial authenticated session.",
+    front: "Continuity without internet",
+    back: "Keeps participant workflows usable offline after initial authenticated session.",
   },
 ];
 
@@ -206,22 +206,37 @@ export default function Home() {
             {FEATURES.map((f) => (
               <div
                 key={f.label}
-                className="bg-slate-900 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition-colors"
+                tabIndex={0}
+                className="group [perspective:1200px] outline-none"
               >
-                <div className="w-9 h-9 rounded-xl bg-slate-800 flex items-center justify-center mb-3">
-                  <f.icon className="w-4 h-4 text-teal-400" />
-                </div>
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <div className="font-semibold text-white text-sm">{f.label}</div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-teal-400">Flash</span>
-                </div>
-                <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-2 mb-2">
-                  <div className="text-[10px] uppercase tracking-wider text-slate-500">Quick Preview</div>
-                  <div className="text-xs text-slate-300 mt-1">{f.preview}</div>
-                </div>
-                <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-2">
-                  <div className="text-[10px] uppercase tracking-wider text-slate-500">What It Does</div>
-                  <div className="text-xs text-slate-400 mt-1 leading-relaxed">{f.value}</div>
+                <div className="relative h-48 w-full rounded-2xl transition-transform duration-500 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] group-focus:[transform:rotateY(180deg)]">
+                  <div className="absolute inset-0 rounded-2xl border border-slate-800 bg-slate-900 p-5 [backface-visibility:hidden]">
+                    <div className="w-9 h-9 rounded-xl bg-slate-800 flex items-center justify-center mb-3">
+                      <f.icon className="w-4 h-4 text-teal-400" />
+                    </div>
+                    <div className="flex items-start justify-between gap-2 mb-3">
+                      <div className="font-semibold text-white text-sm">{f.label}</div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-teal-400">Front</span>
+                    </div>
+                    <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-2">
+                      <div className="text-[10px] uppercase tracking-wider text-slate-500">Quick Preview</div>
+                      <div className="text-xs text-slate-300 mt-1 leading-relaxed">{f.front}</div>
+                    </div>
+                  </div>
+
+                  <div className="absolute inset-0 rounded-2xl border border-teal-700/40 bg-slate-900 p-5 [transform:rotateY(180deg)] [backface-visibility:hidden]">
+                    <div className="w-9 h-9 rounded-xl bg-teal-500/15 border border-teal-500/20 flex items-center justify-center mb-3">
+                      <f.icon className="w-4 h-4 text-teal-300" />
+                    </div>
+                    <div className="flex items-start justify-between gap-2 mb-3">
+                      <div className="font-semibold text-white text-sm">{f.label}</div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-teal-300">Back</span>
+                    </div>
+                    <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-2">
+                      <div className="text-[10px] uppercase tracking-wider text-slate-500">What It Does</div>
+                      <div className="text-xs text-slate-300 mt-1 leading-relaxed">{f.back}</div>
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}
