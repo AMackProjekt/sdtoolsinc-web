@@ -8,12 +8,6 @@ import { api } from '../../../../convex/_generated/api';
 
 export const dynamic = 'force-dynamic';
 
-function getClient() {
-  const url = process.env.NEXT_PUBLIC_CONVEX_URL;
-  if (!url) throw new Error('NEXT_PUBLIC_CONVEX_URL is not set');
-  return new ConvexHttpClient(url);
-}
-
 const TerminalBodySchema = z.object({
   command: z.string().min(1).max(500),
 });
