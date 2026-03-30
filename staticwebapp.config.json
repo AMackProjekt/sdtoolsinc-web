@@ -1,0 +1,62 @@
+{
+  "platform": {
+    "apiRuntime": "node:18"
+  },
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": ["/_next/static/*", "/api/*", "/*.{png,jpg,jpeg,gif,ico,svg,webp,woff,woff2,ttf}"]
+  },
+  "routes": [
+    {
+      "route": "/api/*",
+      "allowedRoles": ["anonymous"]
+    },
+    {
+      "route": "/portal/*",
+      "allowedRoles": ["authenticated"]
+    },
+    {
+      "route": "/login",
+      "allowedRoles": ["anonymous"]
+    },
+    {
+      "route": "/login/*",
+      "allowedRoles": ["anonymous"]
+    },
+    {
+      "route": "/request-access",
+      "allowedRoles": ["anonymous"]
+    },
+    {
+      "route": "/forgot-password",
+      "allowedRoles": ["anonymous"]
+    },
+    {
+      "route": "/reset-password",
+      "allowedRoles": ["anonymous"]
+    },
+    {
+      "route": "/legal/*",
+      "allowedRoles": ["anonymous"]
+    }
+  ],
+  "responseOverrides": {
+    "401": {
+      "redirect": "/login",
+      "statusCode": 302
+    },
+    "404": {
+      "redirect": "/",
+      "statusCode": 302
+    }
+  },
+  "globalHeaders": {
+    "X-Frame-Options": "DENY",
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload"
+  },
+  "mimeTypes": {
+    ".json": "text/json"
+  }
+}
