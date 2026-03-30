@@ -1,5 +1,5 @@
-import EnterpriseControlPlane from "@/components/EnterpriseControlPlane";
+import EnterpriseDashboard from "@/components/EnterpriseDashboard";
 
 export default function EnterpriseWorkspacePage() {
-  return <EnterpriseControlPlane />;
+  return <EnterpriseDashboard />;
 }

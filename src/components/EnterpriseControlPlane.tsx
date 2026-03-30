@@ -85,6 +85,17 @@ function StatusPill({ ok }: { ok: boolean }) {
   );
 }
 
+const END_USER_INTEGRATION_STATUS: Array<{
+  key: keyof EnterpriseControlCenterResponse["integrations"];
+  label: string;
+}> = [
+  { key: "googleOAuth", label: "Google OAuth" },
+  { key: "googleChatWebhook", label: "Google Chat Webhook" },
+  { key: "googleWorkspace", label: "Google Workspace" },
+  { key: "microsoft365", label: "Microsoft 365" },
+  { key: "adobeAcrobat", label: "Adobe Acrobat" },
+];
+
 export default function EnterpriseControlPlane() {
   const [data, setData] = useState<EnterpriseControlCenterResponse | null>(null);
   const [settings, setSettings] = useState<EnterpriseSettings | null>(null);
@@ -117,10 +128,11 @@ export default function EnterpriseControlPlane() {
       { label: "Data Encryption", ok: data.security.data_encrypted },
       { label: "Authentication", ok: data.security.auth_configured },
       { label: "Secure Transport", ok: data.security.secure_transport },
-      { label: "Resend", ok: data.integrations.resend },
       { label: "Google OAuth", ok: data.integrations.googleOAuth },
-      { label: "Convex", ok: data.integrations.convex },
-      { label: "Blob Storage", ok: data.integrations.blob },
+      { label: "Google Chat Webhook", ok: data.integrations.googleChatWebhook },
+      { label: "Google Workspace", ok: data.integrations.googleWorkspace },
+      { label: "Microsoft 365", ok: data.integrations.microsoft365 },
+      { label: "Adobe Acrobat", ok: data.integrations.adobeAcrobat },
     ];
   }, [data]);
 
@@ -399,14 +411,12 @@ export default function EnterpriseControlPlane() {
           <Database className="w-4 h-4 text-violet-600" /> Integrations Snapshot
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
-          {Object.entries(data.integrations)
-            .filter((entry): entry is [string, boolean] => typeof entry[1] === "boolean")
-            .map(([k, v]) => (
-            <div key={k} className="px-3 py-2 rounded-lg border border-slate-100 bg-slate-50 flex items-center justify-between">
-              <span className="text-xs text-slate-500">{k}</span>
-              <StatusPill ok={v} />
+          {END_USER_INTEGRATION_STATUS.map(({ key, label }) => (
+            <div key={key} className="px-3 py-2 rounded-lg border border-slate-100 bg-slate-50 flex items-center justify-between">
+              <span className="text-xs text-slate-500">{label}</span>
+              <StatusPill ok={Boolean(data.integrations[key])} />
             </div>
-            ))}
+          ))}
         </div>
       </div>
 

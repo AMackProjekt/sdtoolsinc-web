@@ -14,14 +14,54 @@ import {
 } from "lucide-react";
 
 const FEATURES = [
-  { icon: ShieldCheck, label: "HIPAA Compliant", desc: "End-to-end encryption and PHI workflow approvals baked in." },
-  { icon: Users, label: "Caseload Management", desc: "Full client roster, demographics, housing matches, and status tracking." },
-  { icon: FileText, label: "Secure Documents", desc: "Upload, store, and share files with role-gated access controls." },
-  { icon: MessageSquare, label: "Google Chat Built-In", desc: "Real-time messaging with clients and team through Google Workspace." },
-  { icon: CalendarDays, label: "Scheduling & Calendar", desc: "F2F visits, appointments, and staff schedules in one place." },
-  { icon: BarChart3, label: "Demographics & Analytics", desc: "Live breakdowns across gender, housing status, employment, and more." },
-  { icon: Gem, label: "Champion Admin", desc: "Supervisor-level oversight — audit logs, compliance, personnel, and integrations." },
-  { icon: WifiOff, label: "Offline Access", desc: "Client portal works offline after first sign-in — no connection needed." },
+  {
+    icon: ShieldCheck,
+    label: "HIPAA Compliant",
+    preview: "Security & compliance foundation",
+    value: "Encrypts PHI, enforces access controls, and supports approved workflow governance.",
+  },
+  {
+    icon: Users,
+    label: "Caseload Management",
+    preview: "Client lifecycle command center",
+    value: "Tracks roster, demographics, housing placements, and case status in one timeline.",
+  },
+  {
+    icon: FileText,
+    label: "Secure Documents",
+    preview: "Protected records vault",
+    value: "Stores and shares participant documents with role-gated permissions and audit visibility.",
+  },
+  {
+    icon: MessageSquare,
+    label: "Google Chat Built-In",
+    preview: "Real-time communication layer",
+    value: "Routes updates and support messages through integrated Google Workspace channels.",
+  },
+  {
+    icon: CalendarDays,
+    label: "Scheduling & Calendar",
+    preview: "Appointment coordination hub",
+    value: "Plans visits, team coverage, and client appointments with shared scheduling context.",
+  },
+  {
+    icon: BarChart3,
+    label: "Demographics & Analytics",
+    preview: "Live KPI intelligence",
+    value: "Surfaces trends across population, housing, employment, and service outcomes.",
+  },
+  {
+    icon: Gem,
+    label: "Champion Admin",
+    preview: "Leadership oversight console",
+    value: "Provides audit, compliance, staffing, and integration visibility for supervisors.",
+  },
+  {
+    icon: WifiOff,
+    label: "Offline Access",
+    preview: "Continuity without internet",
+    value: "Keeps participant workflows usable offline after initial authenticated session.",
+  },
 ];
 
 const ENTERPRISE_SUITES = [
@@ -171,8 +211,18 @@ export default function Home() {
                 <div className="w-9 h-9 rounded-xl bg-slate-800 flex items-center justify-center mb-3">
                   <f.icon className="w-4 h-4 text-teal-400" />
                 </div>
-                <div className="font-semibold text-white text-sm mb-1">{f.label}</div>
-                <div className="text-slate-500 text-xs leading-relaxed">{f.desc}</div>
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <div className="font-semibold text-white text-sm">{f.label}</div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-teal-400">Flash</span>
+                </div>
+                <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-2 mb-2">
+                  <div className="text-[10px] uppercase tracking-wider text-slate-500">Quick Preview</div>
+                  <div className="text-xs text-slate-300 mt-1">{f.preview}</div>
+                </div>
+                <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-2">
+                  <div className="text-[10px] uppercase tracking-wider text-slate-500">What It Does</div>
+                  <div className="text-xs text-slate-400 mt-1 leading-relaxed">{f.value}</div>
+                </div>
               </div>
             ))}
           </div>
