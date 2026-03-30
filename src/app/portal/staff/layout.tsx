@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useState, useRef, useEffect } from "react";
 import { 
   LayoutDashboard, 
@@ -30,10 +31,12 @@ import { StaffProvider, useStaff } from "@/context/StaffContext";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import type { ComplianceStatus } from "@/app/api/admin/compliance/route";
-import WelcomeModal from "@/components/WelcomeModal";
-import OnboardingTour, { type TourStep } from "@/components/OnboardingTour";
-import HmisUploadSidebar from "@/components/HmisUploadSidebar";
-import PortalChat from "@/components/PortalChat";
+import type { TourStep } from "@/components/OnboardingTour";
+
+const WelcomeModal = dynamic(() => import("@/components/WelcomeModal"), { ssr: false });
+const OnboardingTour = dynamic(() => import("@/components/OnboardingTour"), { ssr: false });
+const HmisUploadSidebar = dynamic(() => import("@/components/HmisUploadSidebar"), { ssr: false });
+const PortalChat = dynamic(() => import("@/components/PortalChat"), { ssr: false });
 
 const STAFF_STEPS: TourStep[] = [
   { target: '[data-tour="staff-dashboard"]', title: "Dashboard", body: "Your mission control — see case activity, team updates, and system alerts at a glance.", placement: "right" },

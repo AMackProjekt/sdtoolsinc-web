@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -9,6 +10,9 @@ export const metadata: Metadata = {
   title: 'CaseFlow Operations',
   description: 'Modern case management platform',
   manifest: '/manifest.json',
+  icons: {
+    apple: '/icons/icon-192.png',
+  },
 };
 
 export const viewport: Viewport = {
@@ -28,9 +32,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head>
-        <link rel="apple-touch-icon" href="/icons/icon-192.png" />
-      </head>
       <body className={inter.className}>
         <AuthSessionProvider>
           <ConvexClientProvider>
@@ -40,6 +41,7 @@ export default function RootLayout({
           </ConvexClientProvider>
         </AuthSessionProvider>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

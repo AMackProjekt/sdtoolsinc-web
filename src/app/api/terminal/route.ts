@@ -1,10 +1,11 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { ConvexHttpClient } from 'convex/browser';
 import { getAuthContext } from '@/lib/authz';
 import { logAudit } from '@/lib/audit';
 import { enforce } from '@/lib/policy';
 import { api } from '../../../../convex/_generated/api';
+import { ensureTrustedOrigin } from '@/lib/request-security';
 
 export const dynamic = 'force-dynamic';
 
@@ -264,7 +265,10 @@ async function executeQueryCommand(raw: string): Promise<string> {
   return `ERROR: Unknown command '${parsed.name}'. Run Get-Help to see supported commands.`;
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
+  const originError = ensureTrustedOrigin(req);
+  if (originError) return originError;
+
   const auth = await getAuthContext();
   if (!auth.isAuthenticated || !auth.email) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

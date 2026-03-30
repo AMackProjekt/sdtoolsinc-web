@@ -3,6 +3,7 @@ import { ConvexHttpClient } from "convex/browser";
 import { timingSafeEqual } from "crypto";
 import { api } from "../../../../../convex/_generated/api";
 import { auth } from "@/auth";
+import { ensureTrustedOrigin } from "@/lib/request-security";
 
 export const dynamic = "force-dynamic";
 
@@ -41,6 +42,9 @@ const CASE_MANAGERS = [
 ];
 
 export async function POST(req: NextRequest) {
+  const originError = ensureTrustedOrigin(req);
+  if (originError) return originError;
+
   const session = await auth();
   const isAdmin = session?.user?.role === "admin";
 

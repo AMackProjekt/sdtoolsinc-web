@@ -25,12 +25,18 @@ const NAV = [
   { href: "/portal/enterprise/integrations", label: "Integrations", icon: Plug },
   { href: "/portal/enterprise/audit", label: "Audit & Governance", icon: ScrollText },
   { href: "/portal/enterprise/operations", label: "Platform Operations", icon: Rocket },
+  { href: "/portal/enterprise/executive", label: "Executive Command", icon: Building2 },
+  { href: "/portal/enterprise/hr", label: "HR Operations", icon: Briefcase },
+  { href: "/portal/enterprise/newsroom", label: "News & Media Kit", icon: ScrollText },
 ];
 
 const PORTAL_NAV = [
   { href: "/portal/admin", label: "Admin Portal", icon: UserCog },
   { href: "/portal/staff", label: "Staff Portal", icon: Briefcase },
   { href: "/portal/client", label: "Client Portal", icon: Users },
+  { href: "/portal/enterprise/executive", label: "Executive Suite", icon: Building2 },
+  { href: "/portal/enterprise/hr", label: "HR Suite", icon: UserCog },
+  { href: "/portal/enterprise/newsroom", label: "Newsroom Suite", icon: ScrollText },
 ];
 
 export default function EnterpriseLayout({ children }: { children: React.ReactNode }) {

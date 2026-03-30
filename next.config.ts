@@ -14,14 +14,23 @@ const STATIC_SECURITY_HEADERS = [
 ];
 
 const nextConfig: NextConfig = {
+  reactStrictMode: true,
+  compress: true,
   outputFileTracingRoot: path.join(__dirname),
+  experimental: {
+    optimizePackageImports: ["lucide-react"],
+  },
 
   async headers() {
     return [
       // Apply security headers to every route
       {
         source: "/(.*)",
-        headers: STATIC_SECURITY_HEADERS,
+        headers: [
+          ...STATIC_SECURITY_HEADERS,
+          { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+          { key: "Cross-Origin-Resource-Policy", value: "same-site" },
+        ],
       },
       // Service-worker must revalidate on every load
       {

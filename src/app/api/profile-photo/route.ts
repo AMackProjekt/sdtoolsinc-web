@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../../convex/_generated/api";
+import { ensureTrustedOrigin } from "@/lib/request-security";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +14,9 @@ function getClient() {
 
 export async function POST(req: NextRequest) {
   try {
+    const originError = ensureTrustedOrigin(req);
+    if (originError) return originError;
+
     const client = getClient();
     const session = await auth();
     if (!session?.user?.email) {
@@ -75,6 +79,9 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE(_req: NextRequest) {
   try {
+    const originError = ensureTrustedOrigin(_req);
+    if (originError) return originError;
+
     const client = getClient();
     const session = await auth();
     if (!session?.user?.email) {

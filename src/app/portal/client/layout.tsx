@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useState, useEffect, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import {
@@ -23,11 +24,13 @@ import {
 import { StaffProvider } from "@/context/StaffContext";
 import { signOut, useSession } from "next-auth/react";
 import type { SecuritySummary } from "@/app/api/compliance/status/route";
-import WelcomeModal from "@/components/WelcomeModal";
-import OnboardingTour, { type TourStep } from "@/components/OnboardingTour";
-import PWASetup from "@/components/PWASetup";
-import PortalChat from "@/components/PortalChat";
-import OfflineIndicator from "@/components/OfflineIndicator";
+import type { TourStep } from "@/components/OnboardingTour";
+
+const WelcomeModal = dynamic(() => import("@/components/WelcomeModal"), { ssr: false });
+const OnboardingTour = dynamic(() => import("@/components/OnboardingTour"), { ssr: false });
+const PWASetup = dynamic(() => import("@/components/PWASetup"), { ssr: false });
+const PortalChat = dynamic(() => import("@/components/PortalChat"), { ssr: false });
+const OfflineIndicator = dynamic(() => import("@/components/OfflineIndicator"), { ssr: false });
 
 function ClientBackButton() {
   const router = useRouter();

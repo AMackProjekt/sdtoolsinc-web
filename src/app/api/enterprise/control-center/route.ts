@@ -4,6 +4,7 @@ import { enforce } from "@/lib/policy";
 import { getEncryptedRecord, setEncryptedRecord } from "@/lib/server-data-store";
 import { decryptJson, encryptJson } from "@/lib/crypto";
 import { ORG } from "@/config/org";
+import { ensureTrustedOrigin } from "@/lib/request-security";
 import {
 	defaultEnterpriseSettings,
 	enterpriseSettingsSchema,
@@ -228,6 +229,9 @@ export async function GET() {
 }
 
 export async function PUT(req: NextRequest) {
+	const originError = ensureTrustedOrigin(req);
+	if (originError) return originError;
+
 	const auth = await getAuthContext();
 	if (!auth.isAuthenticated || !auth.email) {
 		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

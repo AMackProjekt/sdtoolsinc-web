@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../../../convex/_generated/api";
 import { upsertClientCredential } from "@/auth";
+import { ensureTrustedOrigin } from "@/lib/request-security";
 
 export const dynamic = "force-dynamic";
 const SETUP_TOKEN = process.env.SETUP_TOKEN ?? "";
@@ -32,6 +33,9 @@ const CLIENTS = [
 ];
 
 export async function POST(req: NextRequest) {
+  const originError = ensureTrustedOrigin(req);
+  if (originError) return originError;
+
   const token = req.headers.get("authorization")?.replace("Bearer ", "");
   if (!SETUP_TOKEN || !token || token !== SETUP_TOKEN) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

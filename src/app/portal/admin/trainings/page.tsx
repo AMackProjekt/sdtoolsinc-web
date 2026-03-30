@@ -58,9 +58,6 @@ const EMPTY_FORM = {
 export default function AdminTrainingsPage() {
   const { data: session } = useSession();
   const allLog     = (useQuery(api.functions.listTrainingLog) ?? []) as TrainingEntry[];
-  const myLog      = (useQuery(api.functions.listMyTrainingLog, {
-    staffEmail: session?.user?.email ?? "",
-  }) ?? []) as TrainingEntry[];
   const addTraining    = useMutation(api.functions.addTrainingLog);
   const deleteTraining = useMutation(api.functions.deleteTrainingLog);
 

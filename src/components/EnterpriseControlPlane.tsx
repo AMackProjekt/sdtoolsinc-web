@@ -19,6 +19,7 @@ import {
   UserCog,
   Briefcase,
   Activity,
+  ScrollText,
 } from "lucide-react";
 import type { EnterpriseSettings } from "@/lib/enterprise-settings";
 import {
@@ -205,9 +206,9 @@ export default function EnterpriseControlPlane() {
 
       <div className="bg-white rounded-xl border border-slate-200 p-4">
         <h2 className="text-sm font-semibold text-slate-700 inline-flex items-center gap-2 mb-3">
-          <Building2 className="w-4 h-4 text-violet-600" /> Managed Workspaces
+          <Building2 className="w-4 h-4 text-violet-600" /> Managed Workspaces & Suites
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
           <Link href="/portal/admin" className="rounded-lg border border-slate-200 p-3 hover:bg-slate-50">
             <p className="text-sm font-semibold text-slate-700 inline-flex items-center gap-2"><UserCog className="w-4 h-4" /> Admin Portal</p>
             <p className="text-xs text-slate-500 mt-1">Program configuration, operations, analytics</p>
@@ -220,13 +221,28 @@ export default function EnterpriseControlPlane() {
             <p className="text-sm font-semibold text-slate-700 inline-flex items-center gap-2"><Users className="w-4 h-4" /> Client Portal</p>
             <p className="text-xs text-slate-500 mt-1">Participant-facing goals, requests, and support features</p>
           </Link>
+          <Link href="/portal/enterprise/executive" className="rounded-lg border border-slate-200 p-3 hover:bg-slate-50">
+            <p className="text-sm font-semibold text-slate-700 inline-flex items-center gap-2"><Building2 className="w-4 h-4" /> Executive Command</p>
+            <p className="text-xs text-slate-500 mt-1">Board-ready scorecards, portfolio risk, and strategic operating cadence</p>
+          </Link>
+          <Link href="/portal/enterprise/hr" className="rounded-lg border border-slate-200 p-3 hover:bg-slate-50">
+            <p className="text-sm font-semibold text-slate-700 inline-flex items-center gap-2"><Briefcase className="w-4 h-4" /> HR Operations</p>
+            <p className="text-xs text-slate-500 mt-1">People ops, lifecycle workflows, compliance acknowledgements, and workforce planning</p>
+          </Link>
+          <Link href="/portal/enterprise/newsroom" className="rounded-lg border border-slate-200 p-3 hover:bg-slate-50">
+            <p className="text-sm font-semibold text-slate-700 inline-flex items-center gap-2"><ScrollText className="w-4 h-4" /> News & Media Kit</p>
+            <p className="text-xs text-slate-500 mt-1">Press assets, approved messaging, and campaign launch briefs for external channels</p>
+          </Link>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-2 mt-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 xl:grid-cols-8 gap-2 mt-4">
           <Link href="/portal/enterprise/identity" className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50">Identity & Access</Link>
           <Link href="/portal/enterprise/organization" className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50">Organization & Tenant</Link>
           <Link href="/portal/enterprise/integrations" className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50">Integrations</Link>
           <Link href="/portal/enterprise/audit" className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50">Audit & Governance</Link>
           <Link href="/portal/enterprise/operations" className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50">Platform Operations</Link>
+          <Link href="/portal/enterprise/executive" className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50">Executive</Link>
+          <Link href="/portal/enterprise/hr" className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50">HR</Link>
+          <Link href="/portal/enterprise/newsroom" className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50">Newsroom</Link>
         </div>
       </div>
 

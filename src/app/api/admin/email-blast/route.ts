@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { Resend } from "resend";
+import { ensureTrustedOrigin } from "@/lib/request-security";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -11,6 +12,9 @@ interface EmailBlastBody {
 }
 
 export async function POST(req: NextRequest) {
+  const originError = ensureTrustedOrigin(req);
+  if (originError) return originError;
+
   const session = await auth();
   if (!session || session.user?.role !== "admin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

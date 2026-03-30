@@ -6,6 +6,7 @@ import { getAuthContext } from "@/lib/authz";
 import { logAudit } from "@/lib/audit";
 import { enforce } from "@/lib/policy";
 import type { PolicyResource } from "@/lib/policy";
+import { ensureTrustedOrigin } from "@/lib/request-security";
 
 const PutBodySchema = z.object({
   data: z.array(z.unknown()).max(1000),
@@ -67,6 +68,9 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ key: s
 }
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ key: string }> }) {
+  const originError = ensureTrustedOrigin(req);
+  if (originError) return originError;
+
   const { key } = await params;
   const normalizedKey = sanitizeKey(key);
 

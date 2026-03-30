@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import {
-  Brain, Wind, Music, Activity, Sparkles, Flame, ExternalLink, ChevronDown, ChevronUp, X
+  Brain, Wind, Music, Activity, Sparkles, Flame, ExternalLink, X
 } from "lucide-react";
 
 const AFFIRMATIONS: string[] = [

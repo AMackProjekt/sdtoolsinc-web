@@ -10,6 +10,7 @@ import {
   Gem,
   WifiOff,
   ArrowRight,
+  Building2,
 } from "lucide-react";
 
 const FEATURES = [
@@ -21,6 +22,21 @@ const FEATURES = [
   { icon: BarChart3, label: "Demographics & Analytics", desc: "Live breakdowns across gender, housing status, employment, and more." },
   { icon: Gem, label: "Champion Admin", desc: "Supervisor-level oversight — audit logs, compliance, personnel, and integrations." },
   { icon: WifiOff, label: "Offline Access", desc: "Client portal works offline after first sign-in — no connection needed." },
+];
+
+const ENTERPRISE_SUITES = [
+  {
+    title: "Executive Command",
+    desc: "Board-ready scorecards, portfolio risk, and operating cadence across Google Workspace and Microsoft 365.",
+  },
+  {
+    title: "HR Operations",
+    desc: "People ops, policy acknowledgements, lifecycle workflows, and workforce planning under one governed workspace.",
+  },
+  {
+    title: "News & Media Kit",
+    desc: "Press assets, approved messaging, campaign briefs, and launch-ready materials for your communications team.",
+  },
 ];
 
 export default function Home() {
@@ -157,6 +173,29 @@ export default function Home() {
                 </div>
                 <div className="font-semibold text-white text-sm mb-1">{f.label}</div>
                 <div className="text-slate-500 text-xs leading-relaxed">{f.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="px-6 md:px-12 py-20 border-t border-slate-800/60 bg-slate-950/60">
+        <div className="max-w-6xl mx-auto">
+          <div className="max-w-2xl mb-10">
+            <div className="inline-flex items-center gap-2 bg-cyan-950 border border-cyan-800/60 text-cyan-400 text-xs font-bold px-4 py-2 rounded-full mb-5 tracking-widest uppercase">
+              <Building2 className="w-3 h-3" /> Enterprise Edition
+            </div>
+            <h2 className="text-2xl md:text-4xl font-black text-white tracking-tight">Executive, HR, and media operations in the same control plane.</h2>
+            <p className="text-slate-400 text-sm md:text-base mt-4 leading-relaxed">
+              CaseFlow now extends beyond service delivery with enterprise-grade suites for executive leadership, HR operations, and newsroom readiness.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {ENTERPRISE_SUITES.map((suite) => (
+              <div key={suite.title} className="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 hover:border-cyan-700/50 transition-colors">
+                <p className="text-xs font-bold tracking-[0.24em] uppercase text-cyan-400">{suite.title}</p>
+                <p className="mt-4 text-sm leading-relaxed text-slate-400">{suite.desc}</p>
               </div>
             ))}
           </div>
