@@ -17,6 +17,17 @@ export interface EnterpriseControlCenterResponse {
     googleChatWebhook: boolean;
     convex: boolean;
     blob: boolean;
+    googleWorkspace: boolean;
+    microsoft365: boolean;
+    adobeAcrobat: boolean;
+    connectors: Array<{
+      id: string;
+      label: string;
+      category: "workspace" | "document" | "communication" | "crm" | "service" | "housing" | "finance";
+      description: string;
+      configured: boolean;
+      requiredEnv: string[];
+    }>;
   };
   identityAccess: {
     workspaceDomain: string;

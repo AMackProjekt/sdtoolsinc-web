@@ -23,7 +23,7 @@ export const defaultEnterpriseSettings: EnterpriseSettings = {
   audit_all_reads: true,
   notify_new_client: true,
   notify_request: false,
-  admin_email: "admin@sdtoolsinc.org",
+  admin_email: "dmack@sdtoolsinc.org",
   show_onboarding: false,
   portal_theme: "Dark Slate",
   records_per_page: "25",
@@ -42,8 +42,15 @@ export function mergeEnterpriseSettings(raw: unknown): EnterpriseSettings {
   if (!partial.success) {
     return defaultEnterpriseSettings;
   }
-  return {
+  const merged = {
     ...defaultEnterpriseSettings,
     ...partial.data,
   };
+
+  // Migrate legacy tenant default to current enterprise admin mailbox.
+  if (merged.admin_email.toLowerCase() === "donyale@dreamsforchange.org") {
+    merged.admin_email = "dmack@sdtoolsinc.org";
+  }
+
+  return merged;
 }

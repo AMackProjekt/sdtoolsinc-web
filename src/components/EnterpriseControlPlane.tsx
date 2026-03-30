@@ -209,32 +209,41 @@ export default function EnterpriseControlPlane() {
           <Building2 className="w-4 h-4 text-violet-600" /> Managed Workspaces & Suites
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-          <Link href="/portal/admin" className="rounded-lg border border-slate-200 p-3 hover:bg-slate-50">
+          <Link href="/portal/enterprise/dashboard" target="_blank" rel="noopener noreferrer" className="rounded-lg border border-slate-200 p-3 hover:bg-slate-50">
+            <p className="text-sm font-semibold text-slate-700 inline-flex items-center gap-2"><Activity className="w-4 h-4" /> Enterprise Dashboard</p>
+            <p className="text-xs text-slate-500 mt-1">Cross-suite KPI overview, readiness status, and enterprise health summary</p>
+          </Link>
+          <Link href="/portal/admin" target="_blank" rel="noopener noreferrer" className="rounded-lg border border-slate-200 p-3 hover:bg-slate-50">
             <p className="text-sm font-semibold text-slate-700 inline-flex items-center gap-2"><UserCog className="w-4 h-4" /> Admin Portal</p>
             <p className="text-xs text-slate-500 mt-1">Program configuration, operations, analytics</p>
           </Link>
-          <Link href="/portal/staff" className="rounded-lg border border-slate-200 p-3 hover:bg-slate-50">
+          <Link href="/portal/staff" target="_blank" rel="noopener noreferrer" className="rounded-lg border border-slate-200 p-3 hover:bg-slate-50">
             <p className="text-sm font-semibold text-slate-700 inline-flex items-center gap-2"><Briefcase className="w-4 h-4" /> Staff Portal</p>
             <p className="text-xs text-slate-500 mt-1">Caseload workflows, service delivery, compliance tasks</p>
           </Link>
-          <Link href="/portal/client" className="rounded-lg border border-slate-200 p-3 hover:bg-slate-50">
+          <Link href="/portal/client" target="_blank" rel="noopener noreferrer" className="rounded-lg border border-slate-200 p-3 hover:bg-slate-50">
             <p className="text-sm font-semibold text-slate-700 inline-flex items-center gap-2"><Users className="w-4 h-4" /> Client Portal</p>
             <p className="text-xs text-slate-500 mt-1">Participant-facing goals, requests, and support features</p>
           </Link>
-          <Link href="/portal/enterprise/executive" className="rounded-lg border border-slate-200 p-3 hover:bg-slate-50">
+          <Link href="/portal/enterprise/executive" target="_blank" rel="noopener noreferrer" className="rounded-lg border border-slate-200 p-3 hover:bg-slate-50">
             <p className="text-sm font-semibold text-slate-700 inline-flex items-center gap-2"><Building2 className="w-4 h-4" /> Executive Command</p>
             <p className="text-xs text-slate-500 mt-1">Board-ready scorecards, portfolio risk, and strategic operating cadence</p>
           </Link>
-          <Link href="/portal/enterprise/hr" className="rounded-lg border border-slate-200 p-3 hover:bg-slate-50">
+          <Link href="/portal/enterprise/hr" target="_blank" rel="noopener noreferrer" className="rounded-lg border border-slate-200 p-3 hover:bg-slate-50">
             <p className="text-sm font-semibold text-slate-700 inline-flex items-center gap-2"><Briefcase className="w-4 h-4" /> HR Operations</p>
             <p className="text-xs text-slate-500 mt-1">People ops, lifecycle workflows, compliance acknowledgements, and workforce planning</p>
           </Link>
-          <Link href="/portal/enterprise/newsroom" className="rounded-lg border border-slate-200 p-3 hover:bg-slate-50">
+          <Link href="/portal/enterprise/finance" target="_blank" rel="noopener noreferrer" className="rounded-lg border border-slate-200 p-3 hover:bg-slate-50">
+            <p className="text-sm font-semibold text-slate-700 inline-flex items-center gap-2"><Database className="w-4 h-4" /> Finance Department</p>
+            <p className="text-xs text-slate-500 mt-1">Budget controls, accounting integrations, reconciliation and financial governance</p>
+          </Link>
+          <Link href="/portal/enterprise/newsroom" target="_blank" rel="noopener noreferrer" className="rounded-lg border border-slate-200 p-3 hover:bg-slate-50">
             <p className="text-sm font-semibold text-slate-700 inline-flex items-center gap-2"><ScrollText className="w-4 h-4" /> News & Media Kit</p>
             <p className="text-xs text-slate-500 mt-1">Press assets, approved messaging, and campaign launch briefs for external channels</p>
           </Link>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-4 xl:grid-cols-8 gap-2 mt-4">
+        <div className="grid grid-cols-1 md:grid-cols-5 xl:grid-cols-10 gap-2 mt-4">
+          <Link href="/portal/enterprise/dashboard" className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50">Dashboard</Link>
           <Link href="/portal/enterprise/identity" className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50">Identity & Access</Link>
           <Link href="/portal/enterprise/organization" className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50">Organization & Tenant</Link>
           <Link href="/portal/enterprise/integrations" className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50">Integrations</Link>
@@ -242,6 +251,7 @@ export default function EnterpriseControlPlane() {
           <Link href="/portal/enterprise/operations" className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50">Platform Operations</Link>
           <Link href="/portal/enterprise/executive" className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50">Executive</Link>
           <Link href="/portal/enterprise/hr" className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50">HR</Link>
+          <Link href="/portal/enterprise/finance" className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50">Finance</Link>
           <Link href="/portal/enterprise/newsroom" className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50">Newsroom</Link>
         </div>
       </div>
@@ -389,12 +399,14 @@ export default function EnterpriseControlPlane() {
           <Database className="w-4 h-4 text-violet-600" /> Integrations Snapshot
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
-          {Object.entries(data.integrations).map(([k, v]) => (
+          {Object.entries(data.integrations)
+            .filter((entry): entry is [string, boolean] => typeof entry[1] === "boolean")
+            .map(([k, v]) => (
             <div key={k} className="px-3 py-2 rounded-lg border border-slate-100 bg-slate-50 flex items-center justify-between">
               <span className="text-xs text-slate-500">{k}</span>
               <StatusPill ok={v} />
             </div>
-          ))}
+            ))}
         </div>
       </div>
 

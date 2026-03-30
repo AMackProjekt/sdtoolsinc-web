@@ -39,6 +39,17 @@ type ControlCenterSummary = {
 		googleChatWebhook: boolean;
 		convex: boolean;
 		blob: boolean;
+		googleWorkspace: boolean;
+		microsoft365: boolean;
+		adobeAcrobat: boolean;
+		connectors: Array<{
+			id: string;
+			label: string;
+			category: "workspace" | "document" | "communication" | "crm" | "service" | "housing" | "finance";
+			description: string;
+			configured: boolean;
+			requiredEnv: string[];
+		}>;
 	};
 	identityAccess: {
 		workspaceDomain: string;
@@ -92,6 +103,27 @@ function hasGoogleOauthCredentials(): boolean {
 	return Boolean(googleClientId) && Boolean(googleClientSecret);
 }
 
+function hasGoogleWorkspaceCredentials(): boolean {
+	return Boolean(process.env.GOOGLE_WORKSPACE_CLIENT_EMAIL) &&
+		Boolean(process.env.GOOGLE_WORKSPACE_PRIVATE_KEY) &&
+		Boolean(process.env.GOOGLE_WORKSPACE_DELEGATED_ADMIN);
+}
+
+function hasMicrosoft365Credentials(): boolean {
+	return Boolean(process.env.MS_GRAPH_TENANT_ID) &&
+		Boolean(process.env.MS_GRAPH_CLIENT_ID) &&
+		Boolean(process.env.MS_GRAPH_CLIENT_SECRET);
+}
+
+function hasAdobeAcrobatCredentials(): boolean {
+	return Boolean(process.env.ADOBE_PDF_SERVICES_CLIENT_ID) &&
+		Boolean(process.env.ADOBE_PDF_SERVICES_CLIENT_SECRET);
+}
+
+function hasRequiredEnv(requiredEnv: string[]): boolean {
+	return requiredEnv.every((key) => Boolean(process.env[key]));
+}
+
 function getComplianceSummary(settings: EnterpriseSettings): ControlCenterSummary["compliance"] {
 	const checks = {
 		phi_workflow_approved:
@@ -132,12 +164,137 @@ function getSecuritySummary(): ControlCenterSummary["security"] {
 }
 
 function getIntegrationSummary(): ControlCenterSummary["integrations"] {
+	const connectors: ControlCenterSummary["integrations"]["connectors"] = [
+		{
+			id: "google-workspace",
+			label: "Google Workspace",
+			category: "workspace",
+			description: "Admin SDK telemetry, directory sync, and enterprise workspace controls.",
+			configured: hasGoogleWorkspaceCredentials(),
+			requiredEnv: [
+				"GOOGLE_WORKSPACE_CLIENT_EMAIL",
+				"GOOGLE_WORKSPACE_PRIVATE_KEY",
+				"GOOGLE_WORKSPACE_DELEGATED_ADMIN",
+			],
+		},
+		{
+			id: "microsoft-365",
+			label: "Microsoft 365",
+			category: "workspace",
+			description: "Microsoft Graph directory, identity, and tenant-level operational telemetry.",
+			configured: hasMicrosoft365Credentials(),
+			requiredEnv: ["MS_GRAPH_TENANT_ID", "MS_GRAPH_CLIENT_ID", "MS_GRAPH_CLIENT_SECRET"],
+		},
+		{
+			id: "adobe-acrobat",
+			label: "Adobe Acrobat",
+			category: "document",
+			description: "PDF generation, conversion, and document workflow automation.",
+			configured: hasAdobeAcrobatCredentials(),
+			requiredEnv: ["ADOBE_PDF_SERVICES_CLIENT_ID", "ADOBE_PDF_SERVICES_CLIENT_SECRET"],
+		},
+		{
+			id: "docusign",
+			label: "DocuSign eSignature",
+			category: "document",
+			description: "Contract and consent signature workflows for enterprise approvals.",
+			configured: hasRequiredEnv([
+				"DOCUSIGN_INTEGRATION_KEY",
+				"DOCUSIGN_ACCOUNT_ID",
+				"DOCUSIGN_USER_ID",
+				"DOCUSIGN_PRIVATE_KEY",
+			]),
+			requiredEnv: [
+				"DOCUSIGN_INTEGRATION_KEY",
+				"DOCUSIGN_ACCOUNT_ID",
+				"DOCUSIGN_USER_ID",
+				"DOCUSIGN_PRIVATE_KEY",
+			],
+		},
+		{
+			id: "slack",
+			label: "Slack",
+			category: "communication",
+			description: "Incident and operational notification routing across enterprise channels.",
+			configured: hasRequiredEnv(["SLACK_BOT_TOKEN", "SLACK_SIGNING_SECRET"]),
+			requiredEnv: ["SLACK_BOT_TOKEN", "SLACK_SIGNING_SECRET"],
+		},
+		{
+			id: "salesforce",
+			label: "Salesforce",
+			category: "crm",
+			description: "Account, case, and lifecycle synchronization into enterprise workflows.",
+			configured: hasRequiredEnv([
+				"SALESFORCE_CLIENT_ID",
+				"SALESFORCE_CLIENT_SECRET",
+				"SALESFORCE_LOGIN_URL",
+			]),
+			requiredEnv: ["SALESFORCE_CLIENT_ID", "SALESFORCE_CLIENT_SECRET", "SALESFORCE_LOGIN_URL"],
+		},
+		{
+			id: "jira-service-management",
+			label: "Jira Service Management",
+			category: "service",
+			description: "Ticket orchestration for cross-functional operations and change controls.",
+			configured: hasRequiredEnv(["JIRA_BASE_URL", "JIRA_EMAIL", "JIRA_API_TOKEN"]),
+			requiredEnv: ["JIRA_BASE_URL", "JIRA_EMAIL", "JIRA_API_TOKEN"],
+		},
+		{
+			id: "csip",
+			label: "CSIP",
+			category: "housing",
+			description: "Coordinated housing data exchange for client services and regional program reporting.",
+			configured: hasRequiredEnv(["CSIP_API_BASE_URL", "CSIP_API_KEY"]),
+			requiredEnv: ["CSIP_API_BASE_URL", "CSIP_API_KEY"],
+		},
+		{
+			id: "sdhc",
+			label: "San Diego Housing Commission (SDHC)",
+			category: "housing",
+			description: "Voucher, placement, and program data integration with SDHC workflows.",
+			configured: hasRequiredEnv(["SDHC_API_BASE_URL", "SDHC_API_KEY"]),
+			requiredEnv: ["SDHC_API_BASE_URL", "SDHC_API_KEY"],
+		},
+		{
+			id: "rtfh",
+			label: "RTFH",
+			category: "housing",
+			description: "Regional task force coordination, shared outcomes, and partner referral synchronization.",
+			configured: hasRequiredEnv(["RTFH_API_BASE_URL", "RTFH_API_KEY"]),
+			requiredEnv: ["RTFH_API_BASE_URL", "RTFH_API_KEY"],
+		},
+		{
+			id: "quickbooks-online",
+			label: "QuickBooks Online",
+			category: "finance",
+			description: "Program-level finance reporting, reconciliations, and accounting exports.",
+			configured: hasRequiredEnv(["QBO_CLIENT_ID", "QBO_CLIENT_SECRET", "QBO_REALM_ID"]),
+			requiredEnv: ["QBO_CLIENT_ID", "QBO_CLIENT_SECRET", "QBO_REALM_ID"],
+		},
+		{
+			id: "netsuite",
+			label: "Oracle NetSuite",
+			category: "finance",
+			description: "Enterprise finance and procurement synchronization for multi-department operations.",
+			configured: hasRequiredEnv([
+				"NETSUITE_ACCOUNT_ID",
+				"NETSUITE_CONSUMER_KEY",
+				"NETSUITE_CONSUMER_SECRET",
+			]),
+			requiredEnv: ["NETSUITE_ACCOUNT_ID", "NETSUITE_CONSUMER_KEY", "NETSUITE_CONSUMER_SECRET"],
+		},
+	];
+
 	return {
 		resend: Boolean(process.env.RESEND_API_KEY),
 		googleOAuth: hasGoogleOauthCredentials(),
 		googleChatWebhook: Boolean(process.env.Champions_Web_Hook),
 		convex: Boolean(process.env.NEXT_PUBLIC_CONVEX_URL),
 		blob: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
+		googleWorkspace: hasGoogleWorkspaceCredentials(),
+		microsoft365: hasMicrosoft365Credentials(),
+		adobeAcrobat: hasAdobeAcrobatCredentials(),
+		connectors,
 	};
 }
 

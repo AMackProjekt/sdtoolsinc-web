@@ -1,7 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CheckCircle2, Mail, MessageSquare, Cloud, Database, RefreshCw, SendHorizonal, XCircle } from "lucide-react";
+import {
+  CheckCircle2,
+  Cloud,
+  FileText,
+  RefreshCw,
+  SendHorizonal,
+  ShieldCheck,
+  Workflow,
+  XCircle,
+} from "lucide-react";
 import { fetchEnterpriseControlCenter, type EnterpriseControlCenterResponse } from "@/lib/enterprise-control-client";
 
 export default function EnterpriseIntegrationsPage() {
@@ -51,13 +60,33 @@ export default function EnterpriseIntegrationsPage() {
     return <div className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-500">Loading integrations...</div>;
   }
 
-  const items = [
-    { label: "Resend Email", ok: data.integrations.resend, icon: Mail, detail: "Transactional email delivery" },
-    { label: "Google OAuth", ok: data.integrations.googleOAuth, icon: Cloud, detail: "Workspace authentication and SSO" },
-    { label: "Google Chat", ok: data.integrations.googleChatWebhook, icon: MessageSquare, detail: "Operational chat notifications" },
-    { label: "Convex", ok: data.integrations.convex, icon: Database, detail: "Realtime backend and state" },
-    { label: "Blob Storage", ok: data.integrations.blob, icon: Database, detail: "Private file storage" },
+  const featuredItems = [
+    {
+      id: "google-workspace",
+      label: "Google Workspace",
+      ok: data.integrations.googleWorkspace,
+      icon: Cloud,
+      detail: "Directory, security posture, and operational telemetry from Google Workspace.",
+    },
+    {
+      id: "microsoft-365",
+      label: "Microsoft 365",
+      ok: data.integrations.microsoft365,
+      icon: ShieldCheck,
+      detail: "Tenant identity, licensing, and workforce insights via Microsoft Graph.",
+    },
+    {
+      id: "adobe-acrobat",
+      label: "Adobe Acrobat",
+      ok: data.integrations.adobeAcrobat,
+      icon: FileText,
+      detail: "PDF automation, document conversions, and enterprise document workflows.",
+    },
   ];
+
+  const pluginItems = data.integrations.connectors.filter(
+    (connector) => !featuredItems.some((featured) => featured.id === connector.id)
+  );
 
   return (
     <div className="space-y-6">
@@ -72,7 +101,7 @@ export default function EnterpriseIntegrationsPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {items.map((item) => {
+        {featuredItems.map((item) => {
           const Icon = item.icon;
           return (
             <div key={item.label} className="rounded-xl border border-slate-200 bg-white p-4">
@@ -87,23 +116,56 @@ export default function EnterpriseIntegrationsPage() {
         })}
       </div>
 
+      <div className="rounded-xl border border-slate-200 bg-white p-5">
+        <div className="mb-4 flex items-start justify-between gap-3">
+          <div>
+            <h2 className="text-sm font-semibold text-slate-700">Additional Plug-ins</h2>
+            <p className="mt-1 text-xs text-slate-500">Ready-to-configure enterprise connectors with environment-based activation logic.</p>
+          </div>
+          <div className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold text-slate-600">
+            <Workflow className="h-3.5 w-3.5" /> {pluginItems.length} Available
+          </div>
+        </div>
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+          {pluginItems.map((plugin) => (
+            <div key={plugin.id} className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+              <div className="flex items-start justify-between gap-2">
+                <p className="text-sm font-semibold text-slate-800">{plugin.label}</p>
+                {plugin.configured ? (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-semibold text-emerald-700">
+                    <CheckCircle2 className="h-3 w-3" /> Connected
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-700">
+                    <XCircle className="h-3 w-3" /> Not Configured
+                  </span>
+                )}
+              </div>
+              <p className="mt-2 text-xs text-slate-600">{plugin.description}</p>
+              <p className="mt-3 text-[11px] font-medium text-slate-500">Required env:</p>
+              <p className="mt-1 text-[11px] leading-relaxed text-slate-500">{plugin.requiredEnv.join(", ")}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="rounded-xl border border-slate-200 bg-white p-5 space-y-4">
-          <h2 className="text-sm font-semibold text-slate-700">Email Delivery Validation</h2>
-          <p className="text-xs text-slate-500">Send a live test through the configured Resend integration using enterprise admin privileges.</p>
+          <h2 className="text-sm font-semibold text-slate-700">Outbound Email Validation</h2>
+          <p className="text-xs text-slate-500">Send a live test through the configured email provider using enterprise admin privileges.</p>
           <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="admin@sdtoolsinc.org" className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" />
           <button type="button" onClick={() => void sendTestEmail()} disabled={sending || !data.platformOperations.canTestEmail} className="inline-flex items-center gap-2 rounded-lg bg-cyan-600 px-3 py-2 text-sm text-white hover:bg-cyan-700 disabled:opacity-60">
             <SendHorizonal className="h-4 w-4" /> {sending ? "Sending..." : "Send Test Email"}
           </button>
-          {!data.platformOperations.canTestEmail && <p className="text-xs text-amber-700">Resend is not configured in the current environment.</p>}
+          {!data.platformOperations.canTestEmail && <p className="text-xs text-amber-700">Email provider credentials are not configured in the current environment.</p>}
         </div>
 
         <div className="rounded-xl border border-slate-200 bg-white p-5 space-y-4">
           <h2 className="text-sm font-semibold text-slate-700">Connector Notes</h2>
           <ul className="space-y-3 text-xs text-slate-600">
-            <li className="rounded-lg bg-slate-50 p-3">Google OAuth remains the enterprise identity backbone for staff and admin accounts.</li>
-            <li className="rounded-lg bg-slate-50 p-3">Google Chat webhook health determines whether operational alerts can be routed to workspace channels.</li>
-            <li className="rounded-lg bg-slate-50 p-3">Convex and Blob status directly impact document delivery, audit persistence, and realtime operations.</li>
+            <li className="rounded-lg bg-slate-50 p-3">Google Workspace and Microsoft 365 can run side-by-side for identity telemetry and executive dashboard coverage.</li>
+            <li className="rounded-lg bg-slate-50 p-3">Adobe Acrobat enables document automation across consent packets, intake bundles, and compliance-ready PDF workflows.</li>
+            <li className="rounded-lg bg-slate-50 p-3">Additional plug-ins activate automatically when required environment variables are present.</li>
           </ul>
         </div>
       </div>
