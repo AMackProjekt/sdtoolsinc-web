@@ -5,7 +5,15 @@ import { Resend } from "resend";
 import { ORG } from "@/config/org";
 import { getBaseUrl } from "@/lib/runtime-config";
 
+export const dynamic = "force-dynamic";
+
 const BASE_URL = getBaseUrl();
+
+function getClient() {
+  const url = process.env.NEXT_PUBLIC_CONVEX_URL;
+  if (!url) throw new Error("NEXT_PUBLIC_CONVEX_URL is not set");
+  return new ConvexHttpClient(url);
+}
 
 const html = (title: string, color: string, icon: string, body: string) => `
 <!DOCTYPE html>
@@ -24,7 +32,7 @@ const html = (title: string, color: string, icon: string, body: string) => `
 </html>`;
 
 export async function GET(req: NextRequest) {
-  const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+  const convex = getClient();
   const resend = new Resend(process.env.RESEND_API_KEY_2);
   const token = req.nextUrl.searchParams.get("token");
   if (!token) {

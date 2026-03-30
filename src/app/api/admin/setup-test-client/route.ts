@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../../../convex/_generated/api";
 import { upsertClientCredential } from "@/auth";
-
+export const dynamic = "force-dynamic";
 const SETUP_TOKEN = process.env.SETUP_TOKEN ?? "";
 
 const CLIENTS = [
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+  const convex = getClient();
   const results: { name: string; email: string; ok: boolean; error?: string }[] = [];
 
   for (const client of CLIENTS) {

@@ -16,12 +16,15 @@ export interface SecuritySummary {
 }
 
 function evaluate(isAuthenticated: boolean): SecuritySummary {
+  const googleClientId = process.env.AUTH_GOOGLE_ID ?? process.env.GOOGLE_CLIENT_ID;
+  const googleClientSecret = process.env.AUTH_GOOGLE_SECRET ?? process.env.GOOGLE_CLIENT_SECRET;
+
   const data_encrypted = Boolean(
     process.env.DATA_ENCRYPTION_KEY || process.env.AUTH_SECRET
   );
   const auth_configured =
-    Boolean(process.env.AUTH_GOOGLE_ID) &&
-    Boolean(process.env.AUTH_GOOGLE_SECRET) &&
+    Boolean(googleClientId) &&
+    Boolean(googleClientSecret) &&
     Boolean(process.env.AUTH_SECRET);
   // In production Next.js always serves over HTTPS; this reflects the env intent
   const secure_transport =

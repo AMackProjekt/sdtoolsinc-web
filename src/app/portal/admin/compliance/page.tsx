@@ -106,7 +106,7 @@ export default function AdminCompliancePage() {
           <CheckRow
             label="Google OAuth Configured"
             ok={status.checks.google_oauth_configured}
-            detail="AUTH_GOOGLE_ID and AUTH_GOOGLE_SECRET must be set."
+            detail="Set AUTH_GOOGLE_ID/AUTH_GOOGLE_SECRET or GOOGLE_CLIENT_ID/GOOGLE_CLIENT_SECRET."
           />
           <CheckRow
             label="KV Store Configured"

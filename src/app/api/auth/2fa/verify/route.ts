@@ -4,6 +4,14 @@ import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../../../../convex/_generated/api";
 import { createHmac } from "crypto";
 
+export const dynamic = "force-dynamic";
+
+function getClient() {
+  const url = process.env.NEXT_PUBLIC_CONVEX_URL;
+  if (!url) throw new Error("NEXT_PUBLIC_CONVEX_URL is not set");
+  return new ConvexHttpClient(url);
+}
+
 function hashCode(code: string): string {
   const secret = process.env.TWO_FA_SECRET ?? "fallback-dev-secret";
   return createHmac("sha256", secret).update(code).digest("hex");
@@ -30,7 +38,7 @@ export async function POST(req: NextRequest) {
   }
 
   const codeHash = hashCode(code);
-  const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+  const convex = getClient();
   const valid = await convex.mutation(api.functions.verifyAndConsumeOtp, { email, codeHash });
 
   if (!valid) {

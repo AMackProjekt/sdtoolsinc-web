@@ -2,6 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../../../../convex/_generated/api";
+
+export const dynamic = "force-dynamic";
+
+function getClient() {
+  const url = process.env.NEXT_PUBLIC_CONVEX_URL;
+  if (!url) throw new Error("NEXT_PUBLIC_CONVEX_URL is not set");
+  return new ConvexHttpClient(url);
+}
 import { Resend } from "resend";
 import { createHmac, randomInt } from "crypto";
 import { ORG } from "@/config/org";
@@ -24,7 +32,7 @@ export async function POST(_req: NextRequest) {
   const codeHash = hashCode(code);
   const expiresAt = Date.now() + 10 * 60 * 1000; // 10 minutes
 
-  const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+  const convex = getClient();
   await convex.mutation(api.functions.upsertOtpCode, { email, codeHash, expiresAt });
 
   const resend = new Resend(process.env.RESEND_API_KEY);

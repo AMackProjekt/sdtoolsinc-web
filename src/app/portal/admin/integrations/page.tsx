@@ -184,7 +184,7 @@ export default function IntegrationsPage() {
       <div className="bg-violet-950 rounded-xl p-6 text-violet-100">
         <h2 className="text-sm font-bold mb-3 text-white">Configuration Quick-Reference</h2>
         <div className="space-y-2 text-xs font-mono leading-relaxed text-violet-300">
-          <p><span className="text-violet-400">Google OAuth:</span> AUTH_GOOGLE_ID · AUTH_GOOGLE_SECRET ✓</p>
+          <p><span className="text-violet-400">Google OAuth:</span> AUTH_GOOGLE_ID · AUTH_GOOGLE_SECRET (or GOOGLE_CLIENT_ID · GOOGLE_CLIENT_SECRET) ✓</p>
           <p><span className="text-violet-400">Google Chat:</span> Champions_Web_Hook ✓</p>
           <p><span className="text-violet-400">Email (Resend):</span> RESEND_API_KEY ✓</p>
           <p><span className="text-violet-400">Google Drive:</span> GOOGLE_SERVICE_ACCOUNT_JSON (pending)</p>

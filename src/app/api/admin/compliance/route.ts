@@ -16,13 +16,15 @@ export interface ComplianceStatus {
 }
 
 function evaluate(): ComplianceStatus {
+  const googleClientId = process.env.AUTH_GOOGLE_ID ?? process.env.GOOGLE_CLIENT_ID;
+  const googleClientSecret = process.env.AUTH_GOOGLE_SECRET ?? process.env.GOOGLE_CLIENT_SECRET;
+
   const checks = {
     phi_workflow_approved: process.env.PHI_WORKFLOW_APPROVED === "true",
     baa_confirmed: process.env.BAA_CONFIRMED === "true",
     encryption_key_configured: Boolean(process.env.DATA_ENCRYPTION_KEY),
     auth_secret_configured: Boolean(process.env.AUTH_SECRET),
-    google_oauth_configured:
-      Boolean(process.env.AUTH_GOOGLE_ID) && Boolean(process.env.AUTH_GOOGLE_SECRET),
+    google_oauth_configured: Boolean(googleClientId) && Boolean(googleClientSecret),
     kv_store_configured:
       Boolean(process.env.KV_REST_API_URL) && Boolean(process.env.KV_REST_API_TOKEN),
   };

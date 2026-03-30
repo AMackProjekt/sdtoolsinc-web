@@ -22,6 +22,9 @@ const clientAllowlist = (process.env.CLIENT_ALLOWLIST ?? "")
   .filter(Boolean);
 
 const orgDomain = (process.env.WORKSPACE_DOMAIN ?? "sdtoolsinc.org").toLowerCase();
+const googleClientId = process.env.AUTH_GOOGLE_ID ?? process.env.GOOGLE_CLIENT_ID ?? "";
+const googleClientSecret = process.env.AUTH_GOOGLE_SECRET ?? process.env.GOOGLE_CLIENT_SECRET ?? "";
+const googleHostedDomain = (process.env.AUTH_GOOGLE_HD ?? process.env.GOOGLE_HOSTED_DOMAIN ?? orgDomain).toLowerCase();
 
 type StoredClientCredential = {
   email: string;
@@ -176,6 +179,9 @@ export async function upsertAdminCredential(input: {
   name?: string;
 }) {
   const email = normalizeLoginIdentifier(input.email);
+  if (!isOrgEmail(email)) {
+    throw new Error(`Admin credentials must use a @${orgDomain} email address.`);
+  }
   const username = normalizeLoginIdentifier(input.username ?? email.split("@")[0]);
   const record: StoredClientCredential = {
     email,
@@ -286,7 +292,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
 
         // Verify admin is on the allowlist
-        if (!adminAllowlist.includes(stored.email.toLowerCase())) return null;
+        const storedEmailNorm = stored.email.toLowerCase();
+        if (!isOrgEmail(storedEmailNorm) || !adminAllowlist.includes(storedEmailNorm)) return null;
 
         const valid = await verifyPassword(password, stored.passwordHash);
         if (!valid) return null;
@@ -300,8 +307,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
     Google({
-      clientId: process.env.AUTH_GOOGLE_ID ?? "",
-      clientSecret: process.env.AUTH_GOOGLE_SECRET ?? "",
+      clientId: googleClientId,
+      clientSecret: googleClientSecret,
+      authorization: {
+        params: {
+          hd: googleHostedDomain,
+          prompt: "select_account",
+        },
+      },
       allowDangerousEmailAccountLinking: false,
     }),
   ],
@@ -324,8 +337,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
       if (account && profile && typeof profile.email === "string") {
         const email = profile.email.toLowerCase();
-        const isAdmin = adminAllowlist.includes(email);
-        const isStaff = !isAdmin && (staffAllowlist.includes(email) || email.endsWith(`@${orgDomain}`));
+        const isDomainEmail = email.endsWith(`@${orgDomain}`);
+        const isAdmin = isDomainEmail && adminAllowlist.includes(email);
+        const isStaff = isDomainEmail && !isAdmin && (staffAllowlist.includes(email) || adminAllowlist.includes(email));
         token.role = isAdmin ? "admin" : isStaff ? "staff" : "client";
       }
       return token;
@@ -345,11 +359,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         return Boolean(user?.email);
       }
 
+      if (account?.provider === "google" && profile && typeof profile === "object") {
+        const emailVerified = (profile as { email_verified?: boolean }).email_verified;
+        if (emailVerified === false) return false;
+      }
+
       if (!profile?.email) return false;
       const email = profile.email.toLowerCase();
       const isAllowedDomain = email.endsWith(`@${orgDomain}`);
-      const isAllowlisted = adminAllowlist.includes(email) || staffAllowlist.includes(email) || clientAllowlist.includes(email);
-      return isAllowedDomain || isAllowlisted;
+      const isClientAllowlisted = clientAllowlist.includes(email);
+      return isAllowedDomain || isClientAllowlisted;
     },
   },
 });

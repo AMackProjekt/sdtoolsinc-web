@@ -61,13 +61,11 @@ export default function Home() {
           </div>
 
           <h1 className="text-5xl md:text-7xl font-black leading-[1.05] tracking-tight mb-6">
-            <span className="text-white">Case management</span>
+            <span className="text-white">Case Management</span>
             <br />
             <span className="bg-gradient-to-r from-teal-400 to-teal-300 bg-clip-text text-transparent">
-              built for Dreams
+              Built to Serve
             </span>
-            <br />
-            <span className="text-white">For Change.</span>
           </h1>
 
           <p className="text-slate-400 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-12">
@@ -220,12 +218,12 @@ export default function Home() {
                 <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 px-3 py-2 rounded-xl">
                   <Image
                     src="/amp-logo.jpeg"
-                    alt="A MackProjekt"
+                    alt="T.O.O.LS INC"
                     width={24}
                     height={24}
                     className="rounded-md object-cover"
                   />
-                  <span className="text-slate-300 font-bold text-xs tracking-wide">A MackProjekt</span>
+                  <span className="text-slate-300 font-bold text-xs tracking-wide">T.O.O.LS INC</span>
                 </div>
               </div>
             </div>

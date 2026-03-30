@@ -104,7 +104,7 @@ export default function AdminTrainingsPage() {
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 70% 50%, white 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
         <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <p className="text-white/70 text-xs uppercase tracking-widest font-semibold mb-1">Dreams For Change</p>
+            <p className="text-white/70 text-xs uppercase tracking-widest font-semibold mb-1">T.O.O.LS INC</p>
             <h2 className="text-2xl font-black">Niche Academy</h2>
             <p className="text-white/80 text-sm mt-1">
               Access your professional development courses, certifications, and learning paths

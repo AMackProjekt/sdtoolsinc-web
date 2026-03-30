@@ -4,7 +4,15 @@ import { timingSafeEqual } from "crypto";
 import { api } from "../../../../../convex/_generated/api";
 import { auth } from "@/auth";
 
+export const dynamic = "force-dynamic";
+
 const SEED_TOKEN = process.env.SETUP_TOKEN ?? "";
+
+function getClient() {
+  const url = process.env.NEXT_PUBLIC_CONVEX_URL;
+  if (!url) throw new Error("NEXT_PUBLIC_CONVEX_URL is not set");
+  return new ConvexHttpClient(url);
+}
 
 function tokenMatches(provided: string): boolean {
   if (!SEED_TOKEN || !provided) return false;
@@ -43,7 +51,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+  const convex = getClient();
 
   // Wipe and re-seed for idempotency
   await convex.mutation(api.functions.clearTeamMembers, {});

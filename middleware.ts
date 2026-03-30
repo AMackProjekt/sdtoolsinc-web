@@ -182,6 +182,16 @@ export default auth(async (req) => {
     return applySecurityHeaders(NextResponse.redirect(new URL("/portal/client", req.url)));
   }
 
+  // ── Domain restriction for staff/admin portals ─────────────────────────
+  const needsDomainRestrictedPortal =
+    pathname.startsWith("/portal/staff") || pathname.startsWith("/portal/admin");
+  if (needsDomainRestrictedPortal && isStaffOrAdmin && userEmail) {
+    const emailNorm = userEmail.toLowerCase();
+    if (!emailNorm.endsWith(`@${ORG_DOMAIN}`)) {
+      return applySecurityHeaders(NextResponse.redirect(new URL("/portal/client", req.url)));
+    }
+  }
+
   // ── Domain check for Google-authenticated staff / admin ─────────────────
   // Credential-based users are already domain-checked at sign-in time.
   const isGoogleSession = !userEmail || userEmail.includes("@"); // always true; guard is the domain

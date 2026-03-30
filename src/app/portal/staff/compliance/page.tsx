@@ -43,7 +43,7 @@ const CHECK_META: Record<
   },
   google_oauth_configured: {
     label: "Google OAuth",
-    description: "AUTH_GOOGLE_ID and AUTH_GOOGLE_SECRET are configured for identity verification.",
+    description: "AUTH_GOOGLE_ID/AUTH_GOOGLE_SECRET or GOOGLE_CLIENT_ID/GOOGLE_CLIENT_SECRET are configured for identity verification.",
     icon: UserCheck,
   },
   kv_store_configured: {

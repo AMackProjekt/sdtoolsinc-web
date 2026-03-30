@@ -3,7 +3,7 @@ export default function OrgChartPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-xl font-bold text-slate-800">Organization Chart</h1>
-        <p className="text-slate-500 text-sm mt-0.5">Dreams For Change — Program Staffing Hierarchy</p>
+        <p className="text-slate-500 text-sm mt-0.5">T.O.O.LS INC — Program Staffing Hierarchy</p>
       </div>
 
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 overflow-x-auto">

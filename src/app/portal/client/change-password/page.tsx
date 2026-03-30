@@ -142,7 +142,7 @@ export default function ChangePasswordPage() {
         </div>
 
         <p className="text-center text-xs text-slate-400 mt-6">
-          Dreams for Change — Secure Client Portal
+          T.O.O.LS INC — Secure Client Portal
         </p>
       </div>
     </div>

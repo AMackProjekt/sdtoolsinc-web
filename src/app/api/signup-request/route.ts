@@ -6,9 +6,17 @@ import { randomBytes } from "crypto";
 import { ORG } from "@/config/org";
 import { getBaseUrl } from "@/lib/runtime-config";
 
+export const dynamic = "force-dynamic";
+
 const ADMIN_NOTIFY_EMAIL = process.env.ADMIN_NOTIFY_EMAIL ?? ORG.supportEmail;
 const ADMIN_NOTIFY_EMAIL_2 = process.env.ADMIN_NOTIFY_EMAIL_2 ?? ADMIN_NOTIFY_EMAIL;
 const BASE_URL = getBaseUrl();
+
+function getClient() {
+  const url = process.env.NEXT_PUBLIC_CONVEX_URL;
+  if (!url) throw new Error("NEXT_PUBLIC_CONVEX_URL is not set");
+  return new ConvexHttpClient(url);
+}
 
 function requestDetailsTable(name: string, email: string, note: string | undefined, date: string) {
   const formattedDate = new Date(date).toLocaleDateString("en-US", {
@@ -43,7 +51,7 @@ function requestDetailsTable(name: string, email: string, note: string | undefin
 }
 
 export async function POST(req: NextRequest) {
-  const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+  const convex = getClient();
   const resendApprove = new Resend(process.env.RESEND_API_KEY);
   const resendDeny = new Resend(process.env.RESEND_API_KEY_2);
 

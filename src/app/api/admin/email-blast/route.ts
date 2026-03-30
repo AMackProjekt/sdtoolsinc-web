@@ -43,12 +43,12 @@ export async function POST(req: NextRequest) {
   for (const to of validRecipients) {
     try {
       const { error } = await resend.emails.send({
-        from: "Dreams For Change <noreply@dreamsforchange.org>",
+        from: "T.O.O.LS INC <noreply@dreamsforchange.org>",
         to,
         subject,
         text: body,
         html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px">
-          <p style="font-size:13px;color:#64748b;margin-bottom:16px">From: Dreams For Change Admin</p>
+          <p style="font-size:13px;color:#64748b;margin-bottom:16px">From: T.O.O.LS INC Admin</p>
           <div style="white-space:pre-wrap;font-size:14px;color:#1e293b;line-height:1.6">${escapeHtml(body)}</div>
           <hr style="margin:24px 0;border:none;border-top:1px solid #e2e8f0"/>
           <p style="font-size:11px;color:#94a3b8">This message was sent via the DFC Staff Portal. Do not reply to this email.</p>

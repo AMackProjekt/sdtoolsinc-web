@@ -85,6 +85,12 @@ function parseList(value: string | undefined): string[] {
 		.filter(Boolean);
 }
 
+function hasGoogleOauthCredentials(): boolean {
+	const googleClientId = process.env.AUTH_GOOGLE_ID ?? process.env.GOOGLE_CLIENT_ID;
+	const googleClientSecret = process.env.AUTH_GOOGLE_SECRET ?? process.env.GOOGLE_CLIENT_SECRET;
+	return Boolean(googleClientId) && Boolean(googleClientSecret);
+}
+
 function getComplianceSummary(settings: EnterpriseSettings): ControlCenterSummary["compliance"] {
 	const checks = {
 		phi_workflow_approved:
@@ -92,8 +98,7 @@ function getComplianceSummary(settings: EnterpriseSettings): ControlCenterSummar
 		baa_confirmed: settings.baa_confirmed || process.env.BAA_CONFIRMED === "true",
 		encryption_key_configured: Boolean(process.env.DATA_ENCRYPTION_KEY),
 		auth_secret_configured: Boolean(process.env.AUTH_SECRET),
-		google_oauth_configured:
-			Boolean(process.env.AUTH_GOOGLE_ID) && Boolean(process.env.AUTH_GOOGLE_SECRET),
+		google_oauth_configured: hasGoogleOauthCredentials(),
 		kv_store_configured:
 			Boolean(process.env.KV_REST_API_URL) && Boolean(process.env.KV_REST_API_TOKEN),
 	};
@@ -117,10 +122,7 @@ function getComplianceSummary(settings: EnterpriseSettings): ControlCenterSummar
 function getSecuritySummary(): ControlCenterSummary["security"] {
 	return {
 		data_encrypted: Boolean(process.env.DATA_ENCRYPTION_KEY || process.env.AUTH_SECRET),
-		auth_configured:
-			Boolean(process.env.AUTH_SECRET) &&
-			Boolean(process.env.AUTH_GOOGLE_ID) &&
-			Boolean(process.env.AUTH_GOOGLE_SECRET),
+		auth_configured: Boolean(process.env.AUTH_SECRET) && hasGoogleOauthCredentials(),
 		secure_transport:
 			process.env.NODE_ENV === "production" ||
 			Boolean(process.env.NEXTAUTH_URL?.startsWith("https://")),
@@ -131,7 +133,7 @@ function getSecuritySummary(): ControlCenterSummary["security"] {
 function getIntegrationSummary(): ControlCenterSummary["integrations"] {
 	return {
 		resend: Boolean(process.env.RESEND_API_KEY),
-		googleOAuth: Boolean(process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET),
+		googleOAuth: hasGoogleOauthCredentials(),
 		googleChatWebhook: Boolean(process.env.Champions_Web_Hook),
 		convex: Boolean(process.env.NEXT_PUBLIC_CONVEX_URL),
 		blob: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
