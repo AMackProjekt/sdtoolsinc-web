@@ -75,6 +75,7 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE(_req: NextRequest) {
   try {
+    const client = getClient();
     const session = await auth();
     if (!session?.user?.email) {
       return NextResponse.json(

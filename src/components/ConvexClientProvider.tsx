@@ -2,10 +2,10 @@
 
 import { ConvexProvider, ConvexReactClient } from "convex/react";
 
-const url = process.env.NEXT_PUBLIC_CONVEX_URL ?? "";
-const convex = url ? new ConvexReactClient(url) : null;
+const FALLBACK_CONVEX_URL = "https://example.convex.cloud";
+const url = process.env.NEXT_PUBLIC_CONVEX_URL ?? FALLBACK_CONVEX_URL;
+const convex = new ConvexReactClient(url);
 
 export function ConvexClientProvider({ children }: { children: React.ReactNode }) {
-  if (!convex) return <>{children}</>;
   return <ConvexProvider client={convex}>{children}</ConvexProvider>;
 }

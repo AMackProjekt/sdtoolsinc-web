@@ -2,8 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../../../convex/_generated/api";
 import { upsertClientCredential } from "@/auth";
+
 export const dynamic = "force-dynamic";
 const SETUP_TOKEN = process.env.SETUP_TOKEN ?? "";
+
+function getClient() {
+  const url = process.env.NEXT_PUBLIC_CONVEX_URL;
+  if (!url) throw new Error("NEXT_PUBLIC_CONVEX_URL is not set");
+  return new ConvexHttpClient(url);
+}
 
 const CLIENTS = [
   {
