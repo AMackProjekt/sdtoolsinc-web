@@ -155,6 +155,36 @@ export default defineSchema({
     workSchedule: v.optional(v.string()),
   }).index("by_email", ["userEmail"]),
 
+  enrollments: defineTable({
+    slot: v.string(),
+    clientName: v.string(),
+    location: v.string(),
+    enrolledDate: v.string(),
+    caseManager: v.string(),
+    status: v.union(v.literal("active"), v.literal("exited"), v.literal("on-hold")),
+    notes: v.optional(v.string()),
+  }).index("by_slot", ["slot"]).index("by_status", ["status"]),
+
+  exits: defineTable({
+    slot: v.string(),
+    clientName: v.string(),
+    location: v.string(),
+    exitDate: v.string(),
+    exitReason: v.string(),
+    exitDestination: v.optional(v.string()),
+    caseManager: v.string(),
+    notes: v.optional(v.string()),
+  }).index("by_slot", ["slot"]),
+
+  trainingLog: defineTable({
+    staffEmail: v.string(),
+    staffName: v.string(),
+    courseName: v.string(),
+    platform: v.string(),
+    completedDate: v.string(),
+    certificateUrl: v.optional(v.string()),
+  }).index("by_staffEmail", ["staffEmail"]),
+
   // ── Admin tables ───────────────────────────────────────────────────────────
 
   auditLogs: defineTable({

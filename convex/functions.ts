@@ -577,6 +577,120 @@ export const upsertUserProfile = mutation({
   },
 });
 
+// ─── Enrollments ─────────────────────────────────────────────────────────────
+
+export const listEnrollments = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("enrollments").order("desc").collect();
+  },
+});
+
+export const addEnrollment = mutation({
+  args: {
+    slot: v.string(),
+    clientName: v.string(),
+    location: v.string(),
+    enrolledDate: v.string(),
+    caseManager: v.string(),
+    status: v.union(v.literal("active"), v.literal("exited"), v.literal("on-hold")),
+    notes: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.insert("enrollments", args);
+  },
+});
+
+export const updateEnrollment = mutation({
+  args: {
+    id: v.id("enrollments"),
+    status: v.union(v.literal("active"), v.literal("exited"), v.literal("on-hold")),
+  },
+  handler: async (ctx, { id, status }) => {
+    await ctx.db.patch(id, { status });
+  },
+});
+
+export const deleteEnrollment = mutation({
+  args: { id: v.id("enrollments") },
+  handler: async (ctx, { id }) => {
+    await ctx.db.delete(id);
+  },
+});
+
+// ─── Exits ───────────────────────────────────────────────────────────────────
+
+export const listExits = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("exits").order("desc").collect();
+  },
+});
+
+export const addExit = mutation({
+  args: {
+    slot: v.string(),
+    clientName: v.string(),
+    location: v.string(),
+    exitDate: v.string(),
+    exitReason: v.string(),
+    exitDestination: v.optional(v.string()),
+    caseManager: v.string(),
+    notes: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.insert("exits", args);
+  },
+});
+
+export const deleteExit = mutation({
+  args: { id: v.id("exits") },
+  handler: async (ctx, { id }) => {
+    await ctx.db.delete(id);
+  },
+});
+
+// ─── Training Log ────────────────────────────────────────────────────────────
+
+export const listTrainingLog = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("trainingLog").order("desc").collect();
+  },
+});
+
+export const listMyTrainingLog = query({
+  args: { staffEmail: v.string() },
+  handler: async (ctx, { staffEmail }) => {
+    return await ctx.db
+      .query("trainingLog")
+      .withIndex("by_staffEmail", (q) => q.eq("staffEmail", staffEmail))
+      .order("desc")
+      .collect();
+  },
+});
+
+export const addTrainingLog = mutation({
+  args: {
+    staffEmail: v.string(),
+    staffName: v.string(),
+    courseName: v.string(),
+    platform: v.string(),
+    completedDate: v.string(),
+    certificateUrl: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.insert("trainingLog", args);
+  },
+});
+
+export const deleteTrainingLog = mutation({
+  args: { id: v.id("trainingLog") },
+  handler: async (ctx, { id }) => {
+    await ctx.db.delete(id);
+  },
+});
+
 // ─── Audit Logs ──────────────────────────────────────────────────────────────
 
 export const listAuditLogs = query({

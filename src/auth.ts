@@ -28,6 +28,7 @@ type StoredClientCredential = {
   username: string;
   passwordHash: string;
   name?: string;
+  mustChangePassword?: boolean;
   approvedAt: string;
 };
 
@@ -99,6 +100,7 @@ export async function upsertClientCredential(input: {
   username?: string;
   password: string;
   name?: string;
+  mustChangePassword?: boolean;
 }) {
   const email = normalizeLoginIdentifier(input.email);
   const username = normalizeLoginIdentifier(input.username ?? email.split("@")[0]);
@@ -107,6 +109,7 @@ export async function upsertClientCredential(input: {
     username,
     passwordHash: await hashPasswordAsync(input.password),
     name: input.name,
+    mustChangePassword: input.mustChangePassword,
     approvedAt: new Date().toISOString(),
   };
 
