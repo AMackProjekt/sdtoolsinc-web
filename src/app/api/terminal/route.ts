@@ -274,7 +274,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const policy = enforce(auth.role, 'terminal', 'execute');
+  const policy = enforce(auth.coreRole, 'terminal', 'execute');
   if (!policy.allowed) {
     return NextResponse.json({ error: policy.error }, { status: policy.status });
   }
@@ -297,7 +297,7 @@ export async function POST(req: NextRequest) {
 
   await logAudit({
     actor: auth.email,
-    role: auth.role,
+    role: auth.coreRole,
     action: 'terminal.command',
     resource: '/api/terminal',
     status: 'success',

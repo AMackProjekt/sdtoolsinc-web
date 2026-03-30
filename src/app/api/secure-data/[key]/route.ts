@@ -44,7 +44,7 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ key: s
   }
 
   const resourceKey = `secure-data:${normalizedKey}` as PolicyResource;
-  const policy = enforce(auth.role, resourceKey, "read");
+  const policy = enforce(auth.coreRole, resourceKey, "read");
   if (!policy.allowed) {
     return NextResponse.json({ error: policy.error }, { status: policy.status });
   }
@@ -58,7 +58,7 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ key: s
 
   await logAudit({
     actor: auth.email,
-    role: auth.role,
+    role: auth.coreRole,
     action: "read",
     resource: `secure-data:${normalizedKey}`,
     status: "success",
@@ -84,7 +84,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ key:
   }
 
   const resourceKey = `secure-data:${normalizedKey}` as PolicyResource;
-  const policy = enforce(auth.role, resourceKey, "write");
+  const policy = enforce(auth.coreRole, resourceKey, "write");
   if (!policy.allowed) {
     return NextResponse.json({ error: policy.error }, { status: policy.status });
   }
@@ -103,7 +103,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ key:
 
   await logAudit({
     actor: auth.email,
-    role: auth.role,
+    role: auth.coreRole,
     action: "write",
     resource: `secure-data:${normalizedKey}`,
     status: "success",

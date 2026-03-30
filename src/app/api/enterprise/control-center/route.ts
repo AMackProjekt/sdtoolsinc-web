@@ -205,7 +205,7 @@ export async function GET() {
 		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 	}
 
-	const permission = enforce(auth.role, "enterprise-control", "read");
+	const permission = enforce(auth.coreRole, "enterprise-control", "read");
 	if (!permission.allowed) {
 		return NextResponse.json({ error: permission.error }, { status: permission.status });
 	}
@@ -237,7 +237,7 @@ export async function PUT(req: NextRequest) {
 		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 	}
 
-	const permission = enforce(auth.role, "enterprise-control", "write");
+	const permission = enforce(auth.coreRole, "enterprise-control", "write");
 	if (!permission.allowed) {
 		return NextResponse.json({ error: permission.error }, { status: permission.status });
 	}

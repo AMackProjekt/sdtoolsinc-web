@@ -10,13 +10,13 @@ import { getAuthContext, hasRole } from "@/lib/authz";
  * directly to the browser — it is fetched server-side and streamed back.
  */
 export async function GET(req: NextRequest) {
-  const { isAuthenticated, role } = await getAuthContext();
+  const { isAuthenticated, coreRole } = await getAuthContext();
 
   if (!isAuthenticated) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  if (!hasRole("staff", role)) {
+  if (!hasRole("staff", coreRole)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

@@ -254,4 +254,21 @@ export default defineSchema({
     image: v.optional(v.string()),  // base64 data URL
     ts: v.string(),
   }).index("by_convKey", ["convKey"]),
+
+  // ── Enterprise Approval Workflows ─────────────────────────────────────────
+  approvalWorkflows: defineTable({
+    requestType: v.union(v.literal("finance"), v.literal("policy"), v.literal("staffing"), v.literal("media")),
+    status: v.union(v.literal("pending"), v.literal("approved"), v.literal("rejected")),
+    priority: v.union(v.literal("low"), v.literal("medium"), v.literal("high"), v.literal("critical")),
+    ownerEmail: v.string(),
+    title: v.string(),
+    summary: v.string(),
+    sourceSuite: v.union(v.literal("executive"), v.literal("hr"), v.literal("newsroom")),
+    requestedAt: v.string(),
+    dueAt: v.string(),
+    resolvedAt: v.optional(v.string()),
+  })
+    .index("by_status", ["status"])
+    .index("by_sourceSuite_and_status", ["sourceSuite", "status"])
+    .index("by_ownerEmail", ["ownerEmail"]),
 });

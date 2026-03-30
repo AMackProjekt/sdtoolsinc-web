@@ -213,17 +213,17 @@ export default function Home() {
                 <div className="w-8 h-8 rounded-lg bg-teal-500 flex items-center justify-center">
                   <span className="text-teal-950 font-black text-[10px]">CF</span>
                 </div>
-                <span className="font-bold text-white text-sm">T.O.O.LS INC</span>
+                <span className="font-bold text-white text-sm">A MackProjekt</span>
               </div>
               <p className="text-slate-500 text-xs max-w-xs leading-relaxed">
-                T.O.O.LS INC builds intelligent tools for social services and case management organizations.
+                A MackProjekt builds intelligent tools for social services.
               </p>
             </div>
 
             {/* Links */}
             <div className="grid grid-cols-2 gap-x-16 gap-y-2 text-xs">
               <div className="space-y-2">
-                <div className="text-slate-600 font-bold uppercase tracking-widest text-[10px] mb-2">Portals</div>
+                <div className="text-slate-600 font-bold uppercase tracking-widest text-[10px] mb-2">Enterprise Portals</div>
                 <Link href="/login/client" className="block text-slate-400 hover:text-white transition-colors">Participant Portal</Link>
                 <Link href="/login/staff" className="block text-slate-400 hover:text-white transition-colors">Staff Portal</Link>
                 <Link href="/login/admin" className="block text-slate-400 hover:text-white transition-colors">Admin Portal</Link>
@@ -257,19 +257,19 @@ export default function Home() {
                 <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 px-3 py-2 rounded-xl">
                   <Image
                     src="/amp-logo.jpeg"
-                    alt="T.O.O.LS INC"
+                    alt="A MackProjekt"
                     width={24}
                     height={24}
                     className="rounded-md object-cover"
                   />
-                  <span className="text-slate-300 font-bold text-xs tracking-wide">T.O.O.LS INC</span>
+                  <span className="text-slate-300 font-bold text-xs tracking-wide">A MackProjekt</span>
                 </div>
               </div>
             </div>
 
             {/* Legal notice */}
             <p className="mt-6 text-[10px] text-slate-700 text-center leading-relaxed max-w-4xl mx-auto">
-              CaseFlow Operations is a proprietary platform developed by A MackProjekt for T.O.O.LS INC. Use of this platform constitutes
+              CaseFlow Operations is a proprietary platform developed by Donyale Mack/A MackProjekt. Use of this platform constitutes
               acceptance of the Terms of Use and Privacy Policy. This system processes Protected Health Information (PHI) in accordance with
               HIPAA (45 CFR Parts 160 and 164). Unauthorized disclosure of PHI may result in civil and criminal penalties. All data is
               encrypted in transit and at rest. This platform uses cookies essential to site security and session management. By continuing

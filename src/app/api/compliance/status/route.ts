@@ -52,7 +52,7 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const policy = enforce(auth.role, "compliance-summary", "read");
+  const policy = enforce(auth.coreRole, "compliance-summary", "read");
   if (!policy.allowed) {
     return NextResponse.json({ error: policy.error }, { status: policy.status });
   }

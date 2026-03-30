@@ -11,13 +11,13 @@ const ALLOWED_TYPES = new Set([
 ]);
 
 export async function POST(req: NextRequest) {
-  const { email, role, isAuthenticated } = await getAuthContext();
+  const { email, coreRole, isAuthenticated } = await getAuthContext();
 
   if (!isAuthenticated || !email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  if (!hasRole("staff", role)) {
+  if (!hasRole("staff", coreRole)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

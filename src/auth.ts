@@ -6,6 +6,8 @@ import { promisify } from "util";
 import { decryptJson, encryptJson } from "@/lib/crypto";
 import { getEncryptedRecord, setEncryptedRecord } from "@/lib/server-data-store";
 
+type EnterpriseRole = "executive" | "hr-staff" | "newsroom-contributor" | "newsroom-editor";
+
 const adminAllowlist = (process.env.ADMIN_ALLOWLIST ?? "")
   .split(",")
   .map((email) => email.trim().toLowerCase())
@@ -196,6 +198,51 @@ export async function upsertAdminCredential(input: {
   return record;
 }
 
+// ── Enterprise Role Management ─────────────────────────────────────────────
+/**
+ * Get enterprise roles assigned to a user by email address.
+ * Returns empty array if no roles assigned.
+ */
+export async function getEnterpriseRoles(email: string): Promise<EnterpriseRole[]> {
+  const normalized = normalizeLoginIdentifier(email);
+  const rolesJson = await getEncryptedRecord("enterprise-roles", normalized);
+  if (!rolesJson) return [];
+  try {
+    return decryptJson<EnterpriseRole[]>(rolesJson);
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Assign enterprise roles to a user.
+ * Replaces any existing roles.
+ */
+export async function setEnterpriseRoles(email: string, roles: EnterpriseRole[]): Promise<void> {
+  const normalized = normalizeLoginIdentifier(email);
+  const encrypted = encryptJson(roles);
+  await setEncryptedRecord("enterprise-roles", normalized, encrypted);
+}
+
+/**
+ * Add one or more enterprise roles to a user.
+ * Does not remove existing roles.
+ */
+export async function addEnterpriseRoles(email: string, roles: EnterpriseRole[]): Promise<void> {
+  const existing = await getEnterpriseRoles(email);
+  const combined = Array.from(new Set([...existing, ...roles]));
+  await setEnterpriseRoles(email, combined);
+}
+
+/**
+ * Remove one or more enterprise roles from a user.
+ */
+export async function removeEnterpriseRoles(email: string, roles: EnterpriseRole[]): Promise<void> {
+  const existing = await getEnterpriseRoles(email);
+  const filtered = existing.filter((r) => !roles.includes(r));
+  await setEnterpriseRoles(email, filtered);
+}
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: process.env.AUTH_SECRET,
   trustHost: true,
@@ -327,11 +374,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
       if (account?.provider === "staff-credentials") {
         token.role = "staff";
+        if (profile?.email) {
+          token.enterpriseRoles = await getEnterpriseRoles(profile.email.toLowerCase());
+        }
         return token;
       }
 
       if (account?.provider === "admin-credentials") {
         token.role = "admin";
+        if (profile?.email) {
+          token.enterpriseRoles = await getEnterpriseRoles(profile.email.toLowerCase());
+        }
         return token;
       }
 
@@ -341,12 +394,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const isAdmin = isDomainEmail && adminAllowlist.includes(email);
         const isStaff = isDomainEmail && !isAdmin && (staffAllowlist.includes(email) || adminAllowlist.includes(email));
         token.role = isAdmin ? "admin" : isStaff ? "staff" : "client";
+        
+        // Fetch enterprise roles for staff and admin users
+        if (isStaff || isAdmin) {
+          token.enterpriseRoles = await getEnterpriseRoles(email);
+        }
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
         session.user.role = (token.role as "staff" | "client" | "admin" | undefined) ?? "client";
+        session.user.enterpriseRoles = (token.enterpriseRoles as EnterpriseRole[] | undefined) ?? [];
       }
       return session;
     },
