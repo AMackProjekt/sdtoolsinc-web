@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Activity, AlertTriangle, Clock3, ShieldCheck, Users } from "lucide-react";
-import { Area, AreaChart, CartesianGrid, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Cell, Bar, BarChart } from "recharts";
+import { Area, AreaChart, CartesianGrid, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Cell, Bar, BarChart, Legend } from "recharts";
 
 type ExecutiveResponse = {
   kpis: {
@@ -27,6 +27,23 @@ type ExecutiveResponse = {
 
 const POLL_MS = 15000;
 const COLORS = ["#0E7490", "#14B8A6", "#67E8F9", "#155E75"];
+
+function DashboardTooltip({ active, payload, label }: { active?: boolean; payload?: Array<{ name: string; value: number; color?: string }>; label?: string; }) {
+  if (!active || !payload?.length) return null;
+
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white/95 px-3 py-2 shadow-lg backdrop-blur">
+      {label ? <p className="text-xs font-semibold text-slate-700">{label}</p> : null}
+      <div className="mt-1 space-y-1">
+        {payload.map((item) => (
+          <p key={item.name} className="text-xs text-slate-600">
+            <span className="font-semibold" style={{ color: item.color ?? "#0f172a" }}>{item.name}</span>: {item.value}
+          </p>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function ExecutiveRealtimeDashboard() {
   const [data, setData] = useState<ExecutiveResponse | null>(null);
@@ -97,7 +114,7 @@ export default function ExecutiveRealtimeDashboard() {
       </div>
 
       <div className="grid gap-4 xl:grid-cols-3">
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 xl:col-span-2">
+        <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-cyan-50/50 p-4 xl:col-span-2">
           <p className="text-sm font-semibold text-slate-700">Approval Throughput (7-day)</p>
           <div className="mt-4 h-72">
             <ResponsiveContainer width="100%" height="100%">
@@ -107,47 +124,60 @@ export default function ExecutiveRealtimeDashboard() {
                     <stop offset="5%" stopColor="#14B8A6" stopOpacity={0.9} />
                     <stop offset="95%" stopColor="#14B8A6" stopOpacity={0.05} />
                   </linearGradient>
+                  <linearGradient id="closedGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#0E7490" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#0E7490" stopOpacity={0.05} />
+                  </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="day" />
-                <YAxis />
-                <Tooltip />
-                <Area type="monotone" dataKey="created" stroke="#0F766E" fill="url(#createdGrad)" />
-                <Area type="monotone" dataKey="closed" stroke="#0E7490" fill="rgba(14,116,144,0.15)" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#dbeafe" />
+                <XAxis dataKey="day" tick={{ fill: "#475569", fontSize: 12 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: "#475569", fontSize: 12 }} axisLine={false} tickLine={false} />
+                <Tooltip content={<DashboardTooltip />} />
+                <Legend wrapperStyle={{ fontSize: "12px" }} />
+                <Area type="monotone" dataKey="created" stroke="#0F766E" strokeWidth={2.5} fill="url(#createdGrad)" dot={false} activeDot={{ r: 5 }} />
+                <Area type="monotone" dataKey="closed" stroke="#0E7490" strokeWidth={2.5} fill="url(#closedGrad)" dot={false} activeDot={{ r: 5 }} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-4">
+        <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-4">
           <p className="text-sm font-semibold text-slate-700">Queue Pressure</p>
-          <div className="mt-4 h-72">
+          <div className="relative mt-4 h-72">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={90}>
+                <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={56} outerRadius={92} paddingAngle={3}>
                   {pieData.map((entry, i) => (
                     <Cell key={entry.name} fill={COLORS[i % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip content={<DashboardTooltip />} />
+                <Legend wrapperStyle={{ fontSize: "12px" }} />
               </PieChart>
             </ResponsiveContainer>
+            <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+              <div className="text-center">
+                <p className="text-[11px] uppercase tracking-wider text-slate-500">Pending</p>
+                <p className="text-2xl font-black text-slate-800">{data.approvals.pendingTotal}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-4">
+      <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-amber-50/40 p-4">
         <p className="text-sm font-semibold text-slate-700">Approvals By Type</p>
         <div className="mt-4 h-64">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data.approvals.byType}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="type" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="pending" fill="#0E7490" />
-              <Bar dataKey="approved" fill="#14B8A6" />
-              <Bar dataKey="rejected" fill="#F97316" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+              <XAxis dataKey="type" tick={{ fill: "#475569", fontSize: 12 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: "#475569", fontSize: 12 }} axisLine={false} tickLine={false} />
+              <Tooltip content={<DashboardTooltip />} />
+              <Legend wrapperStyle={{ fontSize: "12px" }} />
+              <Bar dataKey="pending" fill="#0E7490" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="approved" fill="#14B8A6" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="rejected" fill="#F97316" radius={[6, 6, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

@@ -63,8 +63,8 @@ export default function EnterpriseOperationsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Platform Operations</h1>
-          <p className="mt-1 text-sm text-slate-500">Operational jobs, exports, seed routines, and environment readiness.</p>
+          <h1 className="text-2xl font-bold text-slate-800">Enterprise Operations Center</h1>
+          <p className="mt-1 text-sm text-slate-500">Governed operational workflows, controlled data actions, and production readiness checks.</p>
         </div>
         <button type="button" onClick={() => void load()} className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50">
           <RefreshCw className="h-4 w-4" /> Refresh
@@ -72,39 +72,39 @@ export default function EnterpriseOperationsPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-4">
-        <div className="rounded-xl border border-slate-200 bg-white p-4"><p className="text-xs uppercase tracking-wide text-slate-500">Reseed Staff</p><p className="mt-2 text-sm font-semibold text-slate-800">{data.platformOperations.canReseedStaff ? "Ready" : "Unavailable"}</p></div>
-        <div className="rounded-xl border border-slate-200 bg-white p-4"><p className="text-xs uppercase tracking-wide text-slate-500">Reseed Caseload</p><p className="mt-2 text-sm font-semibold text-slate-800">{data.platformOperations.canReseedCaseload ? "Ready" : "Unavailable"}</p></div>
-        <div className="rounded-xl border border-slate-200 bg-white p-4"><p className="text-xs uppercase tracking-wide text-slate-500">Export Snapshot</p><p className="mt-2 text-sm font-semibold text-slate-800">{data.platformOperations.canExportCaseload ? "Ready" : "Unavailable"}</p></div>
-        <div className="rounded-xl border border-slate-200 bg-white p-4"><p className="text-xs uppercase tracking-wide text-slate-500">Setup Token</p><p className="mt-2 text-sm font-semibold text-slate-800">{data.platformOperations.hasSetupToken ? "Present" : "Missing"}</p></div>
+        <div className="rounded-xl border border-slate-200 bg-white p-4"><p className="text-xs uppercase tracking-wide text-slate-500">Staff Refresh Job</p><p className="mt-2 text-sm font-semibold text-slate-800">{data.platformOperations.canReseedStaff ? "Ready" : "Unavailable"}</p></div>
+        <div className="rounded-xl border border-slate-200 bg-white p-4"><p className="text-xs uppercase tracking-wide text-slate-500">Caseload Refresh Job</p><p className="mt-2 text-sm font-semibold text-slate-800">{data.platformOperations.canReseedCaseload ? "Ready" : "Unavailable"}</p></div>
+        <div className="rounded-xl border border-slate-200 bg-white p-4"><p className="text-xs uppercase tracking-wide text-slate-500">Governed Export</p><p className="mt-2 text-sm font-semibold text-slate-800">{data.platformOperations.canExportCaseload ? "Ready" : "Unavailable"}</p></div>
+        <div className="rounded-xl border border-slate-200 bg-white p-4"><p className="text-xs uppercase tracking-wide text-slate-500">Setup Credential</p><p className="mt-2 text-sm font-semibold text-slate-800">{data.platformOperations.hasSetupToken ? "Present" : "Missing"}</p></div>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
-        <button type="button" onClick={() => void runAction("seed-staff", "/api/admin/seed-staff", "POST", "Staff roster reseeded.")} disabled={busy !== null || !data.platformOperations.canReseedStaff} className="rounded-xl border border-slate-200 bg-white p-5 text-left hover:bg-slate-50 disabled:opacity-60">
+        <button type="button" onClick={() => void runAction("seed-staff", "/api/admin/seed-staff", "POST", "Staff directory refreshed.")} disabled={busy !== null || !data.platformOperations.canReseedStaff} className="rounded-xl border border-slate-200 bg-white p-5 text-left hover:bg-slate-50 disabled:opacity-60">
           <Users className="h-5 w-5 text-cyan-600" />
-          <p className="mt-3 text-sm font-semibold text-slate-800">Reseed Staff Directory</p>
-          <p className="mt-1 text-xs text-slate-500">Rebuild the team member dataset from the controlled enterprise seed source.</p>
+          <p className="mt-3 text-sm font-semibold text-slate-800">Refresh Staff Directory</p>
+          <p className="mt-1 text-xs text-slate-500">Rebuilds governed team records from the controlled enterprise baseline source.</p>
         </button>
-        <button type="button" onClick={() => void runAction("seed-caseload", "/api/admin/seed-caseload", "POST", "Caseload reseeded.")} disabled={busy !== null || !data.platformOperations.canReseedCaseload} className="rounded-xl border border-slate-200 bg-white p-5 text-left hover:bg-slate-50 disabled:opacity-60">
+        <button type="button" onClick={() => void runAction("seed-caseload", "/api/admin/seed-caseload", "POST", "Caseload baseline refreshed.")} disabled={busy !== null || !data.platformOperations.canReseedCaseload} className="rounded-xl border border-slate-200 bg-white p-5 text-left hover:bg-slate-50 disabled:opacity-60">
           <Database className="h-5 w-5 text-cyan-600" />
-          <p className="mt-3 text-sm font-semibold text-slate-800">Reseed Caseload</p>
-          <p className="mt-1 text-xs text-slate-500">Restore the governed participant baseline dataset into Convex.</p>
+          <p className="mt-3 text-sm font-semibold text-slate-800">Refresh Caseload Baseline</p>
+          <p className="mt-1 text-xs text-slate-500">Restores the approved participant baseline across governed system records.</p>
         </button>
-        <button type="button" onClick={() => void runAction("export", "/api/admin/export-caseload", "GET", "Caseload export generated.")} disabled={busy !== null || !data.platformOperations.canExportCaseload} className="rounded-xl border border-slate-200 bg-white p-5 text-left hover:bg-slate-50 disabled:opacity-60">
+        <button type="button" onClick={() => void runAction("export", "/api/admin/export-caseload", "GET", "Governed caseload export generated.")} disabled={busy !== null || !data.platformOperations.canExportCaseload} className="rounded-xl border border-slate-200 bg-white p-5 text-left hover:bg-slate-50 disabled:opacity-60">
           <Download className="h-5 w-5 text-cyan-600" />
-          <p className="mt-3 text-sm font-semibold text-slate-800">Export Caseload Snapshot</p>
-          <p className="mt-1 text-xs text-slate-500">Produce a current governed export across participants, notes, documents, and housing state.</p>
+          <p className="mt-3 text-sm font-semibold text-slate-800">Export Governed Caseload</p>
+          <p className="mt-1 text-xs text-slate-500">Generates a point-in-time governed export for participants, notes, documents, and housing status.</p>
         </button>
       </div>
 
       <div className="rounded-xl border border-slate-200 bg-white p-5">
-        <h2 className="text-sm font-semibold text-slate-700 inline-flex items-center gap-2"><Rocket className="h-4 w-4 text-cyan-600" /> Operations Guidance</h2>
+        <h2 className="text-sm font-semibold text-slate-700 inline-flex items-center gap-2"><Rocket className="h-4 w-4 text-cyan-600" /> Operational Guidance</h2>
         <div className="mt-4 grid gap-3 md:grid-cols-2">
-          <div className="rounded-lg bg-slate-50 p-3 text-xs text-slate-600">Platform operations here orchestrate lower-level admin APIs but are governed from the Enterprise workspace.</div>
-          <div className="rounded-lg bg-slate-50 p-3 text-xs text-slate-600 inline-flex items-center gap-2"><Mail className="h-4 w-4 text-cyan-600" /> Email delivery readiness: {data.platformOperations.canTestEmail ? "Available" : "Unavailable"}</div>
+          <div className="rounded-lg bg-slate-50 p-3 text-xs text-slate-600">These controls orchestrate governed operational APIs from a single enterprise command surface with audit-ready behavior.</div>
+          <div className="rounded-lg bg-slate-50 p-3 text-xs text-slate-600 inline-flex items-center gap-2"><Mail className="h-4 w-4 text-cyan-600" /> Notification channel readiness: {data.platformOperations.canTestEmail ? "Available" : "Unavailable"}</div>
         </div>
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs text-slate-600">{message || "Platform operations workspace is online."}</div>
+      <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs text-slate-600">{message || "Enterprise operations center is online."}</div>
     </div>
   );
 }

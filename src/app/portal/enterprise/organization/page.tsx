@@ -123,9 +123,9 @@ export default function EnterpriseOrganizationPage() {
           </label>
           <div className="rounded-lg bg-slate-50 p-3 text-sm text-slate-600">
             <p className="font-medium text-slate-800 inline-flex items-center gap-2"><Building2 className="h-4 w-4 text-cyan-600" /> Environment-managed tenant identity</p>
-            <p className="mt-2 text-xs text-slate-500">Brand name, domain, program type, support addresses, HMIS URL, and Google Site URL remain environment-backed so deployments stay tenant-isolated.</p>
+            <p className="mt-2 text-xs text-slate-500">Brand name, domain, program type, support addresses, HMIS URL, Google Site URL, and Microsoft 365 connector posture remain environment-backed so deployments stay tenant-isolated.</p>
           </div>
-          <div className="grid gap-3 md:grid-cols-2">
+          <div className="grid gap-3 md:grid-cols-3">
             <div className="rounded-lg border border-slate-100 p-3">
               <p className="text-xs uppercase tracking-wide text-slate-500">HMIS Link</p>
               <p className="mt-2 text-sm font-medium text-slate-800">{organization.hmisConfigured ? "Configured" : "Missing"}</p>
@@ -133,6 +133,10 @@ export default function EnterpriseOrganizationPage() {
             <div className="rounded-lg border border-slate-100 p-3">
               <p className="text-xs uppercase tracking-wide text-slate-500">Google Site</p>
               <p className="mt-2 text-sm font-medium text-slate-800">{organization.googleSiteConfigured ? "Configured" : "Missing"}</p>
+            </div>
+            <div className="rounded-lg border border-slate-100 p-3">
+              <p className="text-xs uppercase tracking-wide text-slate-500">Microsoft 365</p>
+              <p className="mt-2 text-sm font-medium text-slate-800">{data.integrations.microsoft365 ? "Configured" : "Missing"}</p>
             </div>
           </div>
         </div>
