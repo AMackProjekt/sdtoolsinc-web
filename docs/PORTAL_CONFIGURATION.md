@@ -32,7 +32,7 @@ NEXT_PUBLIC_CLIENT_PORTAL_URL=https://toolsinc-client-portal.azurestaticapps.net
 NEXT_PUBLIC_CASEMGR_PORTAL_URL=https://toolsinc-casemgr-portal.azurestaticapps.net
 NEXT_PUBLIC_ADMIN_PORTAL_URL=https://toolsinc-admin-portal.azurestaticapps.net
 NEXT_PUBLIC_HUB_URL=https://portal.sdtoolsinc.org
-NEXT_PUBLIC_LEARNING_URL=https://www.sdtoolsinc.org/portal
+NEXT_PUBLIC_LEARNING_URL=https://www.sdtoolsinc.com/portal
 ```
 
 ### Local Development Defaults
@@ -59,7 +59,7 @@ DB_PASSWORD=SecurePassword123!
 
 ```bash
 JWT_SECRET=your-secure-jwt-secret-key-here
-APP_URL=https://www.sdtoolsinc.org
+APP_URL=https://www.sdtoolsinc.com
 NEXT_PUBLIC_API_URL=https://api.sdtoolsinc.org
 ```
 
