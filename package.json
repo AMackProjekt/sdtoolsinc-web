@@ -47,7 +47,7 @@
     "react-dom": "^19.2.3",
     "recharts": "^2.15.4",
     "resend": "^4.0.0",
-    "serve": "^14.2.5",
+    "serve": "^14.2.6",
     "tailwind-merge": "^2.6.0",
     "zod": "^3.23.8"
   },
