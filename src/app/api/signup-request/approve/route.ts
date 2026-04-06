@@ -35,7 +35,7 @@ const html = (title: string, color: string, icon: string, body: string) => `
 
 export async function GET(req: NextRequest) {
   const convex = getClient();
-  const resend = new Resend(process.env.RESEND_API_KEY);
+  const resend = new Resend(process.env.RESEND_API_KEY || "dummy-key-during-build");
   const token = req.nextUrl.searchParams.get("token");
   if (!token) {
     return new NextResponse(

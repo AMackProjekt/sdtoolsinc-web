@@ -3,8 +3,6 @@ import { auth } from "@/auth";
 import { Resend } from "resend";
 import { ensureTrustedOrigin } from "@/lib/request-security";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 interface EmailBlastBody {
   subject: string;
   body: string;
@@ -43,6 +41,8 @@ export async function POST(req: NextRequest) {
 
   const failed: string[] = [];
   let sent = 0;
+
+  const resend = new Resend(process.env.RESEND_API_KEY || "dummy-key-during-build");
 
   for (const to of validRecipients) {
     try {

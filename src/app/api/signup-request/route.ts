@@ -52,8 +52,8 @@ function requestDetailsTable(name: string, email: string, note: string | undefin
 
 export async function POST(req: NextRequest) {
   const convex = getClient();
-  const resendApprove = new Resend(process.env.RESEND_API_KEY);
-  const resendDeny = new Resend(process.env.RESEND_API_KEY_2);
+  const resendApprove = new Resend(process.env.RESEND_API_KEY || "dummy-key-during-build");
+  const resendDeny = new Resend(process.env.RESEND_API_KEY_2 || "dummy-key-during-build");
 
   const body = await req.json();
   const { name, email, note } = body as { name: string; email: string; note?: string };

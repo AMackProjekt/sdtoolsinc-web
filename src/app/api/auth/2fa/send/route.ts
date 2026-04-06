@@ -35,7 +35,7 @@ export async function POST(_req: NextRequest) {
   const convex = getClient();
   await convex.mutation(api.functions.upsertOtpCode, { email, codeHash, expiresAt });
 
-  const resend = new Resend(process.env.RESEND_API_KEY);
+  const resend = new Resend(process.env.RESEND_API_KEY || "dummy-key-during-build");
   const name = session.user.name ?? email;
 
   await resend.emails.send({

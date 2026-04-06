@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { ORG } from "@/config/org";
 
-const FORWARDING_EMAIL = process.env.NOTIFY_FORWARDING_EMAIL ?? ORG.supportEmail;
-const RESEND = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(req: NextRequest) {
+  const FORWARDING_EMAIL = process.env.NOTIFY_FORWARDING_EMAIL ?? ORG.supportEmail;
+  const RESEND = new Resend(process.env.RESEND_API_KEY || "dummy-key-during-build");
+
   const { client, name, type, size, uploader, date } = await req.json();
 
   if (!client || !name) {

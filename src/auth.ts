@@ -1,8 +1,6 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
-import { createHash, timingSafeEqual, scrypt, randomBytes } from "crypto";
-import { promisify } from "util";
 import { decryptJson, encryptJson } from "@/lib/crypto";
 import { getEncryptedRecord, setEncryptedRecord } from "@/lib/server-data-store";
 
@@ -45,14 +43,16 @@ function isOrgEmail(email: string) {
   return normalizeLoginIdentifier(email).endsWith(`@${orgDomain}`);
 }
 
-// ── Password hashing — scrypt (memory-hard, enterprise-grade) ───────────────
-const scryptAsync = promisify<string | NodeJS.ArrayBufferView, string | NodeJS.ArrayBufferView, number, { N: number; r: number; p: number }, Buffer>(scrypt);
+// Dynamically load node crypto in functions so Edge runtime isn't tripped up in middleware.
 const SCRYPT_KEYLEN = 64;
 const SCRYPT_PARAMS = { N: 16384, r: 8, p: 1 };
 
 async function hashPasswordAsync(password: string): Promise<string> {
-  const salt = randomBytes(32).toString("hex");
-  const hash = await scryptAsync(password, salt, SCRYPT_KEYLEN, SCRYPT_PARAMS);
+  const crypto = await import("crypto");
+  const util = await import("util");
+  const scryptAsync = util.promisify(crypto.scrypt);
+  const salt = crypto.randomBytes(32).toString("hex");
+  const hash = (await scryptAsync(password, salt, SCRYPT_KEYLEN, SCRYPT_PARAMS)) as Buffer;
   return `scrypt$${salt}$${hash.toString("hex")}`;
 }
 
@@ -63,26 +63,29 @@ async function hashPasswordAsync(password: string): Promise<string> {
  *   - Legacy format: plain SHA-256 hex (migration path — rehash on next password reset)
  */
 async function verifyPassword(password: string, stored: string): Promise<boolean> {
+  const crypto = await import("crypto");
   if (stored.startsWith("scrypt$")) {
     const parts = stored.split("$");
     if (parts.length !== 3) return false;
     const [, saltHex, hashHex] = parts;
     try {
-      const hash = await scryptAsync(password, saltHex, SCRYPT_KEYLEN, SCRYPT_PARAMS);
+      const util = await import("util");
+      const scryptAsync = util.promisify(crypto.scrypt);
+      const hash = (await scryptAsync(password, saltHex, SCRYPT_KEYLEN, SCRYPT_PARAMS)) as Buffer;
       const storedHash = Buffer.from(hashHex, "hex");
       if (hash.length !== storedHash.length) return false;
-      return timingSafeEqual(hash, storedHash);
+      return crypto.timingSafeEqual(hash, storedHash);
     } catch {
       return false;
     }
   }
   // Legacy SHA-256 path: rehash will occur on next password reset
   const secret = process.env.AUTH_SECRET ?? "dev-only-change-me";
-  const legacyHash = createHash("sha256").update(`${secret}:${password}`).digest("hex");
+  const legacyHash = crypto.createHash("sha256").update(`${secret}:${password}`).digest("hex");
   const left = Buffer.from(legacyHash, "utf8");
   const right = Buffer.from(stored, "utf8");
   if (left.length !== right.length) return false;
-  return timingSafeEqual(left, right);
+  return crypto.timingSafeEqual(left, right);
 }
 
 export async function getClientCredential(identifier: string): Promise<StoredClientCredential | null> {

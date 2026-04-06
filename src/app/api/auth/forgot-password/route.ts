@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
       const safeProductName = escapeHtml(ORG.productName);
 
       try {
-        const resend = new Resend(process.env.RESEND_API_KEY);
+        const resend = new Resend(process.env.RESEND_API_KEY || "dummy-key-during-build");
 
         const emailResult = await resend.emails.send({
           from: `${safeProductName} <${ORG.fromEmail}>`,

@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const resend = new Resend(process.env.RESEND_API_KEY);
+    const resend = new Resend(process.env.RESEND_API_KEY || "dummy-key-during-build");
 
     const result = await resend.emails.send({
       from: `${ORG.productName} <${ORG.fromEmail}>`,

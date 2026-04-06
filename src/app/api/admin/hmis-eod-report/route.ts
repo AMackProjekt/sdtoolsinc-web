@@ -87,7 +87,7 @@ function buildEmailHtml(notes: HmisNote[], date: string): string {
 }
 
 export async function POST(req: NextRequest) {
-  const resend = new Resend(process.env.RESEND_API_KEY);
+  const resend = new Resend(process.env.RESEND_API_KEY || "dummy-key-during-build");
 
   const { notes, date } = (await req.json()) as { notes: HmisNote[]; date: string };
 
