@@ -101,7 +101,7 @@ export default function EnterpriseLayout({ children }: { children: React.ReactNo
           </div>
           <button
             type="button"
-            onClick={() => signOut({ callbackUrl: "/login/staff" })}
+            onClick={() => signOut({ callbackUrl: "/login/admin" })}
             className="w-full inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200"
           >
             <LogOut className="w-4 h-4" /> Sign out

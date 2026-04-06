@@ -144,7 +144,7 @@ export default function TwoFAPage() {
             </button>
 
             <button
-              onClick={() => signOut({ callbackUrl: "/login/staff" })}
+              onClick={() => signOut({ callbackUrl: "/login" })}
               className="flex items-center gap-1.5 text-slate-400 hover:text-rose-500 transition"
             >
               <LogOut className="w-4 h-4" />

@@ -426,8 +426,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (!profile?.email) return false;
       const email = profile.email.toLowerCase();
       const isAllowedDomain = email.endsWith(`@${orgDomain}`);
-      const isClientAllowlisted = clientAllowlist.includes(email);
-      return isAllowedDomain || isClientAllowlisted;
+      const isAllowlisted =
+        clientAllowlist.includes(email) ||
+        staffAllowlist.includes(email) ||
+        adminAllowlist.includes(email);
+      return isAllowedDomain || isAllowlisted;
     },
   },
 });

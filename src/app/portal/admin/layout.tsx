@@ -105,7 +105,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </div>
           </div>
           <button
-            onClick={() => signOut({ callbackUrl: "/login/staff" })}
+            onClick={() => signOut({ callbackUrl: "/login/admin" })}
             className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-violet-300 hover:bg-violet-800/60 hover:text-red-300 transition text-sm"
           >
             <LogOut className="w-4 h-4" />
