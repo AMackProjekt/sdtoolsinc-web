@@ -245,21 +245,6 @@ export default function Page() {
           </p>
         </div>
 
-        <GlowCard className="p-8">
-          <iframe
-            src="https://forms.cloud.microsoft/r/G0kkRW4F7q"
-            width="100%"
-            height="800"
-            frameBorder="0"
-            marginHeight={0}
-            marginWidth={0}
-            title="T.O.O.L.S Inc Interest Form"
-            className="rounded-lg"
-          >
-            Loading…
-          </iframe>
-        </GlowCard>
-
         {/* Contact Information */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
           <GlowCard className="p-6 text-center">
