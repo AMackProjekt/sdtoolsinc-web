@@ -34,7 +34,7 @@ export function Navbar() {
 
         <div className="flex items-center gap-3">
           <Button variant="ghost" className="hidden sm:inline-flex">
-            <a href="/referral">Submit Referral</a>
+            <a href="/portal">Portal</a>
           </Button>
           <Button variant="primary">
             <a href="/#contact">Get Support</a>

@@ -223,7 +223,7 @@ export default function Page() {
         </div>
 
         <div className="mt-10 text-xs text-muted">
-          © {new Date().getFullYear()} T.O.O.L.S Inc · Empowering individuals To Step Inito Their Purpose
+          © {new Date().getFullYear()} T.O.O.L.S Inc · Empowering individuals To Step Into Their Purpose
         </div>
       </section>
 
