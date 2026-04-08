@@ -42,7 +42,6 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
       authorization: {
         params: {
-          hd: "sdtoolsinc.org",
           prompt: "consent",
           access_type: "offline",
           response_type: "code",
@@ -60,16 +59,9 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
     async signIn({ user }) {
-      const email = user.email;
-
-      const isDev = process.env.NODE_ENV === "development";
-      const credsMissing =
-        !process.env.GOOGLE_CLIENT_ID?.startsWith("REPLACE") === false ||
-        !process.env.AZURE_AD_CLIENT_ID?.startsWith("REPLACE") === false;
-
-      if (isDev && credsMissing) return true;
-
-      return isEnterpriseEmail(email);
+      // Allow any successfully authenticated OAuth user.
+      // Enterprise-portal domain restriction is enforced in middleware.
+      return !!user?.email;
     },
 
     async jwt({ token, user, account }: { token: JWT; user?: User; account?: any }) {
@@ -82,7 +74,9 @@ export const authOptions: NextAuthOptions = {
         token.role =
           user.email === process.env.ENTERPRISE_ADMIN_EMAIL
             ? "enterprise_admin"
-            : "enterprise_viewer";
+            : isEnterpriseEmail(user.email)
+            ? "enterprise_viewer"
+            : "user";
       }
       return token;
     },
@@ -98,7 +92,7 @@ export const authOptions: NextAuthOptions = {
   },
 
   pages: {
-    signIn: "/portal/enterprise/auth",
-    error: "/portal/enterprise/auth",
+    signIn: "/portal/auth",
+    error: "/portal/auth",
   },
 };
