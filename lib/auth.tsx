@@ -1,111 +1,80 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+/**
+ * lib/auth.tsx — NextAuth-backed authentication context.
+ *
+ * Provides the same useAuth() interface used across all Enterprise portal pages
+ * while delegating to NextAuth for Google Workspace + Microsoft 365 OAuth with
+ * encrypted, httpOnly JWT session cookies (no localStorage).
+ */
 
-type User = {
+import { createContext, useContext, ReactNode } from "react";
+import { SessionProvider, useSession, signIn, signOut } from "next-auth/react";
+import type { Session } from "next-auth";
+
+export type User = {
   id: string;
   email: string;
   name: string;
   avatar?: string;
-  enrolledCourses: string[];
-  completedLessons: string[];
-  preferences: {
-    notifications: boolean;
-    emailUpdates: boolean;
-    theme: "dark" | "light";
-  };
+  role: "enterprise_admin" | "enterprise_viewer" | string;
+  provider?: "google" | "azure-ad" | string;
 };
 
 type AuthContextType = {
   user: User | null;
-  login: (email: string, password: string) => Promise<boolean>;
-  signup: (email: string, password: string, name: string) => Promise<boolean>;
+  /** OAuth sign-in — redirects to Google or Azure AD consent screen. */
+  login: (email?: string, password?: string) => Promise<boolean>;
+  signup: (email?: string, password?: string, name?: string) => Promise<boolean>;
   logout: () => void;
   updateProfile: (updates: Partial<User>) => void;
   isAuthenticated: boolean;
+  isLoading: boolean;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+// Inner hook that reads the NextAuth session and exposes the useAuth() contract.
+function AuthContextProvider({ children }: { children: ReactNode }) {
+  const { data: session, status } = useSession();
 
-  useEffect(() => {
-    // Check for stored session (encrypted in production)
-    const storedUser = localStorage.getItem("user-session");
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(atob(storedUser))); // Base64 decode (use proper encryption in production)
-      } catch (e) {
-        localStorage.removeItem("user-session");
+  const isLoading = status === "loading";
+  const isAuthenticated = status === "authenticated";
+
+  const user: User | null = isAuthenticated && session?.user
+    ? {
+        id: (session.user as Session["user"] & { id?: string }).id ?? session.user.email ?? "",
+        email: session.user.email ?? "",
+        name: session.user.name ?? "",
+        avatar: session.user.image ?? undefined,
+        role: ((session.user as Session["user"] & { role?: string }).role as User["role"]) ?? "enterprise_viewer",
+        provider: (session.user as Session["user"] & { provider?: string }).provider ?? undefined,
       }
-    }
-  }, []);
+    : null;
 
-  const signup = async (email: string, password: string, name: string): Promise<boolean> => {
-    // In production: Call secure backend API with bcrypt/argon2 password hashing
-    // This is a mock implementation
-    try {
-      const newUser: User = {
-        id: Date.now().toString(),
-        email,
-        name,
-        enrolledCourses: [],
-        completedLessons: [],
-        preferences: {
-          notifications: true,
-          emailUpdates: true,
-          theme: "dark",
-        },
-      };
-
-      // Store encrypted session (use JWT tokens in production)
-      const encryptedSession = btoa(JSON.stringify(newUser));
-      localStorage.setItem("user-session", encryptedSession);
-      
-      // Store hashed password separately (never store plain text)
-      localStorage.setItem(`pwd-${email}`, btoa(password)); // Use bcrypt in production
-      
-      setUser(newUser);
-      return true;
-    } catch (error) {
-      return false;
-    }
+  /**
+   * login() — ignores the legacy email/password args; triggers OAuth redirect.
+   * Pass "azure-ad" as the first arg to use Microsoft 365, else defaults to Google.
+   */
+  const login = async (provider?: string): Promise<boolean> => {
+    await signIn(provider ?? "google", {
+      callbackUrl: "/portal/enterprise/dashboard",
+    });
+    return true; // actual success determined by redirect
   };
 
-  const login = async (email: string, password: string): Promise<boolean> => {
-    // In production: Call secure backend API for authentication
-    try {
-      const storedPassword = localStorage.getItem(`pwd-${email}`);
-      if (!storedPassword || atob(storedPassword) !== password) {
-        return false;
-      }
-
-      const storedUser = localStorage.getItem("user-session");
-      if (storedUser) {
-        setUser(JSON.parse(atob(storedUser)));
-        return true;
-      }
-      return false;
-    } catch (error) {
-      return false;
-    }
+  /** signup() — no email-only registration; same OAuth flow as login. */
+  const signup = async (provider?: string): Promise<boolean> => {
+    return login(provider);
   };
 
   const logout = () => {
-    localStorage.removeItem("user-session");
-    setUser(null);
+    signOut({ callbackUrl: "/portal/enterprise/auth" });
   };
 
-  const updateProfile = (updates: Partial<User>) => {
-    if (!user) return;
-    
-    const updatedUser = { ...user, ...updates };
-    setUser(updatedUser);
-    
-    // Update encrypted session
-    const encryptedSession = btoa(JSON.stringify(updatedUser));
-    localStorage.setItem("user-session", encryptedSession);
+  /** updateProfile — no-op stub; profile data lives in the OAuth provider. */
+  const updateProfile = (_updates: Partial<User>) => {
+    // Profile updates are handled through the respective identity provider.
   };
 
   return (
@@ -116,11 +85,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signup,
         logout,
         updateProfile,
-        isAuthenticated: !!user,
+        isAuthenticated,
+        isLoading,
       }}
     >
       {children}
     </AuthContext.Provider>
+  );
+}
+
+/**
+ * AuthProvider — wraps the app with NextAuth SessionProvider + the auth context.
+ * Used in app/layout.tsx.
+ */
+export function AuthProvider({ children }: { children: ReactNode }) {
+  return (
+    <SessionProvider>
+      <AuthContextProvider>{children}</AuthContextProvider>
+    </SessionProvider>
   );
 }
 
