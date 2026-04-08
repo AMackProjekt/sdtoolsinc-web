@@ -58,7 +58,7 @@ function AuthContextProvider({ children }: { children: ReactNode }) {
    */
   const login = async (provider?: string): Promise<boolean> => {
     await signIn(provider ?? "google", {
-      callbackUrl: "/portal/enterprise/dashboard",
+      callbackUrl: "/portal",
     });
     return true; // actual success determined by redirect
   };
@@ -69,7 +69,7 @@ function AuthContextProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = () => {
-    signOut({ callbackUrl: "/portal/enterprise/auth" });
+    signOut({ callbackUrl: "/portal" });
   };
 
   /** updateProfile — no-op stub; profile data lives in the OAuth provider. */
