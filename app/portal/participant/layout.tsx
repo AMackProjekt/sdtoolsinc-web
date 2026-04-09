@@ -10,6 +10,7 @@ import {
   User,
   FileText,
   MessageSquare,
+  Settings,
   ArrowLeft,
   Menu,
   X,
@@ -17,6 +18,8 @@ import {
   Bell,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import { GlobalSearch } from "@/components/ui/GlobalSearch";
+import { InternalChat } from "@/components/ui/InternalChat";
 
 const NAV = [
   { href: "/portal/participant/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -24,6 +27,7 @@ const NAV = [
   { href: "/portal/participant/profile", label: "Profile", icon: User },
   { href: "/portal/participant/resources", label: "Resources", icon: FileText },
   { href: "/portal/participant/messages", label: "Messages", icon: MessageSquare },
+  { href: "/portal/participant/settings", label: "Settings", icon: Settings },
 ];
 
 export default function ParticipantLayout({
@@ -153,6 +157,7 @@ export default function ParticipantLayout({
           </div>
 
           <div className="flex items-center gap-3">
+            <GlobalSearch role="participant" />
             <button className="relative rounded-lg p-2 text-muted hover:text-text hover:bg-white/5 transition-colors">
               <Bell className="h-5 w-5" />
               <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-teal-400" />
@@ -170,6 +175,7 @@ export default function ParticipantLayout({
           <div className="pointer-events-none fixed inset-0 -z-10 bg-dash-glow" />
           {children}
         </main>
+        <InternalChat currentUser={user?.name ?? "Participant"} role="participant" />
       </div>
     </div>
   );

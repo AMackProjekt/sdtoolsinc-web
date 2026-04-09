@@ -17,6 +17,7 @@ import {
   ArrowLeft,
   ShieldCheck,
 } from "lucide-react";
+import { GlobalSearch } from "@/components/ui/GlobalSearch";
 
 const NAV = [
   { href: "/portal/admin/dashboard", label: "Overview", icon: LayoutDashboard },
@@ -141,7 +142,8 @@ export default function AdminPortalLayout({ children }: { children: React.ReactN
           >
             <Menu size={20} />
           </button>
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-3">
+            <GlobalSearch role="admin" />
             <button className="relative rounded-lg p-2 text-muted hover:text-text transition">
               <Bell size={18} />
               <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-violet-400" />

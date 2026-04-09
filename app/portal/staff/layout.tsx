@@ -4,18 +4,21 @@ import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/cn";
+import { InternalChat } from "@/components/ui/InternalChat";
 import {
   LayoutDashboard,
   Users,
   Layers,
   FileText,
   BarChart2,
+  Settings,
   Menu,
   X,
   Bell,
   LogOut,
   ArrowLeft,
 } from "lucide-react";
+import { GlobalSearch } from "@/components/ui/GlobalSearch";
 
 const NAV = [
   { href: "/portal/staff/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -23,6 +26,7 @@ const NAV = [
   { href: "/portal/staff/programs", label: "Programs", icon: Layers },
   { href: "/portal/staff/resources", label: "Resources", icon: FileText },
   { href: "/portal/staff/reports", label: "Reports", icon: BarChart2 },
+  { href: "/portal/staff/settings", label: "Settings", icon: Settings },
 ];
 
 export default function StaffPortalLayout({ children }: { children: React.ReactNode }) {
@@ -140,7 +144,8 @@ export default function StaffPortalLayout({ children }: { children: React.ReactN
           >
             <Menu size={20} />
           </button>
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-3">
+            <GlobalSearch role="staff" />
             <button className="relative rounded-lg p-2 text-muted hover:text-text transition">
               <Bell size={18} />
               <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-sky-400" />
@@ -150,6 +155,7 @@ export default function StaffPortalLayout({ children }: { children: React.ReactN
 
         {/* Page content */}
         <main className="flex-1 overflow-y-auto">{children}</main>
+        <InternalChat currentUser={user?.name ?? "Staff"} role="staff" />
       </div>
     </div>
   );
