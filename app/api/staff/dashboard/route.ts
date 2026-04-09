@@ -5,24 +5,24 @@ export const runtime = "nodejs";
 export async function GET() {
   const data = {
     caseload: [
-      { id: "p1", name: "Maria Chen", status: "active", program: "Life Skills", lastContact: "Today", risk: "low" },
-      { id: "p2", name: "Carlos Meza", status: "active", program: "Job Readiness", lastContact: "Yesterday", risk: "medium" },
-      { id: "p3", name: "Aaliyah Johnson", status: "on-hold", program: "Mental Wellness", lastContact: "3 days ago", risk: "high" },
-      { id: "p4", name: "Tanya Williams", status: "active", program: "Life Skills", lastContact: "Today", risk: "low" },
-      { id: "p5", name: "James Rivera", status: "active", program: "Housing Support", lastContact: "2 days ago", risk: "medium" },
-      { id: "p6", name: "Deja Thompson", status: "active", program: "Job Readiness", lastContact: "Yesterday", risk: "low" },
+      { id: "p1", name: "Participant #001", status: "active", program: "Life Skills", lastContact: "Today", risk: "low" },
+      { id: "p2", name: "Participant #002", status: "active", program: "Job Readiness", lastContact: "Yesterday", risk: "medium" },
+      { id: "p3", name: "Participant #003", status: "on-hold", program: "Mental Wellness", lastContact: "3 days ago", risk: "high" },
+      { id: "p4", name: "Participant #004", status: "active", program: "Life Skills", lastContact: "Today", risk: "low" },
+      { id: "p5", name: "Participant #005", status: "active", program: "Housing Support", lastContact: "2 days ago", risk: "medium" },
+      { id: "p6", name: "Participant #006", status: "active", program: "Job Readiness", lastContact: "Yesterday", risk: "low" },
     ],
     schedule: [
-      { id: "sc1", time: "9:00 AM", client: "Maria Chen", type: "Check-in Call", duration: "30 min", confirmed: true },
-      { id: "sc2", time: "10:30 AM", client: "Aaliyah Johnson", type: "Crisis Follow-up", duration: "60 min", confirmed: true },
-      { id: "sc3", time: "1:00 PM", client: "Carlos Meza", type: "Goal Review", duration: "45 min", confirmed: false },
+      { id: "sc1", time: "9:00 AM", client: "Participant #001", type: "Check-in Call", duration: "30 min", confirmed: true },
+      { id: "sc2", time: "10:30 AM", client: "Participant #003", type: "Crisis Follow-up", duration: "60 min", confirmed: true },
+      { id: "sc3", time: "1:00 PM", client: "Participant #002", type: "Goal Review", duration: "45 min", confirmed: false },
       { id: "sc4", time: "3:00 PM", client: "Team Meeting", type: "Staff Sync", duration: "30 min", confirmed: true },
     ],
     recentCheckIns: [
-      { id: "c1", client: "Tanya Williams", note: "Completed Week 4 of Life Skills module. Positive engagement.", time: "1 hour ago", mood: "good" },
-      { id: "c2", client: "James Rivera", note: "Housing documentation submitted. Awaiting approval from HUD.", time: "3 hours ago", mood: "neutral" },
-      { id: "c3", client: "Deja Thompson", note: "Resume workshop attended. Updating portfolio this week.", time: "Yesterday", mood: "good" },
-      { id: "c4", client: "Aaliyah Johnson", note: "Missed appointment. Follow-up call needed.", time: "Yesterday", mood: "concern" },
+      { id: "c1", client: "Participant #004", note: "Completed Week 4 of Life Skills module. Positive engagement.", time: "1 hour ago", mood: "good" },
+      { id: "c2", client: "Participant #005", note: "Housing documentation submitted. Awaiting approval from HUD.", time: "3 hours ago", mood: "neutral" },
+      { id: "c3", client: "Participant #006", note: "Resume workshop attended. Updating portfolio this week.", time: "Yesterday", mood: "good" },
+      { id: "c4", client: "Participant #003", note: "Missed appointment. Follow-up call needed.", time: "Yesterday", mood: "concern" },
     ],
     programs: [
       { id: "pr1", name: "Life Skills", enrolled: 24, completed: 8, progress: 0.65 },
