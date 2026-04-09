@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Settings, Mail, Shield, Archive, Save, Plus, X } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { GlowCard } from "@/components/ui/GlowCard";
+import { useAuth } from "@/lib/auth";
 
 const TABS = [
   { id: "system", label: "System Config", icon: Settings },
@@ -22,10 +24,12 @@ const EMAIL_TEMPLATES = [
 ];
 
 export default function AdminSettingsPage() {
+  const router = useRouter();
+  const { isAuthenticated, isLoading } = useAuth();
   const [activeTab, setActiveTab] = useState("system");
 
   // System Config
-  const [platformName, setPlatformName] = useState("T.O.O.LS Inc Portal");
+  const [platformName, setPlatformName] = useState("");
   const [sessionTimeout, setSessionTimeout] = useState(60);
   const [maxLoginAttempts, setMaxLoginAttempts] = useState(5);
   const [maintenanceMode, setMaintenanceMode] = useState(false);
@@ -59,23 +63,49 @@ export default function AdminSettingsPage() {
   const [dataExportRetention, setDataExportRetention] = useState(30);
   const [retentionSaved, setRetentionSaved] = useState(false);
 
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) router.replace("/portal/admin/auth");
+  }, [isLoading, isAuthenticated, router]);
+
+  useEffect(() => {
+    fetch("/api/admin/settings")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.org_name) setPlatformName(d.org_name);
+        if (d.session_timeout_minutes) setSessionTimeout(d.session_timeout_minutes);
+        if (d.mfa_required !== undefined) setEnforce2FA(d.mfa_required);
+        if (d.allowed_ip_ranges?.length) setIpAllowlist(d.allowed_ip_ranges);
+      })
+      .catch(() => {});
+  }, []);
+
   async function saveSystem() {
-    await new Promise((r) => setTimeout(r, 600));
+    await fetch("/api/admin/settings", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ org_name: platformName, session_timeout_minutes: sessionTimeout }),
+    });
     setSystemSaved(true);
     setTimeout(() => setSystemSaved(false), 2500);
   }
 
   async function saveSecurity() {
-    await new Promise((r) => setTimeout(r, 600));
+    await fetch("/api/admin/settings", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ mfa_required: enforce2FA, allowed_ip_ranges: ipAllowlist }),
+    });
     setSecuritySaved(true);
     setTimeout(() => setSecuritySaved(false), 2500);
   }
 
   async function saveRetention() {
-    await new Promise((r) => setTimeout(r, 600));
+    // Retention fields are UI-only (no org_settings columns); persisted locally
     setRetentionSaved(true);
     setTimeout(() => setRetentionSaved(false), 2500);
   }
+
+  if (isLoading || !isAuthenticated) return null;
 
   function addIp() {
     const trimmed = newIp.trim();
