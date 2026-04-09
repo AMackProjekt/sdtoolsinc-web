@@ -113,21 +113,36 @@ const kpiCards = [
 ];
 
 export default function ParticipantDashboardPage() {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
 
-  useEffect(() => {
-    if (!isAuthenticated) router.replace("/portal/participant/auth");
-  }, [isAuthenticated, router]);
+  type DashData = {
+    learningProgress: { name: string; pct: number }[];
+    quickStats: { coursesEnrolled: number; lessonsDone: number; certificates: number; streakDays: number };
+  };
+  const [dashData, setDashData] = useState<DashData | null>(null);
 
-  if (!user) return null;
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) router.replace("/portal/participant/auth");
+  }, [isLoading, isAuthenticated, router]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetch("/api/participant/dashboard")
+        .then((r) => r.json())
+        .then(setDashData)
+        .catch(() => null);
+    }
+  }, [isAuthenticated]);
+
+  if (isLoading || !isAuthenticated) return null;
 
   return (
     <div className="mx-auto max-w-[1200px] px-6 py-8 space-y-8">
       {/* Welcome */}
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-3xl font-extrabold tracking-tight text-text">
-          Welcome back, {user.name}!
+          Welcome back, {user?.name}!
         </h1>
         <p className="mt-1.5 text-sm text-muted">
           How are you doing today? Your journey is tracked below.
@@ -187,11 +202,11 @@ export default function ParticipantDashboardPage() {
               <h2 className="text-sm font-extrabold uppercase tracking-tight text-text">Learning Progress</h2>
             </div>
             <div className="space-y-3">
-              {[
+              {(dashData?.learningProgress ?? [
                 { name: "Life Skills 101", pct: 80 },
                 { name: "Job Readiness", pct: 55 },
                 { name: "Financial Foundations", pct: 30 },
-              ].map((c) => (
+              ]).map((c) => (
                 <div key={c.name}>
                   <div className="mb-1 flex justify-between text-xs">
                     <span className="font-medium text-text">{c.name}</span>
@@ -218,10 +233,10 @@ export default function ParticipantDashboardPage() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               {[
-                { icon: BookOpen, label: "Courses Enrolled", value: "3", color: "text-sky-400", bg: "bg-sky-500/10" },
-                { icon: CheckSquare, label: "Lessons Done", value: "17", color: "text-emerald-400", bg: "bg-emerald-500/10" },
-                { icon: Award, label: "Certificates", value: "1", color: "text-amber-400", bg: "bg-amber-500/10" },
-                { icon: TrendingUp, label: "Streak (days)", value: "5", color: "text-teal-400", bg: "bg-teal-500/10" },
+                { icon: BookOpen, label: "Courses Enrolled", value: String(dashData?.quickStats.coursesEnrolled ?? "—"), color: "text-sky-400", bg: "bg-sky-500/10" },
+                { icon: CheckSquare, label: "Lessons Done", value: String(dashData?.quickStats.lessonsDone ?? "—"), color: "text-emerald-400", bg: "bg-emerald-500/10" },
+                { icon: Award, label: "Certificates", value: String(dashData?.quickStats.certificates ?? "—"), color: "text-amber-400", bg: "bg-amber-500/10" },
+                { icon: TrendingUp, label: "Streak (days)", value: String(dashData?.quickStats.streakDays ?? "—"), color: "text-teal-400", bg: "bg-teal-500/10" },
               ].map((s) => (
                 <div key={s.label} className={`rounded-lg ${s.bg} p-3`}>
                   <s.icon size={14} className={`mb-1 ${s.color}`} />

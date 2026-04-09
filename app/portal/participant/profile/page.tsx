@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import { GlowCard } from "@/components/ui/GlowCard";
 
 export default function ParticipantProfilePage() {
-  const { user, isAuthenticated, updateProfile } = useAuth();
+  const { user, isAuthenticated, isLoading, updateProfile } = useAuth();
   const router = useRouter();
 
   const [name, setName] = useState("");
@@ -16,10 +16,10 @@ export default function ParticipantProfilePage() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!isLoading && !isAuthenticated) {
       router.replace("/portal/participant/auth");
     }
-  }, [isAuthenticated, router]);
+  }, [isLoading, isAuthenticated, router]);
 
   useEffect(() => {
     if (user) {
@@ -27,7 +27,7 @@ export default function ParticipantProfilePage() {
     }
   }, [user]);
 
-  if (!user) return null;
+  if (isLoading || !isAuthenticated) return null;
 
   const handleSave = () => {
     updateProfile({ name });
@@ -67,7 +67,7 @@ export default function ParticipantProfilePage() {
               <label className="block text-sm font-medium text-text mb-1.5">Email Address</label>
               <input
                 type="email"
-                value={user.email}
+                value={user?.email ?? ""}
                 disabled
                 className="w-full rounded-lg border border-border bg-bg/30 px-4 py-3 text-sm text-muted cursor-not-allowed"
               />

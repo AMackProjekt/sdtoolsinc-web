@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth";
 import { motion } from "framer-motion";
 import { User, Bell, Lock, Palette, Save, Eye, EyeOff } from "lucide-react";
 import { cn } from "@/lib/cn";
@@ -14,14 +16,31 @@ const TABS = [
 ];
 
 export default function ParticipantSettingsPage() {
+  const { user, isAuthenticated, isLoading, updateProfile } = useAuth();
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("profile");
 
-  // Profile state
-  const [name, setName] = useState("Jordan Avery");
-  const [email, setEmail] = useState("jordan.avery@example.com");
-  const [phone, setPhone] = useState("(404) 555-0182");
-  const [bio, setBio] = useState("Participant in the T.O.O.LS Inc Skills & Employment Program.");
+  // Profile state — seeded from auth user once loaded
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [bio, setBio] = useState("");
   const [profileSaved, setProfileSaved] = useState(false);
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.replace("/portal/participant/auth");
+    }
+  }, [isLoading, isAuthenticated, router]);
+
+  useEffect(() => {
+    if (user) {
+      setName(user.name ?? "");
+      setEmail(user.email ?? "");
+    }
+  }, [user]);
+
+  if (isLoading || !isAuthenticated) return null;
 
   // Notifications state
   const [notif, setNotif] = useState({
@@ -45,7 +64,7 @@ export default function ParticipantSettingsPage() {
   const [reduceMotion, setReduceMotion] = useState(false);
 
   async function saveProfile() {
-    await new Promise((r) => setTimeout(r, 600));
+    await updateProfile({ name });
     setProfileSaved(true);
     setTimeout(() => setProfileSaved(false), 2500);
   }
@@ -99,9 +118,8 @@ export default function ParticipantSettingsPage() {
               <h2 className="text-base font-bold text-text">Personal Information</h2>
               <div className="grid gap-4 sm:grid-cols-2">
                 {[
-                  { label: "Full Name", value: name, setter: setName, type: "text" },
-                  { label: "Email Address", value: email, setter: setEmail, type: "email" },
-                  { label: "Phone Number", value: phone, setter: setPhone, type: "tel" },
+                  { label: "Full Name", value: name, setter: setName, type: "text", readOnly: false },
+                  { label: "Phone Number", value: phone, setter: setPhone, type: "tel", readOnly: false },
                 ].map(({ label, value, setter, type }) => (
                   <div key={label}>
                     <label className="block text-xs font-semibold text-muted mb-1.5 uppercase tracking-wider">{label}</label>
@@ -113,6 +131,16 @@ export default function ParticipantSettingsPage() {
                     />
                   </div>
                 ))}
+                <div className="sm:col-span-2">
+                  <label className="block text-xs font-semibold text-muted mb-1.5 uppercase tracking-wider">Email Address</label>
+                  <input
+                    type="email"
+                    value={email}
+                    readOnly
+                    className="w-full rounded-xl border border-border bg-white/5 px-4 py-2.5 text-sm text-muted cursor-not-allowed opacity-70"
+                  />
+                  <p className="mt-1 text-xs text-muted/60">Email is managed by your sign-in provider.</p>
+                </div>
               </div>
               <div>
                 <label className="block text-xs font-semibold text-muted mb-1.5 uppercase tracking-wider">Bio</label>

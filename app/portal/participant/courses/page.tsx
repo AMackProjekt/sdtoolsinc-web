@@ -6,53 +6,37 @@ import { useAuth } from "@/lib/auth";
 import { motion } from "framer-motion";
 import { GlowCard } from "@/components/ui/GlowCard";
 
-const COURSES = [
-  {
-    id: "job-readiness",
-    title: "Job Readiness Fundamentals",
-    description: "Build essential workplace skills including resume writing, interview preparation, and professional communication.",
-    lessons: 12,
-    duration: "4 weeks",
-    level: "Beginner",
-  },
-  {
-    id: "financial-literacy",
-    title: "Financial Literacy",
-    description: "Learn to manage your finances effectively including budgeting, saving, and understanding credit.",
-    lessons: 8,
-    duration: "3 weeks",
-    level: "Beginner",
-  },
-  {
-    id: "personal-development",
-    title: "Personal Development",
-    description: "Develop self-awareness, set goals, and build the mindset needed for long-term success.",
-    lessons: 10,
-    duration: "3 weeks",
-    level: "All Levels",
-  },
-  {
-    id: "digital-skills",
-    title: "Digital Skills",
-    description: "Master essential computer and internet skills required in today's workplace.",
-    lessons: 15,
-    duration: "5 weeks",
-    level: "Beginner",
-  },
-];
+type Course = {
+  id: string;
+  title: string;
+  description: string;
+  lessons: number;
+  duration: string;
+  level: string;
+};
 
 export default function ParticipantCoursesPage() {
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
+  const [courses, setCourses] = useState<Course[]>([]);
   const [enrolledIds, setEnrolledIds] = useState<string[]>([]);
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!isLoading && !isAuthenticated) {
       router.replace("/portal/participant/auth");
     }
-  }, [isAuthenticated, router]);
+  }, [isLoading, isAuthenticated, router]);
 
-  if (!user) return null;
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetch("/api/participant/courses")
+        .then((r) => r.json())
+        .then((data) => setCourses(data.courses ?? []))
+        .catch(() => null);
+    }
+  }, [isAuthenticated]);
+
+  if (isLoading || !isAuthenticated) return null;
 
   const enrollCourse = (courseId: string) => {
     if (enrolledIds.includes(courseId)) return;
@@ -71,7 +55,7 @@ export default function ParticipantCoursesPage() {
       </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {COURSES.map((course, index) => {
+        {courses.map((course, index) => {
           const isEnrolled = enrolledIds.includes(course.id);
           return (
             <motion.div
