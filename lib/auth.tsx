@@ -53,19 +53,33 @@ function AuthContextProvider({ children }: { children: ReactNode }) {
     : null;
 
   /**
-   * login() — ignores the legacy email/password args; triggers OAuth redirect.
-   * Pass "azure-ad" as the first arg to use Microsoft 365, else defaults to Google.
+   * login() — supports both credentials (email+password) and OAuth providers.
+   * If a real email + password are passed, uses Supabase credentials sign-in.
+   * If a provider name (google / azure-ad) is passed, does OAuth redirect.
    */
-  const login = async (provider?: string): Promise<boolean> => {
-    await signIn(provider ?? "google", {
-      callbackUrl: "/portal",
-    });
-    return true; // actual success determined by redirect
+  const login = async (emailOrProvider?: string, password?: string): Promise<boolean> => {
+    if (emailOrProvider && password) {
+      // Credentials sign-in (email + password)
+      const result = await signIn("credentials", {
+        email: emailOrProvider,
+        password,
+        callbackUrl: "/portal",
+        redirect: false,
+      });
+      if (result?.error) return false;
+      if (result?.url) {
+        window.location.href = result.url;
+      }
+      return true;
+    }
+    // OAuth redirect
+    await signIn(emailOrProvider ?? "google", { callbackUrl: "/portal" });
+    return true;
   };
 
-  /** signup() — no email-only registration; same OAuth flow as login. */
-  const signup = async (provider?: string): Promise<boolean> => {
-    return login(provider);
+  /** signup() — OAuth only; direct registration handled via Supabase signup page. */
+  const signup = async (emailOrProvider?: string): Promise<boolean> => {
+    return login(emailOrProvider);
   };
 
   const logout = () => {

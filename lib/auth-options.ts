@@ -1,6 +1,8 @@
 import { NextAuthOptions, Session, User } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import AzureADProvider from "next-auth/providers/azure-ad";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { createClient } from "@supabase/supabase-js";
 import { JWT } from "next-auth/jwt";
 
 /** Domains allowed to access the Enterprise portal */
@@ -41,6 +43,39 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.AZURE_AD_CLIENT_ID ?? "",
       clientSecret: process.env.AZURE_AD_CLIENT_SECRET ?? "",
       tenantId: process.env.AZURE_AD_TENANT_ID ?? "common",
+    }),
+
+    // ── Email / Password via Supabase ─────────────────────────
+    CredentialsProvider({
+      name: "Email & Password",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) return null;
+        const supaUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+        const supaKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
+        if (!supaUrl.startsWith("http")) return null;
+        try {
+          const supa = createClient(supaUrl, supaKey);
+          const { data, error } = await supa.auth.signInWithPassword({
+            email: credentials.email,
+            password: credentials.password,
+          });
+          if (error || !data.user) return null;
+          return {
+            id: data.user.id,
+            email: data.user.email ?? "",
+            name: (data.user.user_metadata?.full_name as string | undefined)
+              ?? data.user.email
+              ?? "",
+            image: (data.user.user_metadata?.avatar_url as string | undefined) ?? null,
+          };
+        } catch {
+          return null;
+        }
+      },
     }),
   ],
 
