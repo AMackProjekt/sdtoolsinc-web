@@ -44,13 +44,13 @@ interface OrgSettings {
 }
 
 const DEFAULT: OrgSettings = {
-  orgName: "S.D. Tools Inc.",
-  subdomain: "sdtools",
-  contactEmail: "admin@sdtools.org",
-  address: "123 Main Street",
-  city: "San Diego",
-  state: "CA",
-  zipCode: "92101",
+  orgName: "",
+  subdomain: "",
+  contactEmail: "",
+  address: "",
+  city: "",
+  state: "",
+  zipCode: "",
   timezone: "America/Los_Angeles",
   dataRetention: "90",
   theme: "dark-slate",

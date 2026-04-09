@@ -79,7 +79,7 @@ const statusColor: Record<string, string> = {
   "In Review": "text-sky-400 bg-sky-400/10",
 };
 
-export default function EnterprisFinancePage() {
+export default function EnterpriseFinancePage() {
   const { isAuthenticated } = useAuth();
   const router = useRouter();
   const [data, setData] = useState<FinanceData | null>(null);

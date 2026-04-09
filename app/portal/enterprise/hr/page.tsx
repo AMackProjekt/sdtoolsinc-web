@@ -80,7 +80,7 @@ export default function HRPage() {
     total:   staff.length,
     active:  staff.filter((s) => s.status === "Active").length,
     onLeave: staff.filter((s) => s.status === "On Leave").length,
-    open:    4,
+    open:    0,
   };
 
   const handleAddStaff = (e: React.FormEvent) => {
