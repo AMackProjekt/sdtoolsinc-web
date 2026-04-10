@@ -9,6 +9,9 @@ import {
   Shield,
   ArrowRight,
   ChevronRight,
+  DollarSign,
+  Users2,
+  Newspaper,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 
@@ -53,6 +56,36 @@ const PORTALS = [
       "Identity, compliance, integrations, and executive analytics for enterprise administrators.",
     badge: "Enterprise Administrators",
   },
+  {
+    href: "/portal/finance/dashboard",
+    authHref: "/portal/finance/auth",
+    icon: DollarSign,
+    accent: "emerald",
+    label: "Finance Portal",
+    description:
+      "Manage budgets, payroll, invoices, and financial reports for the organization.",
+    badge: "Finance Team",
+  },
+  {
+    href: "/portal/hr/dashboard",
+    authHref: "/portal/hr/auth",
+    icon: Users2,
+    accent: "amber",
+    label: "HR Portal",
+    description:
+      "Staff management, onboarding, performance reviews, and compliance tracking.",
+    badge: "HR Department",
+  },
+  {
+    href: "/portal/news/dashboard",
+    authHref: "/portal/news/auth",
+    icon: Newspaper,
+    accent: "rose",
+    label: "News & Media Portal",
+    description:
+      "Publish articles, manage announcements, and track media content and engagement.",
+    badge: "Communications Team",
+  },
 ];
 
 const accentMap: Record<
@@ -82,6 +115,24 @@ const accentMap: Record<
     icon: "bg-cyan-900/60 text-cyan-400",
     badge: "bg-cyan-900/40 text-cyan-400 border border-cyan-700/50",
     arrow: "text-cyan-400",
+  },
+  emerald: {
+    card: "hover:border-emerald-500/50 hover:shadow-[0_0_0_1px_rgba(16,185,129,.35),0_12px_40px_rgba(0,0,0,.5)]",
+    icon: "bg-emerald-900/60 text-emerald-400",
+    badge: "bg-emerald-900/40 text-emerald-400 border border-emerald-700/50",
+    arrow: "text-emerald-400",
+  },
+  amber: {
+    card: "hover:border-amber-500/50 hover:shadow-[0_0_0_1px_rgba(245,158,11,.35),0_12px_40px_rgba(0,0,0,.5)]",
+    icon: "bg-amber-900/60 text-amber-400",
+    badge: "bg-amber-900/40 text-amber-400 border border-amber-700/50",
+    arrow: "text-amber-400",
+  },
+  rose: {
+    card: "hover:border-rose-500/50 hover:shadow-[0_0_0_1px_rgba(244,63,94,.35),0_12px_40px_rgba(0,0,0,.5)]",
+    icon: "bg-rose-900/60 text-rose-400",
+    badge: "bg-rose-900/40 text-rose-400 border border-rose-700/50",
+    arrow: "text-rose-400",
   },
 };
 
@@ -118,7 +169,7 @@ export default function PortalHubPage() {
       </motion.div>
 
       {/* Portal Cards */}
-      <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
         {PORTALS.map((portal, i) => {
           const colors = accentMap[portal.accent];
           const Icon = portal.icon;
