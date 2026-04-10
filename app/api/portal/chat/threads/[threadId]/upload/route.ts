@@ -36,7 +36,7 @@ const MAX_SIZE = 10 * 1024 * 1024; // 10 MB
  */
 export async function POST(
   req: NextRequest,
-  { params }: { params: { threadId: string } }
+  { params }: { params: Promise<{ threadId: string }> }
 ) {
   let formData: FormData;
   try {
@@ -116,7 +116,7 @@ export async function POST(
  */
 export async function GET(
   req: NextRequest,
-  { params: _params }: { params: { threadId: string } }
+  { params: _params }: { params: Promise<{ threadId: string }> }
 ) {
   const fileId = req.nextUrl.searchParams.get("fileId");
   if (!fileId) {
@@ -128,7 +128,7 @@ export async function GET(
     return NextResponse.json({ error: "File not found" }, { status: 404 });
   }
 
-  const decrypted = decryptBuffer(stored.dataEncrypted);
+  const decrypted = new Uint8Array(decryptBuffer(stored.dataEncrypted));
 
   return new NextResponse(decrypted, {
     status: 200,

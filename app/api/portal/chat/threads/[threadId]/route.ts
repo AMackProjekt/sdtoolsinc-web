@@ -111,9 +111,9 @@ const msgCounters: Record<string, number> = {
  */
 export async function GET(
   _req: NextRequest,
-  { params }: { params: { threadId: string } }
+  { params }: { params: Promise<{ threadId: string }> }
 ) {
-  const { threadId } = params;
+  const { threadId } = await params;
   const stored = messageStore[threadId] ?? [];
 
   const messages: ThreadMessage[] = stored.map((m) => ({
@@ -136,9 +136,9 @@ export async function GET(
  */
 export async function POST(
   req: NextRequest,
-  { params }: { params: { threadId: string } }
+  { params }: { params: Promise<{ threadId: string }> }
 ) {
-  const { threadId } = params;
+  const { threadId } = await params;
   const body = await req.json();
   const { text, from, role, fileAttachment } = body as {
     text?: string;

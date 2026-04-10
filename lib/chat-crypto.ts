@@ -14,6 +14,8 @@ import {
   createDecipheriv,
   randomBytes,
   pbkdf2Sync,
+  CipherGCM,
+  DecipherGCM,
 } from "node:crypto";
 
 const ALGO = "aes-256-gcm" as const;
@@ -44,7 +46,7 @@ export function encryptText(plaintext: string): string {
   const iv = randomBytes(IV_LEN);
   const cipher = createCipheriv(ALGO, key, iv, {
     authTagLength: TAG_LEN,
-  } as Parameters<typeof createCipheriv>[3]);
+  } as Parameters<typeof createCipheriv>[3]) as CipherGCM;
   const enc = Buffer.concat([cipher.update(plaintext, "utf8"), cipher.final()]);
   const tag = cipher.getAuthTag();
   return `${iv.toString("hex")}:${tag.toString("hex")}:${enc.toString("hex")}`;
@@ -63,7 +65,7 @@ export function decryptText(payload: string): string {
     key,
     Buffer.from(ivHex, "hex"),
     { authTagLength: TAG_LEN } as Parameters<typeof createDecipheriv>[3]
-  );
+  ) as DecipherGCM;
   decipher.setAuthTag(Buffer.from(tagHex, "hex"));
   const plain =
     decipher.update(Buffer.from(cipherHex, "hex")).toString("utf8") +
