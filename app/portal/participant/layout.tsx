@@ -20,6 +20,7 @@ import {
   PenLine,
   Heart,
   HelpCircle,
+  Plug,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { GlobalSearch } from "@/components/ui/GlobalSearch";
@@ -36,6 +37,7 @@ const NAV = [
   { href: "/portal/participant/messages", label: "Messages", icon: MessageSquare, tourId: "p-messages" },
   { href: "/portal/participant/profile", label: "Profile", icon: User },
   { href: "/portal/participant/resources", label: "Resources", icon: FileText },
+  { href: "/portal/participant/integrations", label: "Integrations", icon: Plug },
   { href: "/portal/participant/settings", label: "Settings", icon: Settings },
 ];
 

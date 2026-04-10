@@ -18,6 +18,9 @@ import {
   Bell,
   LogOut,
   ArrowLeft,
+  NotebookPen,
+  Heart,
+  Plug,
 } from "lucide-react";
 import { GlobalSearch } from "@/components/ui/GlobalSearch";
 
@@ -27,6 +30,9 @@ const NAV = [
   { href: "/portal/staff/programs", label: "Programs", icon: Layers },
   { href: "/portal/staff/resources", label: "Resources", icon: FileText },
   { href: "/portal/staff/reports", label: "Reports", icon: BarChart2 },
+  { href: "/portal/staff/casenotes", label: "Case Notes", icon: NotebookPen },
+  { href: "/portal/staff/self-care", label: "Self-Care", icon: Heart },
+  { href: "/portal/staff/integrations", label: "Integrations", icon: Plug },
   { href: "/portal/staff/settings", label: "Settings", icon: Settings },
 ];
 
