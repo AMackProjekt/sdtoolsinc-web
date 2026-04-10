@@ -42,8 +42,8 @@ const NAV = [
   { href: "/portal/enterprise/hr", label: "HR Operations", icon: Briefcase },
   { href: "/portal/enterprise/newsroom", label: "News & Media Kit", icon: ScrollText },
   { href: "/portal/enterprise/settings", label: "Settings", icon: SlidersHorizontal },
-  { href: "/portal/voice", label: "Your Voice Is Heard", icon: Mic2 },
-  { href: "/portal/legal", label: "Legal & Compliance", icon: Scale },
+  { href: "/portal/enterprise/voice", label: "Your Voice Is Heard", icon: Mic2 },
+  { href: "/portal/enterprise/legal", label: "Legal & Compliance", icon: Scale },
 ];
 
 const PORTAL_NAV = [

@@ -24,8 +24,8 @@ const SECTIONS = [
   { href: "/portal/enterprise/hr",            label: "HR Operations",          icon: Briefcase,         color: "text-teal-400",    bg: "bg-teal-950/40 border-teal-800/30",      desc: "Workforce, onboarding" },
   { href: "/portal/enterprise/newsroom",      label: "News & Media Kit",       icon: Globe,             color: "text-indigo-400",  bg: "bg-indigo-950/40 border-indigo-800/30",  desc: "Press releases, assets" },
   { href: "/portal/enterprise/settings",      label: "Workspace Settings",     icon: SlidersHorizontal, color: "text-slate-300",   bg: "bg-slate-800/60 border-slate-700/30",    desc: "Config, policies, API keys" },
-  { href: "/portal/voice",                    label: "Your Voice Is Heard",    icon: Mic2,              color: "text-pink-400",    bg: "bg-pink-950/40 border-pink-800/30",      desc: "Feedback, roadmap requests" },
-  { href: "/portal/legal",                    label: "Legal & Compliance",     icon: Scale,             color: "text-orange-400",  bg: "bg-orange-950/40 border-orange-800/30",  desc: "Contracts, policies, DPA" },
+  { href: "/portal/enterprise/voice",         label: "Your Voice Is Heard",    icon: Mic2,              color: "text-pink-400",    bg: "bg-pink-950/40 border-pink-800/30",      desc: "Feedback, roadmap requests" },
+  { href: "/portal/enterprise/legal",         label: "Legal & Compliance",     icon: Scale,             color: "text-orange-400",  bg: "bg-orange-950/40 border-orange-800/30",  desc: "Contracts, policies, DPA" },
 ];
 
 const MANAGED_PORTALS = [
