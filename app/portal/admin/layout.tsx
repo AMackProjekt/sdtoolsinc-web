@@ -23,6 +23,7 @@ import {
   NotebookPen,
   Heart,
   Plug,
+  GraduationCap,
 } from "lucide-react";
 import { GlobalSearch } from "@/components/ui/GlobalSearch";
 import { InternalChat } from "@/components/ui/InternalChat";
@@ -42,6 +43,7 @@ const NAV = [
   { href: "/portal/admin/casenotes", label: "Case Notes", icon: NotebookPen },
   { href: "/portal/admin/self-care", label: "Self-Care", icon: Heart },
   { href: "/portal/admin/integrations", label: "Integrations", icon: Plug },
+  { href: "/portal/admin/pro-dev", label: "Pro Development", icon: GraduationCap },
   { href: "/portal/admin/settings", label: "Settings", icon: Settings },
 ];
 

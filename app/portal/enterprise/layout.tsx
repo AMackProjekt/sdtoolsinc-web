@@ -30,6 +30,7 @@ import {
 } from "lucide-react";
 import { GlobalSearch } from "@/components/ui/GlobalSearch";
 import { InternalChat } from "@/components/ui/InternalChat";
+import { MackAI } from "@/components/ui/MackAI";
 
 const NAV = [
   { href: "/portal/enterprise", label: "Workspace Control", icon: Settings2, exact: true },
@@ -205,6 +206,7 @@ export default function EnterpriseLayout({ children }: { children: React.ReactNo
         <main className="flex-1 p-6">{children}</main>
       </div>
       <InternalChat currentUser={user?.name ?? "Enterprise"} role="admin" />
+      <MackAI />
     </div>
   );
 }
