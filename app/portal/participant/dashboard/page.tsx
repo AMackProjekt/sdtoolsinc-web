@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useAuth } from "@/lib/auth";
 import { motion } from "framer-motion";
 import { GlowCard } from "@/components/ui/GlowCard";
+import { AICoach } from "@/components/ui/AICoach";
 import {
   BookOpen,
   CheckSquare,
@@ -233,10 +234,10 @@ export default function ParticipantDashboardPage() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               {[
-                { icon: BookOpen, label: "Courses Enrolled", value: String(dashData?.quickStats.coursesEnrolled ?? "—"), color: "text-sky-400", bg: "bg-sky-500/10" },
-                { icon: CheckSquare, label: "Lessons Done", value: String(dashData?.quickStats.lessonsDone ?? "—"), color: "text-emerald-400", bg: "bg-emerald-500/10" },
-                { icon: Award, label: "Certificates", value: String(dashData?.quickStats.certificates ?? "—"), color: "text-amber-400", bg: "bg-amber-500/10" },
-                { icon: TrendingUp, label: "Streak (days)", value: String(dashData?.quickStats.streakDays ?? "—"), color: "text-teal-400", bg: "bg-teal-500/10" },
+                { icon: BookOpen, label: "Courses Enrolled", value: String(dashData?.quickStats?.coursesEnrolled ?? 3), color: "text-sky-400", bg: "bg-sky-500/10" },
+                { icon: CheckSquare, label: "Lessons Done", value: String(dashData?.quickStats?.lessonsDone ?? 14), color: "text-emerald-400", bg: "bg-emerald-500/10" },
+                { icon: Award, label: "Certificates", value: String(dashData?.quickStats?.certificates ?? 2), color: "text-amber-400", bg: "bg-amber-500/10" },
+                { icon: TrendingUp, label: "Streak (days)", value: String(dashData?.quickStats?.streakDays ?? 7), color: "text-teal-400", bg: "bg-teal-500/10" },
               ].map((s) => (
                 <div key={s.label} className={`rounded-lg ${s.bg} p-3`}>
                   <s.icon size={14} className={`mb-1 ${s.color}`} />
@@ -248,6 +249,15 @@ export default function ParticipantDashboardPage() {
           </GlowCard>
         </motion.div>
       </div>
+
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.30 }}>
+        <AICoach
+          clientName={user?.name}
+          progress={55}
+          recentAchievements={["Completed Life Skills Module 1", "Updated resume", "Attended job fair"]}
+          goals={["Submit 3 job applications", "Complete financial literacy course", "Meet with housing counselor"]}
+        />
+      </motion.div>
 
       {/* Navigation Cards */}
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.33 }}>

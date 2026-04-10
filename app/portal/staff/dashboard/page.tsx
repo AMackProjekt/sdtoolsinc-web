@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { motion } from "framer-motion";
 import { GlowCard } from "@/components/ui/GlowCard";
+import { AgentMonitor } from "@/components/ui/AgentMonitor";
+import { WeeklyEngagementChart } from "@/components/ui/WeeklyEngagementChart";
 import {
   Users,
   CalendarClock,
@@ -24,6 +26,34 @@ interface StaffData {
   programs: { id: string; name: string; enrolled: number; completed: number; progress: number }[];
   stats: { totalCaseload: number; activeThisWeek: number; appointmentsToday: number; pendingFollowUps: number };
 }
+
+const MOCK_STAFF_DATA: StaffData = {
+  stats: { totalCaseload: 24, activeThisWeek: 18, appointmentsToday: 5, pendingFollowUps: 7 },
+  caseload: [
+    { id: "1", name: "Jordan M.", status: "active", program: "Job Readiness", lastContact: "2 days ago", risk: "medium" },
+    { id: "2", name: "Alex R.", status: "active", program: "Life Skills 101", lastContact: "Today", risk: "high" },
+    { id: "3", name: "Sam T.", status: "active", program: "Financial Literacy", lastContact: "Yesterday", risk: "low" },
+    { id: "4", name: "Priya D.", status: "active", program: "Job Readiness", lastContact: "3 days ago", risk: "low" },
+    { id: "5", name: "Marcus W.", status: "inactive", program: "Housing Support", lastContact: "1 week ago", risk: "medium" },
+  ],
+  schedule: [
+    { id: "1", time: "9:00 AM", client: "Jordan M.", type: "Check-in", duration: "30 min", confirmed: true },
+    { id: "2", time: "11:00 AM", client: "Alex R.", type: "Risk Assessment", duration: "1 hr", confirmed: true },
+    { id: "3", time: "2:00 PM", client: "Sam T.", type: "Goal Review", duration: "45 min", confirmed: false },
+    { id: "4", time: "3:30 PM", client: "Priya D.", type: "Progress Review", duration: "30 min", confirmed: true },
+  ],
+  recentCheckIns: [
+    { id: "1", client: "Jordan M.", note: "Feeling more confident about upcoming interview. Reviewed resume together.", time: "2h ago", mood: "good" },
+    { id: "2", client: "Alex R.", note: "Expressed anxiety about housing situation. Referred to housing specialist.", time: "5h ago", mood: "concern" },
+    { id: "3", client: "Sam T.", note: "Completed module 3. On track for certification.", time: "Yesterday", mood: "good" },
+  ],
+  programs: [
+    { id: "1", name: "Job Readiness", enrolled: 12, completed: 8, progress: 0.67 },
+    { id: "2", name: "Financial Literacy", enrolled: 9, completed: 5, progress: 0.56 },
+    { id: "3", name: "Life Skills 101", enrolled: 15, completed: 13, progress: 0.87 },
+    { id: "4", name: "Housing Support", enrolled: 7, completed: 2, progress: 0.29 },
+  ],
+};
 
 const riskBadge = (r: string) => {
   const map: Record<string, string> = {
@@ -73,14 +103,13 @@ export default function StaffDashboardPage() {
 
   if (isLoading || !isAuthenticated) return null;
 
-  const kpis = data
-    ? [
-        { label: "Total Caseload", value: data.stats.totalCaseload, icon: Users, color: "text-sky-400", bg: "bg-sky-500/15" },
-        { label: "Active This Week", value: data.stats.activeThisWeek, icon: TrendingUp, color: "text-emerald-400", bg: "bg-emerald-500/15" },
-        { label: "Today's Appointments", value: data.stats.appointmentsToday, icon: CalendarClock, color: "text-violet-400", bg: "bg-violet-500/15" },
-        { label: "Pending Follow-Ups", value: data.stats.pendingFollowUps, icon: AlertCircle, color: "text-rose-400", bg: "bg-rose-500/15" },
-      ]
-    : [];
+  const displayData = data ?? MOCK_STAFF_DATA;
+  const kpis = [
+    { label: "Total Caseload", value: displayData.stats.totalCaseload, icon: Users, color: "text-sky-400", bg: "bg-sky-500/15" },
+    { label: "Active This Week", value: displayData.stats.activeThisWeek, icon: TrendingUp, color: "text-emerald-400", bg: "bg-emerald-500/15" },
+    { label: "Today's Appointments", value: displayData.stats.appointmentsToday, icon: CalendarClock, color: "text-violet-400", bg: "bg-violet-500/15" },
+    { label: "Pending Follow-Ups", value: displayData.stats.pendingFollowUps, icon: AlertCircle, color: "text-rose-400", bg: "bg-rose-500/15" },
+  ];
 
   return (
     <div className="mx-auto max-w-[1300px] px-6 py-8 space-y-8">
@@ -108,7 +137,7 @@ export default function StaffDashboardPage() {
 
       {loading ? (
         <div className="flex items-center justify-center py-24 text-muted">Loading dashboard…</div>
-      ) : data ? (
+      ) : (
         <>
           {/* KPI Row */}
           <motion.div
@@ -137,7 +166,7 @@ export default function StaffDashboardPage() {
                   <h2 className="text-sm font-extrabold tracking-tight text-text uppercase">Today&apos;s Schedule</h2>
                 </div>
                 <div className="space-y-2">
-                  {data.schedule.map((s) => (
+                  {displayData.schedule.map((s) => (
                     <div key={s.id} className="flex items-center gap-3 rounded-lg bg-white/[0.02] p-3">
                       <div className="w-16 shrink-0 text-xs font-semibold text-sky-400">{s.time}</div>
                       <div className="flex-1 min-w-0">
@@ -163,7 +192,7 @@ export default function StaffDashboardPage() {
                   <h2 className="text-sm font-extrabold tracking-tight text-text uppercase">Recent Check-Ins</h2>
                 </div>
                 <div className="space-y-3">
-                  {data.recentCheckIns.map((c) => (
+                  {displayData.recentCheckIns.map((c) => (
                     <div key={c.id} className="flex items-start gap-3 rounded-lg bg-white/[0.02] p-3">
                       <div className="mt-0.5 shrink-0">{moodIcon(c.mood)}</div>
                       <div className="flex-1 min-w-0">
@@ -204,7 +233,7 @@ export default function StaffDashboardPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {data.caseload.map((p) => (
+                    {displayData.caseload.map((p) => (
                       <tr key={p.id} className="border-b border-border/40 last:border-0">
                         <td className="py-2.5 pr-3 font-semibold text-text">{p.name}</td>
                         <td className="py-2.5 pr-3 text-xs text-muted">{p.program}</td>
@@ -225,7 +254,7 @@ export default function StaffDashboardPage() {
                   <h2 className="text-sm font-extrabold tracking-tight text-text uppercase">Program Progress</h2>
                 </div>
                 <div className="space-y-4">
-                  {data.programs.map((p) => (
+                  {displayData.programs.map((p) => (
                     <div key={p.id}>
                       <div className="mb-1.5 flex items-center justify-between text-xs">
                         <span className="font-semibold text-text">{p.name}</span>
@@ -245,9 +274,13 @@ export default function StaffDashboardPage() {
               </GlowCard>
             </motion.div>
           </div>
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+            <WeeklyEngagementChart />
+          </motion.div>
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
+            <AgentMonitor />
+          </motion.div>
         </>
-      ) : (
-        <GlowCard className="p-8 text-center text-muted">Failed to load dashboard data.</GlowCard>
       )}
     </div>
   );

@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { motion } from "framer-motion";
 import { GlowCard } from "@/components/ui/GlowCard";
-import { TrendingUp, Users, Activity, Clock, BarChart2 } from "lucide-react";
+import { TrendingUp, Users, Activity, Clock } from "lucide-react";
+import { WeeklyEngagementChart } from "@/components/ui/WeeklyEngagementChart";
 import { cn } from "@/lib/cn";
 
 interface AdminStats {
@@ -101,14 +102,9 @@ export default function AdminAnalyticsPage() {
         ))}
       </div>
 
-      {/* Placeholder chart area */}
-      <GlowCard className="flex flex-col items-center py-16 text-center">
-        <BarChart2 className="mb-4 h-10 w-10 opacity-25 text-violet-400" />
-        <h3 className="text-lg font-semibold text-white">Charts coming soon</h3>
-        <p className="mt-2 max-w-sm text-sm text-slate-400">
-          Detailed charts for registrations over time, engagement rates, and program completion will appear here.
-        </p>
-      </GlowCard>
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+        <WeeklyEngagementChart title="Platform Engagement" />
+      </motion.div>
     </div>
   );
 }

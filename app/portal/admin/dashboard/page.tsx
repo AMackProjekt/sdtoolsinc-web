@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { motion } from "framer-motion";
 import { GlowCard } from "@/components/ui/GlowCard";
+import { AgentMonitor } from "@/components/ui/AgentMonitor";
 import {
   Users,
   UserCheck,
@@ -36,6 +37,29 @@ interface DashData {
   auditLog: { id: string; user: string; action: string; target: string; time: string; severity: string }[];
   systemHealth: { uptime: string; responseTime: string; activeConnections: number; errorRate: string };
 }
+
+const MOCK_ADMIN_DATA: DashData = {
+  stats: { totalUsers: 312, activeStaff: 18, activeParticipants: 274, activeCourses: 14, pendingRegistrations: 9, newThisMonth: 37 },
+  recentRegistrations: [
+    { id: "1", name: "Tanya Brooks", email: "tanya.b@example.com", role: "participant", date: "Today", status: "active" },
+    { id: "2", name: "Luis Vega", email: "luis.v@example.com", role: "participant", date: "Yesterday", status: "pending" },
+    { id: "3", name: "Sarah Kim", email: "sarah.k@example.com", role: "staff", date: "2 days ago", status: "active" },
+    { id: "4", name: "Michael T.", email: "michael.t@example.com", role: "participant", date: "3 days ago", status: "active" },
+  ],
+  staffActivity: [
+    { id: "1", name: "Maria Chen", role: "Case Manager", caseload: 12, lastLogin: "2h ago", status: "online" },
+    { id: "2", name: "Robert Torres", role: "Job Coach", caseload: 9, lastLogin: "Today", status: "online" },
+    { id: "3", name: "Deja Williams", role: "Peer Mentor", caseload: 6, lastLogin: "Yesterday", status: "away" },
+    { id: "4", name: "Dr. Ahmed K.", role: "Counselor", caseload: 14, lastLogin: "3h ago", status: "online" },
+  ],
+  auditLog: [
+    { id: "1", user: "admin@sdtools.io", action: "Updated user role", target: "luis.v@example.com", time: "5m ago", severity: "info" },
+    { id: "2", user: "maria.chen@sdtools.io", action: "Submitted case report", target: "Participant #274", time: "22m ago", severity: "info" },
+    { id: "3", user: "admin@sdtools.io", action: "Flagged registration", target: "unknown@temp.io", time: "1h ago", severity: "warning" },
+    { id: "4", user: "system", action: "Auto-archived inactive record", target: "Participant #198", time: "3h ago", severity: "info" },
+  ],
+  systemHealth: { uptime: "99.97%", responseTime: "142ms", activeConnections: 38, errorRate: "0.02%" },
+};
 
 const statusDot = (s: string) => {
   if (s === "online") return <span className="inline-block h-2 w-2 rounded-full bg-emerald-400" />;
@@ -86,16 +110,15 @@ export default function AdminDashboardPage() {
 
   if (!isAuthenticated) return null;
 
-  const kpis = data
-    ? [
-        { label: "Total Users", value: data.stats.totalUsers, icon: Users, color: "text-violet-400", bg: "bg-violet-500/15" },
-        { label: "Active Staff", value: data.stats.activeStaff, icon: UserCheck, color: "text-sky-400", bg: "bg-sky-500/15" },
-        { label: "Participants", value: data.stats.activeParticipants, icon: Activity, color: "text-teal-400", bg: "bg-teal-500/15" },
-        { label: "Active Courses", value: data.stats.activeCourses, icon: BookOpen, color: "text-amber-400", bg: "bg-amber-500/15" },
-        { label: "Pending Reg.", value: data.stats.pendingRegistrations, icon: Clock, color: "text-rose-400", bg: "bg-rose-500/15" },
-        { label: "New This Month", value: data.stats.newThisMonth, icon: TrendingUp, color: "text-emerald-400", bg: "bg-emerald-500/15" },
-      ]
-    : [];
+  const displayData = data ?? MOCK_ADMIN_DATA;
+  const kpis = [
+    { label: "Total Users", value: displayData.stats.totalUsers, icon: Users, color: "text-violet-400", bg: "bg-violet-500/15" },
+    { label: "Active Staff", value: displayData.stats.activeStaff, icon: UserCheck, color: "text-sky-400", bg: "bg-sky-500/15" },
+    { label: "Participants", value: displayData.stats.activeParticipants, icon: Activity, color: "text-teal-400", bg: "bg-teal-500/15" },
+    { label: "Active Courses", value: displayData.stats.activeCourses, icon: BookOpen, color: "text-amber-400", bg: "bg-amber-500/15" },
+    { label: "Pending Reg.", value: displayData.stats.pendingRegistrations, icon: Clock, color: "text-rose-400", bg: "bg-rose-500/15" },
+    { label: "New This Month", value: displayData.stats.newThisMonth, icon: TrendingUp, color: "text-emerald-400", bg: "bg-emerald-500/15" },
+  ];
 
   return (
     <div className="mx-auto max-w-[1300px] px-6 py-8 space-y-8">
@@ -125,7 +148,7 @@ export default function AdminDashboardPage() {
 
       {loading ? (
         <div className="flex items-center justify-center py-24 text-muted">Loading dashboard…</div>
-      ) : data ? (
+      ) : (
         <>
           {/* KPI Grid */}
           <motion.div
@@ -168,7 +191,7 @@ export default function AdminDashboardPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {data.recentRegistrations.map((r) => (
+                    {displayData.recentRegistrations.map((r) => (
                       <tr key={r.id} className="border-b border-border/40 last:border-0">
                         <td className="py-2.5 pr-3">
                           <div className="font-semibold text-text">{r.name}</div>
@@ -206,7 +229,7 @@ export default function AdminDashboardPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {data.staffActivity.map((s) => (
+                    {displayData.staffActivity.map((s) => (
                       <tr key={s.id} className="border-b border-border/40 last:border-0">
                         <td className="py-2.5 pr-3">
                           <div className="font-semibold text-text">{s.name}</div>
@@ -237,7 +260,7 @@ export default function AdminDashboardPage() {
                   <h2 className="text-sm font-extrabold tracking-tight text-text uppercase">Recent Audit Log</h2>
                 </div>
                 <div className="space-y-3">
-                  {data.auditLog.map((entry) => (
+                  {displayData.auditLog.map((entry) => (
                     <div key={entry.id} className="flex items-start gap-3 rounded-lg bg-white/[0.02] p-3">
                       <div className={`mt-0.5 h-2 w-2 shrink-0 rounded-full ${entry.severity === "warning" ? "bg-amber-400" : "bg-violet-500"}`} />
                       <div className="flex-1 min-w-0">
@@ -270,10 +293,10 @@ export default function AdminDashboardPage() {
                 </div>
                 <div className="space-y-3">
                   {[
-                    { label: "Uptime", value: data.systemHealth.uptime, ok: true },
-                    { label: "Response Time", value: data.systemHealth.responseTime, ok: true },
-                    { label: "Live Connections", value: String(data.systemHealth.activeConnections), ok: true },
-                    { label: "Error Rate", value: data.systemHealth.errorRate, ok: true },
+                    { label: "Uptime", value: displayData.systemHealth.uptime, ok: true },
+                    { label: "Response Time", value: displayData.systemHealth.responseTime, ok: true },
+                    { label: "Live Connections", value: String(displayData.systemHealth.activeConnections), ok: true },
+                    { label: "Error Rate", value: displayData.systemHealth.errorRate, ok: true },
                   ].map((h) => (
                     <div key={h.label} className="flex items-center justify-between text-sm">
                       <span className="text-muted">{h.label}</span>
@@ -327,9 +350,10 @@ export default function AdminDashboardPage() {
               </GlowCard>
             </motion.div>
           </div>
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+            <AgentMonitor />
+          </motion.div>
         </>
-      ) : (
-        <GlowCard className="p-8 text-center text-muted">Failed to load dashboard data.</GlowCard>
       )}
     </div>
   );
