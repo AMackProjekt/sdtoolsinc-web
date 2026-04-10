@@ -16,16 +16,24 @@ import {
   LogOut,
   ArrowLeft,
   ShieldCheck,
+  Briefcase,
+  UserCog,
+  ScrollText,
 } from "lucide-react";
 import { GlobalSearch } from "@/components/ui/GlobalSearch";
 import { InternalChat } from "@/components/ui/InternalChat";
+import { MackAI } from "@/components/ui/MackAI";
 
 const NAV = [
   { href: "/portal/admin/dashboard", label: "Overview", icon: LayoutDashboard },
   { href: "/portal/admin/users", label: "Users", icon: Users },
   { href: "/portal/admin/staff", label: "Staff", icon: UserCheck },
+  { href: "/portal/admin/personnel", label: "Personnel", icon: UserCog },
+  { href: "/portal/admin/hr", label: "HR Console", icon: Briefcase },
   { href: "/portal/admin/content", label: "Content", icon: BookOpen },
   { href: "/portal/admin/analytics", label: "Analytics", icon: BarChart2 },
+  { href: "/portal/admin/compliance", label: "Compliance", icon: ShieldCheck },
+  { href: "/portal/admin/audit", label: "Audit Log", icon: ScrollText },
   { href: "/portal/admin/settings", label: "Settings", icon: Settings },
 ];
 
@@ -156,6 +164,7 @@ export default function AdminPortalLayout({ children }: { children: React.ReactN
         <main className="flex-1 overflow-y-auto">{children}</main>
       </div>
       <InternalChat currentUser={user?.name ?? "Admin"} role="admin" />
+      <MackAI />
     </div>
   );
 }

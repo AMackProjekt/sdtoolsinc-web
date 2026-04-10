@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/cn";
 import { InternalChat } from "@/components/ui/InternalChat";
+import { MackAI } from "@/components/ui/MackAI";
 import {
   LayoutDashboard,
   Users,
@@ -157,6 +158,7 @@ export default function StaffPortalLayout({ children }: { children: React.ReactN
         {/* Page content */}
         <main className="flex-1 overflow-y-auto">{children}</main>
         <InternalChat currentUser={user?.name ?? "Staff"} role="staff" />
+        <MackAI />
       </div>
     </div>
   );
