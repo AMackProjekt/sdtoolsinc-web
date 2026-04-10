@@ -19,6 +19,10 @@ import {
   Briefcase,
   UserCog,
   ScrollText,
+  ClipboardList,
+  NotebookPen,
+  Heart,
+  Plug,
 } from "lucide-react";
 import { GlobalSearch } from "@/components/ui/GlobalSearch";
 import { InternalChat } from "@/components/ui/InternalChat";
@@ -34,6 +38,10 @@ const NAV = [
   { href: "/portal/admin/analytics", label: "Analytics", icon: BarChart2 },
   { href: "/portal/admin/compliance", label: "Compliance", icon: ShieldCheck },
   { href: "/portal/admin/audit", label: "Audit Log", icon: ScrollText },
+  { href: "/portal/admin/assignments", label: "Assignments", icon: ClipboardList },
+  { href: "/portal/admin/casenotes", label: "Case Notes", icon: NotebookPen },
+  { href: "/portal/admin/self-care", label: "Self-Care", icon: Heart },
+  { href: "/portal/admin/integrations", label: "Integrations", icon: Plug },
   { href: "/portal/admin/settings", label: "Settings", icon: Settings },
 ];
 

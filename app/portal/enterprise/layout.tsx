@@ -26,6 +26,7 @@ import {
   MessageSquare,
   Mic2,
   Scale,
+  Heart,
 } from "lucide-react";
 import { GlobalSearch } from "@/components/ui/GlobalSearch";
 import { InternalChat } from "@/components/ui/InternalChat";
@@ -42,6 +43,7 @@ const NAV = [
   { href: "/portal/enterprise/hr", label: "HR Operations", icon: Briefcase },
   { href: "/portal/enterprise/newsroom", label: "News & Media Kit", icon: ScrollText },
   { href: "/portal/enterprise/settings", label: "Settings", icon: SlidersHorizontal },
+  { href: "/portal/enterprise/self-care", label: "Self-Care", icon: Heart },
   { href: "/portal/enterprise/voice", label: "Your Voice Is Heard", icon: Mic2 },
   { href: "/portal/enterprise/legal", label: "Legal & Compliance", icon: Scale },
 ];
