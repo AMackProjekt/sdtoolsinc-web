@@ -350,9 +350,9 @@ export default function StaffCaseNotesPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.04, duration: 0.3 }}
               >
+                <div onClick={() => openEdit(note)}>
                 <GlowCard
                   className="cursor-pointer p-4 hover:border-sky-700/40 transition-colors"
-                  onClick={() => openEdit(note)}
                 >
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                     <div className="flex-1">
@@ -382,6 +382,7 @@ export default function StaffCaseNotesPage() {
                     </div>
                   </div>
                 </GlowCard>
+                </div>
               </motion.div>
             ))}
           </div>
