@@ -32,14 +32,14 @@ const NAV = [
 export default function StaffPortalLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    if (!isAuthenticated && !pathname.endsWith("/auth")) {
+    if (!isLoading && !isAuthenticated && !pathname.endsWith("/auth")) {
       router.replace("/portal/staff/auth");
     }
-  }, [isAuthenticated, pathname, router]);
+  }, [isLoading, isAuthenticated, pathname, router]);
 
   const handleLogout = () => {
     logout();
@@ -109,7 +109,7 @@ export default function StaffPortalLayout({ children }: { children: React.ReactN
           {user && (
             <div className="flex items-center gap-3 rounded-lg bg-sky-950/40 px-3 py-2.5">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sky-500/30 text-xs font-bold text-sky-300">
-                {user.name.charAt(0).toUpperCase()}
+                {user?.name?.charAt(0).toUpperCase() ?? "S"}
               </div>
               <div className="min-w-0 flex-1">
                 <div className="truncate text-xs font-semibold text-sky-200">{user.name}</div>
@@ -140,13 +140,14 @@ export default function StaffPortalLayout({ children }: { children: React.ReactN
         <header className="sticky top-0 z-10 flex h-14 items-center justify-between border-b border-border bg-panel/70 px-5 backdrop-blur-xl">
           <button
             onClick={() => setSidebarOpen(true)}
+            title="Open menu"
             className="rounded-lg p-2 text-muted hover:text-text transition lg:hidden"
           >
             <Menu size={20} />
           </button>
           <div className="ml-auto flex items-center gap-3">
             <GlobalSearch role="staff" />
-            <button className="relative rounded-lg p-2 text-muted hover:text-text transition">
+            <button title="Notifications" className="relative rounded-lg p-2 text-muted hover:text-text transition">
               <Bell size={18} />
               <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-sky-400" />
             </button>

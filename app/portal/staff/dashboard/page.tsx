@@ -45,15 +45,15 @@ const moodIcon = (m: string) => {
 };
 
 export default function StaffDashboardPage() {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
   const [data, setData] = useState<StaffData | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    if (!isAuthenticated) router.replace("/portal/staff/auth");
-  }, [isAuthenticated, router]);
+    if (!isLoading && !isAuthenticated) router.replace("/portal/staff/auth");
+  }, [isLoading, isAuthenticated, router]);
 
   const load = async (silent = false) => {
     if (!silent) setLoading(true);
@@ -71,7 +71,7 @@ export default function StaffDashboardPage() {
     load();
   }, []);
 
-  if (!isAuthenticated) return null;
+  if (isLoading || !isAuthenticated) return null;
 
   const kpis = data
     ? [

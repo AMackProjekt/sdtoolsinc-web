@@ -8,14 +8,16 @@ export interface ChatMessage {
   ts: string;
 }
 
-const MOCK_THREAD: ChatMessage[] = [
-  { id: "1", from: "Staff Member", role: "staff", text: "Hi! Just checking in — how are things going this week?", ts: "2025-07-14T09:15:00Z" },
-  { id: "2", from: "You", role: "participant", text: "Things are going well! I finished Module 2 of Life Skills.", ts: "2025-07-14T09:18:00Z" },
-  { id: "3", from: "Staff Member", role: "staff", text: "That's great progress! Let's review your goals at our Thursday session.", ts: "2025-07-14T09:20:00Z" },
+// In-memory store — shared across all portal roles, persists for the server session
+const store: ChatMessage[] = [
+  { id: "1", from: "Staff Member", role: "staff", text: "Hi! Just checking in — how are things going this week?", ts: new Date(Date.now() - 3600000 * 2).toISOString() },
+  { id: "2", from: "Participant", role: "participant", text: "Things are going well! I finished Module 2 of Life Skills.", ts: new Date(Date.now() - 3600000 * 1.8).toISOString() },
+  { id: "3", from: "Staff Member", role: "staff", text: "That's great progress! Let's review your goals at our Thursday session.", ts: new Date(Date.now() - 3600000 * 1.6).toISOString() },
 ];
+let counter = 4;
 
 export async function GET() {
-  return NextResponse.json({ messages: MOCK_THREAD });
+  return NextResponse.json({ messages: store });
 }
 
 export async function POST(req: NextRequest) {
@@ -27,13 +29,16 @@ export async function POST(req: NextRequest) {
   }
 
   const newMessage: ChatMessage = {
-    id: String(Date.now()),
+    id: String(counter++),
     from,
     role,
     text: text.trim(),
     ts: new Date().toISOString(),
   };
 
-  // In production: persist to Supabase
+  store.push(newMessage);
+  // Keep last 200 messages to prevent unbounded growth
+  if (store.length > 200) store.splice(0, store.length - 200);
+
   return NextResponse.json({ message: newMessage }, { status: 201 });
 }

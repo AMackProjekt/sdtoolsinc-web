@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/cn";
 import {
   Settings2,
+  SlidersHorizontal,
   Building2,
   KeyRound,
   Palette,
@@ -27,6 +28,7 @@ import {
   Scale,
 } from "lucide-react";
 import { GlobalSearch } from "@/components/ui/GlobalSearch";
+import { InternalChat } from "@/components/ui/InternalChat";
 
 const NAV = [
   { href: "/portal/enterprise", label: "Workspace Control", icon: Settings2, exact: true },
@@ -39,6 +41,7 @@ const NAV = [
   { href: "/portal/enterprise/executive", label: "Executive Command", icon: Building2 },
   { href: "/portal/enterprise/hr", label: "HR Operations", icon: Briefcase },
   { href: "/portal/enterprise/newsroom", label: "News & Media Kit", icon: ScrollText },
+  { href: "/portal/enterprise/settings", label: "Settings", icon: SlidersHorizontal },
   { href: "/portal/voice", label: "Your Voice Is Heard", icon: Mic2 },
   { href: "/portal/legal", label: "Legal & Compliance", icon: Scale },
 ];
@@ -52,18 +55,20 @@ const PORTAL_NAV = [
 export default function EnterpriseLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    if (!isAuthenticated && !pathname.endsWith("/auth")) {
+    if (!isLoading && !isAuthenticated && !pathname.endsWith("/auth")) {
       router.replace("/portal/enterprise/auth");
     }
-  }, [isAuthenticated, pathname, router]);
+  }, [isLoading, isAuthenticated, pathname, router]);
 
   if (pathname.endsWith("/auth")) {
     return <>{children}</>;
   }
+
+  if (isLoading || !isAuthenticated) return null;
 
   const handleLogout = () => {
     logout();
@@ -197,6 +202,7 @@ export default function EnterpriseLayout({ children }: { children: React.ReactNo
 
         <main className="flex-1 p-6">{children}</main>
       </div>
+      <InternalChat currentUser={user?.name ?? "Enterprise"} role="admin" />
     </div>
   );
 }

@@ -18,6 +18,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { GlobalSearch } from "@/components/ui/GlobalSearch";
+import { InternalChat } from "@/components/ui/InternalChat";
 
 const NAV = [
   { href: "/portal/admin/dashboard", label: "Overview", icon: LayoutDashboard },
@@ -154,6 +155,7 @@ export default function AdminPortalLayout({ children }: { children: React.ReactN
         {/* Page content */}
         <main className="flex-1 overflow-y-auto">{children}</main>
       </div>
+      <InternalChat currentUser={user?.name ?? "Admin"} role="admin" />
     </div>
   );
 }

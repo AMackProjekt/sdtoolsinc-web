@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { User, Bell, Lock, Briefcase, Save, Eye, EyeOff } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { GlowCard } from "@/components/ui/GlowCard";
+import { useAuth } from "@/lib/auth";
 
 const TABS = [
   { id: "profile", label: "Profile", icon: User },
@@ -14,11 +16,13 @@ const TABS = [
 ];
 
 export default function StaffSettingsPage() {
+  const router = useRouter();
+  const { user, isAuthenticated, isLoading } = useAuth();
   const [activeTab, setActiveTab] = useState("profile");
 
   // Profile state
-  const [name, setName] = useState("Taylor Morgan");
-  const [email, setEmail] = useState("t.morgan@sdtoolsinc.org");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [department, setDepartment] = useState("Case Management");
   const [title, setTitle] = useState("Senior Case Manager");
   const [phone, setPhone] = useState("(404) 555-0117");
@@ -47,6 +51,17 @@ export default function StaffSettingsPage() {
   const [autoAssign, setAutoAssign] = useState(true);
   const [language, setLanguage] = useState("en");
 
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) router.replace("/portal/staff/auth");
+  }, [isLoading, isAuthenticated, router]);
+
+  useEffect(() => {
+    if (user) {
+      setName(user.name);
+      setEmail(user.email);
+    }
+  }, [user]);
+
   async function saveProfile() {
     await new Promise((r) => setTimeout(r, 600));
     setProfileSaved(true);
@@ -60,6 +75,8 @@ export default function StaffSettingsPage() {
     setPwSaved(true);
     setTimeout(() => setPwSaved(false), 2500);
   }
+
+  if (isLoading || !isAuthenticated) return null;
 
   return (
     <div className="min-h-screen px-4 py-8 sm:px-8">

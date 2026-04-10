@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageSquare, X, Send, Minimize2 } from "lucide-react";
+import { MessageSquare, X, Send, Minimize2, ExternalLink } from "lucide-react";
 
 interface ChatMessage {
   id: string;
@@ -190,6 +190,16 @@ export function InternalChat({
                 </span>
               </div>
               <div className="flex items-center gap-1">
+                <a
+                  href="/portal/chat"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded p-1 text-muted hover:text-text transition"
+                  aria-label="Open chat in new tab"
+                  title="Open in new tab"
+                >
+                  <ExternalLink size={13} />
+                </a>
                 <button
                   onClick={() => setMinimized((m) => !m)}
                   className="rounded p-1 text-muted hover:text-text transition"
