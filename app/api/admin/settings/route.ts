@@ -19,7 +19,7 @@ export async function GET() {
     if (error) {
       // No row yet — return safe defaults
       return NextResponse.json({
-        org_name: "",
+        org_name: "T.O.O.LS Inc",
         session_timeout_minutes: 60,
         mfa_required: false,
         allowed_ip_ranges: [],

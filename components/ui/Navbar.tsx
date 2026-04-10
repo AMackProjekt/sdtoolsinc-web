@@ -1,9 +1,19 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "./Button";
 
 export function Navbar() {
+  const [orgName, setOrgName] = useState("T.O.O.LS Inc");
+
+  useEffect(() => {
+    fetch("/api/enterprise/org")
+      .then((r) => r.json())
+      .then((d) => { if (d.settings?.org_name) setOrgName(d.settings.org_name); })
+      .catch(() => {});
+  }, []);
+
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-bg/70 backdrop-blur-xl">
       <div className="mx-auto flex max-w-container items-center justify-between px-7 py-4">
@@ -16,11 +26,11 @@ export function Navbar() {
         >
           <img
             src="/logos/main-logo.png"
-            alt="T.O.O.LS Inc Logo"
+            alt={`${orgName} Logo`}
             className="h-10 w-auto object-contain"
           />
           <span className="font-extrabold tracking-tight text-text">
-            T.O.O.LS Inc
+            {orgName}
           </span>
         </motion.a>
 
