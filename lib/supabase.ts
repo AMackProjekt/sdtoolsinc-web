@@ -93,6 +93,30 @@ export type StaffMember = {
   manager_id?: string;
 };
 
+export type Participant = {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email?: string;
+  phone?: string;
+  dob?: string;
+  enrollment_date: string;
+  status: "enrolled" | "matched" | "exited" | "pending";
+  referral_agency?: string;
+  case_manager_id?: string;
+  notes?: string;
+  created_at: string;
+};
+
+export type CaseAssignment = {
+  id: string;
+  participant_id: string;
+  staff_id: string;
+  assigned_at: string;
+  assigned_by?: string;
+  notes?: string;
+};
+
 export type PressRelease = {
   id: string;
   title: string;
@@ -216,4 +240,122 @@ export async function getMetrics(period?: string) {
   const { data, error } = await query;
   if (error) throw error;
   return data as MetricKPI[];
+}
+
+// ─── Staff ────────────────────────────────────────────────────────────────────
+
+export async function createStaffMember(member: Omit<StaffMember, "id">) {
+  const db = createSupabaseAdmin();
+  const { data, error } = await db
+    .from("staff")
+    .insert(member)
+    .select()
+    .single();
+  if (error) throw error;
+  return data as StaffMember;
+}
+
+export async function updateStaffMember(id: string, updates: Partial<Omit<StaffMember, "id">>) {
+  const db = createSupabaseAdmin();
+  const { data, error } = await db
+    .from("staff")
+    .update(updates)
+    .eq("id", id)
+    .select()
+    .single();
+  if (error) throw error;
+  return data as StaffMember;
+}
+
+// ─── Participants ─────────────────────────────────────────────────────────────
+
+export async function getParticipants(filters?: { status?: string; case_manager_id?: string }) {
+  const db = createSupabaseAdmin();
+  let query = db.from("participants").select("*").order("created_at", { ascending: false });
+  if (filters?.status) query = query.eq("status", filters.status);
+  if (filters?.case_manager_id) query = query.eq("case_manager_id", filters.case_manager_id);
+  const { data, error } = await query;
+  if (error) throw error;
+  return data as Participant[];
+}
+
+export async function getParticipantById(id: string) {
+  const db = createSupabaseAdmin();
+  const { data, error } = await db
+    .from("participants")
+    .select("*")
+    .eq("id", id)
+    .single();
+  if (error) throw error;
+  return data as Participant;
+}
+
+export async function createParticipant(participant: Omit<Participant, "id" | "created_at">) {
+  const db = createSupabaseAdmin();
+  const { data, error } = await db
+    .from("participants")
+    .insert(participant)
+    .select()
+    .single();
+  if (error) throw error;
+  return data as Participant;
+}
+
+export async function updateParticipant(id: string, updates: Partial<Omit<Participant, "id" | "created_at">>) {
+  const db = createSupabaseAdmin();
+  const { data, error } = await db
+    .from("participants")
+    .update(updates)
+    .eq("id", id)
+    .select()
+    .single();
+  if (error) throw error;
+  return data as Participant;
+}
+
+// ─── Case Assignments ─────────────────────────────────────────────────────────
+
+export async function getCaseAssignments(staffId?: string) {
+  const db = createSupabaseAdmin();
+  let query = db
+    .from("case_assignments")
+    .select("*, participants(*), staff(*)")
+    .order("assigned_at", { ascending: false });
+  if (staffId) query = query.eq("staff_id", staffId);
+  const { data, error } = await query;
+  if (error) throw error;
+  return data as (CaseAssignment & { participants: Participant; staff: StaffMember })[];
+}
+
+export async function assignParticipant(assignment: Omit<CaseAssignment, "id" | "assigned_at">) {
+  const db = createSupabaseAdmin();
+  // Upsert: one active assignment per participant
+  const { data, error } = await db
+    .from("case_assignments")
+    .upsert(
+      { ...assignment, assigned_at: new Date().toISOString() },
+      { onConflict: "participant_id" }
+    )
+    .select()
+    .single();
+  if (error) throw error;
+  // Also update the participant's case_manager_id for quick lookup
+  await db
+    .from("participants")
+    .update({ case_manager_id: assignment.staff_id })
+    .eq("id", assignment.participant_id);
+  return data as CaseAssignment;
+}
+
+export async function unassignParticipant(participantId: string) {
+  const db = createSupabaseAdmin();
+  const { error } = await db
+    .from("case_assignments")
+    .delete()
+    .eq("participant_id", participantId);
+  if (error) throw error;
+  await db
+    .from("participants")
+    .update({ case_manager_id: null })
+    .eq("id", participantId);
 }
