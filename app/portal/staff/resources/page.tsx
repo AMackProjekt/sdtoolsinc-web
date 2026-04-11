@@ -32,7 +32,7 @@ const RESOURCES: Resource[] = [
     description: "Comprehensive guide covering intake, assessment, goal setting, and closure procedures.",
     type: "document",
     category: "Case Management",
-    url: "#",
+    url: "https://www.samhsa.gov/resource-search/ebp",
     audience: "staff",
   },
   {
@@ -41,7 +41,7 @@ const RESOURCES: Resource[] = [
     description: "Standardized intake form template for new participant onboarding.",
     type: "template",
     category: "Templates",
-    url: "#",
+    url: "https://www.samhsa.gov/sites/default/files/programs_campaigns/homelessness_programs_resources/ahar-intake-form.pdf",
     audience: "staff",
   },
   {
@@ -50,7 +50,7 @@ const RESOURCES: Resource[] = [
     description: "Video training series on trauma-informed approaches for case workers.",
     type: "video",
     category: "Training",
-    url: "#",
+    url: "https://www.youtube.com/watch?v=eVQlKoLqJHc",
     audience: "staff",
   },
   {
@@ -59,7 +59,7 @@ const RESOURCES: Resource[] = [
     description: "Up-to-date list of community partners, services, and referral contacts.",
     type: "link",
     category: "Community",
-    url: "#",
+    url: "https://www.211.org/",
     audience: "both",
   },
   {
@@ -68,7 +68,7 @@ const RESOURCES: Resource[] = [
     description: "SMART goal methodology and documentation guidelines for participant plans.",
     type: "document",
     category: "Case Management",
-    url: "#",
+    url: "https://www.mindtools.com/pages/article/smart-goals.htm",
     audience: "staff",
   },
   {
@@ -77,7 +77,7 @@ const RESOURCES: Resource[] = [
     description: "Step-by-step procedures for handling participant crises and escalations.",
     type: "document",
     category: "Protocols",
-    url: "#",
+    url: "https://www.samhsa.gov/sites/default/files/national-guidelines-for-behavioral-health-crisis-care-02242020.pdf",
     audience: "staff",
   },
   {
@@ -86,7 +86,7 @@ const RESOURCES: Resource[] = [
     description: "Overview of public benefits programs and eligibility criteria for referrals.",
     type: "document",
     category: "Community",
-    url: "#",
+    url: "https://www.benefits.gov/",
     audience: "both",
   },
   {
@@ -95,7 +95,7 @@ const RESOURCES: Resource[] = [
     description: "Standardized template for documenting monthly participant progress notes.",
     type: "template",
     category: "Templates",
-    url: "#",
+    url: "https://www.templateroller.com/template/2369/progress-note-template.html",
     audience: "staff",
   },
   {
@@ -104,7 +104,7 @@ const RESOURCES: Resource[] = [
     description: "New staff orientation checklist covering systems, policies, and procedures.",
     type: "document",
     category: "Training",
-    url: "#",
+    url: "https://www.shrm.org/resourcesandtools/tools-and-samples/hr-forms/pages/new-employee-orientation-checklist.aspx",
     audience: "staff",
   },
 ];

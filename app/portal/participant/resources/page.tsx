@@ -21,7 +21,7 @@ const RESOURCES: Resource[] = [
     description: "A comprehensive workbook covering essential life skills for independent living.",
     type: "document",
     category: "Life Skills",
-    url: "#",
+    url: "https://www.skillsyouneed.com/",
   },
   {
     id: "2",
@@ -29,7 +29,7 @@ const RESOURCES: Resource[] = [
     description: "Step-by-step guidance for finding and applying to jobs in your area.",
     type: "document",
     category: "Employment",
-    url: "#",
+    url: "https://www.careeronestop.org/JobSearch/job-search.aspx",
   },
   {
     id: "3",
@@ -37,7 +37,7 @@ const RESOURCES: Resource[] = [
     description: "Learn to create a personal budget and manage money effectively.",
     type: "video",
     category: "Financial Literacy",
-    url: "#",
+    url: "https://www.youtube.com/watch?v=sVKQn2I4HDM",
   },
   {
     id: "4",
@@ -45,7 +45,7 @@ const RESOURCES: Resource[] = [
     description: "Local resources and support organizations available to participants.",
     type: "link",
     category: "Community",
-    url: "#",
+    url: "https://www.211.org/",
   },
   {
     id: "5",
@@ -53,7 +53,7 @@ const RESOURCES: Resource[] = [
     description: "Professional resume templates tailored for entry-level positions.",
     type: "document",
     category: "Employment",
-    url: "#",
+    url: "https://www.resumegenius.com/resume-templates",
   },
   {
     id: "6",
@@ -61,7 +61,7 @@ const RESOURCES: Resource[] = [
     description: "Short videos covering stress management, mindfulness, and wellbeing.",
     type: "video",
     category: "Wellness",
-    url: "#",
+    url: "https://www.youtube.com/playlist?list=PLZRRxQcaEjA4qyEuYfAMCazlL0vQDkIj2",
   },
 ];
 
