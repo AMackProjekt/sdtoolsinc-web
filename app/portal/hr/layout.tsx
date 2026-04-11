@@ -14,6 +14,7 @@ import {
   BarChart2,
   ShieldCheck,
   GraduationCap,
+  ShieldAlert,
   Settings,
   Menu,
   Bell,
@@ -30,6 +31,7 @@ const NAV = [
   { href: "/portal/hr/performance",    label: "Performance",   icon: BarChart2 },
   { href: "/portal/hr/compliance",     label: "Compliance",    icon: ShieldCheck },
   { href: "/portal/hr/training",       label: "Training",      icon: GraduationCap },
+  { href: "/portal/hr/disciplinary",   label: "Disciplinary",  icon: ShieldAlert },
   { href: "/portal/hr/settings",       label: "Settings",      icon: Settings },
 ];
 
