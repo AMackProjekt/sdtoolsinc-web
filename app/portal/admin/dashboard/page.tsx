@@ -21,6 +21,14 @@ import {
   Wifi,
   WifiOff,
   Circle,
+  UserPlus,
+  UserMinus,
+  GitMerge,
+  Send,
+  Building2,
+  FileWarning,
+  Star,
+  Scale,
 } from "lucide-react";
 
 interface DashData {
@@ -36,6 +44,16 @@ interface DashData {
   staffActivity: { id: string; name: string; role: string; caseload: number; lastLogin: string; status: string }[];
   auditLog: { id: string; user: string; action: string; target: string; time: string; severity: string }[];
   systemHealth: { uptime: string; responseTime: string; activeConnections: number; errorRate: string };
+  participantStats: {
+    enrolled: number;
+    matched: number;
+    exited: number;
+    referralsPending: number;
+    referralAgencies: number;
+    writeUps: number;
+    milestones: number;
+    appeals: number;
+  };
 }
 
 const MOCK_ADMIN_DATA: DashData = {
@@ -59,6 +77,16 @@ const MOCK_ADMIN_DATA: DashData = {
     { id: "4", user: "system", action: "Auto-archived inactive record", target: "Participant #198", time: "3h ago", severity: "info" },
   ],
   systemHealth: { uptime: "99.97%", responseTime: "142ms", activeConnections: 38, errorRate: "0.02%" },
+  participantStats: {
+    enrolled: 274,
+    matched: 189,
+    exited: 43,
+    referralsPending: 17,
+    referralAgencies: 8,
+    writeUps: 5,
+    milestones: 62,
+    appeals: 3,
+  },
 };
 
 const statusDot = (s: string) => {
@@ -166,6 +194,40 @@ export default function AdminDashboardPage() {
                 <div className="mt-1 text-xs text-muted">{k.label}</div>
               </GlowCard>
             ))}
+          </motion.div>
+
+          {/* ── Participants Overview KPIs ────────────────────────────────── */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.08 }}
+          >
+            <div className="mb-3 flex items-center gap-2">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-teal-500/15">
+                <Users size={14} className="text-teal-400" />
+              </div>
+              <h2 className="text-xs font-extrabold uppercase tracking-widest text-teal-400/80">Participants Overview</h2>
+            </div>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
+              {[
+                { label: "Enrolled",          value: displayData.participantStats.enrolled,          icon: UserPlus,     color: "text-teal-400",   bg: "bg-teal-500/15" },
+                { label: "Matched",           value: displayData.participantStats.matched,           icon: GitMerge,     color: "text-sky-400",    bg: "bg-sky-500/15" },
+                { label: "Exited",            value: displayData.participantStats.exited,            icon: UserMinus,    color: "text-slate-400",  bg: "bg-slate-500/15" },
+                { label: "Referrals Pending", value: displayData.participantStats.referralsPending,  icon: Send,         color: "text-amber-400",  bg: "bg-amber-500/15" },
+                { label: "Referral Agencies", value: displayData.participantStats.referralAgencies,  icon: Building2,    color: "text-violet-400", bg: "bg-violet-500/15" },
+                { label: "Write-ups",         value: displayData.participantStats.writeUps,          icon: FileWarning,  color: "text-rose-400",   bg: "bg-rose-500/15" },
+                { label: "Milestones",        value: displayData.participantStats.milestones,        icon: Star,         color: "text-emerald-400",bg: "bg-emerald-500/15" },
+                { label: "Appeals",           value: displayData.participantStats.appeals,           icon: Scale,        color: "text-orange-400", bg: "bg-orange-500/15" },
+              ].map((k) => (
+                <GlowCard key={k.label} className="p-4">
+                  <div className={`mb-2.5 flex h-8 w-8 items-center justify-center rounded-lg ${k.bg}`}>
+                    <k.icon size={16} className={k.color} />
+                  </div>
+                  <div className="text-xl font-extrabold tracking-tight text-text">{k.value.toLocaleString()}</div>
+                  <div className="mt-0.5 text-[11px] leading-tight text-muted">{k.label}</div>
+                </GlowCard>
+              ))}
+            </div>
           </motion.div>
 
           <div className="grid gap-6 lg:grid-cols-2">

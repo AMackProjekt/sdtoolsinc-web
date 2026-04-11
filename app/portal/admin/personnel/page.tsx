@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import {
   UserCog, Search, ChevronDown, Eye, Users, BarChart2,
   AlertCircle, CheckCircle2, TrendingUp, ClipboardList, UserCheck,
+  CalendarDays,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 
@@ -72,6 +73,48 @@ const CASE_MANAGERS = [
 
 // ─── Style maps ───────────────────────────────────────────────────────────────
 
+type Shift = "Morning" | "Afternoon" | "Evening" | "Remote" | "Off";
+
+interface WorkSchedule {
+  empId: string;
+  mon: Shift;
+  tue: Shift;
+  wed: Shift;
+  thu: Shift;
+  fri: Shift;
+  weeklyHours: number;
+  notes?: string;
+}
+
+const SCHEDULES: WorkSchedule[] = [
+  { empId: "1",  mon: "Morning",   tue: "Morning",   wed: "Morning",   thu: "Morning",   fri: "Morning",   weeklyHours: 40, notes: "Flex start 8–9 am" },
+  { empId: "2",  mon: "Morning",   tue: "Remote",    wed: "Morning",   thu: "Remote",    fri: "Morning",   weeklyHours: 40 },
+  { empId: "3",  mon: "Afternoon", tue: "Afternoon", wed: "Afternoon", thu: "Off",       fri: "Afternoon", weeklyHours: 32 },
+  { empId: "4",  mon: "Morning",   tue: "Morning",   wed: "Remote",    thu: "Morning",   fri: "Remote",    weeklyHours: 40 },
+  { empId: "5",  mon: "Morning",   tue: "Morning",   wed: "Morning",   thu: "Morning",   fri: "Off",       weeklyHours: 32, notes: "4/10 schedule" },
+  { empId: "6",  mon: "Off",       tue: "Off",       wed: "Off",       thu: "Off",       fri: "Off",       weeklyHours: 0,  notes: "Medical leave" },
+  { empId: "7",  mon: "Afternoon", tue: "Afternoon", wed: "Morning",   thu: "Afternoon", fri: "Morning",   weeklyHours: 40 },
+  { empId: "8",  mon: "Morning",   tue: "Afternoon", wed: "Morning",   thu: "Afternoon", fri: "Morning",   weeklyHours: 40 },
+  { empId: "9",  mon: "Morning",   tue: "Morning",   wed: "Morning",   thu: "Morning",   fri: "Morning",   weeklyHours: 40, notes: "Director hours" },
+  { empId: "10", mon: "Off",       tue: "Off",       wed: "Off",       thu: "Off",       fri: "Off",       weeklyHours: 0,  notes: "Departed" },
+];
+
+const SHIFT_STYLE: Record<Shift, string> = {
+  Morning:   "bg-sky-500/20 text-sky-300 border-sky-500/20",
+  Afternoon: "bg-violet-500/20 text-violet-300 border-violet-500/20",
+  Evening:   "bg-amber-500/20 text-amber-300 border-amber-500/20",
+  Remote:    "bg-teal-500/20 text-teal-300 border-teal-500/20",
+  Off:       "bg-slate-700/30 text-slate-500 border-slate-700/20",
+};
+
+const DAYS: { key: keyof Omit<WorkSchedule, "empId" | "weeklyHours" | "notes">; label: string }[] = [
+  { key: "mon", label: "Mon" },
+  { key: "tue", label: "Tue" },
+  { key: "wed", label: "Wed" },
+  { key: "thu", label: "Thu" },
+  { key: "fri", label: "Fri" },
+];
+
 const EMP_STATUS_COLOR: Record<EmpStatus, string> = {
   "Active":   "bg-green-500/20 text-green-300",
   "On Leave": "bg-yellow-500/20 text-yellow-300",
@@ -115,7 +158,7 @@ function KpiCard({ label, value, sub, color }: { label: string; value: string | 
 // ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function PersonnelPage() {
-  const [tab, setTab] = useState<"directory" | "caseload">("directory");
+  const [tab, setTab] = useState<"directory" | "caseload" | "schedule">("directory");
 
   // Directory state
   const [search, setSearch] = useState("");
@@ -182,12 +225,13 @@ export default function PersonnelPage() {
         className="flex gap-1 rounded-xl border border-border bg-panel p-1 w-fit"
       >
         {[
-          { key: "directory", label: "Directory",         icon: Users },
-          { key: "caseload",  label: "Caseload Analytics", icon: BarChart2 },
+          { key: "directory", label: "Directory",          icon: Users },
+          { key: "caseload",  label: "Caseload Analytics",  icon: BarChart2 },
+          { key: "schedule",  label: "Work Schedule",       icon: CalendarDays },
         ].map(({ key, label, icon: Icon }) => (
           <button
             key={key}
-            onClick={() => setTab(key as "directory" | "caseload")}
+            onClick={() => setTab(key as "directory" | "caseload" | "schedule")}
             className={cn(
               "flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition",
               tab === key
@@ -452,6 +496,97 @@ export default function PersonnelPage() {
                 ))}
               </tbody>
             </table>
+          </div>
+        </motion.div>
+      )}
+
+      {/* ── Work Schedule tab ─────────────────────────────────────────────── */}
+      {tab === "schedule" && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="space-y-5"
+        >
+          {/* KPI strip */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { label: "On-Site Today",    value: SCHEDULES.filter(s => s.mon === "Morning" || s.mon === "Afternoon").length, color: "text-violet-300" },
+              { label: "Remote Today",     value: SCHEDULES.filter(s => s.mon === "Remote").length,                           color: "text-teal-300"   },
+              { label: "Off Today",        value: SCHEDULES.filter(s => s.mon === "Off").length,                              color: "text-slate-400"  },
+              { label: "Avg Weekly Hours", value: Math.round(SCHEDULES.reduce((a, s) => a + s.weeklyHours, 0) / Math.max(1, SCHEDULES.filter(s => s.weeklyHours > 0).length)) + "h", color: "text-sky-300" },
+            ].map(kpi => (
+              <div key={kpi.label} className="rounded-xl border border-border bg-panel p-4">
+                <p className={`text-2xl font-extrabold ${kpi.color}`}>{kpi.value}</p>
+                <p className="text-xs text-muted mt-0.5">{kpi.label}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Schedule grid */}
+          <div className="rounded-xl border border-border bg-panel overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="px-5 py-3 text-left text-xs font-semibold text-muted">Employee</th>
+                  {DAYS.map(d => (
+                    <th key={d.key} className="px-4 py-3 text-center text-xs font-semibold text-muted">{d.label}</th>
+                  ))}
+                  <th className="px-4 py-3 text-center text-xs font-semibold text-muted">Hrs/Wk</th>
+                  <th className="px-5 py-3 text-left text-xs font-semibold text-muted hidden lg:table-cell">Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {SCHEDULES.map((sched, i) => {
+                  const emp = EMPLOYEES.find(e => e.id === sched.empId);
+                  if (!emp) return null;
+                  return (
+                    <motion.tr
+                      key={sched.empId}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: i * 0.03 }}
+                      className="border-b border-border/50 last:border-0 hover:bg-white/[0.02] transition"
+                    >
+                      <td className="px-5 py-3">
+                        <div className="font-semibold text-text">{emp.name}</div>
+                        <div className="text-xs text-muted">{emp.role}</div>
+                      </td>
+                      {DAYS.map(d => (
+                        <td key={d.key} className="px-4 py-3 text-center">
+                          <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-semibold border", SHIFT_STYLE[sched[d.key]])}>
+                            {sched[d.key]}
+                          </span>
+                        </td>
+                      ))}
+                      <td className="px-4 py-3 text-center text-sm font-semibold text-text">{sched.weeklyHours}h</td>
+                      <td className="px-5 py-3 text-xs text-muted hidden lg:table-cell">{sched.notes ?? "—"}</td>
+                    </motion.tr>
+                  );
+                })}
+              </tbody>
+              <tfoot>
+                <tr className="bg-white/[0.02] border-t border-border">
+                  <td className="px-5 py-2 text-xs font-semibold text-muted">Coverage</td>
+                  {DAYS.map(d => {
+                    const count = SCHEDULES.filter(s => s[d.key] !== "Off").length;
+                    return (
+                      <td key={d.key} className="px-4 py-2 text-center">
+                        <span className="text-xs font-bold text-violet-300">{count}/{SCHEDULES.length}</span>
+                      </td>
+                    );
+                  })}
+                  <td colSpan={2} />
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          {/* Legend */}
+          <div className="flex flex-wrap gap-3 text-xs">
+            {(Object.entries(SHIFT_STYLE) as [Shift, string][]).map(([shift, cls]) => (
+              <span key={shift} className={cn("rounded-full px-3 py-1 border font-semibold", cls)}>{shift}</span>
+            ))}
           </div>
         </motion.div>
       )}

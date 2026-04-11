@@ -325,19 +325,20 @@ export function IntegrationsPanel({
 
                 {/* Expandable feature list */}
                 {isOpen && (
-                  <motion.ul
+                  <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
-                    className="mt-3 space-y-1 border-t border-white/10 pt-3"
                   >
-                    {app.features.map((f) => (
-                      <li key={f} className="flex items-center gap-2 text-[11px] text-muted">
-                        <CheckCircle2 size={10} className={app.color} />
-                        {f}
-                      </li>
-                    ))}
-                  </motion.ul>
+                    <ul className="mt-3 space-y-1 border-t border-white/10 pt-3">
+                      {app.features.map((f) => (
+                        <li key={f} className="flex items-center gap-2 text-[11px] text-muted">
+                          <CheckCircle2 size={10} className={app.color} />
+                          {f}
+                        </li>
+                      ))}
+                    </ul>
+                  </motion.div>
                 )}
 
                 {/* Action buttons */}
