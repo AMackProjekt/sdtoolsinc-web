@@ -6,10 +6,10 @@ import { GlowCard } from "@/components/ui/GlowCard";
 import { ExternalLink, BookOpen, GraduationCap, Star, Clock, Tag } from "lucide-react";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
-type Provider = "Niche Academy" | "Coursera" | "Khan Academy";
+type Provider = "Niche Academy" | "Coursera" | "Khan Academy" | "Microsoft Learn" | "Google" | "Verizon";
 type Topic = "Social Work" | "Case Management" | "Trauma-Informed Care" | "Mental Health"
   | "Leadership" | "Public Health" | "Psychology" | "Life Skills" | "Career Readiness"
-  | "Financial Literacy" | "Technology";
+  | "Financial Literacy" | "Technology" | "Data Analytics" | "Cybersecurity" | "Digital Marketing";
 
 interface Course {
   id: string;
@@ -213,20 +213,172 @@ const COURSES: Course[] = [
     isFree: true,
     url: "https://www.khanacademy.org/math/statistics-probability",
   },
+
+  // ── Microsoft Learn ────────────────────────────────────────────────────────
+  {
+    id: "ms-01",
+    title: "Azure Fundamentals (AZ-900 Learning Path)",
+    provider: "Microsoft Learn",
+    topic: "Technology",
+    description: "Explore cloud concepts, core Azure services, security, compliance, and pricing — the foundation for any Microsoft cloud role.",
+    duration: "10h",
+    level: "Beginner",
+    isFree: true,
+    url: "https://learn.microsoft.com/en-us/training/paths/azure-fundamentals/",
+  },
+  {
+    id: "ms-02",
+    title: "Introduction to AI on Microsoft Azure",
+    provider: "Microsoft Learn",
+    topic: "Technology",
+    description: "Discover how AI and machine learning work, explore Azure AI services, and apply responsible AI principles in real-world scenarios.",
+    duration: "5h",
+    level: "Beginner",
+    isFree: true,
+    url: "https://learn.microsoft.com/en-us/training/modules/get-started-ai-fundamentals/",
+  },
+  {
+    id: "ms-03",
+    title: "Cybersecurity Fundamentals",
+    provider: "Microsoft Learn",
+    topic: "Cybersecurity",
+    description: "Learn core cybersecurity concepts including threat types, attack vectors, identity protection, and safe data practices for everyday professionals.",
+    duration: "3h",
+    level: "Beginner",
+    isFree: true,
+    url: "https://learn.microsoft.com/en-us/training/modules/describe-basic-cybersecurity-threats-attacks-mitigations/",
+  },
+  {
+    id: "ms-04",
+    title: "Power BI: Build Reports & Dashboards",
+    provider: "Microsoft Learn",
+    topic: "Data Analytics",
+    description: "Create interactive reports and dashboards with Power BI to visualize program data, track KPIs, and drive data-informed decisions.",
+    duration: "8h",
+    level: "Beginner",
+    isFree: true,
+    url: "https://learn.microsoft.com/en-us/training/paths/create-use-analytics-reports-power-bi/",
+  },
+  {
+    id: "ms-05",
+    title: "Microsoft 365 Productivity Essentials",
+    provider: "Microsoft Learn",
+    topic: "Technology",
+    description: "Master Teams, Outlook, SharePoint, and OneDrive to improve collaboration, communication, and document management across your organization.",
+    duration: "4h",
+    level: "Beginner",
+    isFree: true,
+    url: "https://learn.microsoft.com/en-us/training/paths/m365-teams-associate/",
+  },
+
+  // ── Google ─────────────────────────────────────────────────────────────────
+  {
+    id: "goog-01",
+    title: "Fundamentals of Digital Marketing",
+    provider: "Google",
+    topic: "Digital Marketing",
+    description: "Google's IAB-certified course covering SEO, analytics, social media, content marketing, and advertising fundamentals — 26 practical modules.",
+    duration: "40h",
+    level: "Beginner",
+    isFree: true,
+    url: "https://learndigital.withgoogle.com/digitalgarage/course/digital-marketing",
+  },
+  {
+    id: "goog-02",
+    title: "Google Data Analytics Certificate",
+    provider: "Google",
+    topic: "Data Analytics",
+    description: "Learn data cleaning, analysis, and visualization using spreadsheets, SQL, Tableau, and R. Audit free on Coursera — no payment required.",
+    duration: "6 months",
+    level: "Beginner",
+    isFree: true,
+    url: "https://grow.google/certificates/data-analytics/",
+  },
+  {
+    id: "goog-03",
+    title: "Google Project Management Certificate",
+    provider: "Google",
+    topic: "Leadership",
+    description: "Build project management skills using Agile and traditional frameworks. Audit free via Coursera — covers planning, execution, and stakeholder management.",
+    duration: "6 months",
+    level: "Beginner",
+    isFree: true,
+    url: "https://grow.google/certificates/project-management/",
+  },
+  {
+    id: "goog-04",
+    title: "Google AI Essentials",
+    provider: "Google",
+    topic: "Technology",
+    description: "Understand how generative AI works, use AI tools to boost productivity, and apply responsible AI practices in professional settings.",
+    duration: "Self-paced",
+    level: "Beginner",
+    isFree: true,
+    url: "https://grow.google/certificates/ai-essentials/",
+  },
+  {
+    id: "goog-05",
+    title: "Google Workspace: Collaboration & Productivity",
+    provider: "Google",
+    topic: "Technology",
+    description: "Get hands-on with Gmail, Docs, Sheets, Slides, Drive, and Meet. Official Google training to boost team productivity and remote collaboration.",
+    duration: "Self-paced",
+    level: "Beginner",
+    isFree: true,
+    url: "https://workspace.google.com/learning-center/",
+  },
+
+  // ── Verizon ────────────────────────────────────────────────────────────────
+  {
+    id: "vzn-01",
+    title: "Small Business Digital Ready",
+    provider: "Verizon",
+    topic: "Technology",
+    description: "Verizon's free platform offering courses on e-commerce, digital marketing, finance, and cybersecurity tailored for community organizations and small businesses.",
+    duration: "Self-paced",
+    level: "Beginner",
+    isFree: true,
+    url: "https://business.verizon.com/resources/small-business-digital-ready/",
+  },
+  {
+    id: "vzn-02",
+    title: "Skill Forward: Career & Tech Upskilling",
+    provider: "Verizon",
+    topic: "Career Readiness",
+    description: "Free job-ready training in cybersecurity, cloud computing, and data skills through Verizon's workforce development platform. Certificates included.",
+    duration: "Self-paced",
+    level: "Beginner",
+    isFree: true,
+    url: "https://www.verizon.com/about/responsibility/digital-inclusion/skill-forward",
+  },
+  {
+    id: "vzn-03",
+    title: "Digital Inclusion: Closing the Digital Divide",
+    provider: "Verizon",
+    topic: "Life Skills",
+    description: "Explore Verizon's digital equity resources including internet access tools, device programs, and digital literacy training for underserved communities.",
+    duration: "Self-paced",
+    level: "Beginner",
+    isFree: true,
+    url: "https://www.verizon.com/about/responsibility/digital-inclusion",
+  },
 ];
 
 // ─── Constants ───────────────────────────────────────────────────────────────────
-const ALL_PROVIDERS: Provider[] = ["Niche Academy", "Coursera", "Khan Academy"];
+const ALL_PROVIDERS: Provider[] = ["Niche Academy", "Coursera", "Khan Academy", "Microsoft Learn", "Google", "Verizon"];
 const ALL_TOPICS: Topic[] = [
   "Social Work", "Case Management", "Trauma-Informed Care", "Mental Health",
   "Leadership", "Public Health", "Psychology", "Life Skills", "Career Readiness",
-  "Financial Literacy", "Technology",
+  "Financial Literacy", "Technology", "Data Analytics", "Cybersecurity", "Digital Marketing",
 ];
 
 const PROVIDER_COLOR: Record<Provider, string> = {
-  "Niche Academy": "bg-purple-500/15 text-purple-300 border border-purple-400/20",
-  "Coursera":      "bg-sky-500/15 text-sky-300 border border-sky-400/20",
-  "Khan Academy":  "bg-teal-500/15 text-teal-300 border border-teal-400/20",
+  "Niche Academy":   "bg-purple-500/15 text-purple-300 border border-purple-400/20",
+  "Coursera":        "bg-sky-500/15 text-sky-300 border border-sky-400/20",
+  "Khan Academy":    "bg-teal-500/15 text-teal-300 border border-teal-400/20",
+  "Microsoft Learn": "bg-blue-500/15 text-blue-300 border border-blue-400/20",
+  "Google":          "bg-yellow-500/15 text-yellow-300 border border-yellow-400/20",
+  "Verizon":         "bg-red-500/15 text-red-300 border border-red-400/20",
 };
 
 const LEVEL_COLOR: Record<Course["level"], string> = {
@@ -236,9 +388,12 @@ const LEVEL_COLOR: Record<Course["level"], string> = {
 };
 
 const PROVIDER_ICON: Record<Provider, string> = {
-  "Niche Academy": "🎓",
-  "Coursera":      "📘",
-  "Khan Academy":  "🟢",
+  "Niche Academy":   "🎓",
+  "Coursera":        "📘",
+  "Khan Academy":    "🟢",
+  "Microsoft Learn": "🪟",
+  "Google":          "🌐",
+  "Verizon":         "📡",
 };
 
 // ─── Component ──────────────────────────────────────────────────────────────────
