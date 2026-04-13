@@ -101,10 +101,10 @@ export default function EnterpriseSettingsPage() {
 
   const LANDING_OPTIONS = [
     { label: "Dashboard", value: "/portal/enterprise/dashboard" },
-    { label: "Programs", value: "/portal/enterprise/programs" },
-    { label: "Participants", value: "/portal/enterprise/participants" },
-    { label: "Analytics", value: "/portal/enterprise/analytics" },
-    { label: "Reports", value: "/portal/enterprise/reports" },
+    { label: "Operations", value: "/portal/enterprise/operations" },
+    { label: "Organization", value: "/portal/enterprise/organization" },
+    { label: "Executive", value: "/portal/enterprise/executive" },
+    { label: "Audit", value: "/portal/enterprise/audit" },
   ];
 
   return (

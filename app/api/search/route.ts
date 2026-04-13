@@ -6,15 +6,15 @@ const SEARCH_INDEX = [
   { id: "a1", title: "User Management", description: "Manage portal user accounts and roles", href: "/portal/admin/users", category: "Admin", role: "admin" },
   { id: "a2", title: "Platform Settings", description: "System config, security, and audit retention", href: "/portal/admin/settings", category: "Admin", role: "admin" },
   { id: "a3", title: "Admin Dashboard", description: "Overview of platform KPIs and activity", href: "/portal/admin/dashboard", category: "Admin", role: "admin" },
-  { id: "a4", title: "Participant Accounts", description: "View and manage all participant profiles", href: "/portal/admin/participants", category: "Admin", role: "admin" },
+  { id: "a4", title: "Participant Accounts", description: "View and manage all participant profiles", href: "/portal/admin/users", category: "Admin", role: "admin" },
   { id: "a5", title: "Staff Accounts", description: "Manage staff users and their assignments", href: "/portal/admin/staff", category: "Admin", role: "admin" },
 
   // Staff
-  { id: "s1", title: "My Caseload", description: "View and manage your assigned participants", href: "/portal/staff/caseload", category: "Staff", role: "staff" },
+  { id: "s1", title: "My Caseload", description: "View and manage your assigned participants", href: "/portal/staff/participants", category: "Staff", role: "staff" },
   { id: "s2", title: "Staff Dashboard", description: "Your personal staff overview and activity feed", href: "/portal/staff/dashboard", category: "Staff", role: "staff" },
-  { id: "s3", title: "Internal Chat", description: "Message participants and other staff members", href: "/portal/staff/messages", category: "Staff", role: "staff" },
+  { id: "s3", title: "Internal Chat", description: "Message participants and other staff members", href: "/portal/chat", category: "Staff", role: "staff" },
   { id: "s4", title: "Staff Settings", description: "Update profile, notifications, and preferences", href: "/portal/staff/settings", category: "Staff", role: "staff" },
-  { id: "s5", title: "Scheduling", description: "Manage appointments and check-in schedules", href: "/portal/staff/scheduling", category: "Staff", role: "staff" },
+  { id: "s5", title: "Scheduling", description: "Manage appointments and check-in schedules", href: "/portal/staff/programs", category: "Staff", role: "staff" },
 
   // Participant
   { id: "p1", title: "My Dashboard", description: "Your program progress and upcoming goals", href: "/portal/participant/dashboard", category: "Participant", role: "participant" },

@@ -21,7 +21,7 @@ export type User = {
   provider?: "google" | "azure-ad" | string;
 };
 
-type AuthContextType = {
+export type AuthContextType = {
   user: User | null;
   /** OAuth sign-in — redirects to Google or Azure AD consent screen. */
   login: (email?: string, password?: string) => Promise<boolean>;
@@ -32,7 +32,7 @@ type AuthContextType = {
   isLoading: boolean;
 };
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Inner hook that reads the NextAuth session and exposes the useAuth() contract.
 function AuthContextProvider({ children }: { children: ReactNode }) {

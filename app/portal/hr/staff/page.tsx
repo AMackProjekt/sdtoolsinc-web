@@ -8,40 +8,8 @@ import {
   Search, UserPlus, X, ChevronDown, ChevronUp,
   Mail, Phone, Briefcase, Calendar, Building2, User, Edit2,
 } from "lucide-react";
+import { STAFF_DATA, DEPARTMENTS, type StaffMember } from "@/lib/hr-data";
 
-// ─── Shared Mock Data ─────────────────────────────────────────────────────────
-
-export interface StaffMember {
-  id: string;
-  name: string;
-  title: string;
-  dept: string;
-  status: "active" | "on-leave" | "terminated" | "onboarding";
-  hire: string;
-  email: string;
-  phone: string;
-  supervisor: string;
-  type: "Full-time" | "Part-time" | "Contract";
-  location: string;
-  emergency_name: string;
-  emergency_phone: string;
-  emergency_rel: string;
-}
-
-export const STAFF_DATA: StaffMember[] = [
-  { id: "s1", name: "Marcus Johnson",  title: "Case Manager II",      dept: "Client Services",  status: "active",     hire: "Mar 1, 2022",  email: "mjohnson@sdtoolsinc.org",  phone: "(619) 555-0101", supervisor: "Priya Sharma",    type: "Full-time", location: "Main Office", emergency_name: "Dana Johnson",   emergency_phone: "(619) 555-0901", emergency_rel: "Spouse"  },
-  { id: "s2", name: "Priya Sharma",    title: "Program Coordinator",  dept: "Operations",       status: "active",     hire: "Jul 15, 2021", email: "psharma@sdtoolsinc.org",   phone: "(619) 555-0102", supervisor: "James Thornton",  type: "Full-time", location: "Main Office", emergency_name: "Raj Sharma",     emergency_phone: "(619) 555-0902", emergency_rel: "Parent"  },
-  { id: "s3", name: "Devon Clarke",    title: "Intake Specialist",    dept: "Client Services",  status: "on-leave",   hire: "Jan 20, 2023", email: "dclarke@sdtoolsinc.org",   phone: "(619) 555-0103", supervisor: "Marcus Johnson",  type: "Full-time", location: "Main Office", emergency_name: "Tanya Clarke",   emergency_phone: "(619) 555-0903", emergency_rel: "Sibling" },
-  { id: "s4", name: "Sandra Nguyen",   title: "Data Analyst",         dept: "Technology",       status: "active",     hire: "Sep 5, 2023",  email: "snguyen@sdtoolsinc.org",   phone: "(619) 555-0104", supervisor: "James Thornton",  type: "Full-time", location: "Remote",      emergency_name: "Lyn Nguyen",     emergency_phone: "(619) 555-0904", emergency_rel: "Parent"  },
-  { id: "s5", name: "James Thornton",  title: "Finance Manager",      dept: "Finance",          status: "active",     hire: "May 10, 2020", email: "jthornton@sdtoolsinc.org", phone: "(619) 555-0105", supervisor: "Executive Dir.",  type: "Full-time", location: "Main Office", emergency_name: "Carol Thornton", emergency_phone: "(619) 555-0905", emergency_rel: "Spouse"  },
-  { id: "s6", name: "Aaliyah Brooks",  title: "HR Generalist",        dept: "Human Resources",  status: "active",     hire: "Feb 12, 2024", email: "abrooks@sdtoolsinc.org",   phone: "(619) 555-0106", supervisor: "Priya Sharma",    type: "Full-time", location: "Main Office", emergency_name: "Kim Brooks",     emergency_phone: "(619) 555-0906", emergency_rel: "Parent"  },
-  { id: "s7", name: "Tyler Reed",      title: "Support Specialist",   dept: "Client Services",  status: "onboarding", hire: "Jul 1, 2025",  email: "treed@sdtoolsinc.org",     phone: "(619) 555-0107", supervisor: "Marcus Johnson",  type: "Full-time", location: "Main Office", emergency_name: "Meg Reed",       emergency_phone: "(619) 555-0907", emergency_rel: "Parent"  },
-  { id: "s8", name: "Fatima Ali",      title: "Case Manager I",       dept: "Client Services",  status: "onboarding", hire: "Jul 1, 2025",  email: "fali@sdtoolsinc.org",      phone: "(619) 555-0108", supervisor: "Marcus Johnson",  type: "Part-time", location: "Main Office", emergency_name: "Yusuf Ali",      emergency_phone: "(619) 555-0908", emergency_rel: "Spouse"  },
-  { id: "s9", name: "Carlos Vega",     title: "Program Assistant",    dept: "Operations",       status: "onboarding", hire: "Aug 1, 2025",  email: "cvega@sdtoolsinc.org",     phone: "(619) 555-0109", supervisor: "Priya Sharma",    type: "Part-time", location: "Remote",      emergency_name: "Maria Vega",     emergency_phone: "(619) 555-0909", emergency_rel: "Parent"  },
-  { id: "s10", name: "Naomi Luckett",  title: "Outreach Lead",        dept: "Outreach",         status: "active",     hire: "Jan 10, 2022", email: "nluckett@sdtoolsinc.org",  phone: "(619) 555-0110", supervisor: "Priya Sharma",    type: "Full-time", location: "Main Office", emergency_name: "Roy Luckett",    emergency_phone: "(619) 555-0910", emergency_rel: "Spouse"  },
-];
-
-export const DEPARTMENTS = ["All", "Client Services", "Operations", "Finance", "Technology", "Human Resources", "Outreach"];
 
 const STATUS_COLORS: Record<string, string> = {
   active:     "bg-emerald-900/40 text-emerald-400 border border-emerald-700/40",
@@ -50,7 +18,7 @@ const STATUS_COLORS: Record<string, string> = {
   terminated: "bg-red-900/40 text-red-400 border border-red-700/40",
 };
 
-export const STATUS_LABELS: Record<string, string> = {
+const STATUS_LABELS: Record<string, string> = {
   active: "Active", "on-leave": "On Leave", onboarding: "Onboarding", terminated: "Terminated",
 };
 
@@ -150,11 +118,11 @@ export default function HRStaffPage() {
               className="w-full rounded-lg border border-border bg-slate-800/60 pl-9 pr-3 py-2 text-sm text-text placeholder:text-muted focus:outline-none focus:border-amber-500"
             />
           </div>
-          <select value={deptFilter} onChange={(e) => setDeptFilter(e.target.value)}
+          <select value={deptFilter} onChange={(e) => setDeptFilter(e.target.value)} title="Filter by department"
             className="rounded-lg border border-border bg-slate-800/60 px-3 py-2 text-sm text-text focus:outline-none focus:border-amber-500">
             {DEPARTMENTS.map((d) => <option key={d}>{d}</option>)}
           </select>
-          <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}
+          <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} title="Filter by status"
             className="rounded-lg border border-border bg-slate-800/60 px-3 py-2 text-sm text-text focus:outline-none focus:border-amber-500">
             <option value="All">All Statuses</option>
             {["active","on-leave","onboarding","terminated"].map((s) => (
@@ -203,10 +171,10 @@ export default function HRStaffPage() {
                     <td className="px-5 py-3">
                       <select
                         value={s.status}
+                        title="Update employee status"
                         onClick={(e) => e.stopPropagation()}
                         onChange={(e) => handleStatusChange(s.id, e.target.value as StaffMember["status"])}
                         className={cn("rounded-full px-2.5 py-0.5 text-xs font-semibold border-0 cursor-pointer focus:outline-none", STATUS_COLORS[s.status])}
-                        style={{ background: "transparent" }}
                       >
                         {["active","on-leave","onboarding","terminated"].map((v) => (
                           <option key={v} value={v} className="bg-slate-900 text-white">{STATUS_LABELS[v]}</option>
@@ -291,7 +259,15 @@ export default function HRStaffPage() {
             >
               <div className="flex items-center justify-between mb-5">
                 <h2 className="text-lg font-bold text-white">{editTarget ? "Edit Staff Member" : "Add Staff Member"}</h2>
-                <button onClick={() => setShowModal(false)} className="rounded-lg p-2 text-slate-400 hover:text-white transition"><X size={18} /></button>
+                <button
+                  type="button"
+                  aria-label="Close modal"
+                  title="Close modal"
+                  onClick={() => setShowModal(false)}
+                  className="rounded-lg p-2 text-slate-400 hover:text-white transition"
+                >
+                  <X size={18} />
+                </button>
               </div>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {([
@@ -317,21 +293,21 @@ export default function HRStaffPage() {
                 ))}
                 <div>
                   <label className="mb-1 block text-xs font-semibold text-slate-400">Department</label>
-                  <select value={form.dept} onChange={(e) => setForm({ ...form, dept: e.target.value })}
+                  <select value={form.dept} onChange={(e) => setForm({ ...form, dept: e.target.value })} title="Department"
                     className="w-full rounded-lg border border-border bg-slate-800/60 px-3 py-2 text-sm text-text focus:outline-none focus:border-amber-500">
                     {DEPARTMENTS.filter(d => d !== "All").map((d) => <option key={d}>{d}</option>)}
                   </select>
                 </div>
                 <div>
                   <label className="mb-1 block text-xs font-semibold text-slate-400">Employment Type</label>
-                  <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value as typeof form.type })}
+                  <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value as typeof form.type })} title="Employment type"
                     className="w-full rounded-lg border border-border bg-slate-800/60 px-3 py-2 text-sm text-text focus:outline-none focus:border-amber-500">
                     {["Full-time","Part-time","Contract"].map((t) => <option key={t}>{t}</option>)}
                   </select>
                 </div>
                 <div>
                   <label className="mb-1 block text-xs font-semibold text-slate-400">Status</label>
-                  <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as typeof form.status })}
+                  <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as typeof form.status })} title="Status"
                     className="w-full rounded-lg border border-border bg-slate-800/60 px-3 py-2 text-sm text-text focus:outline-none focus:border-amber-500">
                     {["active","on-leave","onboarding","terminated"].map((s) => (
                       <option key={s} value={s}>{STATUS_LABELS[s]}</option>
@@ -340,7 +316,7 @@ export default function HRStaffPage() {
                 </div>
                 <div>
                   <label className="mb-1 block text-xs font-semibold text-slate-400">Location</label>
-                  <select value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })}
+                  <select value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} title="Location"
                     className="w-full rounded-lg border border-border bg-slate-800/60 px-3 py-2 text-sm text-text focus:outline-none focus:border-amber-500">
                     {["Main Office","Remote","Hybrid"].map((l) => <option key={l}>{l}</option>)}
                   </select>

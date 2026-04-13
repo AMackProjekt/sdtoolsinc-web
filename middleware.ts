@@ -48,4 +48,5 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: ["/portal/enterprise/:path*"],
+  // /demo/* is intentionally excluded — no auth required for demo mode
 };

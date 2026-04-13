@@ -2,13 +2,21 @@
   "name": "toolsinc-dashdarkx",
   "private": true,
   "version": "1.0.0",
+  "description": "T.O.O.L.S Inc enterprise demo desktop application",
+  "author": "T.O.O.L.S Inc",
   "type": "module",
+  "main": "electron/main.js",
+  "homepage": "./",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "export": "next build",
     "start": "next start",
     "lint": "next lint",
+    "electron": "electron .",
+    "electron-dev": "concurrently \"npm run dev\" \"wait-on http://localhost:3000 && electron .\"",
+    "pack": "npm run export && electron-builder --dir",
+    "dist": "node scripts/electron-dist.mjs",
     "optimize-logos": "node scripts/optimize-logos.js",
     "docker:build": "docker build -t toolsinc-web:latest .",
     "docker:run": "docker run -d -p 3000:3000 --name toolsinc-web toolsinc-web:latest",
@@ -37,11 +45,39 @@
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "autoprefixer": "^10.4.20",
+    "concurrently": "^9.0.0",
+    "electron": "^35.0.0",
+    "electron-builder": "^26.0.0",
+    "electron-is-dev": "^3.0.1",
     "eslint": "^8.57.0",
     "eslint-config-next": "^15.5.14",
     "postcss": "^8.4.41",
     "sharp": "^0.34.5",
     "tailwindcss": "^3.4.10",
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "wait-on": "^8.0.1"
+  },
+  "build": {
+    "appId": "com.sdtoolsinc.demo",
+    "productName": "T.O.O.L.S Inc - Enterprise Demo",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "electron/**/*",
+      "public/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "msi"
+      ]
+    },
+    "msi": {
+      "createDesktopShortcut": false,
+      "createStartMenuShortcut": false
+    }
   }
 }
