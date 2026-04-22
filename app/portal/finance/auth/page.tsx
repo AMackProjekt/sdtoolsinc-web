@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { signIn } from "next-auth/react";
 import { DollarSign, Eye, EyeOff } from "lucide-react";
 import { cn } from "@/lib/cn";
+import { getSafeCallbackUrl } from "@/lib/portal-auth";
 
 // Google logo SVG
 const GoogleLogo = () => (
@@ -27,15 +28,24 @@ const MicrosoftLogo = () => (
   </svg>
 );
 
-export default function FinanceAuthPage() {
+function FinanceAuthPageInner() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { login, signup, isLoading } = useAuth();
+  const callbackUrl = getSafeCallbackUrl(searchParams.get("callbackUrl"), "/portal/finance/dashboard");
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    setName("");
+    setEmail("");
+    setPassword("");
+    setError("");
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,16 +54,16 @@ export default function FinanceAuthPage() {
       if (mode === "login") {
         await login(email, password);
       } else {
-        await signup(name, email, password);
+        await signup(email, password, name);
       }
-      router.push("/portal/finance/dashboard");
+      router.push(callbackUrl);
     } catch {
       setError(mode === "login" ? "Invalid credentials. Please try again." : "Could not create account. Try again.");
     }
   };
 
   const handleOAuth = async (provider: "google" | "azure-ad") => {
-    await signIn(provider, { callbackUrl: "/portal/finance/dashboard" });
+    await signIn(provider, { callbackUrl });
   };
 
   return (
@@ -103,7 +113,7 @@ export default function FinanceAuthPage() {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} autoComplete="off" className="space-y-4">
             {mode === "signup" && (
               <div>
                 <label className="mb-1.5 block text-xs font-medium text-muted">Full name</label>
@@ -112,6 +122,7 @@ export default function FinanceAuthPage() {
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                  autoComplete="off"
                   placeholder="Jane Smith"
                   className="w-full rounded-lg border border-border bg-glass px-4 py-2.5 text-sm text-text placeholder:text-muted/40 focus:border-emerald-500/60 focus:outline-none focus:ring-1 focus:ring-emerald-500/30"
                 />
@@ -125,6 +136,7 @@ export default function FinanceAuthPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@organization.org"
+                autoComplete="off"
                 className="w-full rounded-lg border border-border bg-glass px-4 py-2.5 text-sm text-text placeholder:text-muted/40 focus:border-emerald-500/60 focus:outline-none focus:ring-1 focus:ring-emerald-500/30"
               />
             </div>
@@ -137,6 +149,7 @@ export default function FinanceAuthPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
+                  autoComplete={mode === "login" ? "current-password" : "new-password"}
                   className="w-full rounded-lg border border-border bg-glass px-4 py-2.5 pr-10 text-sm text-text placeholder:text-muted/40 focus:border-emerald-500/60 focus:outline-none focus:ring-1 focus:ring-emerald-500/30"
                 />
                 <button
@@ -184,5 +197,13 @@ export default function FinanceAuthPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function FinanceAuthPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-bg text-sm text-muted">Loading auth…</div>}>
+      <FinanceAuthPageInner />
+    </Suspense>
   );
 }

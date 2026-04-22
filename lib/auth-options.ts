@@ -1,4 +1,4 @@
-import { NextAuthOptions, Session, User } from "next-auth";
+import { Account, NextAuthOptions, Session, User } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import AzureADProvider from "next-auth/providers/azure-ad";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -86,7 +86,7 @@ export const authOptions: NextAuthOptions = {
       return !!user?.email;
     },
 
-    async jwt({ token, user, account }: { token: JWT; user?: User; account?: any }) {
+    async jwt({ token, user, account }: { token: JWT; user?: User; account?: Account | null }) {
       if (user) {
         token.sub = user.id ?? token.sub;
         token.email = user.email ?? token.email;
@@ -105,9 +105,14 @@ export const authOptions: NextAuthOptions = {
 
     async session({ session, token }: { session: Session; token: JWT }) {
       if (token && session.user) {
-        (session.user as any).id = token.sub;
-        (session.user as any).role = token.role;
-        (session.user as any).provider = token.provider;
+        const sessionUser = session.user as Session["user"] & {
+          id?: string;
+          role?: string;
+          provider?: string;
+        };
+        sessionUser.id = token.sub;
+        sessionUser.role = token.role as string | undefined;
+        sessionUser.provider = token.provider as string | undefined;
       }
       return session;
     },

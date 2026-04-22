@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useAuth } from "@/lib/auth";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Newspaper, Eye, EyeOff } from "lucide-react";
+import { getSafeCallbackUrl } from "@/lib/portal-auth";
 
 const GoogleLogo = () => (
   <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -24,9 +25,11 @@ const MicrosoftLogo = () => (
   </svg>
 );
 
-export default function NewsAuthPage() {
-  const { login, signup } = useAuth();
+function NewsAuthPageInner() {
+  const { login, signup, isAuthenticated } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = getSafeCallbackUrl(searchParams.get("callbackUrl"), "/portal/news/dashboard");
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -34,6 +37,19 @@ export default function NewsAuthPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setName("");
+    setEmail("");
+    setPassword("");
+    setError("");
+  }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace(callbackUrl);
+    }
+  }, [isAuthenticated, callbackUrl, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,11 +59,11 @@ export default function NewsAuthPage() {
       if (mode === "login") {
         await login(email, password);
       } else {
-        await signup(name, email, password);
+        await signup(email, password, name);
       }
-      router.push("/portal/news/dashboard");
-    } catch (err: any) {
-      setError(err?.message ?? "Authentication failed. Please try again.");
+      router.push(callbackUrl);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Authentication failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -85,7 +101,7 @@ export default function NewsAuthPage() {
         <div className="mb-5 flex flex-col gap-2.5">
           <button
             type="button"
-            onClick={() => signIn("google", { callbackUrl: "/portal/news/dashboard" })}
+            onClick={() => signIn("google", { callbackUrl })}
             className="flex w-full items-center justify-center gap-2.5 rounded-xl border border-slate-700/60 bg-slate-800/60 px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:border-rose-500/40 hover:bg-rose-900/10"
           >
             <GoogleLogo />
@@ -93,7 +109,7 @@ export default function NewsAuthPage() {
           </button>
           <button
             type="button"
-            onClick={() => signIn("azure-ad", { callbackUrl: "/portal/news/dashboard" })}
+            onClick={() => signIn("azure-ad", { callbackUrl })}
             className="flex w-full items-center justify-center gap-2.5 rounded-xl border border-slate-700/60 bg-slate-800/60 px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:border-rose-500/40 hover:bg-rose-900/10"
           >
             <MicrosoftLogo />
@@ -108,7 +124,7 @@ export default function NewsAuthPage() {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-3">
+        <form onSubmit={handleSubmit} autoComplete="off" className="space-y-3">
           {mode === "signup" && (
             <input
               type="text"
@@ -116,6 +132,7 @@ export default function NewsAuthPage() {
               placeholder="Full name"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              autoComplete="off"
               className="w-full rounded-xl border border-slate-700/50 bg-slate-800/60 px-4 py-2.5 text-sm text-slate-200 placeholder-slate-500 outline-none transition focus:border-rose-500/60 focus:ring-2 focus:ring-rose-500/30"
             />
           )}
@@ -125,6 +142,7 @@ export default function NewsAuthPage() {
             placeholder="Email address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            autoComplete="off"
             className="w-full rounded-xl border border-slate-700/50 bg-slate-800/60 px-4 py-2.5 text-sm text-slate-200 placeholder-slate-500 outline-none transition focus:border-rose-500/60 focus:ring-2 focus:ring-rose-500/30"
           />
           <div className="relative">
@@ -134,6 +152,7 @@ export default function NewsAuthPage() {
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              autoComplete={mode === "login" ? "current-password" : "new-password"}
               className="w-full rounded-xl border border-slate-700/50 bg-slate-800/60 px-4 py-2.5 pr-10 text-sm text-slate-200 placeholder-slate-500 outline-none transition focus:border-rose-500/60 focus:ring-2 focus:ring-rose-500/30"
             />
             <button
@@ -191,5 +210,13 @@ export default function NewsAuthPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function NewsAuthPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-bg text-sm text-muted">Loading auth…</div>}>
+      <NewsAuthPageInner />
+    </Suspense>
   );
 }

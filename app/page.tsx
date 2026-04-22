@@ -9,7 +9,7 @@ import { CookieConsent } from "@/components/ui/CookieConsent";
 
 export default function Page() {
   return (
-    <main className="min-h-screen bg-bg">
+    <main id="top" className="min-h-screen bg-bg">
       {/* Background glow */}
       <div className="pointer-events-none fixed inset-0 -z-10 bg-dash-glow" />
 
@@ -85,7 +85,7 @@ export default function Page() {
               Leadership
             </div>
             <h2 className="h2 mt-4">
-              Donyale "DThree" Mack
+              Donyale &quot;DThree&quot; Mack
             </h2>
             <div className="mt-2 text-lg font-semibold text-muted">
               Owner/Founder
@@ -97,11 +97,11 @@ export default function Page() {
                 providing support and opportunities to those seeking a second chance in life.
               </p>
               <p>
-                Born out of lived experience and personal challenges, Donyale's journey is marked by resilience, 
+                Born out of lived experience and personal challenges, Donyale&apos;s journey is marked by resilience, 
                 overcoming adversity, and an unwavering passion to help others facing similar struggles.
               </p>
               <p className="text-brand font-semibold">
-                "Every individual deserves the opportunity to unlock their full potential."
+                &quot;Every individual deserves the opportunity to unlock their full potential.&quot;
               </p>
             </div>
           </div>
@@ -181,7 +181,7 @@ export default function Page() {
             Ready to Start Your Journey?
           </h2>
           <p className="mx-auto mt-4 max-w-[680px] text-muted">
-            Let us know how we can support you. Fill out the form below and we'll respond within 48 hours.
+            Let us know how we can support you. Fill out the form below and we&apos;ll respond within 48 hours.
           </p>
         </div>
 
@@ -203,10 +203,10 @@ export default function Page() {
       {/* FOOTER CTA */}
       <section className="mx-auto max-w-container px-7 py-16 text-center">
         <div className="flex flex-col md:flex-row items-center justify-center gap-8">
-          <a href="#">
+          <a href="#top">
             <Button variant="primary">Back to Top</Button>
           </a>
-          
+
           <div className="flex flex-col items-center gap-3">
             <div className="text-sm font-semibold text-text">Submit Referral</div>
             <div className="rounded-xl bg-panel border border-border p-4 shadow-glow">

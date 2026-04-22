@@ -49,7 +49,7 @@ export function NDAModal({ onAccept, title = "Confidentiality Agreement" }: NDAM
             <section>
               <h2 className="font-bold text-gray-900">1. CONFIDENTIALITY AGREEMENT</h2>
               <p>
-                This Confidentiality Agreement ("Agreement") is entered into as of the date of acceptance between T.O.O.L.S Inc ("Company") and the user ("Recipient") accessing this Enterprise Demo Portal.
+                This Confidentiality Agreement (&quot;Agreement&quot;) is entered into as of the date of acceptance between T.O.O.L.S Inc (&quot;Company&quot;) and the user (&quot;Recipient&quot;) accessing this Enterprise Demo Portal.
               </p>
             </section>
 
@@ -91,7 +91,7 @@ export function NDAModal({ onAccept, title = "Confidentiality Agreement" }: NDAM
             <section>
               <h2 className="font-bold text-gray-900">5. TERM AND TERMINATION</h2>
               <p>
-                This Agreement remains in effect for the duration of the demo access period. The Company reserves the right to terminate access immediately and without notice if: (a) this Agreement is violated; (b) suspicious activity is detected; or (c) at the Company's sole discretion. Obligations regarding confidentiality survive termination indefinitely.
+                This Agreement remains in effect for the duration of the demo access period. The Company reserves the right to terminate access immediately and without notice if: (a) this Agreement is violated; (b) suspicious activity is detected; or (c) at the Company&apos;s sole discretion. Obligations regarding confidentiality survive termination indefinitely.
               </p>
             </section>
 
@@ -105,7 +105,7 @@ export function NDAModal({ onAccept, title = "Confidentiality Agreement" }: NDAM
             <section>
               <h2 className="font-bold text-gray-900">7. NO WARRANTY & LIABILITY LIMITATION</h2>
               <p>
-                This demo portal is provided "AS IS" without warranties of any kind, express or implied. The Company shall not be liable for any damages, including direct, indirect, incidental, special, or consequential damages, arising from use of this portal or inability to use it.
+                This demo portal is provided &quot;AS IS&quot; without warranties of any kind, express or implied. The Company shall not be liable for any damages, including direct, indirect, incidental, special, or consequential damages, arising from use of this portal or inability to use it.
               </p>
             </section>
 
@@ -119,7 +119,7 @@ export function NDAModal({ onAccept, title = "Confidentiality Agreement" }: NDAM
             <section>
               <h2 className="font-bold text-gray-900">9. GOVERNING LAW</h2>
               <p>
-                This Agreement shall be governed by and construed in accordance with the laws of the United States, without regard to its conflict of law provisions. Both parties consent to exclusive jurisdiction in federal and state courts located in the Company's principal place of business.
+                This Agreement shall be governed by and construed in accordance with the laws of the United States, without regard to its conflict of law provisions. Both parties consent to exclusive jurisdiction in federal and state courts located in the Company&apos;s principal place of business.
               </p>
             </section>
 

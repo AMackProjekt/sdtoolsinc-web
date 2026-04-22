@@ -40,8 +40,6 @@ export default function ParticipantSettingsPage() {
     }
   }, [user]);
 
-  if (isLoading || !isAuthenticated) return null;
-
   // Notifications state
   const [notif, setNotif] = useState({
     courseUpdates: true,
@@ -62,6 +60,8 @@ export default function ParticipantSettingsPage() {
   const [colorScheme, setColorScheme] = useState("teal");
   const [fontSize, setFontSize] = useState("medium");
   const [reduceMotion, setReduceMotion] = useState(false);
+
+  if (isLoading || !isAuthenticated) return null;
 
   async function saveProfile() {
     await updateProfile({ name });

@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { signIn } from "next-auth/react";
+import Link from "next/link";
 import { useAuth } from "@/lib/auth";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/cn";
+import { getSafeCallbackUrl } from "@/lib/portal-auth";
 
 const GoogleLogo = () => (
   <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
@@ -25,7 +27,7 @@ const MicrosoftLogo = () => (
   </svg>
 );
 
-export default function AuthPage() {
+function AuthPageInner() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,14 +35,29 @@ export default function AuthPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [signingIn, setSigningIn] = useState<"google" | "azure-ad" | null>(null);
+  const router = useRouter();
 
-  const { login, signup } = useAuth();
+  const { login, signup, isAuthenticated, isLoading } = useAuth();
+  const searchParams = useSearchParams();
+  const callbackUrl = getSafeCallbackUrl(searchParams.get("callbackUrl"), "/portal");
+
+  useEffect(() => {
+    setEmail("");
+    setPassword("");
+    setName("");
+    setError("");
+  }, []);
+
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      router.replace(callbackUrl);
+    }
+  }, [isLoading, isAuthenticated, callbackUrl, router]);
 
   const handleSignIn = async (provider: "google" | "azure-ad") => {
     setSigningIn(provider);
-    await signIn(provider, { callbackUrl: "/portal" });
+    await signIn(provider, { callbackUrl });
   };
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,11 +70,11 @@ export default function AuthPage() {
         : await signup(email, password, name);
 
       if (success) {
-        router.push("/portal");
+        router.push(callbackUrl);
       } else {
         setError(isLogin ? "Invalid credentials" : "Signup failed");
       }
-    } catch (err) {
+    } catch {
       setError("An error occurred. Please try again.");
     } finally {
       setLoading(false);
@@ -125,7 +142,7 @@ export default function AuthPage() {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} autoComplete="off" className="space-y-6">
             {!isLogin && (
               <div>
                 <label htmlFor="name" className="block text-sm font-semibold text-text mb-2">
@@ -137,6 +154,7 @@ export default function AuthPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required={!isLogin}
+                  autoComplete="off"
                   className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand/50"
                   placeholder="Enter your name"
                 />
@@ -153,6 +171,7 @@ export default function AuthPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                autoComplete="off"
                 className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand/50"
                 placeholder="you@example.com"
               />
@@ -169,6 +188,7 @@ export default function AuthPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={8}
+                autoComplete="new-password"
                 className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand/50"
                 placeholder="••••••••"
               />
@@ -222,11 +242,19 @@ export default function AuthPage() {
         </div>
 
         <div className="mt-6 text-center">
-          <a href="/" className="text-sm text-muted hover:text-text transition-colors">
+          <Link href="/" className="text-sm text-muted hover:text-text transition-colors">
             ← Back to home
-          </a>
+          </Link>
         </div>
       </motion.div>
     </div>
+  );
+}
+
+export default function AuthPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-bg text-sm text-muted">Loading auth…</div>}>
+      <AuthPageInner />
+    </Suspense>
   );
 }

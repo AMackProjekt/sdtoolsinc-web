@@ -84,7 +84,7 @@ export function AICoach({
           </div>
           <div className="text-left">
             <h3 className="text-sm font-semibold text-white leading-none">AI Coach</h3>
-            <p className="text-[11px] text-slate-400 mt-0.5">Hey {displayName} — here's your daily check-in</p>
+            <p className="text-[11px] text-slate-400 mt-0.5">Hey {displayName} — here&apos;s your daily check-in</p>
           </div>
         </div>
         {open ? (

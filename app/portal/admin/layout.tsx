@@ -50,14 +50,14 @@ const NAV = [
 export default function AdminPortalLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    if (!isAuthenticated && !pathname.endsWith("/auth")) {
+    if (!isLoading && !isAuthenticated && !pathname.endsWith("/auth")) {
       router.replace("/portal/admin/auth");
     }
-  }, [isAuthenticated, pathname, router]);
+  }, [isLoading, isAuthenticated, pathname, router]);
 
   const handleLogout = () => {
     logout();
@@ -66,6 +66,10 @@ export default function AdminPortalLayout({ children }: { children: React.ReactN
 
   if (pathname.endsWith("/auth")) {
     return <>{children}</>;
+  }
+
+  if (isLoading || !isAuthenticated) {
+    return null;
   }
 
   return (

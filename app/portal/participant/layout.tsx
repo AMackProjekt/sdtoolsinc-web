@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
 import {
@@ -56,10 +56,17 @@ export default function ParticipantLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const { user, logout } = useAuth();
+  const router = useRouter();
+  const { user, logout, isAuthenticated, isLoading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
   const [showTour, setShowTour] = useState(false);
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated && !pathname.endsWith("/auth")) {
+      router.replace("/portal/participant/auth");
+    }
+  }, [isLoading, isAuthenticated, pathname, router]);
 
   useState(() => {
     if (typeof window !== "undefined" && !localStorage.getItem("tools_participant_onboarded")) {
@@ -72,6 +79,14 @@ export default function ParticipantLayout({
     localStorage.setItem("tools_participant_onboarded", "1");
     setShowTour(false);
   };
+
+  if (pathname.endsWith("/auth")) {
+    return <>{children}</>;
+  }
+
+  if (isLoading || !isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="flex min-h-screen bg-bg">

@@ -57,8 +57,6 @@ export default function AuditPage() {
       .finally(() => setLoadingData(false));
   }, [isAuthenticated]);
 
-  if (!isAuthenticated) return null;
-
   const filtered = useMemo(() => {
     return logs.filter((log) => {
       const matchQ = !query || log.user.includes(query) || log.action.includes(query.toUpperCase()) || log.resource.includes(query);
@@ -68,6 +66,8 @@ export default function AuditPage() {
       return matchQ && matchSev && matchFrom && matchTo;
     });
   }, [query, severityFilter, dateFrom, dateTo, logs]);
+
+  if (!isAuthenticated) return null;
 
   const handleExport = () => {
     const header = "ID,Timestamp,User,Action,Resource,IP,Severity";

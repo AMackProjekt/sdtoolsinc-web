@@ -69,6 +69,37 @@ const INITIAL_AGENTS: Agent[] = [
     lastRun: new Date(Date.now() - 30 * 60 * 1000),
     tasksCompleted: 203,
   },
+  {
+    id: "6",
+    name: "Sweep & Audit Agent",
+    type: "scheduled",
+    enabled: true,
+    status: "running",
+    progress: 0,
+    nextRun: new Date(Date.now() + 60 * 1000),
+    lastRun: new Date(Date.now() - 2 * 60 * 1000),
+    tasksCompleted: 0,
+  },
+  {
+    id: "7",
+    name: "Security Defense Agent",
+    type: "event",
+    enabled: true,
+    status: "running",
+    nextRun: new Date(Date.now() + 1 * 1000),
+    lastRun: new Date(Date.now() - 1 * 60 * 1000),
+    tasksCompleted: 0,
+  },
+  {
+    id: "8",
+    name: "Encryption Agent",
+    type: "event",
+    enabled: true,
+    status: "running",
+    nextRun: new Date(Date.now() + 1 * 1000),
+    lastRun: new Date(Date.now()),
+    tasksCompleted: 0,
+  },
 ];
 
 function formatNextRun(date?: Date): string {

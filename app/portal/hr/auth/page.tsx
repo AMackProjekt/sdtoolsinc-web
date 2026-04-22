@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useAuth } from "@/lib/auth";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Users2, Eye, EyeOff } from "lucide-react";
+import { getSafeCallbackUrl } from "@/lib/portal-auth";
 
 const GoogleLogo = () => (
   <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
@@ -24,9 +25,11 @@ const MicrosoftLogo = () => (
   </svg>
 );
 
-export default function HRAuthPage() {
+function HRAuthPageInner() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { login, signup } = useAuth();
+  const callbackUrl = getSafeCallbackUrl(searchParams.get("callbackUrl"), "/portal/hr/dashboard");
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,6 +37,13 @@ export default function HRAuthPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setName("");
+    setEmail("");
+    setPassword("");
+    setError("");
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,9 +54,9 @@ export default function HRAuthPage() {
       if (mode === "login") {
         await login(email, password);
       } else {
-        await signup(name, email, password);
+        await signup(email, password, name);
       }
-      router.push("/portal/hr/dashboard");
+      router.push(callbackUrl);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Authentication failed");
     } finally {
@@ -55,7 +65,7 @@ export default function HRAuthPage() {
   };
 
   const handleOAuth = (provider: string) => {
-    signIn(provider, { callbackUrl: "/portal/hr/dashboard" });
+    signIn(provider, { callbackUrl });
   };
 
   return (
@@ -118,7 +128,7 @@ export default function HRAuthPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} autoComplete="off" className="space-y-4">
           {mode === "signup" && (
             <div>
               <label className="mb-1.5 block text-xs font-medium text-slate-400">Full Name</label>
@@ -127,6 +137,7 @@ export default function HRAuthPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
+                autoComplete="off"
                 placeholder="Your full name"
                 className="w-full rounded-xl border border-slate-700/60 bg-slate-800/50 px-4 py-2.5 text-sm text-white placeholder-slate-500 outline-none transition focus:border-amber-500/60 focus:ring-2 focus:ring-amber-500/30"
               />
@@ -140,6 +151,7 @@ export default function HRAuthPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              autoComplete="off"
               placeholder="you@sdtoolsinc.com"
               className="w-full rounded-xl border border-slate-700/60 bg-slate-800/50 px-4 py-2.5 text-sm text-white placeholder-slate-500 outline-none transition focus:border-amber-500/60 focus:ring-2 focus:ring-amber-500/30"
             />
@@ -153,6 +165,7 @@ export default function HRAuthPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                autoComplete={mode === "login" ? "current-password" : "new-password"}
                 placeholder="••••••••"
                 className="w-full rounded-xl border border-slate-700/60 bg-slate-800/50 px-4 py-2.5 pr-11 text-sm text-white placeholder-slate-500 outline-none transition focus:border-amber-500/60 focus:ring-2 focus:ring-amber-500/30"
               />
@@ -191,5 +204,13 @@ export default function HRAuthPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function HRAuthPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-bg text-sm text-muted">Loading auth…</div>}>
+      <HRAuthPageInner />
+    </Suspense>
   );
 }

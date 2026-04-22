@@ -164,7 +164,7 @@ export function GlobalSearch({ role = "any" }: GlobalSearchProps) {
               <div className="max-h-[60vh] overflow-y-auto divide-y divide-border/50">
                 {query.length >= 2 && results.length === 0 && !loading && (
                   <div className="px-5 py-10 text-center text-sm text-muted">
-                    No results for <span className="font-semibold text-text">"{query}"</span>
+                    No results for <span className="font-semibold text-text">&quot;{query}&quot;</span>
                   </div>
                 )}
 

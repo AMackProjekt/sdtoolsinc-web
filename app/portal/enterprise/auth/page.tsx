@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useAuth } from "@/lib/auth";
 import { Shield, Lock } from "lucide-react";
 import { motion } from "framer-motion";
+import { getSafeCallbackUrl } from "@/lib/portal-auth";
 
 // Google "G" SVG logo
 const GoogleLogo = () => (
@@ -39,20 +40,22 @@ const MicrosoftLogo = () => (
   </svg>
 );
 
-export default function EnterpriseAuthPage() {
+function EnterpriseAuthPageInner() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { isAuthenticated, isLoading } = useAuth();
   const [signingIn, setSigningIn] = useState<"google" | "azure-ad" | null>(null);
+  const callbackUrl = getSafeCallbackUrl(searchParams.get("callbackUrl"), "/portal/enterprise/dashboard");
 
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
-      router.replace("/portal/enterprise/dashboard");
+      router.replace(callbackUrl);
     }
-  }, [isAuthenticated, isLoading, router]);
+  }, [isAuthenticated, isLoading, callbackUrl, router]);
 
   const handleSignIn = async (provider: "google" | "azure-ad") => {
     setSigningIn(provider);
-    await signIn(provider, { callbackUrl: "/portal/enterprise/dashboard" });
+    await signIn(provider, { callbackUrl });
   };
 
   return (
@@ -132,5 +135,13 @@ export default function EnterpriseAuthPage() {
         </p>
       </motion.div>
     </div>
+  );
+}
+
+export default function EnterpriseAuthPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-bg text-sm text-muted">Loading auth…</div>}>
+      <EnterpriseAuthPageInner />
+    </Suspense>
   );
 }

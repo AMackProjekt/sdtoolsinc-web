@@ -4,11 +4,14 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "./Button";
 import { Mail, Phone, ChevronDown } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export function Navbar() {
   const [orgName, setOrgName] = useState("T.O.O.LS Inc");
   const [contactOpen, setContactOpen] = useState(false);
   const contactRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     fetch("/api/enterprise/org")
@@ -31,8 +34,9 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-bg/70 backdrop-blur-xl">
       <div className="mx-auto flex max-w-container items-center justify-between px-7 py-4">
-        <motion.a
-          href="/"
+        <motion.button
+          type="button"
+          onClick={() => router.push("/")}
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35 }}
@@ -46,13 +50,13 @@ export function Navbar() {
           <span className="font-extrabold tracking-tight text-text">
             {orgName}
           </span>
-        </motion.a>
+        </motion.button>
 
         <nav className="hidden items-center gap-6 md:flex">
-          <a className="text-sm font-medium text-muted hover:text-text" href="/#platform">Programs</a>
-          <a className="text-sm font-medium text-muted hover:text-text" href="/#dashboard">Impact</a>
-          <a className="text-sm font-medium text-muted hover:text-text" href="/partnerships">Partnerships</a>
-          <a className="text-sm font-medium text-muted hover:text-text" href="/referral">Referral</a>
+          <Link className="text-sm font-medium text-muted hover:text-text" href="/#platform">Programs</Link>
+          <Link className="text-sm font-medium text-muted hover:text-text" href="/#dashboard">Impact</Link>
+          <Link className="text-sm font-medium text-muted hover:text-text" href="/partnerships">Partnerships</Link>
+          <Link className="text-sm font-medium text-muted hover:text-text" href="/referral">Referral</Link>
 
           {/* Contact dropdown */}
           <div ref={contactRef} className="relative">
@@ -89,7 +93,7 @@ export function Navbar() {
                   <div className="border-t border-border pt-4">
                     <p className="text-[10px] font-semibold uppercase tracking-widest text-muted mb-2">Direct Contact</p>
                     <p className="text-sm font-semibold text-text mb-1">
-                      Donyale <span className="text-brand">"DThree"</span> Mack
+                      Donyale <span className="text-brand">&quot;DThree&quot;</span> Mack
                     </p>
                     <a
                       href="mailto:dmack@sdtoolsinc.org"
@@ -115,12 +119,8 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <Button variant="ghost" className="hidden sm:inline-flex">
-            <a href="/portal">Portal</a>
-          </Button>
-          <Button variant="primary">
-            <a href="mailto:support@sdtoolsinc.org">Get Support</a>
-          </Button>
+          <Button variant="ghost" className="hidden sm:inline-flex" onClick={() => router.push("/portal")}>Portal</Button>
+          <Button variant="primary" onClick={() => window.location.href = "mailto:support@sdtoolsinc.org"}>Get Support</Button>
         </div>
       </div>
     </header>
