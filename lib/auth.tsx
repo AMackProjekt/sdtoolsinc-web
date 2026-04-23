@@ -77,9 +77,30 @@ function AuthContextProvider({ children }: { children: ReactNode }) {
     return true;
   };
 
-  /** signup() — OAuth only; direct registration handled via Supabase signup page. */
-  const signup = async (emailOrProvider?: string): Promise<boolean> => {
-    return login(emailOrProvider);
+  /** signup() — creates a Supabase account and signs the user in immediately. */
+  const signup = async (email?: string, password?: string, name?: string): Promise<boolean> => {
+    if (!email || !password) return false;
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, name }),
+      });
+      if (!res.ok) return false;
+
+      // Sign in immediately after account creation
+      const result = await signIn("credentials", {
+        email,
+        password,
+        callbackUrl: "/portal/participant/dashboard",
+        redirect: false,
+      });
+      if (result?.error) return false;
+      if (result?.url) window.location.href = result.url;
+      return true;
+    } catch {
+      return false;
+    }
   };
 
   const logout = () => {
