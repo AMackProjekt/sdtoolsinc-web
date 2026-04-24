@@ -243,10 +243,10 @@ export default function StaffInterviewReadyPage() {
                       const avg = Number(
                         (
                           (row.clarityScore +
-                            row.confidenceScore +
+                            (row.confidenceScore ?? row.clarityScore) +
                             row.professionalismScore +
                             row.jobRelevanceScore +
-                            row.completenessScore) /
+                            (row.completenessScore ?? row.professionalismScore)) /
                           5
                         ).toFixed(1)
                       );
@@ -307,8 +307,8 @@ export default function StaffInterviewReadyPage() {
                         {selected.clientName}
                       </div>
                     </div>
-                    <span className={`rounded-full border px-2 py-1 text-xs font-semibold ${scorePill(Number(((selected.clarityScore + selected.confidenceScore + selected.professionalismScore + selected.jobRelevanceScore + selected.completenessScore) / 5).toFixed(1)))}`}>
-                      Avg {Number(((selected.clarityScore + selected.confidenceScore + selected.professionalismScore + selected.jobRelevanceScore + selected.completenessScore) / 5).toFixed(1))}/5
+                    <span className={`rounded-full border px-2 py-1 text-xs font-semibold ${scorePill(Number(((selected.clarityScore + (selected.confidenceScore ?? selected.clarityScore) + selected.professionalismScore + selected.jobRelevanceScore + (selected.completenessScore ?? selected.professionalismScore)) / 5).toFixed(1)))}`}>
+                      Avg {Number(((selected.clarityScore + (selected.confidenceScore ?? selected.clarityScore) + selected.professionalismScore + selected.jobRelevanceScore + (selected.completenessScore ?? selected.professionalismScore)) / 5).toFixed(1))}/5
                     </span>
                   </div>
 
