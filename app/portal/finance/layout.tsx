@@ -40,20 +40,20 @@ export default function FinancePortalLayout({ children }: { children: React.Reac
   const { user, isAuthenticated, isLoading, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const isAuthPage = pathname === "/portal/finance/auth" || pathname === "/portal/finance/auth/";
+
   useEffect(() => {
-    if (!isLoading && !isAuthenticated && !pathname.endsWith("/auth")) {
+    if (!isLoading && !isAuthenticated && !isAuthPage) {
       router.replace("/portal/finance/auth");
     }
-  }, [isLoading, isAuthenticated, pathname, router]);
+  }, [isLoading, isAuthenticated, isAuthPage, router]);
 
   const handleLogout = () => {
     logout();
     router.push("/portal");
   };
 
-  if (pathname.endsWith("/auth")) {
-    return <>{children}</>;
-  }
+  if (isAuthPage) return <>{children}</>;
 
   return (
     <div className="flex min-h-screen bg-bg">

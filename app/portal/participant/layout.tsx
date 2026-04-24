@@ -65,11 +65,13 @@ export default function ParticipantLayout({
   const [showWelcome, setShowWelcome] = useState(false);
   const [showTour, setShowTour] = useState(false);
 
+  const isAuthPage = pathname === "/portal/participant/auth" || pathname === "/portal/participant/auth/";
+
   useEffect(() => {
-    if (!isLoading && !isAuthenticated && !pathname.endsWith("/auth")) {
+    if (!isLoading && !isAuthenticated && !isAuthPage) {
       router.replace("/portal/participant/auth");
     }
-  }, [isLoading, isAuthenticated, pathname, router]);
+  }, [isLoading, isAuthenticated, isAuthPage, router]);
 
   useState(() => {
     if (typeof window !== "undefined" && !localStorage.getItem("tools_participant_onboarded")) {
@@ -83,9 +85,7 @@ export default function ParticipantLayout({
     setShowTour(false);
   };
 
-  if (pathname.endsWith("/auth")) {
-    return <>{children}</>;
-  }
+  if (isAuthPage) return <>{children}</>;
 
   if (isLoading || !isAuthenticated) {
     return null;

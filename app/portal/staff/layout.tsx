@@ -44,21 +44,20 @@ export default function StaffPortalLayout({ children }: { children: React.ReactN
   const { user, isAuthenticated, isLoading, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const isAuthPage = pathname === "/portal/staff/auth" || pathname === "/portal/staff/auth/";
+
   useEffect(() => {
-    if (!isLoading && !isAuthenticated && !pathname.endsWith("/auth")) {
+    if (!isLoading && !isAuthenticated && !isAuthPage) {
       router.replace("/portal/staff/auth");
     }
-  }, [isLoading, isAuthenticated, pathname, router]);
+  }, [isLoading, isAuthenticated, isAuthPage, router]);
 
   const handleLogout = () => {
     logout();
     router.push("/portal");
   };
 
-  // Don't render the layout wrapper on the auth page
-  if (pathname.endsWith("/auth")) {
-    return <>{children}</>;
-  }
+  if (isAuthPage) return <>{children}</>;
 
   return (
     <div className="flex min-h-screen bg-bg">
