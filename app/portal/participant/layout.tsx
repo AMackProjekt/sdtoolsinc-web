@@ -21,6 +21,7 @@ import {
   Heart,
   HelpCircle,
   Plug,
+  Mic,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { GlobalSearch } from "@/components/ui/GlobalSearch";
@@ -34,6 +35,7 @@ const NAV = [
   { href: "/portal/participant/goals", label: "My Goals", icon: Target, tourId: "p-goals" },
   { href: "/portal/participant/journal", label: "Daily Journal", icon: PenLine, tourId: "p-journal" },
   { href: "/portal/participant/self-care", label: "Self-Care", icon: Heart, tourId: "p-selfcare" },
+  { href: "/portal/participant/interview-ready", label: "InterviewReady AI Coach", icon: Mic, tourId: "p-interview-ready" },
   { href: "/portal/participant/messages", label: "Messages", icon: MessageSquare, tourId: "p-messages" },
   { href: "/portal/participant/profile", label: "Profile", icon: User },
   { href: "/portal/participant/resources", label: "Resources", icon: FileText },
@@ -47,6 +49,7 @@ const TOUR_STEPS = [
   { target: '[data-tour="p-goals"]', title: "My Goals", body: "Set S.M.A.R.T. goals and celebrate milestones as you achieve them.", placement: "right" as const },
   { target: '[data-tour="p-journal"]', title: "Daily Journal", body: "Reflect on your day. Private notes only you and your care team can see.", placement: "right" as const },
   { target: '[data-tour="p-selfcare"]', title: "Self-Care", body: "Breathing exercises, affirmations, and wellness tools to recharge.", placement: "right" as const },
+  { target: '[data-tour="p-interview-ready"]', title: "InterviewReady AI Coach", body: "Practice mock interviews and get supportive AI feedback with STAR answer building.", placement: "right" as const },
   { target: '[data-tour="p-messages"]', title: "Messages", body: "Stay connected with your case manager and support team.", placement: "right" as const },
 ];
 
@@ -120,6 +123,8 @@ export default function ParticipantLayout({
           </Link>
           <button
             onClick={() => setSidebarOpen(false)}
+            title="Close menu"
+            aria-label="Close menu"
             className="text-teal-300/50 hover:text-white lg:hidden"
           >
             <X className="h-5 w-5" />
@@ -197,6 +202,8 @@ export default function ParticipantLayout({
           <div className="flex items-center gap-4">
             <button
               onClick={() => setSidebarOpen(true)}
+              title="Open menu"
+              aria-label="Open menu"
               className="text-muted hover:text-text lg:hidden"
             >
               <Menu className="h-5 w-5" />
@@ -208,7 +215,11 @@ export default function ParticipantLayout({
 
           <div className="flex items-center gap-3">
             <GlobalSearch role="participant" />
-            <button className="relative rounded-lg p-2 text-muted hover:text-text hover:bg-white/5 transition-colors">
+            <button
+              title="Notifications"
+              aria-label="Notifications"
+              className="relative rounded-lg p-2 text-muted hover:text-text hover:bg-white/5 transition-colors"
+            >
               <Bell className="h-5 w-5" />
               <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-teal-400" />
             </button>

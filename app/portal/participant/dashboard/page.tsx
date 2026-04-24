@@ -17,6 +17,7 @@ import {
   Users,
   Target,
   ChevronRight,
+  Mic,
 } from "lucide-react";
 
 /* ── 3-D Flip Card ────────────────────────────────────────────────── */
@@ -261,7 +262,7 @@ export default function ParticipantDashboardPage() {
 
       {/* Navigation Cards */}
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.33 }}>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           <Link href="/portal/participant/courses">
             <GlowCard className="group flex items-center justify-between p-5 cursor-pointer hover:border-teal-700/40 transition">
               <div className="flex items-center gap-3">
@@ -293,6 +294,18 @@ export default function ParticipantDashboardPage() {
                 <div>
                   <div className="text-sm font-semibold text-text">Certificates</div>
                   <div className="text-xs text-muted">View achievements</div>
+                </div>
+              </div>
+              <ChevronRight size={16} className="text-muted group-hover:text-teal-400 transition" />
+            </GlowCard>
+          </Link>
+          <Link href="/portal/participant/interview-ready">
+            <GlowCard className="group flex items-center justify-between p-5 cursor-pointer hover:border-teal-700/40 transition">
+              <div className="flex items-center gap-3">
+                <Mic size={18} className="text-teal-400" />
+                <div>
+                  <div className="text-sm font-semibold text-text">InterviewReady AI Coach</div>
+                  <div className="text-xs text-muted">Practice mock interviews</div>
                 </div>
               </div>
               <ChevronRight size={16} className="text-muted group-hover:text-teal-400 transition" />

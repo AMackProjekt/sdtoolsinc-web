@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useAuth } from "@/lib/auth";
 import { motion } from "framer-motion";
 import { GlowCard } from "@/components/ui/GlowCard";
@@ -17,6 +18,7 @@ import {
   RefreshCw,
   Stethoscope,
   MessageSquare,
+  Mic,
 } from "lucide-react";
 
 interface StaffData {
@@ -276,6 +278,27 @@ export default function StaffDashboardPage() {
           </div>
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
             <WeeklyEngagementChart />
+          </motion.div>
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.33 }}>
+            <Link href="/portal/staff/interview-ready">
+              <GlowCard className="group cursor-pointer border border-sky-700/30 p-6 hover:border-sky-500/50 transition">
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <div className="mb-1 flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-sky-300/75">
+                      <Mic size={13} />
+                      Employment Readiness Module
+                    </div>
+                    <h3 className="text-lg font-extrabold text-text">InterviewReady AI Coach Review Panel</h3>
+                    <p className="mt-1 text-sm text-muted">
+                      View mock interview attempts, confidence trends, and AI coaching insights for your caseload.
+                    </p>
+                  </div>
+                  <span className="rounded-full border border-sky-500/40 bg-sky-500/20 px-3 py-1 text-xs font-semibold text-sky-200">
+                    Open Panel
+                  </span>
+                </div>
+              </GlowCard>
+            </Link>
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
             <AgentMonitor />

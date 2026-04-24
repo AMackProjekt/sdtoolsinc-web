@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { initDemoMocks } from "@/lib/demo-msw";
 
 export function DemoLayoutClient({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -11,6 +12,7 @@ export function DemoLayoutClient({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    initDemoMocks();
     setIsClient(true);
 
     // Check NDA acceptance

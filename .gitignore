@@ -2,7 +2,11 @@ node_modules
 .next/
 out/
 dist/
+dist-rebuild/
+dist-rebuild-*/
+dist-rebuild-manual/
 playwright-report/
 test-results/
 .env.local
 .env*.local
+sdtoolsinc-web/

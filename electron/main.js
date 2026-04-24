@@ -28,6 +28,34 @@ const isDev = !app.isPackaged;
 const gotLock = app.requestSingleInstanceLock();
 if (!gotLock) app.quit();
 
+function hardenWindowForDemo(window) {
+  // Disable common devtools shortcuts and view-source in packaged demo builds.
+  window.webContents.on('before-input-event', (event, input) => {
+    const key = (input.key ?? '').toLowerCase();
+    const ctrlOrCmd = input.control || input.meta;
+    const shift = input.shift;
+
+    const blockedCombo =
+      key === 'f12' ||
+      (ctrlOrCmd && shift && (key === 'i' || key === 'j' || key === 'c')) ||
+      (ctrlOrCmd && key === 'u');
+
+    if (blockedCombo) {
+      event.preventDefault();
+    }
+  });
+
+  window.webContents.on('context-menu', (event) => {
+    event.preventDefault();
+  });
+
+  window.webContents.on('devtools-opened', () => {
+    window.webContents.closeDevTools();
+  });
+
+  window.setContentProtection(true);
+}
+
 let mainWindow = null;
 
 function applySecurityHeaders(ses) {
@@ -70,7 +98,11 @@ function createWindow() {
 
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
-    if (isDev) mainWindow.webContents.openDevTools({ mode: 'detach' });
+    if (isDev) {
+      mainWindow.webContents.openDevTools({ mode: 'detach' });
+    } else {
+      hardenWindowForDemo(mainWindow);
+    }
   });
 
   const ALLOWED_ORIGIN = isDev ? 'http://localhost:3000' : 'file://';
@@ -197,4 +229,8 @@ const menuTemplate = [
   },
 ];
 
-Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate));
+if (app.isPackaged) {
+  Menu.setApplicationMenu(null);
+} else {
+  Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate));
+}
