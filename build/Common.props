@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- Shared Build Properties for All Platforms -->
+
+  <PropertyGroup>
+    <MSBuildAllProjects>
+      $(MSBuildAllProjects);
+      $(MSBuildThisFileFullPath);
+    </MSBuildAllProjects>
+    
+    <!-- Build Configuration -->
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">Any CPU</Platform>
+    <Deterministic>true</Deterministic>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <!-- Path Properties -->
+  <PropertyGroup>
+    <ProjectRoot Condition=" '$(ProjectRoot)' == '' ">$([System.IO.Path]::GetDirectoryName($(MSBuildThisFileDirectory)))\</ProjectRoot>
+    <OutputPath Condition=" '$(OutputPath)' == '' ">$(ProjectRoot)dist\</OutputPath>
+    <BuildTempPath Condition=" '$(BuildTempPath)' == '' ">$(ProjectRoot)obj\</BuildTempPath>
+    <LogsPath Condition=" '$(LogsPath)' == '' ">$(BuildTempPath)logs\</LogsPath>
+  </PropertyGroup>
+
+  <!-- Version Properties -->
+  <PropertyGroup>
+    <MajorVersion>1</MajorVersion>
+    <MinorVersion>0</MinorVersion>
+    <BuildNumber>0</BuildNumber>
+    <VersionSuffix Condition=" '$(Configuration)' == 'Debug' ">dev</VersionSuffix>
+    <VersionSuffix Condition=" '$(Configuration)' == 'Release' ">rel</VersionSuffix>
+    <BuildVersion>$(MajorVersion).$(MinorVersion).$(BuildNumber)</BuildVersion>
+  </PropertyGroup>
+
+  <!-- Conditional Properties Based on Configuration -->
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <Optimize>true</Optimize>
+    <DebugType>embedded</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <Optimize>false</Optimize>
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+
+  <!-- Environment Properties -->
+  <PropertyGroup>
+    <IsWindows Condition=" '$(OS)' == 'Windows_NT' ">true</IsWindows>
+    <IsLinux Condition=" '$(OS)' != 'Windows_NT' ">true</IsLinux>
+  </PropertyGroup>
+
+</Project>

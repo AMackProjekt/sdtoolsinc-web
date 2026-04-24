@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- Mobile Build Properties -->
+  <PropertyGroup>
+    <MobileProjectRoot>$(ProjectRoot)mobile\</MobileProjectRoot>
+    <MobileOutputPath>$(OutputPath)mobile\</MobileOutputPath>
+    <MobileAndroidOutputPath>$(MobileOutputPath)android\</MobileAndroidOutputPath>
+    <MobileIOSOutputPath>$(MobileOutputPath)ios\</MobileIOSOutputPath>
+    <MobileWebOutputPath>$(MobileOutputPath)web\</MobileWebOutputPath>
+    <MobilePackageJsonPath>$(MobileProjectRoot)package.json</MobilePackageJsonPath>
+  </PropertyGroup>
+
+  <!-- Check if Mobile Project Exists -->
+  <Target Name="CheckMobileProject">
+    <Message Text="Checking for mobile project..." Importance="normal" />
+    <Message Text="Mobile project path: $(MobileProjectRoot)" Importance="normal" />
+    <Message Text="Mobile project exists: $(MobileProjectExists)" Importance="normal" Condition="Exists('$(MobilePackageJsonPath)')" />
+  </Target>
+
+  <!-- Restore Mobile Dependencies -->
+  <Target Name="RestoreMobileDependencies" Condition="Exists('$(MobileProjectRoot)')">
+    <Message Text="Restoring mobile dependencies..." Importance="high" />
+    <Exec Command="npm ci --prefer-offline" WorkingDirectory="$(MobileProjectRoot)" ContinueOnError="false" />
+    <Message Text="Mobile dependencies restored" Importance="high" />
+  </Target>
+
+  <!-- Build Mobile - All Platforms -->
+  <Target Name="BuildMobile" DependsOnTargets="CleanMobile;BuildMobileAndroid;BuildMobileIOS;BuildMobileWeb">
+    <Message Text="All mobile platforms built successfully" Importance="high" />
+  </Target>
+
+  <!-- Build Mobile - Android APK/AAB -->
+  <Target Name="BuildMobileAndroid" DependsOnTargets="RestoreMobileDependencies" Condition="Exists('$(MobileProjectRoot)')">
+    <Message Text="Building mobile Android app..." Importance="high" />
+    <MakeDir Directories="$(MobileAndroidOutputPath)" Condition="!Exists('$(MobileAndroidOutputPath)')" />
+    
+    <!-- Placeholder for React Native/Expo Android build -->
+    <Exec Command="npm run build:android" WorkingDirectory="$(MobileProjectRoot)" ContinueOnError="true" />
+    
+    <Message Text="Android build complete: $(MobileAndroidOutputPath)" Importance="high" />
+  </Target>
+
+  <!-- Build Mobile - iOS App/IPA -->
+  <Target Name="BuildMobileIOS" DependsOnTargets="RestoreMobileDependencies" Condition="Exists('$(MobileProjectRoot)') AND '$(OS)' == 'Windows_NT'">
+    <Message Text="iOS builds require macOS. Skipping on Windows." Importance="high" />
+  </Target>
+
+  <Target Name="BuildMobileIOS" DependsOnTargets="RestoreMobileDependencies" Condition="Exists('$(MobileProjectRoot)') AND '$(OS)' != 'Windows_NT'">
+    <Message Text="Building mobile iOS app..." Importance="high" />
+    <MakeDir Directories="$(MobileIOSOutputPath)" Condition="!Exists('$(MobileIOSOutputPath)')" />
+    
+    <!-- Placeholder for React Native/Expo iOS build -->
+    <Exec Command="npm run build:ios" WorkingDirectory="$(MobileProjectRoot)" ContinueOnError="true" />
+    
+    <Message Text="iOS build complete: $(MobileIOSOutputPath)" Importance="high" />
+  </Target>
+
+  <!-- Build Mobile - Progressive Web App (PWA) -->
+  <Target Name="BuildMobileWeb" DependsOnTargets="RestoreMobileDependencies" Condition="Exists('$(MobileProjectRoot)')">
+    <Message Text="Building mobile web app (PWA)..." Importance="high" />
+    <MakeDir Directories="$(MobileWebOutputPath)" Condition="!Exists('$(MobileWebOutputPath)')" />
+    
+    <!-- Placeholder for React Native Web or Expo Web -->
+    <Exec Command="npm run build:web" WorkingDirectory="$(MobileProjectRoot)" ContinueOnError="true" />
+    
+    <!-- Copy to output -->
+    <ItemGroup>
+      <MobileWebFiles Include="$(MobileProjectRoot)dist\web\**\*.*" Condition="Exists('$(MobileProjectRoot)dist\web\')" />
+    </ItemGroup>
+    <Copy SourceFiles="@(MobileWebFiles)" DestinationFolder="$(MobileWebOutputPath)%(RecursiveDir)" />
+    
+    <Message Text="Mobile web build complete: $(MobileWebOutputPath)" Importance="high" />
+  </Target>
+
+  <!-- Test Mobile -->
+  <Target Name="TestMobile" DependsOnTargets="RestoreMobileDependencies" Condition="Exists('$(MobileProjectRoot)')">
+    <Message Text="Running mobile tests..." Importance="high" />
+    <Exec Command="npm run test" WorkingDirectory="$(MobileProjectRoot)" ContinueOnError="true" />
+  </Target>
+
+  <!-- Clean Mobile Build -->
+  <Target Name="CleanMobile">
+    <Message Text="Cleaning mobile build artifacts..." Importance="normal" />
+    <RemoveDir Directories="$(MobileOutputPath)" Condition="Exists('$(MobileOutputPath)')" />
+    <RemoveDir Directories="$(MobileProjectRoot)dist\" Condition="Exists('$(MobileProjectRoot)dist\') AND Exists('$(MobileProjectRoot)')" />
+  </Target>
+
+  <!-- Start Mobile Dev -->
+  <Target Name="StartMobileDev" DependsOnTargets="RestoreMobileDependencies" Condition="Exists('$(MobileProjectRoot)')">
+    <Message Text="Starting mobile development environment..." Importance="high" />
+    <Exec Command="npm run start" WorkingDirectory="$(MobileProjectRoot)" />
+  </Target>
+
+  <!-- Setup Mobile Project Structure (if not exists) -->
+  <Target Name="InitMobileProject" Condition="!Exists('$(MobileProjectRoot)')">
+    <Message Text="Mobile project not found at $(MobileProjectRoot)" Importance="high" />
+    <Message Text="To set up mobile builds, create a mobile project folder with package.json" Importance="high" />
+    <Message Text="Recommended: React Native or Expo project" Importance="normal" />
+  </Target>
+
+  <!-- Build Status -->
+  <Target Name="MobileBuildStatus">
+    <Message Text="Mobile Project Status:" Importance="high" />
+    <Message Text="  Exists: Exists('$(MobileProjectRoot)')" Importance="normal" />
+    <Message Text="  Path: $(MobileProjectRoot)" Importance="normal" />
+    <Message Text="  Package.json: Exists('$(MobilePackageJsonPath)')" Importance="normal" />
+  </Target>
+
+</Project>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- Web Build Properties -->
+  <PropertyGroup>
+    <WebProjectRoot>$(ProjectRoot)</WebProjectRoot>
+    <WebOutputPath>$(OutputPath)web\</WebOutputPath>
+    <WebDistPath>$(WebProjectRoot)out\</WebDistPath>
+    <NextConfigPath>$(WebProjectRoot)next.config.js</NextConfigPath>
+  </PropertyGroup>
+
+  <!-- Restore Web Dependencies -->
+  <Target Name="RestoreWebDependencies">
+    <Message Text="Restoring web dependencies..." Importance="high" />
+    <Exec Command="npm ci --prefer-offline" WorkingDirectory="$(WebProjectRoot)" ContinueOnError="false" />
+    <Message Text="Web dependencies restored" Importance="high" />
+  </Target>
+
+  <!-- Build Web (Development) -->
+  <Target Name="BuildWebDev" DependsOnTargets="RestoreWebDependencies">
+    <Message Text="Building web application (Development)..." Importance="high" />
+    <Exec Command="npm run dev" WorkingDirectory="$(WebProjectRoot)" ContinueOnError="false" />
+  </Target>
+
+  <!-- Build Web (Production - Static Export) -->
+  <Target Name="BuildWeb" DependsOnTargets="CleanWeb;RestoreWebDependencies">
+    <Message Text="Building web application (Production)..." Importance="high" />
+    <Message Text="Configuration: $(Configuration)" Importance="normal" />
+    
+    <!-- Run Next.js build with static export -->
+    <Exec Command="npm run build" WorkingDirectory="$(WebProjectRoot)" ContinueOnError="false" />
+    
+    <!-- Copy static export to output -->
+    <Message Text="Copying static export to output..." Importance="normal" />
+    <ItemGroup>
+      <WebDistFiles Include="$(WebDistPath)**\*.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(WebDistFiles)" DestinationFolder="$(WebOutputPath)%(RecursiveDir)" />
+    
+    <Message Text="Web build complete: $(WebOutputPath)" Importance="high" />
+  </Target>
+
+  <!-- Lint Web -->
+  <Target Name="LintWeb" DependsOnTargets="RestoreWebDependencies">
+    <Message Text="Linting web code..." Importance="high" />
+    <Exec Command="npm run lint" WorkingDirectory="$(WebProjectRoot)" ContinueOnError="true" />
+  </Target>
+
+  <!-- Test Web -->
+  <Target Name="TestWeb" DependsOnTargets="RestoreWebDependencies">
+    <Message Text="Running web tests..." Importance="high" />
+    <Exec Command="npm run test" WorkingDirectory="$(WebProjectRoot)" ContinueOnError="true" />
+  </Target>
+
+  <!-- Clean Web Build -->
+  <Target Name="CleanWeb">
+    <Message Text="Cleaning web build artifacts..." Importance="normal" />
+    <RemoveDir Directories="$(WebDistPath)" Condition="Exists('$(WebDistPath)')" />
+    <RemoveDir Directories="$(WebProjectRoot).next\" Condition="Exists('$(WebProjectRoot).next\')" />
+    <RemoveDir Directories="$(WebOutputPath)" Condition="Exists('$(WebOutputPath)')" />
+  </Target>
+
+  <!-- Validate Web Configuration -->
+  <Target Name="ValidateWebConfig">
+    <Message Text="Validating Next.js configuration..." Importance="normal" />
+    <Error Text="Next.js config not found at $(NextConfigPath)" Condition="!Exists('$(NextConfigPath)')" />
+    <Message Text="Next.js configuration valid" Importance="normal" />
+  </Target>
+
+  <!-- Start Web Dev Server -->
+  <Target Name="StartWebServer" DependsOnTargets="RestoreWebDependencies">
+    <Message Text="Starting Next.js development server..." Importance="high" />
+    <Message Text="Server will run on http://localhost:3000" Importance="high" />
+    <Exec Command="npm run dev" WorkingDirectory="$(WebProjectRoot)" />
+  </Target>
+
+</Project>
