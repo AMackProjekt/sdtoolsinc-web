@@ -60,14 +60,15 @@ export default function EnterpriseLayout({ children }: { children: React.ReactNo
   const router = useRouter();
   const { user, isAuthenticated, isLoading, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const isAuthPage = pathname === "/portal/enterprise/auth" || pathname === "/portal/enterprise/auth/";
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated && !pathname.endsWith("/auth")) {
+    if (!isLoading && !isAuthenticated && !isAuthPage) {
       router.replace("/portal/enterprise/auth");
     }
-  }, [isLoading, isAuthenticated, pathname, router]);
+  }, [isLoading, isAuthenticated, isAuthPage, router]);
 
-  if (pathname.endsWith("/auth")) {
+  if (isAuthPage) {
     return <>{children}</>;
   }
 

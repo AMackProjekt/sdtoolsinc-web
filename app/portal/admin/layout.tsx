@@ -52,19 +52,20 @@ export default function AdminPortalLayout({ children }: { children: React.ReactN
   const router = useRouter();
   const { user, isAuthenticated, isLoading, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const isAuthPage = pathname === "/portal/admin/auth" || pathname === "/portal/admin/auth/";
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated && !pathname.endsWith("/auth")) {
+    if (!isLoading && !isAuthenticated && !isAuthPage) {
       router.replace("/portal/admin/auth");
     }
-  }, [isLoading, isAuthenticated, pathname, router]);
+  }, [isLoading, isAuthenticated, isAuthPage, router]);
 
   const handleLogout = () => {
     logout();
     router.push("/portal");
   };
 
-  if (pathname.endsWith("/auth")) {
+  if (isAuthPage) {
     return <>{children}</>;
   }
 
