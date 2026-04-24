@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/cn";
 import {
   Settings2,
+  SlidersHorizontal,
   Building2,
   KeyRound,
   Palette,
@@ -21,18 +22,31 @@ import {
   Menu,
   X,
   Bell,
+  DollarSign,
+  MessageSquare,
+  Mic2,
+  Scale,
+  Heart,
 } from "lucide-react";
+import { GlobalSearch } from "@/components/ui/GlobalSearch";
+import { InternalChat } from "@/components/ui/InternalChat";
+import { MackAI } from "@/components/ui/MackAI";
 
 const NAV = [
   { href: "/portal/enterprise", label: "Workspace Control", icon: Settings2, exact: true },
   { href: "/portal/enterprise/identity", label: "Identity & Access", icon: KeyRound },
   { href: "/portal/enterprise/organization", label: "Organization & Tenant", icon: Palette },
+  { href: "/portal/enterprise/finance", label: "Finance Division", icon: DollarSign },
   { href: "/portal/enterprise/integrations", label: "Integrations", icon: Plug },
   { href: "/portal/enterprise/audit", label: "Audit & Governance", icon: ScrollText },
   { href: "/portal/enterprise/operations", label: "Platform Operations", icon: Rocket },
   { href: "/portal/enterprise/executive", label: "Executive Command", icon: Building2 },
   { href: "/portal/enterprise/hr", label: "HR Operations", icon: Briefcase },
   { href: "/portal/enterprise/newsroom", label: "News & Media Kit", icon: ScrollText },
+  { href: "/portal/enterprise/settings", label: "Settings", icon: SlidersHorizontal },
+  { href: "/portal/enterprise/self-care", label: "Self-Care", icon: Heart },
+  { href: "/portal/enterprise/voice", label: "Your Voice Is Heard", icon: Mic2 },
+  { href: "/portal/enterprise/legal", label: "Legal & Compliance", icon: Scale },
 ];
 
 const PORTAL_NAV = [
@@ -44,18 +58,20 @@ const PORTAL_NAV = [
 export default function EnterpriseLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    if (!isAuthenticated && !pathname.endsWith("/auth")) {
+    if (!isLoading && !isAuthenticated && !pathname.endsWith("/auth")) {
       router.replace("/portal/enterprise/auth");
     }
-  }, [isAuthenticated, pathname, router]);
+  }, [isLoading, isAuthenticated, pathname, router]);
 
   if (pathname.endsWith("/auth")) {
     return <>{children}</>;
   }
+
+  if (isLoading || !isAuthenticated) return null;
 
   const handleLogout = () => {
     logout();
@@ -178,14 +194,19 @@ export default function EnterpriseLayout({ children }: { children: React.ReactNo
               Enterprise Workspace Administration
             </div>
           </div>
-          <button className="relative rounded-lg p-2 text-slate-400 hover:text-slate-700 transition">
-            <Bell className="h-5 w-5" />
-            <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-cyan-500" />
-          </button>
+          <div className="flex items-center gap-3">
+            <GlobalSearch role="enterprise" />
+            <button className="relative rounded-lg p-2 text-slate-400 hover:text-slate-700 transition">
+              <Bell className="h-5 w-5" />
+              <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-cyan-500" />
+            </button>
+          </div>
         </header>
 
         <main className="flex-1 p-6">{children}</main>
       </div>
+      <InternalChat currentUser={user?.name ?? "Enterprise"} role="admin" />
+      <MackAI />
     </div>
   );
 }

@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { signIn } from "next-auth/react";
 import { useAuth } from "@/lib/auth";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/cn";
 import Link from "next/link";
+import { getSafeCallbackUrl } from "@/lib/portal-auth";
 
 const GoogleLogo = () => (
   <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
@@ -26,7 +27,7 @@ const MicrosoftLogo = () => (
   </svg>
 );
 
-export default function ParticipantAuthPage() {
+function ParticipantAuthPageInner() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,18 +37,27 @@ export default function ParticipantAuthPage() {
   const [signingIn, setSigningIn] = useState<"google" | "azure-ad" | null>(null);
 
   const { login, signup, isAuthenticated } = useAuth();
+  const searchParams = useSearchParams();
+  const callbackUrl = getSafeCallbackUrl(searchParams.get("callbackUrl"), "/portal/participant/dashboard");
 
   const handleSignIn = async (provider: "google" | "azure-ad") => {
     setSigningIn(provider);
-    await signIn(provider, { callbackUrl: "/portal/participant/dashboard" });
+    await signIn(provider, { callbackUrl });
   };
   const router = useRouter();
 
   useEffect(() => {
+    setEmail("");
+    setPassword("");
+    setName("");
+    setError("");
+  }, []);
+
+  useEffect(() => {
     if (isAuthenticated) {
-      router.replace("/portal/participant/dashboard");
+      router.replace(callbackUrl);
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, callbackUrl, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,7 +70,7 @@ export default function ParticipantAuthPage() {
         : await signup(email, password, name);
 
       if (success) {
-        router.push("/portal/participant/dashboard");
+        router.push(callbackUrl);
       } else {
         setError(isLogin ? "Invalid credentials" : "Signup failed. Please try again.");
       }
@@ -137,7 +147,7 @@ export default function ParticipantAuthPage() {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} autoComplete="off" className="space-y-5">
             {!isLogin && (
               <div>
                 <label htmlFor="name" className="block text-sm font-semibold text-text mb-2">
@@ -149,7 +159,7 @@ export default function ParticipantAuthPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required={!isLogin}
-                  autoComplete="name"
+                  autoComplete="off"
                   className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-teal-500/50"
                   placeholder="Enter your full name"
                 />
@@ -166,7 +176,7 @@ export default function ParticipantAuthPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                autoComplete="email"
+                autoComplete="off"
                 className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-teal-500/50"
                 placeholder="you@example.com"
               />
@@ -238,5 +248,13 @@ export default function ParticipantAuthPage() {
         </div>
       </motion.div>
     </div>
+  );
+}
+
+export default function ParticipantAuthPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-bg text-sm text-muted">Loading auth…</div>}>
+      <ParticipantAuthPageInner />
+    </Suspense>
   );
 }

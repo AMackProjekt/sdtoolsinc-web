@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
 import {
@@ -10,20 +10,47 @@ import {
   User,
   FileText,
   MessageSquare,
+  Settings,
   ArrowLeft,
   Menu,
   X,
   LogOut,
   Bell,
+  Target,
+  PenLine,
+  Heart,
+  HelpCircle,
+  Plug,
+  Mic,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import { GlobalSearch } from "@/components/ui/GlobalSearch";
+import { InternalChat } from "@/components/ui/InternalChat";
+import { MackAI } from "@/components/ui/MackAI";
+import { PortalWalkthrough } from "@/components/ui/PortalWalkthrough";
 
 const NAV = [
-  { href: "/portal/participant/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/portal/participant/courses", label: "My Courses", icon: BookOpen },
+  { href: "/portal/participant/dashboard", label: "Dashboard", icon: LayoutDashboard, tourId: "p-dashboard" },
+  { href: "/portal/participant/courses", label: "My Courses", icon: BookOpen, tourId: "p-courses" },
+  { href: "/portal/participant/goals", label: "My Goals", icon: Target, tourId: "p-goals" },
+  { href: "/portal/participant/journal", label: "Daily Journal", icon: PenLine, tourId: "p-journal" },
+  { href: "/portal/participant/self-care", label: "Self-Care", icon: Heart, tourId: "p-selfcare" },
+  { href: "/portal/participant/interview-ready", label: "InterviewReady AI Coach", icon: Mic, tourId: "p-interview-ready" },
+  { href: "/portal/participant/messages", label: "Messages", icon: MessageSquare, tourId: "p-messages" },
   { href: "/portal/participant/profile", label: "Profile", icon: User },
   { href: "/portal/participant/resources", label: "Resources", icon: FileText },
-  { href: "/portal/participant/messages", label: "Messages", icon: MessageSquare },
+  { href: "/portal/participant/integrations", label: "Integrations", icon: Plug },
+  { href: "/portal/participant/settings", label: "Settings", icon: Settings },
+];
+
+const TOUR_STEPS = [
+  { target: '[data-tour="p-dashboard"]', title: "Dashboard", body: "Your home base — see your progress, goals, and key updates at a glance.", placement: "right" as const },
+  { target: '[data-tour="p-courses"]', title: "My Courses", body: "Browse and complete courses assigned to you. Track progress as you learn.", placement: "right" as const },
+  { target: '[data-tour="p-goals"]', title: "My Goals", body: "Set S.M.A.R.T. goals and celebrate milestones as you achieve them.", placement: "right" as const },
+  { target: '[data-tour="p-journal"]', title: "Daily Journal", body: "Reflect on your day. Private notes only you and your care team can see.", placement: "right" as const },
+  { target: '[data-tour="p-selfcare"]', title: "Self-Care", body: "Breathing exercises, affirmations, and wellness tools to recharge.", placement: "right" as const },
+  { target: '[data-tour="p-interview-ready"]', title: "InterviewReady AI Coach", body: "Practice mock interviews and get supportive AI feedback with STAR answer building.", placement: "right" as const },
+  { target: '[data-tour="p-messages"]', title: "Messages", body: "Stay connected with your case manager and support team.", placement: "right" as const },
 ];
 
 export default function ParticipantLayout({
@@ -32,8 +59,37 @@ export default function ParticipantLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const { user, logout } = useAuth();
+  const router = useRouter();
+  const { user, logout, isAuthenticated, isLoading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(false);
+  const [showTour, setShowTour] = useState(false);
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated && !pathname.endsWith("/auth")) {
+      router.replace("/portal/participant/auth");
+    }
+  }, [isLoading, isAuthenticated, pathname, router]);
+
+  useState(() => {
+    if (typeof window !== "undefined" && !localStorage.getItem("tools_participant_onboarded")) {
+      setTimeout(() => setShowWelcome(true), 800);
+    }
+  });
+
+  const startTour = () => { setShowWelcome(false); setShowTour(true); };
+  const completeTour = () => {
+    localStorage.setItem("tools_participant_onboarded", "1");
+    setShowTour(false);
+  };
+
+  if (pathname.endsWith("/auth")) {
+    return <>{children}</>;
+  }
+
+  if (isLoading || !isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="flex min-h-screen bg-bg">
@@ -67,6 +123,8 @@ export default function ParticipantLayout({
           </Link>
           <button
             onClick={() => setSidebarOpen(false)}
+            title="Close menu"
+            aria-label="Close menu"
             className="text-teal-300/50 hover:text-white lg:hidden"
           >
             <X className="h-5 w-5" />
@@ -100,6 +158,7 @@ export default function ParticipantLayout({
               <Link
                 key={item.href}
                 href={item.href}
+                data-tour={item.tourId}
                 onClick={() => setSidebarOpen(false)}
                 className={cn(
                   "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all",
@@ -143,6 +202,8 @@ export default function ParticipantLayout({
           <div className="flex items-center gap-4">
             <button
               onClick={() => setSidebarOpen(true)}
+              title="Open menu"
+              aria-label="Open menu"
               className="text-muted hover:text-text lg:hidden"
             >
               <Menu className="h-5 w-5" />
@@ -153,7 +214,12 @@ export default function ParticipantLayout({
           </div>
 
           <div className="flex items-center gap-3">
-            <button className="relative rounded-lg p-2 text-muted hover:text-text hover:bg-white/5 transition-colors">
+            <GlobalSearch role="participant" />
+            <button
+              title="Notifications"
+              aria-label="Notifications"
+              className="relative rounded-lg p-2 text-muted hover:text-text hover:bg-white/5 transition-colors"
+            >
               <Bell className="h-5 w-5" />
               <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-teal-400" />
             </button>
@@ -170,6 +236,41 @@ export default function ParticipantLayout({
           <div className="pointer-events-none fixed inset-0 -z-10 bg-dash-glow" />
           {children}
         </main>
+        <InternalChat currentUser={user?.name ?? "Participant"} role="participant" />
+        <MackAI />
+
+        {/* Welcome modal on first visit */}
+        {showWelcome && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+            <div className="w-full max-w-md rounded-3xl bg-slate-900 border border-teal-800/40 shadow-2xl p-8 mx-4 text-center">
+              <div className="w-16 h-16 rounded-full bg-teal-500/20 flex items-center justify-center mx-auto mb-5">
+                <Heart className="w-8 h-8 text-teal-400" />
+              </div>
+              <h2 className="text-2xl font-black text-white mb-2">Welcome to your Portal</h2>
+              <p className="text-slate-400 text-sm leading-relaxed mb-8">
+                This is your personal space to track goals, journal your journey, access self-care tools, and stay connected with your support team.
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={startTour}
+                  className="flex-1 py-3 rounded-xl bg-teal-500 text-slate-900 font-bold text-sm hover:bg-teal-400 transition"
+                >
+                  Take the Tour
+                </button>
+                <button
+                  onClick={completeTour}
+                  className="flex-1 py-3 rounded-xl bg-slate-800 text-slate-300 font-semibold text-sm hover:bg-slate-700 transition"
+                >
+                  Skip for now
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {showTour && (
+          <PortalWalkthrough steps={TOUR_STEPS} onComplete={completeTour} />
+        )}
       </div>
     </div>
   );

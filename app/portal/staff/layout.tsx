@@ -4,18 +4,26 @@ import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/cn";
+import { InternalChat } from "@/components/ui/InternalChat";
+import { MackAI } from "@/components/ui/MackAI";
 import {
   LayoutDashboard,
   Users,
   Layers,
   FileText,
   BarChart2,
+  Settings,
   Menu,
   X,
   Bell,
   LogOut,
   ArrowLeft,
+  NotebookPen,
+  Heart,
+  Plug,
+  Mic,
 } from "lucide-react";
+import { GlobalSearch } from "@/components/ui/GlobalSearch";
 
 const NAV = [
   { href: "/portal/staff/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -23,19 +31,24 @@ const NAV = [
   { href: "/portal/staff/programs", label: "Programs", icon: Layers },
   { href: "/portal/staff/resources", label: "Resources", icon: FileText },
   { href: "/portal/staff/reports", label: "Reports", icon: BarChart2 },
+  { href: "/portal/staff/casenotes", label: "Case Notes", icon: NotebookPen },
+  { href: "/portal/staff/interview-ready", label: "InterviewReady Review", icon: Mic },
+  { href: "/portal/staff/self-care", label: "Self-Care", icon: Heart },
+  { href: "/portal/staff/integrations", label: "Integrations", icon: Plug },
+  { href: "/portal/staff/settings", label: "Settings", icon: Settings },
 ];
 
 export default function StaffPortalLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    if (!isAuthenticated && !pathname.endsWith("/auth")) {
+    if (!isLoading && !isAuthenticated && !pathname.endsWith("/auth")) {
       router.replace("/portal/staff/auth");
     }
-  }, [isAuthenticated, pathname, router]);
+  }, [isLoading, isAuthenticated, pathname, router]);
 
   const handleLogout = () => {
     logout();
@@ -105,7 +118,7 @@ export default function StaffPortalLayout({ children }: { children: React.ReactN
           {user && (
             <div className="flex items-center gap-3 rounded-lg bg-sky-950/40 px-3 py-2.5">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sky-500/30 text-xs font-bold text-sky-300">
-                {user.name.charAt(0).toUpperCase()}
+                {user?.name?.charAt(0).toUpperCase() ?? "S"}
               </div>
               <div className="min-w-0 flex-1">
                 <div className="truncate text-xs font-semibold text-sky-200">{user.name}</div>
@@ -136,12 +149,14 @@ export default function StaffPortalLayout({ children }: { children: React.ReactN
         <header className="sticky top-0 z-10 flex h-14 items-center justify-between border-b border-border bg-panel/70 px-5 backdrop-blur-xl">
           <button
             onClick={() => setSidebarOpen(true)}
+            title="Open menu"
             className="rounded-lg p-2 text-muted hover:text-text transition lg:hidden"
           >
             <Menu size={20} />
           </button>
-          <div className="ml-auto">
-            <button className="relative rounded-lg p-2 text-muted hover:text-text transition">
+          <div className="ml-auto flex items-center gap-3">
+            <GlobalSearch role="staff" />
+            <button title="Notifications" className="relative rounded-lg p-2 text-muted hover:text-text transition">
               <Bell size={18} />
               <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-sky-400" />
             </button>
@@ -150,6 +165,8 @@ export default function StaffPortalLayout({ children }: { children: React.ReactN
 
         {/* Page content */}
         <main className="flex-1 overflow-y-auto">{children}</main>
+        <InternalChat currentUser={user?.name ?? "Staff"} role="staff" />
+        <MackAI />
       </div>
     </div>
   );

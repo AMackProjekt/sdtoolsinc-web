@@ -21,7 +21,7 @@ export type User = {
   provider?: "google" | "azure-ad" | string;
 };
 
-type AuthContextType = {
+export type AuthContextType = {
   user: User | null;
   /** OAuth sign-in — redirects to Google or Azure AD consent screen. */
   login: (email?: string, password?: string) => Promise<boolean>;
@@ -32,7 +32,7 @@ type AuthContextType = {
   isLoading: boolean;
 };
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Inner hook that reads the NextAuth session and exposes the useAuth() contract.
 function AuthContextProvider({ children }: { children: ReactNode }) {
@@ -53,19 +53,62 @@ function AuthContextProvider({ children }: { children: ReactNode }) {
     : null;
 
   /**
-   * login() — ignores the legacy email/password args; triggers OAuth redirect.
-   * Pass "azure-ad" as the first arg to use Microsoft 365, else defaults to Google.
+   * login() — supports both credentials (email+password) and OAuth providers.
+   * If a real email + password are passed, uses Supabase credentials sign-in.
+   * If a provider name (google / azure-ad) is passed, does OAuth redirect.
    */
+<<<<<<< HEAD
   const login = async (provider?: string): Promise<boolean> => {
     await signIn(provider ?? "google", {
       callbackUrl: "/portal",
     });
     return true; // actual success determined by redirect
+=======
+  const login = async (emailOrProvider?: string, password?: string): Promise<boolean> => {
+    if (emailOrProvider && password) {
+      // Credentials sign-in (email + password)
+      const result = await signIn("credentials", {
+        email: emailOrProvider,
+        password,
+        callbackUrl: "/portal",
+        redirect: false,
+      });
+      if (result?.error) return false;
+      if (result?.url) {
+        window.location.href = result.url;
+      }
+      return true;
+    }
+    // OAuth redirect
+    await signIn(emailOrProvider ?? "google", { callbackUrl: "/portal" });
+    return true;
+>>>>>>> 0e31ed33d73d7984a281cf3677ca23b02936b785
   };
 
-  /** signup() — no email-only registration; same OAuth flow as login. */
-  const signup = async (provider?: string): Promise<boolean> => {
-    return login(provider);
+  /** signup() — creates a Supabase account and signs the user in immediately. */
+  const signup = async (email?: string, password?: string, name?: string): Promise<boolean> => {
+    if (!email || !password) return false;
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, name }),
+      });
+      if (!res.ok) return false;
+
+      // Sign in immediately after account creation
+      const result = await signIn("credentials", {
+        email,
+        password,
+        callbackUrl: "/portal/participant/dashboard",
+        redirect: false,
+      });
+      if (result?.error) return false;
+      if (result?.url) window.location.href = result.url;
+      return true;
+    } catch {
+      return false;
+    }
   };
 
   const logout = () => {

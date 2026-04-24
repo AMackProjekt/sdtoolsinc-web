@@ -3,6 +3,7 @@ import { GlowCard } from "@/components/ui/GlowCard";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ChatBot } from "@/components/ui/ChatBot";
 import { CookieConsent } from "@/components/ui/CookieConsent";
+import Link from "next/link";
 
 export default function PartnershipsPage() {
   return (
@@ -16,7 +17,7 @@ export default function PartnershipsPage() {
         <SectionHeading
           eyebrow="Collaboration"
           title="In Partnership"
-          subtitle="Together, we're building a stronger community through strategic partnerships and collaborative support networks."
+          subtitle="Together, we&apos;re building a stronger community through strategic partnerships and collaborative support networks."
         />
       </section>
 
@@ -134,15 +135,15 @@ export default function PartnershipsPage() {
         <GlowCard className="p-12">
           <h2 className="h2">Interested in Partnering?</h2>
           <p className="mt-4 text-muted max-w-[680px] mx-auto">
-            We're always looking for like-minded organizations to collaborate with. 
-            If you share our mission and want to make a difference, let's connect.
+            We&apos;re always looking for like-minded organizations to collaborate with. 
+            If you share our mission and want to make a difference, let&apos;s connect.
           </p>
           <div className="mt-8">
-            <a href="/#contact">
+            <Link href="/#contact">
               <button className="inline-flex items-center justify-center rounded-md px-6 py-3 text-sm font-semibold bg-gradient-to-br from-brand to-brand2 text-[#02131a] hover:shadow-glow transition-shadow">
                 Get in Touch
               </button>
-            </a>
+            </Link>
           </div>
         </GlowCard>
       </section>

@@ -1,14 +1,23 @@
 {
   "name": "toolsinc-dashdarkx",
   "private": true,
+<<<<<<< HEAD
   "version": "1.1.0",
+=======
+  "version": "1.0.0",
+  "description": "T.O.O.L.S Inc enterprise demo desktop application",
+  "author": "T.O.O.L.S Inc",
+>>>>>>> 0e31ed33d73d7984a281cf3677ca23b02936b785
   "type": "module",
+  "main": "electron/main.js",
+  "homepage": "./",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "export": "next build",
     "start": "next start",
     "lint": "next lint",
+<<<<<<< HEAD
     "test": "vitest",
     "test:unit": "vitest run",
     "test:ui": "vitest --ui",
@@ -25,6 +34,20 @@
     "deps:update-all": "npm update && npm run deps:update-portals && cd api && npm update",
     "analyze": "ANALYZE=true next build",
     "verify": "bash scripts/verify-performance.sh",
+=======
+    "lint:fix": "next lint --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "electron": "electron .",
+    "electron-dev": "concurrently \"npm run dev\" \"wait-on http://localhost:3000 && electron .\"",
+    "pack": "npm run export && electron-builder --dir",
+    "dist": "node scripts/electron-dist.mjs",
+    "dist:demo": "npm run export && node scripts/electron-dist.mjs",
+>>>>>>> 0e31ed33d73d7984a281cf3677ca23b02936b785
     "optimize-logos": "node scripts/optimize-logos.js",
     "docker:build": "docker build -t toolsinc-web:latest .",
     "docker:run": "docker run -d -p 3000:3000 --name toolsinc-web toolsinc-web:latest",
@@ -32,13 +55,15 @@
     "docker:logs": "docker logs -f toolsinc-web",
     "compose:up": "docker-compose up -d",
     "compose:down": "docker-compose down",
-    "compose:logs": "docker-compose logs -f"
+    "compose:logs": "docker-compose logs -f",
+    "prepare": "husky"
   },
   "dependencies": {
     "@sentry/nextjs": "^10.48.0",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.93.3",
     "clsx": "^2.1.1",
+<<<<<<< HEAD
     "framer-motion": "^11.18.2",
     "lucide-react": "^0.563.0",
     "next": "^16.1.5",
@@ -69,5 +94,115 @@
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.3",
     "vitest": "^4.0.18"
+=======
+    "framer-motion": "^11.0.0",
+    "jose": "^5.10.0",
+    "lucide-react": "^1.7.0",
+    "msw": "^2.13.2",
+    "next": "^15.5.15",
+    "next-auth": "^4.24.13",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "recharts": "^2.12.7",
+    "serve": "^14.2.1",
+    "tailwind-merge": "^2.5.2"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.59.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^20.12.12",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.20",
+    "concurrently": "^9.0.0",
+    "cross-env": "^10.1.0",
+    "dotenv-cli": "^11.0.0",
+    "electron": "^35.0.0",
+    "electron-builder": "^26.0.0",
+    "electron-is-dev": "^3.0.1",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^15.5.14",
+    "eslint-config-prettier": "^10.1.8",
+    "husky": "^9.1.7",
+    "jsdom": "^29.0.2",
+    "lint-staged": "^16.4.0",
+    "png-to-ico": "^3.0.1",
+    "postcss": "^8.4.41",
+    "prettier": "^3.8.3",
+    "sharp": "^0.34.5",
+    "tailwindcss": "^3.4.10",
+    "typescript": "^5.5.4",
+    "vitest": "^4.1.5",
+    "wait-on": "^8.0.1"
+  },
+  "build": {
+    "appId": "com.sdtoolsinc.demo",
+    "productName": "T.O.O.L.S Inc - Enterprise Preview",
+    "copyright": "Copyright © 2024 T.O.O.L.S Inc. All rights reserved.",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "electron/**/*",
+      "out/**/*",
+      "build/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "msi",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico",
+      "verifyUpdateCodeSignature": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "installerHeaderIcon": "build/icon.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "T.O.O.L.S Inc Preview",
+      "runAfterFinish": true,
+      "perMachine": false,
+      "license": "LICENSE"
+    },
+    "msi": {
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "T.O.O.L.S Inc Preview"
+    },
+    "extraMetadata": {
+      "main": "electron/main.js"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,mjs,cjs}": [
+      "eslint --fix"
+    ],
+    "*.{json,md,css,scss,yml,yaml}": [
+      "prettier --write"
+    ]
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
+>>>>>>> 0e31ed33d73d7984a281cf3677ca23b02936b785
   }
 }

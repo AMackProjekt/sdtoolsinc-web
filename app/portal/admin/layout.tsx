@@ -16,28 +16,48 @@ import {
   LogOut,
   ArrowLeft,
   ShieldCheck,
+  Briefcase,
+  UserCog,
+  ScrollText,
+  ClipboardList,
+  NotebookPen,
+  Heart,
+  Plug,
+  GraduationCap,
 } from "lucide-react";
+import { GlobalSearch } from "@/components/ui/GlobalSearch";
+import { InternalChat } from "@/components/ui/InternalChat";
+import { MackAI } from "@/components/ui/MackAI";
 
 const NAV = [
   { href: "/portal/admin/dashboard", label: "Overview", icon: LayoutDashboard },
   { href: "/portal/admin/users", label: "Users", icon: Users },
   { href: "/portal/admin/staff", label: "Staff", icon: UserCheck },
+  { href: "/portal/admin/personnel", label: "Personnel", icon: UserCog },
+  { href: "/portal/admin/hr", label: "HR Console", icon: Briefcase },
   { href: "/portal/admin/content", label: "Content", icon: BookOpen },
   { href: "/portal/admin/analytics", label: "Analytics", icon: BarChart2 },
+  { href: "/portal/admin/compliance", label: "Compliance", icon: ShieldCheck },
+  { href: "/portal/admin/audit", label: "Audit Log", icon: ScrollText },
+  { href: "/portal/admin/assignments", label: "Assignments", icon: ClipboardList },
+  { href: "/portal/admin/casenotes", label: "Case Notes", icon: NotebookPen },
+  { href: "/portal/admin/self-care", label: "Self-Care", icon: Heart },
+  { href: "/portal/admin/integrations", label: "Integrations", icon: Plug },
+  { href: "/portal/admin/pro-dev", label: "Pro Development", icon: GraduationCap },
   { href: "/portal/admin/settings", label: "Settings", icon: Settings },
 ];
 
 export default function AdminPortalLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    if (!isAuthenticated && !pathname.endsWith("/auth")) {
+    if (!isLoading && !isAuthenticated && !pathname.endsWith("/auth")) {
       router.replace("/portal/admin/auth");
     }
-  }, [isAuthenticated, pathname, router]);
+  }, [isLoading, isAuthenticated, pathname, router]);
 
   const handleLogout = () => {
     logout();
@@ -46,6 +66,10 @@ export default function AdminPortalLayout({ children }: { children: React.ReactN
 
   if (pathname.endsWith("/auth")) {
     return <>{children}</>;
+  }
+
+  if (isLoading || !isAuthenticated) {
+    return null;
   }
 
   return (
@@ -141,7 +165,8 @@ export default function AdminPortalLayout({ children }: { children: React.ReactN
           >
             <Menu size={20} />
           </button>
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-3">
+            <GlobalSearch role="admin" />
             <button className="relative rounded-lg p-2 text-muted hover:text-text transition">
               <Bell size={18} />
               <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-violet-400" />
@@ -152,6 +177,8 @@ export default function AdminPortalLayout({ children }: { children: React.ReactN
         {/* Page content */}
         <main className="flex-1 overflow-y-auto">{children}</main>
       </div>
+      <InternalChat currentUser={user?.name ?? "Admin"} role="admin" />
+      <MackAI />
     </div>
   );
 }

@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/cn";
 import { ShieldCheck, Eye, EyeOff } from "lucide-react";
 import { motion } from "framer-motion";
+import { getSafeCallbackUrl } from "@/lib/portal-auth";
 
 const GoogleLogo = () => (
   <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
@@ -26,9 +27,11 @@ const MicrosoftLogo = () => (
   </svg>
 );
 
-export default function AdminAuthPage() {
+function AdminAuthPageInner() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { login, signup, isAuthenticated } = useAuth();
+  const callbackUrl = getSafeCallbackUrl(searchParams.get("callbackUrl"), "/portal/admin/dashboard");
 
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [name, setName] = useState("");
@@ -39,14 +42,21 @@ export default function AdminAuthPage() {
   const [loading, setLoading] = useState(false);
   const [signingIn, setSigningIn] = useState<"google" | "azure-ad" | null>(null);
 
+  useEffect(() => {
+    setName("");
+    setEmail("");
+    setPassword("");
+    setError("");
+  }, []);
+
   const handleSignIn = async (provider: "google" | "azure-ad") => {
     setSigningIn(provider);
-    await signIn(provider, { callbackUrl: "/portal/admin/dashboard" });
+    await signIn(provider, { callbackUrl });
   };
 
   useEffect(() => {
-    if (isAuthenticated) router.replace("/portal/admin/dashboard");
-  }, [isAuthenticated, router]);
+    if (isAuthenticated) router.replace(callbackUrl);
+  }, [isAuthenticated, callbackUrl, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,7 +69,7 @@ export default function AdminAuthPage() {
         if (!name.trim()) { setError("Name is required."); setLoading(false); return; }
         await signup(email, password, name);
       }
-      router.push("/portal/admin/dashboard");
+      router.push(callbackUrl);
     } catch {
       setError("Invalid credentials. Please try again.");
     } finally {
@@ -144,7 +154,7 @@ export default function AdminAuthPage() {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} autoComplete="off" className="space-y-4">
           {mode === "signup" && (
             <div>
               <label className="mb-1.5 block text-xs font-semibold text-muted">Full Name</label>
@@ -152,6 +162,7 @@ export default function AdminAuthPage() {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                autoComplete="off"
                 placeholder="Your full name"
                 className="w-full rounded-xl border border-border bg-panel px-4 py-3 text-sm text-text placeholder:text-muted/50 outline-none focus:border-violet-500/50 focus:ring-2 focus:ring-violet-500/20 transition"
               />
@@ -166,6 +177,7 @@ export default function AdminAuthPage() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="admin@sdtools.org"
               required
+              autoComplete="off"
               className="w-full rounded-xl border border-border bg-panel px-4 py-3 text-sm text-text placeholder:text-muted/50 outline-none focus:border-violet-500/50 focus:ring-2 focus:ring-violet-500/20 transition"
             />
           </div>
@@ -179,6 +191,7 @@ export default function AdminAuthPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
+                autoComplete={mode === "login" ? "current-password" : "new-password"}
                 className="w-full rounded-xl border border-border bg-panel px-4 py-3 pr-11 text-sm text-text placeholder:text-muted/50 outline-none focus:border-violet-500/50 focus:ring-2 focus:ring-violet-500/20 transition"
               />
               <button
@@ -213,5 +226,13 @@ export default function AdminAuthPage() {
         </button>
       </motion.div>
     </div>
+  );
+}
+
+export default function AdminAuthPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-bg text-sm text-muted">Loading auth…</div>}>
+      <AdminAuthPageInner />
+    </Suspense>
   );
 }

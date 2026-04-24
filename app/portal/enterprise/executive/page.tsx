@@ -8,7 +8,7 @@ import { cn } from "@/lib/cn";
 import { BarChart3, Users, TrendingUp, FileDown, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 
-const ENROLLMENT_TREND = [
+const FALLBACK_ENROLLMENT_TREND = [
   { month: "Jan", value: 18 },
   { month: "Feb", value: 22 },
   { month: "Mar", value: 30 },
@@ -18,13 +18,11 @@ const ENROLLMENT_TREND = [
   { month: "Jul", value: 47 },
 ];
 
-const PORTAL_USAGE = [
+const FALLBACK_PORTAL_USAGE = [
   { name: "Participant Portal", pct: 68, color: "bg-teal-500" },
   { name: "Staff Portal",       pct: 24, color: "bg-sky-500" },
   { name: "Admin Portal",       pct: 8,  color: "bg-violet-500" },
 ];
-
-const maxEnroll = Math.max(...ENROLLMENT_TREND.map((e) => e.value));
 
 export default function ExecutivePage() {
   const { isAuthenticated } = useAuth();
@@ -32,6 +30,8 @@ export default function ExecutivePage() {
   const [exporting, setExporting] = useState(false);
   const [exportDone, setExportDone] = useState(false);
   const [metrics, setMetrics] = useState<Record<string, string>>({});
+  const [enrollmentTrend, setEnrollmentTrend] = useState(FALLBACK_ENROLLMENT_TREND);
+  const [portalUsage, setPortalUsage] = useState(FALLBACK_PORTAL_USAGE);
 
   useEffect(() => {
     if (!isAuthenticated) router.replace("/portal/enterprise/auth");
@@ -41,7 +41,11 @@ export default function ExecutivePage() {
     if (!isAuthenticated) return;
     fetch("/api/enterprise/metrics")
       .then((r) => r.json())
-      .then((data) => { if (data.metrics) setMetrics(data.metrics); })
+      .then((data) => {
+        if (data.metrics) setMetrics(data.metrics);
+        if (Array.isArray(data.enrollmentTrend)) setEnrollmentTrend(data.enrollmentTrend);
+        if (Array.isArray(data.portalUsage)) setPortalUsage(data.portalUsage);
+      })
       .catch(() => {});
   }, [isAuthenticated]);
 
@@ -106,7 +110,8 @@ export default function ExecutivePage() {
             <h3 className="text-sm font-bold text-white">Monthly New Enrollments</h3>
           </div>
           <div className="flex items-end justify-around gap-2 h-32">
-            {ENROLLMENT_TREND.map(({ month, value }) => {
+            {enrollmentTrend.map(({ month, value }) => {
+              const maxEnroll = Math.max(...enrollmentTrend.map((e) => e.value));
               const h = Math.round((value / maxEnroll) * 100);
               return (
                 <div key={month} className="flex flex-1 flex-col items-center gap-1">
@@ -132,7 +137,7 @@ export default function ExecutivePage() {
             <h3 className="text-sm font-bold text-white">Portal Usage Breakdown</h3>
           </div>
           <div className="space-y-4 pt-2">
-            {PORTAL_USAGE.map(({ name, pct, color }) => (
+            {portalUsage.map(({ name, pct, color }) => (
               <div key={name} className="space-y-1.5">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-slate-300">{name}</span>

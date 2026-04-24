@@ -44,13 +44,13 @@ interface OrgSettings {
 }
 
 const DEFAULT: OrgSettings = {
-  orgName: "S.D. Tools Inc.",
-  subdomain: "sdtools",
-  contactEmail: "admin@sdtools.org",
-  address: "123 Main Street",
-  city: "San Diego",
-  state: "CA",
-  zipCode: "92101",
+  orgName: "",
+  subdomain: "",
+  contactEmail: "",
+  address: "",
+  city: "",
+  state: "",
+  zipCode: "",
   timezone: "America/Los_Angeles",
   dataRetention: "90",
   theme: "dark-slate",
@@ -71,7 +71,20 @@ export default function OrganizationPage() {
     if (!isAuthenticated) { router.replace("/portal/enterprise/auth"); return; }
     fetch("/api/enterprise/org")
       .then((r) => r.json())
-      .then((data) => { if (data.settings) setSettings((prev) => ({ ...prev, ...data.settings })); })
+      .then((data) => {
+        if (data.settings) {
+          const s = data.settings;
+          setSettings((prev) => ({
+            ...prev,
+            ...(s.org_name !== undefined && { orgName: s.org_name }),
+            ...(s.domain !== undefined && { subdomain: s.domain }),
+            ...(s.mfa_required !== undefined && { mfaRequired: s.mfa_required }),
+            ...(s.session_timeout_minutes !== undefined && {
+              sessionTimeout: String(s.session_timeout_minutes),
+            }),
+          }));
+        }
+      })
       .catch(() => {});
   }, [isAuthenticated, router]);
 
@@ -88,7 +101,12 @@ export default function OrganizationPage() {
     fetch("/api/enterprise/org", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(settings),
+      body: JSON.stringify({
+        org_name: settings.orgName,
+        domain: settings.subdomain,
+        mfa_required: settings.mfaRequired,
+        session_timeout_minutes: parseInt(settings.sessionTimeout, 10) || 60,
+      }),
     }).catch(() => {});
     setSaved(true);
     setDirty(false);

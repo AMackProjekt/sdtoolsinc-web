@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/ui/Navbar";
 import { GlowCard } from "@/components/ui/GlowCard";
 import { Button } from "@/components/ui/Button";
+import Link from "next/link";
 
 export default function InterestPage() {
   return (
@@ -85,7 +86,7 @@ export default function InterestPage() {
           {/* Additional Help */}
           <div className="mt-8 text-center">
             <p className="text-sm text-muted">
-              Need immediate assistance? <a href="/#contact" className="text-brand hover:text-brand2 transition-colors">Contact us directly</a>
+              Need immediate assistance? <Link href="/#contact" className="text-brand hover:text-brand2 transition-colors">Contact us directly</Link>
             </p>
           </div>
         </div>

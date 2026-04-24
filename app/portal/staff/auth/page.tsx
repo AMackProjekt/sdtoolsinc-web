@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useAuth } from "@/lib/auth";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { getSafeCallbackUrl } from "@/lib/portal-auth";
 
 const GoogleLogo = () => (
   <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
@@ -25,9 +26,11 @@ const MicrosoftLogo = () => (
   </svg>
 );
 
-export default function StaffAuthPage() {
+function StaffAuthPageInner() {
   const { login, signup, isAuthenticated } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = getSafeCallbackUrl(searchParams.get("callbackUrl"), "/portal/staff/dashboard");
 
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
@@ -36,16 +39,23 @@ export default function StaffAuthPage() {
   const [error, setError] = useState("");
   const [signingIn, setSigningIn] = useState<"google" | "azure-ad" | null>(null);
 
+  useEffect(() => {
+    setEmail("");
+    setPassword("");
+    setName("");
+    setError("");
+  }, []);
+
   const handleSignIn = async (provider: "google" | "azure-ad") => {
     setSigningIn(provider);
-    await signIn(provider, { callbackUrl: "/portal/staff/dashboard" });
+    await signIn(provider, { callbackUrl });
   };
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.replace("/portal/staff/dashboard");
+      router.replace(callbackUrl);
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, callbackUrl, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,7 +66,7 @@ export default function StaffAuthPage() {
       } else {
         await signup(email, password, name);
       }
-      router.push("/portal/staff/dashboard");
+      router.push(callbackUrl);
     } catch {
       setError(mode === "login" ? "Invalid credentials" : "Could not create account");
     }
@@ -145,7 +155,7 @@ export default function StaffAuthPage() {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} autoComplete="off" className="space-y-4">
             {mode === "signup" && (
               <input
                 type="text"
@@ -153,6 +163,7 @@ export default function StaffAuthPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
+                autoComplete="off"
                 className="w-full rounded-lg border border-border bg-bg/50 px-4 py-3 text-sm text-text placeholder-muted outline-none focus:border-sky-500/50 focus:ring-2 focus:ring-sky-500/20 transition"
               />
             )}
@@ -162,6 +173,7 @@ export default function StaffAuthPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              autoComplete="off"
               className="w-full rounded-lg border border-border bg-bg/50 px-4 py-3 text-sm text-text placeholder-muted outline-none focus:border-sky-500/50 focus:ring-2 focus:ring-sky-500/20 transition"
             />
             <input
@@ -170,6 +182,7 @@ export default function StaffAuthPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              autoComplete={mode === "login" ? "current-password" : "new-password"}
               className="w-full rounded-lg border border-border bg-bg/50 px-4 py-3 text-sm text-text placeholder-muted outline-none focus:border-sky-500/50 focus:ring-2 focus:ring-sky-500/20 transition"
             />
 
@@ -187,5 +200,15 @@ export default function StaffAuthPage() {
         </div>
       </motion.div>
     </div>
+  );
+}
+
+export default function StaffAuthPage() {
+  return (
+    <Suspense
+      fallback={<div className="flex min-h-screen items-center justify-center bg-bg text-sm text-muted">Loading auth…</div>}
+    >
+      <StaffAuthPageInner />
+    </Suspense>
   );
 }
