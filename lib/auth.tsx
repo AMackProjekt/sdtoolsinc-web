@@ -57,13 +57,6 @@ function AuthContextProvider({ children }: { children: ReactNode }) {
    * If a real email + password are passed, uses Supabase credentials sign-in.
    * If a provider name (google / azure-ad) is passed, does OAuth redirect.
    */
-<<<<<<< HEAD
-  const login = async (provider?: string): Promise<boolean> => {
-    await signIn(provider ?? "google", {
-      callbackUrl: "/portal",
-    });
-    return true; // actual success determined by redirect
-=======
   const login = async (emailOrProvider?: string, password?: string): Promise<boolean> => {
     if (emailOrProvider && password) {
       // Credentials sign-in (email + password)
@@ -82,7 +75,6 @@ function AuthContextProvider({ children }: { children: ReactNode }) {
     // OAuth redirect
     await signIn(emailOrProvider ?? "google", { callbackUrl: "/portal" });
     return true;
->>>>>>> 0e31ed33d73d7984a281cf3677ca23b02936b785
   };
 
   /** signup() — creates a Supabase account and signs the user in immediately. */
