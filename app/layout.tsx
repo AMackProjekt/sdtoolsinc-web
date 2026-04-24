@@ -1,6 +1,5 @@
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth";
-import { BgAgentStatus } from "@/components/ui/BgAgentStatus";
 
 export const metadata = {
   title: "T.O.O.L.S Inc - Empowering Individuals To Step Into Their Purpose",
@@ -18,7 +17,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="font-sans text-text antialiased">
         <AuthProvider>
           {children}
-          <BgAgentStatus />
         </AuthProvider>
       </body>
     </html>
