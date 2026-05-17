@@ -226,6 +226,9 @@ export default function Page() {
               <p className="text-text/85 leading-relaxed">
                 Grab the book on Amazon to support the mission and help fund vital resources for people rebuilding their lives.
               </p>
+              <div className="inline-flex items-center rounded-full border border-brand2/30 bg-brand2/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-brand2">
+                Portion of proceeds support participants
+              </div>
               <Button variant="primary" onClick={handleAmazonClick}>View on Amazon</Button>
               <div className="text-sm text-muted">
                 <strong className="text-text">Donyale Mack</strong>
