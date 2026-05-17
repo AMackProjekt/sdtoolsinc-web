@@ -161,7 +161,13 @@ export default function Page() {
           </div>
 
           <div className="mt-8">
-            <Button variant="primary">View on Amazon</Button>
+            <a
+              href="https://www.amazon.com/Navigating-Spiritual-Warfare-UNDERSTANDING-OVERCOMING-ebook/dp/B0CW1JNJBZ"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button variant="primary">View on Amazon</Button>
+            </a>
           </div>
 
           <div className="mt-6 text-sm text-muted">
