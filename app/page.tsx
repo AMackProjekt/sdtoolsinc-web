@@ -211,13 +211,24 @@ export default function Page() {
             </p>
           </div>
 
-          <div className="mt-8">
-            <Button variant="primary" onClick={handleAmazonClick}>View on Amazon</Button>
-          </div>
-
-          <div className="mt-6 text-sm text-muted">
-            <strong className="text-text">Donyale Mack</strong>
-            <div className="mt-1">CEO/Author</div>
+          <div className="mt-8 grid gap-8 lg:grid-cols-[220px_minmax(0,1fr)] items-center">
+            <div className="mx-auto max-w-[220px] overflow-hidden rounded-3xl border border-border bg-[#07090f] shadow-glow aspect-[3/4]">
+              <img
+                src="/images/Book.jpg"
+                alt="Navigating Spiritual Warfare book cover"
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <div className="space-y-4 text-left">
+              <p className="text-text/85 leading-relaxed">
+                Grab the book on Amazon to support the mission and help fund vital resources for people rebuilding their lives.
+              </p>
+              <Button variant="primary" onClick={handleAmazonClick}>View on Amazon</Button>
+              <div className="text-sm text-muted">
+                <strong className="text-text">Donyale Mack</strong>
+                <div className="mt-1">CEO/Author</div>
+              </div>
+            </div>
           </div>
         </GlowCard>
       </section>
