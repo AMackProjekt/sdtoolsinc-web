@@ -1,0 +1,6 @@
+<Project>
+  <PropertyGroup>
+    <!-- Point VSToolsPath to the local VSTools directory in the repo so MSBuild can find the Node.js Tools targets during CI/build. -->
+    <VSToolsPath>$(MSBuildThisFileDirectory)VSTools</VSToolsPath>
+  </PropertyGroup>
+</Project>
