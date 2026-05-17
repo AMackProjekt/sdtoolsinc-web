@@ -211,8 +211,8 @@ export default function Page() {
             </p>
           </div>
 
-          <div className="mt-8 grid gap-8 lg:grid-cols-[220px_minmax(0,1fr)] items-center">
-            <div className="mx-auto max-w-[220px] overflow-hidden rounded-3xl border border-border bg-[#07090f] shadow-glow aspect-[3/4]">
+          <div className="mt-8 grid gap-8 lg:grid-cols-[220px_minmax(0,1fr)] items-center group">
+            <div className="mx-auto max-w-[220px] overflow-hidden rounded-3xl border border-border bg-[#07090f] shadow-glow aspect-[3/4] transition duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_30px_70px_-24px_rgba(56,189,248,0.55)]">
               <img
                 src="/images/Book.jpg"
                 alt="Navigating Spiritual Warfare book cover"
@@ -220,6 +220,9 @@ export default function Page() {
               />
             </div>
             <div className="space-y-4 text-left">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand2">
+                Featured Release
+              </p>
               <p className="text-text/85 leading-relaxed">
                 Grab the book on Amazon to support the mission and help fund vital resources for people rebuilding their lives.
               </p>
