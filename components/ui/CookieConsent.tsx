@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 import { Button } from "./Button";
 
 export function CookieConsent() {
@@ -184,9 +185,9 @@ export function CookieConsent() {
                 </div>
 
                 <div className="flex items-center justify-between pt-4 border-t border-border">
-                  <a href="#" className="text-xs text-brand hover:text-brand2 underline">
+                  <Link href="/portal/enterprise/legal#privacy" className="text-xs text-brand hover:text-brand2 underline">
                     Privacy Policy
-                  </a>
+                  </Link>
                   <div className="flex items-center gap-3">
                     <button
                       onClick={declineAll}
