@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FileText, Shield, Eye, Cookie, Users, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/cn";
@@ -146,6 +146,18 @@ const CONTENT: Record<string, { sections: { heading: string; text: string }[] }>
 export default function LegalPage() {
   const [activeTab, setActiveTab] = useState("terms");
 
+  useEffect(() => {
+    // If the URL includes a hash like #privacy, activate that tab on load
+    try {
+      const h = typeof window !== "undefined" ? window.location.hash.slice(1) : "";
+      if (h && TABS.some((t) => t.id === h)) {
+        setActiveTab(h);
+      }
+    } catch (e) {
+      // noop
+    }
+  }, []);
+
   const active = TABS.find((t) => t.id === activeTab)!;
   const ActiveIcon = active.icon;
   const sections = CONTENT[activeTab]?.sections ?? [];
@@ -178,7 +190,14 @@ export default function LegalPage() {
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => {
+                    setActiveTab(tab.id);
+                    try {
+                      window.history.replaceState(null, "", `#${tab.id}`);
+                    } catch (e) {
+                      // ignore
+                    }
+                  }}
                   className={cn(
                     "flex items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-medium transition-all",
                     activeTab === tab.id
