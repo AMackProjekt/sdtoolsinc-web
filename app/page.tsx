@@ -226,8 +226,11 @@ export default function Page() {
               <p className="text-text/85 leading-relaxed">
                 Grab the book on Amazon to support the mission and help fund vital resources for people rebuilding their lives.
               </p>
-              <div className="inline-flex items-center rounded-full border border-brand2/30 bg-brand2/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-brand2">
-                Portion of proceeds support participants
+              <div className="inline-flex max-w-[20rem] items-center gap-2 rounded-full border border-brand2/30 bg-brand2/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-brand2">
+                <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-brand2/20 text-[0.65rem] leading-none">💛</span>
+                <span className="whitespace-normal text-[0.7rem] leading-tight">
+                  Portion of proceeds support participants
+                </span>
               </div>
               <Button variant="primary" onClick={handleAmazonClick}>View on Amazon</Button>
               <div className="text-sm text-muted">
