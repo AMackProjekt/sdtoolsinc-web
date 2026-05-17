@@ -8,6 +8,46 @@ import { ChatBot } from "@/components/ui/ChatBot";
 import { CookieConsent } from "@/components/ui/CookieConsent";
 
 export default function Page() {
+  const AMZN_URL = "https://www.amazon.com/Navigating-Spiritual-Warfare-UNDERSTANDING-OVERCOMING-ebook/dp/B0CW1JNJBZ";
+
+  const handleAmazonClick = () => {
+    try {
+      // GA4 / gtag
+      if (typeof (window as any).gtag === "function") {
+        (window as any).gtag("event", "click", {
+          event_category: "outbound",
+          event_label: "view_on_amazon",
+          value: 1,
+          destination: AMZN_URL,
+        });
+      }
+
+      // dataLayer (older GA or GTM)
+      if (Array.isArray((window as any).dataLayer)) {
+        (window as any).dataLayer.push({
+          event: "outbound_click",
+          label: "view_on_amazon",
+          url: AMZN_URL,
+        });
+      }
+
+      // Application Insights
+      const ai = (window as any).appInsights;
+      if (ai && typeof ai.trackEvent === "function") {
+        ai.trackEvent({ name: "ViewOnAmazonClick" }, { url: AMZN_URL });
+      }
+    } catch (e) {
+      // swallow analytics errors
+    }
+
+    // Open external link in a new tab
+    try {
+      window.open(AMZN_URL, "_blank", "noopener,noreferrer");
+    } catch (e) {
+      // fallback to location assign
+      window.location.href = AMZN_URL;
+    }
+  };
   return (
     <main id="top" className="min-h-screen bg-bg">
       {/* Background glow */}
@@ -161,13 +201,7 @@ export default function Page() {
           </div>
 
           <div className="mt-8">
-            <a
-              href="https://www.amazon.com/Navigating-Spiritual-Warfare-UNDERSTANDING-OVERCOMING-ebook/dp/B0CW1JNJBZ"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button variant="primary">View on Amazon</Button>
-            </a>
+            <Button variant="primary" onClick={handleAmazonClick}>View on Amazon</Button>
           </div>
 
           <div className="mt-6 text-sm text-muted">
