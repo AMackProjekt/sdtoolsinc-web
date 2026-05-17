@@ -11,18 +11,36 @@ export default function Page() {
   const AMZN_URL = "https://www.amazon.com/Navigating-Spiritual-Warfare-UNDERSTANDING-OVERCOMING-ebook/dp/B0CW1JNJBZ";
 
   const handleAmazonClick = () => {
+    // Helper to open link exactly once
+    let opened = false;
+    const openLink = () => {
+      if (opened) return;
+      opened = true;
+      try {
+        window.open(AMZN_URL, "_blank", "noopener,noreferrer");
+      } catch (e) {
+        window.location.href = AMZN_URL;
+      }
+    };
+
     try {
-      // GA4 / gtag
+      // GA4: use select_content with event_callback to ensure analytics is sent
       if (typeof (window as any).gtag === "function") {
-        (window as any).gtag("event", "click", {
-          event_category: "outbound",
-          event_label: "view_on_amazon",
-          value: 1,
-          destination: AMZN_URL,
+        (window as any).gtag("event", "select_content", {
+          content_type: "outbound",
+          item_id: AMZN_URL,
+          method: "button",
+          event_callback: openLink,
         });
+
+        // Fallback: open after 500ms if callback doesn't fire
+        setTimeout(openLink, 500);
+      } else {
+        // If no gtag, open immediately
+        openLink();
       }
 
-      // dataLayer (older GA or GTM)
+      // dataLayer (GTM) push for compatibility
       if (Array.isArray((window as any).dataLayer)) {
         (window as any).dataLayer.push({
           event: "outbound_click",
@@ -37,15 +55,8 @@ export default function Page() {
         ai.trackEvent({ name: "ViewOnAmazonClick" }, { url: AMZN_URL });
       }
     } catch (e) {
-      // swallow analytics errors
-    }
-
-    // Open external link in a new tab
-    try {
-      window.open(AMZN_URL, "_blank", "noopener,noreferrer");
-    } catch (e) {
-      // fallback to location assign
-      window.location.href = AMZN_URL;
+      // swallow analytics errors and ensure link opens
+      openLink();
     }
   };
   return (
