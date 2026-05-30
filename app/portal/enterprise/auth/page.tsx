@@ -44,7 +44,10 @@ function EnterpriseAuthPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { isAuthenticated, isLoading } = useAuth();
-  const [signingIn, setSigningIn] = useState<"google" | "azure-ad" | null>(null);
+  const [signingIn, setSigningIn] = useState<"google" | "azure-ad" | "dev-demo" | null>(null);
+  const [demoEmail, setDemoEmail] = useState("demo@sdtoolsinc.org");
+  const [demoPassword, setDemoPassword] = useState("demo");
+  const [isLocalhost, setIsLocalhost] = useState(false);
   const callbackUrl = getSafeCallbackUrl(searchParams.get("callbackUrl"), "/portal/enterprise/dashboard");
 
   useEffect(() => {
@@ -53,9 +56,26 @@ function EnterpriseAuthPageInner() {
     }
   }, [isAuthenticated, isLoading, callbackUrl, router]);
 
+  useEffect(() => {
+    setIsLocalhost(
+      typeof window !== "undefined" &&
+      (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+    );
+  }, []);
+
   const handleSignIn = async (provider: "google" | "azure-ad") => {
     setSigningIn(provider);
     await signIn(provider, { callbackUrl });
+  };
+
+  const handleDemoSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSigningIn("dev-demo");
+    await signIn("dev-demo", { 
+      email: demoEmail,
+      password: demoPassword,
+      callbackUrl
+    });
   };
 
   return (
@@ -121,6 +141,43 @@ function EnterpriseAuthPageInner() {
             {signingIn === "azure-ad" ? "Redirecting…" : "Sign in with Microsoft 365"}
           </button>
         </div>
+
+        {/* Development Demo Login (localhost only) */}
+        {isLocalhost && (
+          <div className="mt-6 border-t border-slate-800 pt-6">
+            <p className="mb-3 text-center text-xs text-slate-500">
+              Development Mode: Quick Demo Login
+            </p>
+            <form onSubmit={handleDemoSignIn} className="space-y-2">
+              <input
+                type="email"
+                value={demoEmail}
+                onChange={(e) => setDemoEmail(e.target.value)}
+                disabled={signingIn !== null}
+                className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white placeholder-slate-500 disabled:opacity-50"
+                placeholder="Email"
+              />
+              <input
+                type="password"
+                value={demoPassword}
+                onChange={(e) => setDemoPassword(e.target.value)}
+                disabled={signingIn !== null}
+                className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white placeholder-slate-500 disabled:opacity-50"
+                placeholder="Password"
+              />
+              <button
+                type="submit"
+                disabled={signingIn !== null}
+                className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-700 bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:border-slate-600 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {signingIn === "dev-demo" ? (
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white" />
+                ) : null}
+                {signingIn === "dev-demo" ? "Signing in…" : "Demo Login"}
+              </button>
+            </form>
+          </div>
+        )}
 
         <p className="mt-8 text-center text-xs text-slate-500">
           Only <strong className="text-slate-400">@sdtoolsinc.org</strong> and{" "}

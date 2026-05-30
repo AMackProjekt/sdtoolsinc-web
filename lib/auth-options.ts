@@ -53,8 +53,36 @@ export const authOptions: NextAuthOptions = {
     AzureADProvider({
       clientId: process.env.AZURE_AD_CLIENT_ID ?? "",
       clientSecret: process.env.AZURE_AD_CLIENT_SECRET ?? "",
-      tenantId: process.env.AZURE_AD_TENANT_ID ?? "common",
+      tenantId: process.env.AZURE_AD_TENANT_ID ?? "7b8ddd10-77f7-4cc4-bcd8-ef9b93f39792",
     }),
+
+    // ── Development Demo Credentials (localhost only) ─────────
+    ...(process.env.NODE_ENV === "development"
+      ? [
+          CredentialsProvider({
+            id: "dev-demo",
+            name: "Development Demo",
+            credentials: {
+              email: { label: "Email", type: "email", placeholder: "demo@sdtoolsinc.org" },
+              password: { label: "Password", type: "password", placeholder: "demo" },
+            },
+            async authorize(credentials) {
+              if (
+                credentials?.email === "demo@sdtoolsinc.org" &&
+                credentials?.password === "demo"
+              ) {
+                return {
+                  id: "dev-demo-user",
+                  email: "demo@sdtoolsinc.org",
+                  name: "Demo User",
+                  image: null,
+                };
+              }
+              return null;
+            },
+          }),
+        ]
+      : []),
 
     // ── Email / Password via Supabase ─────────────────────────
     CredentialsProvider({

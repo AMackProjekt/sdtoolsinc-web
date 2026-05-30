@@ -54,13 +54,16 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Enterprise routes also require an allowed organization domain.
-  if (pathname.startsWith(ENTERPRISE_PREFIX) && !isEnterpriseEmail(token.email as string | undefined)) {
-    const url = request.nextUrl.clone();
-    url.pathname = ENTERPRISE_AUTH_PAGE;
-    url.searchParams.set("error", "AccessDenied");
-    url.searchParams.set("callbackUrl", `${request.nextUrl.pathname}${request.nextUrl.search}`);
-    return NextResponse.redirect(url);
+  // Enterprise routes also require an allowed organization domain (skip in development/localhost).
+  if (pathname.startsWith(ENTERPRISE_PREFIX)) {
+    const isDevelopment = request.nextUrl.hostname === "localhost" || request.nextUrl.hostname === "127.0.0.1";
+    if (!isDevelopment && !isEnterpriseEmail(token.email as string | undefined)) {
+      const url = request.nextUrl.clone();
+      url.pathname = ENTERPRISE_AUTH_PAGE;
+      url.searchParams.set("error", "AccessDenied");
+      url.searchParams.set("callbackUrl", `${request.nextUrl.pathname}${request.nextUrl.search}`);
+      return NextResponse.redirect(url);
+    }
   }
 
   return NextResponse.next();

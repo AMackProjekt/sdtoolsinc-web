@@ -1,0 +1,240 @@
+{
+  "@next/bundle-analyzer": {
+    "current": "15.5.15",
+    "wanted": "15.5.18",
+    "latest": "16.2.6",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\@next\\bundle-analyzer"
+  },
+  "@playwright/test": {
+    "current": "1.59.1",
+    "wanted": "1.60.0",
+    "latest": "1.60.0",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\@playwright\\test"
+  },
+  "@sentry/nextjs": {
+    "current": "10.50.0",
+    "wanted": "10.53.1",
+    "latest": "10.53.1",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\@sentry\\nextjs"
+  },
+  "@supabase/ssr": {
+    "current": "0.8.0",
+    "wanted": "0.8.0",
+    "latest": "0.10.3",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\@supabase\\ssr"
+  },
+  "@supabase/supabase-js": {
+    "current": "2.102.1",
+    "wanted": "2.105.4",
+    "latest": "2.105.4",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\@supabase\\supabase-js"
+  },
+  "@types/node": {
+    "current": "22.19.17",
+    "wanted": "22.19.19",
+    "latest": "25.8.0",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\@types\\node"
+  },
+  "@types/react": {
+    "current": "18.3.27",
+    "wanted": "18.3.28",
+    "latest": "19.2.14",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\@types\\react"
+  },
+  "@types/react-dom": {
+    "current": "18.3.7",
+    "wanted": "18.3.7",
+    "latest": "19.2.3",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\@types\\react-dom"
+  },
+  "@vitejs/plugin-react": {
+    "current": "4.7.0",
+    "wanted": "4.7.0",
+    "latest": "6.0.2",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\@vitejs\\plugin-react"
+  },
+  "@vitest/ui": {
+    "current": "4.1.5",
+    "wanted": "4.1.6",
+    "latest": "4.1.6",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\@vitest\\ui"
+  },
+  "autoprefixer": {
+    "current": "10.4.23",
+    "wanted": "10.5.0",
+    "latest": "10.5.0",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\autoprefixer"
+  },
+  "cypress": {
+    "current": "13.17.0",
+    "wanted": "13.17.0",
+    "latest": "15.15.0",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\cypress"
+  },
+  "electron": {
+    "current": "35.7.5",
+    "wanted": "35.7.5",
+    "latest": "42.1.0",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\electron"
+  },
+  "eslint": {
+    "current": "9.39.4",
+    "wanted": "9.39.4",
+    "latest": "10.4.0",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\eslint"
+  },
+  "eslint-config-next": {
+    "current": "16.2.4",
+    "wanted": "16.2.6",
+    "latest": "16.2.6",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\eslint-config-next"
+  },
+  "framer-motion": {
+    "current": "11.18.2",
+    "wanted": "11.18.2",
+    "latest": "12.38.0",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\framer-motion"
+  },
+  "jose": {
+    "current": "5.10.0",
+    "wanted": "5.10.0",
+    "latest": "6.2.3",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\jose"
+  },
+  "jsdom": {
+    "current": "29.0.2",
+    "wanted": "29.1.1",
+    "latest": "29.1.1",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\jsdom"
+  },
+  "lint-staged": {
+    "current": "16.4.0",
+    "wanted": "16.4.0",
+    "latest": "17.0.5",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\lint-staged"
+  },
+  "lucide-react": {
+    "current": "0.563.0",
+    "wanted": "0.563.0",
+    "latest": "1.16.0",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\lucide-react"
+  },
+  "msw": {
+    "current": "2.13.2",
+    "wanted": "2.14.6",
+    "latest": "2.14.6",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\msw"
+  },
+  "next": {
+    "current": "16.2.4",
+    "wanted": "16.2.6",
+    "latest": "16.2.6",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\next"
+  },
+  "next-auth": {
+    "current": "4.24.13",
+    "wanted": "4.24.14",
+    "latest": "4.24.14",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\next-auth"
+  },
+  "postcss": {
+    "current": "8.5.6",
+    "wanted": "8.5.14",
+    "latest": "8.5.14",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\postcss"
+  },
+  "react": {
+    "current": "19.2.5",
+    "wanted": "19.2.6",
+    "latest": "19.2.6",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\react"
+  },
+  "react-dom": {
+    "current": "19.2.5",
+    "wanted": "19.2.6",
+    "latest": "19.2.6",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\react-dom"
+  },
+  "recharts": {
+    "current": "2.15.4",
+    "wanted": "2.15.4",
+    "latest": "3.8.1",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\recharts"
+  },
+  "resend": {
+    "current": "4.8.0",
+    "wanted": "4.8.0",
+    "latest": "6.12.3",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\resend"
+  },
+  "tailwind-merge": {
+    "current": "2.6.0",
+    "wanted": "2.6.1",
+    "latest": "3.6.0",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\tailwind-merge"
+  },
+  "tailwindcss": {
+    "current": "3.4.19",
+    "wanted": "3.4.19",
+    "latest": "4.3.0",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\tailwindcss"
+  },
+  "typescript": {
+    "current": "5.9.3",
+    "wanted": "5.9.3",
+    "latest": "6.0.3",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\typescript"
+  },
+  "vitest": {
+    "current": "4.1.5",
+    "wanted": "4.1.6",
+    "latest": "4.1.6",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\vitest"
+  },
+  "wait-on": {
+    "current": "8.0.5",
+    "wanted": "8.0.5",
+    "latest": "9.0.10",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\wait-on"
+  },
+  "zod": {
+    "current": "3.25.76",
+    "wanted": "3.25.76",
+    "latest": "4.4.3",
+    "dependent": "sdtoolsinc-web",
+    "location": "K:\\sdtoolsinc-web\\node_modules\\zod"
+  }
+}
