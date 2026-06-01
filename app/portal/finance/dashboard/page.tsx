@@ -1,6 +1,7 @@
 "use client";
 
 import { GlowCard } from "@/components/ui/GlowCard";
+import { MessagingWidget } from "@/components/ui/MessagingWidget";
 import { motion } from "framer-motion";
 import {
   DollarSign,
@@ -53,6 +54,8 @@ export default function FinanceDashboard() {
         <h1 className="text-2xl font-extrabold tracking-tight text-text">Finance Overview</h1>
         <p className="mt-1 text-sm text-muted">Fiscal Year 2025 · Updated {new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</p>
       </div>
+
+      <MessagingWidget className="max-w-4xl" />
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">

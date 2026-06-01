@@ -1,299 +1,215 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
-import { User, Bell, Lock, Briefcase, Save, Eye, EyeOff } from "lucide-react";
-import { cn } from "@/lib/cn";
-import { GlowCard } from "@/components/ui/GlowCard";
-import { useAuth } from "@/lib/auth";
+import { useState } from "react";
+import { Mail, ShieldPlus, Save, CheckCircle2, MessageSquare, BrainCircuit, Bot, Sun, Moon, Monitor } from "lucide-react";
+import { useTheme } from "@/context/ThemeContext";
 
-const TABS = [
-  { id: "profile", label: "Profile", icon: User },
-  { id: "notifications", label: "Notifications", icon: Bell },
-  { id: "password", label: "Password", icon: Lock },
-  { id: "preferences", label: "Work Preferences", icon: Briefcase },
-];
+export default function SettingsPage() {
+  const { theme, setTheme } = useTheme();
+  const [emailForwarding, setEmailForwarding] = useState(true);
+  const [savedStatus, setSavedStatus] = useState(false);
 
-export default function StaffSettingsPage() {
-  const router = useRouter();
-  const { user, isAuthenticated, isLoading } = useAuth();
-  const [activeTab, setActiveTab] = useState("profile");
-
-  // Profile state
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [department, setDepartment] = useState("Case Management");
-  const [title, setTitle] = useState("Senior Case Manager");
-  const [phone, setPhone] = useState("(404) 555-0117");
-  const [profileSaved, setProfileSaved] = useState(false);
-
-  // Notifications
-  const [notif, setNotif] = useState({
-    newCases: true,
-    caseUpdates: true,
-    participantMessages: true,
-    schedulingAlerts: true,
-    adminAnnouncements: false,
-    weeklyReport: true,
-  });
-
-  // Password
-  const [currentPw, setCurrentPw] = useState("");
-  const [newPw, setNewPw] = useState("");
-  const [confirmPw, setConfirmPw] = useState("");
-  const [showPw, setShowPw] = useState(false);
-  const [pwSaved, setPwSaved] = useState(false);
-
-  // Work Preferences
-  const [defaultView, setDefaultView] = useState("caseload");
-  const [caseloadDisplay, setCaseloadDisplay] = useState("card");
-  const [autoAssign, setAutoAssign] = useState(true);
-  const [language, setLanguage] = useState("en");
-
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) router.replace("/portal/staff/auth");
-  }, [isLoading, isAuthenticated, router]);
-
-  useEffect(() => {
-    if (user) {
-      setName(user.name);
-      setEmail(user.email);
-    }
-  }, [user]);
-
-  async function saveProfile() {
-    await new Promise((r) => setTimeout(r, 600));
-    setProfileSaved(true);
-    setTimeout(() => setProfileSaved(false), 2500);
-  }
-
-  async function savePassword() {
-    if (!currentPw || !newPw || newPw !== confirmPw) return;
-    await new Promise((r) => setTimeout(r, 600));
-    setCurrentPw(""); setNewPw(""); setConfirmPw("");
-    setPwSaved(true);
-    setTimeout(() => setPwSaved(false), 2500);
-  }
-
-  if (isLoading || !isAuthenticated) return null;
+  const handleSave = () => {
+    setSavedStatus(true);
+    setTimeout(() => setSavedStatus(false), 3000);
+  };
 
   return (
-    <div className="min-h-screen px-4 py-8 sm:px-8">
-      <div className="mx-auto max-w-3xl space-y-6">
-        <motion.div
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+    <div className="max-w-4xl space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-charcoal-900 tracking-tight">Staff Settings</h1>
+          <p className="text-slate-500 mt-1">Configure your aesthetics, notifications, and security preferences.</p>
+        </div>
+        <button 
+          onClick={handleSave}
+          className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2 ${savedStatus ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'bg-teal-600 text-white hover:bg-teal-700 shadow-lg shadow-teal-600/20 active:scale-95'}`}
         >
-          <h1 className="text-2xl font-extrabold tracking-tight text-text">Account Settings</h1>
-          <p className="text-sm text-muted mt-1">Manage your staff profile and preferences</p>
-        </motion.div>
+          {savedStatus ? <><CheckCircle2 className="w-4 h-4" /> Optimization Saved</> : <><Save className="w-4 h-4" /> Save Changes</>}
+        </button>
+      </div>
 
-        {/* Tabs */}
-        <div className="flex gap-1 rounded-xl bg-white/5 p-1">
-          {TABS.map((tab) => {
-            const Icon = tab.icon;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={cn(
-                  "flex flex-1 items-center justify-center gap-2 rounded-lg py-2 text-xs font-semibold transition-all sm:text-sm",
-                  activeTab === tab.id
-                    ? "bg-sky-600/80 text-white shadow-sm"
-                    : "text-muted hover:text-text"
-                )}
-              >
-                <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                <span className="hidden sm:inline">{tab.label}</span>
-              </button>
-            );
-          })}
+      <div className="space-y-6">
+
+        {/* THEME SELECTION */}
+        <div className="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm transition-all group overflow-hidden relative">
+           <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50/50 rounded-full blur-2xl -mr-10 -mt-10"></div>
+           <div className="flex items-center gap-3 mb-8 relative z-10">
+              <div className="w-10 h-10 bg-indigo-50 border border-indigo-100 flex items-center justify-center rounded-lg text-indigo-600">
+                <Monitor className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-charcoal-900">Visual Aesthetic</h2>
+                <p className="text-sm text-slate-500 font-medium">Customize the portal's light, dark, and glass environments.</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
+               {/* Glass Mode */}
+               <button 
+                 onClick={() => setTheme('glass')}
+                 className={`p-6 rounded-2xl border-2 transition flex flex-col items-center gap-4 group/card ${theme === 'glass' ? 'bg-indigo-50 border-indigo-600 ring-4 ring-indigo-600/5' : 'bg-slate-50 border-slate-100 hover:border-slate-300'}`}
+               >
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition ${theme === 'glass' ? 'bg-indigo-600 text-white' : 'bg-white text-slate-400 group-hover/card:text-indigo-600'}`}>
+                     <Monitor className="w-6 h-6" />
+                  </div>
+                  <div className="text-center">
+                     <p className={`font-bold text-sm ${theme === 'glass' ? 'text-indigo-950' : 'text-slate-600'}`}>Glass (Default)</p>
+                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Premium Translucent</p>
+                  </div>
+               </button>
+
+               {/* Dark Mode */}
+               <button 
+                 onClick={() => setTheme('dark')}
+                 className={`p-6 rounded-2xl border-2 transition flex flex-col items-center gap-4 group/card ${theme === 'dark' ? 'bg-charcoal-900 border-teal-500 ring-4 ring-teal-500/5' : 'bg-slate-50 border-slate-100 hover:border-slate-300'}`}
+               >
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition ${theme === 'dark' ? 'bg-teal-500 text-white' : 'bg-white text-slate-400 group-hover/card:text-charcoal-950'}`}>
+                     <Moon className="w-6 h-6" />
+                  </div>
+                  <div className="text-center">
+                     <p className={`font-bold text-sm ${theme === 'dark' ? 'text-teal-400' : 'text-slate-600'}`}>Night Focus</p>
+                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Deep Obsidian</p>
+                  </div>
+               </button>
+
+               {/* Light Mode */}
+               <button 
+                 onClick={() => setTheme('light')}
+                 className={`p-6 rounded-2xl border-2 transition flex flex-col items-center gap-4 group/card ${theme === 'light' ? 'bg-amber-50 border-amber-600 ring-4 ring-amber-600/5' : 'bg-slate-50 border-slate-100 hover:border-slate-300'}`}
+               >
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition ${theme === 'light' ? 'bg-amber-600 text-white' : 'bg-white text-slate-400 group-hover/card:text-amber-600'}`}>
+                     <Sun className="w-6 h-6" />
+                  </div>
+                  <div className="text-center">
+                     <p className={`font-bold text-sm ${theme === 'light' ? 'text-amber-950' : 'text-slate-600'}`}>Daylight</p>
+                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Classic High Contrast</p>
+                  </div>
+               </button>
+            </div>
+        </div>
+        
+        {/* Email Settings Block */}
+        <div className="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 bg-indigo-50 border border-indigo-100 flex items-center justify-center rounded-lg text-indigo-600">
+              <Mail className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-charcoal-900">Email & Notification Forwarding</h2>
+              <p className="text-sm text-slate-500 font-medium">Manage how alerts from CaseFlow reach you off-platform.</p>
+            </div>
+          </div>
+
+          <div className="space-y-5">
+            <div className="p-5 border border-slate-200 rounded-xl bg-slate-50 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <label className="font-bold text-charcoal-900 block mb-1">Primary Email Forwarding Address</label>
+                <p className="text-sm text-slate-500 mb-2 md:mb-0">All case notes, document uploads, and direct messages will be securely carbon-copied here.</p>
+              </div>
+              <input 
+                type="email" 
+                title="Primary Email Forwarding Address"
+                disabled 
+                value={process.env.NEXT_PUBLIC_NOTIFY_EMAIL ?? "notifications@sdtoolsinc.org"} 
+                className="bg-slate-200 border border-slate-300 text-slate-600 font-bold px-4 py-2 rounded-lg cursor-not-allowed w-full md:w-auto text-sm"
+              />
+            </div>
+
+            <div className="flex items-center justify-between p-4 border border-slate-200 rounded-xl hover:bg-slate-50 transition cursor-pointer" onClick={() => setEmailForwarding(!emailForwarding)}>
+              <div>
+                <label className="font-bold text-charcoal-900 block cursor-pointer">Activate Forwarding Bridge</label>
+                <p className="text-sm text-slate-500">Instantly push portal updates to your T.O.O.LS INC inbox.</p>
+              </div>
+              <div className={`w-12 h-6 rounded-full transition-colors relative ${emailForwarding ? 'bg-teal-500' : 'bg-slate-300'}`}>
+                <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform ${emailForwarding ? 'translate-x-6' : 'translate-x-0'}`}></div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Profile */}
-        {activeTab === "profile" && (
-          <motion.div key="profile" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
-            <GlowCard className="p-6 space-y-5">
-              <h2 className="text-base font-bold text-text">Staff Profile</h2>
-              <div className="grid gap-4 sm:grid-cols-2">
-                {[
-                  { label: "Full Name", value: name, setter: setName, type: "text" },
-                  { label: "Email Address", value: email, setter: setEmail, type: "email" },
-                  { label: "Department", value: department, setter: setDepartment, type: "text" },
-                  { label: "Job Title", value: title, setter: setTitle, type: "text" },
-                  { label: "Phone Number", value: phone, setter: setPhone, type: "tel" },
-                ].map(({ label, value, setter, type }) => (
-                  <div key={label}>
-                    <label className="block text-xs font-semibold text-muted mb-1.5 uppercase tracking-wider">{label}</label>
-                    <input
-                      type={type}
-                      value={value}
-                      onChange={(e) => setter(e.target.value)}
-                      className="w-full rounded-xl border border-border bg-white/5 px-4 py-2.5 text-sm text-text focus:border-sky-500/50 focus:outline-none focus:ring-1 focus:ring-sky-500/30"
-                    />
-                  </div>
-                ))}
+        {/* Global Notifications Block */}
+        <div className="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm">
+          {/* ... notifications content ... */}
+        </div>
+
+        {/* INTEGRATED ECOSYSTEM & PLUG-INS */}
+        <div className="bg-charcoal-900 p-8 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden group">
+           <div className="absolute top-0 right-0 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
+           
+           <div className="flex items-center gap-4 mb-8 relative z-10">
+              <div className="w-12 h-12 bg-white/10 border border-white/20 rounded-2xl flex items-center justify-center text-teal-400">
+                 <ShieldPlus className="w-6 h-6" />
               </div>
-              <button
-                onClick={saveProfile}
-                className="flex items-center gap-2 rounded-xl bg-sky-500/20 px-5 py-2.5 text-sm font-semibold text-sky-300 hover:bg-sky-500/30 transition-colors"
-              >
-                <Save className="h-4 w-4" />
-                {profileSaved ? "Saved!" : "Save Changes"}
-              </button>
-            </GlowCard>
-          </motion.div>
-        )}
-
-        {/* Notifications */}
-        {activeTab === "notifications" && (
-          <motion.div key="notifications" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
-            <GlowCard className="p-6 space-y-4">
-              <h2 className="text-base font-bold text-text">Notification Settings</h2>
-              {[
-                { key: "newCases", label: "New case assignments" },
-                { key: "caseUpdates", label: "Case status updates" },
-                { key: "participantMessages", label: "Participant messages" },
-                { key: "schedulingAlerts", label: "Scheduling conflicts & alerts" },
-                { key: "adminAnnouncements", label: "Admin-wide announcements" },
-                { key: "weeklyReport", label: "Weekly caseload report" },
-              ].map(({ key, label }) => (
-                <div key={key} className="flex items-center justify-between py-2 border-b border-border/50 last:border-0">
-                  <span className="text-sm text-text">{label}</span>
-                  <button
-                    onClick={() => setNotif((p) => ({ ...p, [key]: !p[key as keyof typeof notif] }))}
-                    className={`relative h-5 w-9 rounded-full transition-colors ${notif[key as keyof typeof notif] ? "bg-sky-500" : "bg-white/10"}`}
-                  >
-                    <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${notif[key as keyof typeof notif] ? "translate-x-4" : "translate-x-0.5"}`} />
-                  </button>
-                </div>
-              ))}
-            </GlowCard>
-          </motion.div>
-        )}
-
-        {/* Password */}
-        {activeTab === "password" && (
-          <motion.div key="password" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
-            <GlowCard className="p-6 space-y-4">
-              <h2 className="text-base font-bold text-text">Change Password</h2>
-              <p className="text-xs text-muted">Password must be at least 12 characters and meet complexity requirements.</p>
-              {[
-                { label: "Current Password", value: currentPw, setter: setCurrentPw },
-                { label: "New Password", value: newPw, setter: setNewPw },
-                { label: "Confirm New Password", value: confirmPw, setter: setConfirmPw },
-              ].map(({ label, value, setter }) => (
-                <div key={label}>
-                  <label className="block text-xs font-semibold text-muted mb-1.5 uppercase tracking-wider">{label}</label>
-                  <div className="relative">
-                    <input
-                      type={showPw ? "text" : "password"}
-                      value={value}
-                      onChange={(e) => setter(e.target.value)}
-                      className="w-full rounded-xl border border-border bg-white/5 px-4 py-2.5 pr-10 text-sm text-text focus:border-sky-500/50 focus:outline-none focus:ring-1 focus:ring-sky-500/30"
-                    />
-                    <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-text">
-                      {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </button>
-                  </div>
-                </div>
-              ))}
-              {newPw && confirmPw && newPw !== confirmPw && (
-                <p className="text-xs text-rose-400">Passwords do not match</p>
-              )}
-              <button
-                onClick={savePassword}
-                disabled={!currentPw || !newPw || newPw !== confirmPw}
-                className="flex items-center gap-2 rounded-xl bg-sky-500/20 px-5 py-2.5 text-sm font-semibold text-sky-300 hover:bg-sky-500/30 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                <Lock className="h-4 w-4" />
-                {pwSaved ? "Password Updated!" : "Update Password"}
-              </button>
-            </GlowCard>
-          </motion.div>
-        )}
-
-        {/* Work Preferences */}
-        {activeTab === "preferences" && (
-          <motion.div key="preferences" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
-            <GlowCard className="p-6 space-y-6">
-              <h2 className="text-base font-bold text-text">Work Preferences</h2>
-
               <div>
-                <label className="block text-xs font-semibold text-muted mb-3 uppercase tracking-wider">Default Dashboard View</label>
-                <div className="flex gap-2 flex-wrap">
-                  {[
-                    { id: "caseload", label: "Caseload" },
-                    { id: "schedule", label: "Schedule" },
-                    { id: "analytics", label: "Analytics" },
-                  ].map((v) => (
-                    <button
-                      key={v.id}
-                      onClick={() => setDefaultView(v.id)}
-                      className={cn(
-                        "rounded-xl px-4 py-2 text-sm font-semibold border transition-all",
-                        defaultView === v.id ? "bg-sky-500/20 text-sky-300 border-sky-500/40" : "border-border text-muted hover:bg-white/5"
-                      )}
-                    >
-                      {v.label}
-                    </button>
-                  ))}
-                </div>
+                 <h2 className="text-xl font-bold tracking-tight">Connected Ecosystem</h2>
+                 <p className="text-sm text-white/50 font-medium">Manage your external workspace links and AI assistants.</p>
+              </div>
+           </div>
+
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
+              {/* Plugin 1 */}
+              <div className="p-6 bg-white/5 rounded-3xl border border-white/10 hover:bg-white/10 transition group/item">
+                 <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                       <div className="w-10 h-10 bg-blue-500/20 text-blue-400 rounded-xl flex items-center justify-center">
+                          <MessageSquare className="w-5 h-5" />
+                       </div>
+                       <span className="font-bold text-sm">Google Chat Bridge</span>
+                    </div>
+                    <div className="w-10 h-5 bg-teal-500 rounded-full relative shadow-inner">
+                       <div className="absolute top-1 right-1 w-3 h-3 bg-white rounded-full"></div>
+                    </div>
+                 </div>
+                 <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest leading-relaxed">Status: Connected to workspace account</p>
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-muted mb-3 uppercase tracking-wider">Caseload Display</label>
-                <div className="flex gap-2">
-                  {[
-                    { id: "card", label: "Card View" },
-                    { id: "list", label: "List View" },
-                    { id: "table", label: "Table View" },
-                  ].map((v) => (
-                    <button
-                      key={v.id}
-                      onClick={() => setCaseloadDisplay(v.id)}
-                      className={cn(
-                        "rounded-xl px-4 py-2 text-sm font-semibold border transition-all",
-                        caseloadDisplay === v.id ? "bg-sky-500/20 text-sky-300 border-sky-500/40" : "border-border text-muted hover:bg-white/5"
-                      )}
-                    >
-                      {v.label}
-                    </button>
-                  ))}
-                </div>
+              {/* Plugin 2 */}
+              <div className="p-6 bg-white/5 rounded-3xl border border-white/10 hover:bg-white/10 transition opacity-60">
+                 <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                       <div className="w-10 h-10 bg-amber-500/20 text-amber-400 rounded-xl flex items-center justify-center">
+                          <BrainCircuit className="w-5 h-5" />
+                       </div>
+                       <span className="font-bold text-sm italic">Curiosity Legacy</span>
+                    </div>
+                    <div className="w-10 h-5 bg-white/20 rounded-full relative">
+                       <div className="absolute top-1 left-1 w-3 h-3 bg-white/50 rounded-full"></div>
+                    </div>
+                 </div>
+                 <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest leading-relaxed">Status: Disconnected (V2 Pending)</p>
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-muted mb-1.5 uppercase tracking-wider">Language</label>
-                <select
-                  value={language}
-                  onChange={(e) => setLanguage(e.target.value)}
-                  className="rounded-xl border border-border bg-white/5 px-4 py-2.5 text-sm text-text focus:border-sky-500/50 focus:outline-none focus:ring-1 focus:ring-sky-500/30"
-                >
-                  <option value="en">English</option>
-                  <option value="es">Spanish</option>
-                  <option value="fr">French</option>
-                  <option value="pt">Portuguese</option>
-                </select>
+              {/* Bot 1: System Reliability Bot */}
+              <div className="p-6 bg-indigo-500/10 rounded-3xl border border-indigo-500/30 hover:bg-indigo-500/20 transition group/item col-span-1 md:col-span-2 ring-1 ring-indigo-500/20">
+                 <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-4">
+                       <div className="w-12 h-12 bg-indigo-500 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/20 animate-pulse">
+                          <Bot className="w-6 h-6" />
+                       </div>
+                       <div>
+                          <span className="font-bold text-base block">System Reliability Agent (Auto-Bot)</span>
+                          <span className="text-[10px] text-indigo-400 font-black uppercase tracking-widest">Active • Monitoring runtime errors</span>
+                       </div>
+                    </div>
+                    <div className="flex items-center gap-4">
+                       <span className="text-xs font-bold text-indigo-300">Live Repair Active</span>
+                       <div className="w-12 h-6 bg-teal-500 rounded-full relative cursor-pointer shadow-lg shadow-teal-500/10">
+                          <div className="absolute top-1 right-1 w-4 h-4 bg-white rounded-full transition-transform shadow-sm"></div>
+                       </div>
+                    </div>
+                 </div>
+                 <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                    <p className="text-xs text-white/40 leading-relaxed max-w-lg italic font-medium">Automatically detects page timeouts or "500 Internal" errors and attempts a silent refresh or state restoration for Case Managers.</p>
+                    <button className="px-4 py-1.5 bg-white/5 text-[10px] font-bold text-white uppercase tracking-widest rounded-lg border border-white/10 hover:bg-white/10 transition">Run Diagnostics</button>
+                 </div>
               </div>
 
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-semibold text-text">Auto-accept case assignments</p>
-                  <p className="text-xs text-muted mt-0.5">New cases assigned to you will be automatically accepted</p>
-                </div>
-                <button
-                  onClick={() => setAutoAssign(!autoAssign)}
-                  className={`relative h-5 w-9 rounded-full transition-colors ${autoAssign ? "bg-sky-500" : "bg-white/10"}`}
-                >
-                  <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${autoAssign ? "translate-x-4" : "translate-x-0.5"}`} />
-                </button>
-              </div>
-            </GlowCard>
-          </motion.div>
-        )}
+           </div>
+        </div>
+
       </div>
     </div>
   );

@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { GlowCard } from "@/components/ui/GlowCard";
+import { MessagingWidget } from "@/components/ui/MessagingWidget";
 import {
   Users2,
   Clock,
@@ -65,6 +66,8 @@ export default function HRDashboardPage() {
         <h1 className="text-2xl font-extrabold tracking-tight text-white">HR Dashboard</h1>
         <p className="mt-1 text-sm text-slate-400">Staff management, onboarding, and workforce compliance</p>
       </div>
+
+      <MessagingWidget className="max-w-4xl" />
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">

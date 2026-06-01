@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   ShieldCheck,
   Lock,
@@ -50,7 +50,7 @@ function resolvePortalRole(userRole?: string): "staff" | "participant" | "admin"
   const r = (userRole ?? "").toLowerCase();
   if (r.includes("admin") || r.includes("enterprise")) return "admin";
   if (r.includes("staff") || r.includes("case")) return "staff";
-  if (r.includes("participant") || r.includes("viewer")) return "participant";
+  if (r.includes("participant") || r.includes("client") || r.includes("viewer")) return "participant";
   return "staff";
 }
 
@@ -110,6 +110,7 @@ export default function ChatPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pollTimerRef = useRef<NodeJS.Timeout | null>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const searchParams = useSearchParams();
 
   // ── Auth guard ────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -145,6 +146,17 @@ export default function ChatPage() {
   useEffect(() => {
     loadThreads();
   }, [loadThreads]);
+
+  useEffect(() => {
+    const threadId = searchParams.get("threadId");
+    if (!threadId || !threads.length || selectedThread?.id === threadId) {
+      return;
+    }
+    const match = threads.find((thread) => thread.id === threadId);
+    if (match) {
+      selectThread(match);
+    }
+  }, [searchParams, threads, selectedThread]);
 
   // ── Load messages ─────────────────────────────────────────────────────────
   const loadMessages = useCallback(async () => {

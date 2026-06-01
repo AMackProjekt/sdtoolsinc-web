@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useAuth } from "@/lib/auth";
 import { motion } from "framer-motion";
 import { GlowCard } from "@/components/ui/GlowCard";
+import { MessagingWidget } from "@/components/ui/MessagingWidget";
 import { AgentMonitor } from "@/components/ui/AgentMonitor";
 import { WeeklyEngagementChart } from "@/components/ui/WeeklyEngagementChart";
 import {
@@ -141,6 +142,8 @@ export default function StaffDashboardPage() {
         <div className="flex items-center justify-center py-24 text-muted">Loading dashboard…</div>
       ) : (
         <>
+          <MessagingWidget className="max-w-4xl" />
+
           {/* KPI Row */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}

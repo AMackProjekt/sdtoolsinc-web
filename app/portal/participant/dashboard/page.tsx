@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useAuth } from "@/lib/auth";
 import { motion } from "framer-motion";
 import { GlowCard } from "@/components/ui/GlowCard";
+import { MessagingWidget } from "@/components/ui/MessagingWidget";
 import { AICoach } from "@/components/ui/AICoach";
 import {
   BookOpen,
@@ -150,6 +151,8 @@ export default function ParticipantDashboardPage() {
           How are you doing today? Your journey is tracked below.
         </p>
       </motion.div>
+
+      <MessagingWidget className="max-w-3xl" />
 
       {/* 3D Flip KPI Cards */}
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.06 }}>

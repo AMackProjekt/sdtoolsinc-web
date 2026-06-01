@@ -1,10 +1,14 @@
 export function getSafeCallbackUrl(rawCallbackUrl: string | null | undefined, fallbackPath: string): string {
-  if (!rawCallbackUrl) return fallbackPath;
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
+
+  if (!rawCallbackUrl) {
+    return origin ? `${origin}${fallbackPath}` : fallbackPath;
+  }
 
   // Accept only same-origin relative paths to avoid open redirects.
   if (rawCallbackUrl.startsWith("/") && !rawCallbackUrl.startsWith("//")) {
-    return rawCallbackUrl;
+    return origin ? `${origin}${rawCallbackUrl}` : rawCallbackUrl;
   }
 
-  return fallbackPath;
+  return origin ? `${origin}${fallbackPath}` : fallbackPath;
 }

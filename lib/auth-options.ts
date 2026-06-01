@@ -4,6 +4,8 @@ import AzureADProvider from "next-auth/providers/azure-ad";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { createClient } from "@supabase/supabase-js";
 import { JWT } from "next-auth/jwt";
+import { findClientUserByUsername, verifyPassword } from "@/lib/client-users";
+import { isRateLimited, buildRateLimitKey } from "@/lib/rate-limit";
 
 /** Domains allowed to access the Enterprise portal */
 const ENTERPRISE_DOMAINS = (process.env.ENTERPRISE_ALLOWED_DOMAINS ?? "sdtoolsinc.org,sdtoolsinc.com")
@@ -84,6 +86,45 @@ export const authOptions: NextAuthOptions = {
         ]
       : []),
 
+    // ── Client Portal Credentials ─────────────────────────────
+    CredentialsProvider({
+      id: "client-credentials",
+      name: "Client Portal Login",
+      credentials: {
+        username: { label: "Username", type: "text", placeholder: "dfclientA1" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials, req) {
+        const username = credentials?.username?.trim().toLowerCase();
+        const password = credentials?.password;
+        const ipAddress = req?.headers?.get?.("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown-ip";
+        const usernameKey = buildRateLimitKey(["client-login", username]);
+        const ipKey = buildRateLimitKey(["client-login-ip", ipAddress]);
+
+        if (!username || !password) return null;
+        if (isRateLimited(usernameKey, 7, 60_000)) return null;
+        if (isRateLimited(ipKey, 20, 60_000)) return null;
+
+        const user = await findClientUserByUsername(username);
+        if (!user) return null;
+
+        const isAuthorized = verifyPassword(password, user.passwordHash, user.salt);
+        if (!isAuthorized) return null;
+
+        return {
+          id: user.id,
+          email: `${user.username}@clients.sdtoolsinc.org`,
+          name: user.name,
+          username: user.username,
+          firstLogin: user.firstLogin,
+          mustChangePassword: user.mustChangePassword,
+          sessionVersion: user.sessionVersion,
+          role: "client",
+          image: null,
+        };
+      },
+    }),
+
     // ── Email / Password via Supabase ─────────────────────────
     CredentialsProvider({
       name: "Email & Password",
@@ -140,9 +181,12 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
     async signIn({ user }) {
-      // Allow any successfully authenticated OAuth user.
-      // Enterprise-portal domain restriction is enforced in middleware.
-      return !!user?.email;
+      if (!user?.email) return false;
+      if ((user as any).role === "client" && (user as any).mustChangePassword === true) {
+        return "/portal/client/change-password";
+      }
+      // Allow other authenticated users.
+      return true;
     },
 
     async redirect({ url, baseUrl }) {
@@ -165,27 +209,33 @@ export const authOptions: NextAuthOptions = {
         token.picture = user.image ?? token.picture;
         token.provider = account?.provider ?? "unknown";
         token.role =
-          user.email?.toLowerCase() === TEMP_READONLY_USERNAME
+          (user as any).role === "client"
+            ? "client"
+            : user.email?.toLowerCase() === TEMP_READONLY_USERNAME
             ? "enterprise_viewer"
             : user.email === process.env.ENTERPRISE_ADMIN_EMAIL
             ? "enterprise_admin"
             : isEnterpriseEmail(user.email)
             ? "enterprise_viewer"
             : "user";
+        token.username = (user as any).username ?? token.username;
+        token.firstLogin = (user as any).firstLogin ?? token.firstLogin;
+        token.mustChangePassword = (user as any).mustChangePassword ?? token.mustChangePassword;
+        token.sessionVersion = (user as any).sessionVersion ?? token.sessionVersion;
       }
       return token;
     },
 
     async session({ session, token }: { session: Session; token: JWT }) {
       if (token && session.user) {
-        const sessionUser = session.user as Session["user"] & {
-          id?: string;
-          role?: string;
-          provider?: string;
-        };
+        const sessionUser = session.user as any;
         sessionUser.id = token.sub;
         sessionUser.role = token.role as string | undefined;
         sessionUser.provider = token.provider as string | undefined;
+        sessionUser.username = token.username as string | undefined;
+        sessionUser.firstLogin = token.firstLogin as boolean | undefined;
+        sessionUser.mustChangePassword = token.mustChangePassword as boolean | undefined;
+        sessionUser.sessionVersion = token.sessionVersion as number | undefined;
       }
       return session;
     },

@@ -1,595 +1,226 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { motion } from "framer-motion";
-import {
-  UserCog, Search, ChevronDown, Eye, Users, BarChart2,
-  AlertCircle, CheckCircle2, TrendingUp, ClipboardList, UserCheck,
-  CalendarDays,
-} from "lucide-react";
-import { cn } from "@/lib/cn";
-
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-type EmpStatus = "Active" | "On Leave" | "Departed";
-type Department = "All" | "Case Management" | "IT" | "Administration" | "Programs" | "Outreach";
-type ClientStatus = "Active" | "Inactive" | "Crisis";
-type Program = "Case Management" | "Crisis Support" | "Housing" | "Employment";
-
-interface Employee {
-  id: string;
-  name: string;
-  role: string;
-  department: Exclude<Department, "All">;
-  startDate: string;
-  status: EmpStatus;
-  email: string;
-}
-
-interface CaseAssignment {
-  clientId: string;
-  clientName: string;
-  clientStatus: ClientStatus;
-  managerId: string;
-  managerName: string;
-  program: Program;
-  assignedDate: string;
-}
-
-// ─── Data ─────────────────────────────────────────────────────────────────────
-
-const EMPLOYEES: Employee[] = [
-  { id: "1",  name: "Aaliyah Torres",   role: "Case Manager II",        department: "Case Management", startDate: "2023-03-12", status: "Active",   email: "atorres@sdtoolsinc.org" },
-  { id: "2",  name: "Marcus Chen",      role: "Systems Administrator",  department: "IT",              startDate: "2022-08-01", status: "Active",   email: "mchen@sdtoolsinc.org" },
-  { id: "3",  name: "Destiny Brown",    role: "Program Coordinator",    department: "Programs",        startDate: "2023-11-07", status: "Active",   email: "dbrown@sdtoolsinc.org" },
-  { id: "4",  name: "Jordan Williams",  role: "Outreach Specialist",    department: "Outreach",        startDate: "2024-01-15", status: "Active",   email: "jwilliams@sdtoolsinc.org" },
-  { id: "5",  name: "Elijah Roberts",   role: "Executive Assistant",    department: "Administration",  startDate: "2024-02-20", status: "Active",   email: "eroberts@sdtoolsinc.org" },
-  { id: "6",  name: "Simone Hayward",   role: "Case Manager I",         department: "Case Management", startDate: "2023-06-18", status: "On Leave", email: "shayward@sdtoolsinc.org" },
-  { id: "7",  name: "Derek Okafor",     role: "IT Support Specialist",  department: "IT",              startDate: "2021-05-03", status: "Active",   email: "dokafor@sdtoolsinc.org" },
-  { id: "8",  name: "Naomi Luckett",    role: "Outreach Lead",          department: "Outreach",        startDate: "2022-01-10", status: "Active",   email: "nluckett@sdtoolsinc.org" },
-  { id: "9",  name: "Tyrese Fountain",  role: "Program Director",       department: "Programs",        startDate: "2020-09-14", status: "Active",   email: "tfountain@sdtoolsinc.org" },
-  { id: "10", name: "Brianna Keith",    role: "Office Manager",         department: "Administration",  startDate: "2019-11-01", status: "Departed", email: "bkeith@sdtoolsinc.org" },
-];
-
-const CASELOAD: CaseAssignment[] = [
-  { clientId: "c01", clientName: "Aaliyah Brooks",   clientStatus: "Active",   managerId: "cm1", managerName: "Marcus Rivera",  program: "Case Management",  assignedDate: "2025-01-14" },
-  { clientId: "c02", clientName: "Jerome Mitchell",  clientStatus: "Crisis",   managerId: "cm1", managerName: "Marcus Rivera",  program: "Crisis Support",   assignedDate: "2025-03-02" },
-  { clientId: "c03", clientName: "Destiny Chang",    clientStatus: "Active",   managerId: "cm2", managerName: "Yolanda Tran",   program: "Housing",          assignedDate: "2025-02-07" },
-  { clientId: "c04", clientName: "Raymond Flores",   clientStatus: "Inactive", managerId: "cm2", managerName: "Yolanda Tran",   program: "Employment",       assignedDate: "2024-11-20" },
-  { clientId: "c05", clientName: "Sasha Monroe",     clientStatus: "Active",   managerId: "cm2", managerName: "Yolanda Tran",   program: "Case Management",  assignedDate: "2025-01-30" },
-  { clientId: "c06", clientName: "Liam Patterson",   clientStatus: "Active",   managerId: "cm3", managerName: "Devon Okafor",   program: "Employment",       assignedDate: "2025-02-18" },
-  { clientId: "c07", clientName: "Nadia Kozlov",     clientStatus: "Crisis",   managerId: "cm3", managerName: "Devon Okafor",   program: "Crisis Support",   assignedDate: "2025-04-01" },
-  { clientId: "c08", clientName: "Theo Williams",    clientStatus: "Active",   managerId: "cm4", managerName: "Priya Nair",     program: "Housing",          assignedDate: "2025-01-05" },
-  { clientId: "c09", clientName: "Camille Dubois",   clientStatus: "Active",   managerId: "cm4", managerName: "Priya Nair",     program: "Case Management",  assignedDate: "2025-03-15" },
-  { clientId: "c10", clientName: "Isaac Osei",       clientStatus: "Inactive", managerId: "cm4", managerName: "Priya Nair",     program: "Employment",       assignedDate: "2024-12-10" },
-];
-
-const CASE_MANAGERS = [
-  { id: "cm1", name: "Marcus Rivera",  title: "Case Manager II" },
-  { id: "cm2", name: "Yolanda Tran",   title: "Case Manager I" },
-  { id: "cm3", name: "Devon Okafor",   title: "Case Manager II" },
-  { id: "cm4", name: "Priya Nair",     title: "Case Manager I" },
-];
-
-// ─── Style maps ───────────────────────────────────────────────────────────────
-
-type Shift = "Morning" | "Afternoon" | "Evening" | "Remote" | "Off";
-
-interface WorkSchedule {
-  empId: string;
-  mon: Shift;
-  tue: Shift;
-  wed: Shift;
-  thu: Shift;
-  fri: Shift;
-  weeklyHours: number;
-  notes?: string;
-}
-
-const SCHEDULES: WorkSchedule[] = [
-  { empId: "1",  mon: "Morning",   tue: "Morning",   wed: "Morning",   thu: "Morning",   fri: "Morning",   weeklyHours: 40, notes: "Flex start 8–9 am" },
-  { empId: "2",  mon: "Morning",   tue: "Remote",    wed: "Morning",   thu: "Remote",    fri: "Morning",   weeklyHours: 40 },
-  { empId: "3",  mon: "Afternoon", tue: "Afternoon", wed: "Afternoon", thu: "Off",       fri: "Afternoon", weeklyHours: 32 },
-  { empId: "4",  mon: "Morning",   tue: "Morning",   wed: "Remote",    thu: "Morning",   fri: "Remote",    weeklyHours: 40 },
-  { empId: "5",  mon: "Morning",   tue: "Morning",   wed: "Morning",   thu: "Morning",   fri: "Off",       weeklyHours: 32, notes: "4/10 schedule" },
-  { empId: "6",  mon: "Off",       tue: "Off",       wed: "Off",       thu: "Off",       fri: "Off",       weeklyHours: 0,  notes: "Medical leave" },
-  { empId: "7",  mon: "Afternoon", tue: "Afternoon", wed: "Morning",   thu: "Afternoon", fri: "Morning",   weeklyHours: 40 },
-  { empId: "8",  mon: "Morning",   tue: "Afternoon", wed: "Morning",   thu: "Afternoon", fri: "Morning",   weeklyHours: 40 },
-  { empId: "9",  mon: "Morning",   tue: "Morning",   wed: "Morning",   thu: "Morning",   fri: "Morning",   weeklyHours: 40, notes: "Director hours" },
-  { empId: "10", mon: "Off",       tue: "Off",       wed: "Off",       thu: "Off",       fri: "Off",       weeklyHours: 0,  notes: "Departed" },
-];
-
-const SHIFT_STYLE: Record<Shift, string> = {
-  Morning:   "bg-sky-500/20 text-sky-300 border-sky-500/20",
-  Afternoon: "bg-violet-500/20 text-violet-300 border-violet-500/20",
-  Evening:   "bg-amber-500/20 text-amber-300 border-amber-500/20",
-  Remote:    "bg-teal-500/20 text-teal-300 border-teal-500/20",
-  Off:       "bg-slate-700/30 text-slate-500 border-slate-700/20",
-};
-
-const DAYS: { key: keyof Omit<WorkSchedule, "empId" | "weeklyHours" | "notes">; label: string }[] = [
-  { key: "mon", label: "Mon" },
-  { key: "tue", label: "Tue" },
-  { key: "wed", label: "Wed" },
-  { key: "thu", label: "Thu" },
-  { key: "fri", label: "Fri" },
-];
-
-const EMP_STATUS_COLOR: Record<EmpStatus, string> = {
-  "Active":   "bg-green-500/20 text-green-300",
-  "On Leave": "bg-yellow-500/20 text-yellow-300",
-  "Departed": "bg-slate-600/40 text-slate-400",
-};
-
-const CLIENT_STATUS_COLOR: Record<ClientStatus, string> = {
-  Active:   "bg-emerald-500/20 text-emerald-300",
-  Inactive: "bg-slate-600/40 text-slate-400",
-  Crisis:   "bg-rose-500/20 text-rose-300",
-};
-
-const DEPARTMENTS: Department[] = ["All", "Case Management", "IT", "Administration", "Programs", "Outreach"];
-
-// ─── Sub-components ───────────────────────────────────────────────────────────
-
-function Avatar({ name, size = 8 }: { name: string; size?: number }) {
-  const initials = name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
-  return (
-    <div
-      className={cn(
-        "rounded-full bg-violet-700/40 border border-violet-500/30 flex items-center justify-center text-xs font-bold text-violet-200 shrink-0",
-        size === 10 ? "h-10 w-10" : "h-8 w-8"
-      )}
-    >
-      {initials}
-    </div>
-  );
-}
-
-function KpiCard({ label, value, sub, color }: { label: string; value: string | number; sub?: string; color: string }) {
-  return (
-    <div className={cn("rounded-xl border p-4", color)}>
-      <p className="text-xs font-semibold uppercase tracking-widest text-muted">{label}</p>
-      <p className="mt-1 text-3xl font-extrabold tracking-tight text-text">{value}</p>
-      {sub && <p className="mt-0.5 text-xs text-muted">{sub}</p>}
-    </div>
-  );
-}
-
-// ─── Main page ────────────────────────────────────────────────────────────────
+import { useState } from "react";
+import { useQuery, useMutation } from "convex/react";
+import { api } from '@/convex/_generated/api';
+import { UserCog, Plus, Trash2, Save, Search } from "lucide-react";
+import type { Id, Doc } from '@/convex/_generated/dataModel';
 
 export default function PersonnelPage() {
-  const [tab, setTab] = useState<"directory" | "caseload" | "schedule">("directory");
+  const teamMembers = (useQuery(api.functions.listTeamMembers) ?? []) as Doc<"teamMembers">[];
+  const schedules = (useQuery(api.functions.listStaffSchedules) ?? []) as Doc<"staffSchedules">[];
+  const addTeamMember = useMutation(api.functions.addTeamMember);
+  const upsertSchedule = useMutation(api.functions.upsertStaffSchedule);
+  const deleteSchedule = useMutation(api.functions.deleteStaffSchedule);
 
-  // Directory state
   const [search, setSearch] = useState("");
-  const [dept, setDept] = useState<Department>("All");
-  const [statusFilter, setStatusFilter] = useState<"All" | EmpStatus>("All");
+  const [newMember, setNewMember] = useState({ memberId: "", name: "", role: "" });
+  const [addingMember, setAddingMember] = useState(false);
 
-  const filteredEmployees = useMemo(() => EMPLOYEES.filter((e) => {
-    const q = search.toLowerCase();
-    return (
-      (e.name.toLowerCase().includes(q) || e.role.toLowerCase().includes(q) || e.email.toLowerCase().includes(q)) &&
-      (dept === "All" || e.department === dept) &&
-      (statusFilter === "All" || e.status === statusFilter)
-    );
-  }), [search, dept, statusFilter]);
+  const [schedForm, setSchedForm] = useState({
+    staffEmail: "",
+    staffName: "",
+    dayOfWeek: "Monday",
+    startTime: "09:00",
+    endTime: "17:00",
+    location: "",
+    notes: "",
+  });
+  const [addingSched, setAddingSched] = useState(false);
 
-  // Caseload analytics derived data
-  const caseloadByManager = useMemo(() =>
-    CASE_MANAGERS.map((cm) => {
-      const clients = CASELOAD.filter((c) => c.managerId === cm.id);
-      const active   = clients.filter((c) => c.clientStatus === "Active").length;
-      const inactive = clients.filter((c) => c.clientStatus === "Inactive").length;
-      const crisis   = clients.filter((c) => c.clientStatus === "Crisis").length;
-      const programs = [...new Set(clients.map((c) => c.program))];
-      return { ...cm, clients, total: clients.length, active, inactive, crisis, programs };
-    }),
-    []
+  const filtered = teamMembers.filter(
+    (m) =>
+      m.name.toLowerCase().includes(search.toLowerCase()) ||
+      m.role.toLowerCase().includes(search.toLowerCase())
   );
 
-  const totalClients  = CASELOAD.length;
-  const totalActive   = CASELOAD.filter((c) => c.clientStatus === "Active").length;
-  const totalCrisis   = CASELOAD.filter((c) => c.clientStatus === "Crisis").length;
-  const avgCaseload   = (totalClients / CASE_MANAGERS.length).toFixed(1);
+  async function handleAddMember() {
+    if (!newMember.memberId || !newMember.name || !newMember.role) return;
+    await addTeamMember(newMember);
+    setNewMember({ memberId: "", name: "", role: "" });
+    setAddingMember(false);
+  }
+
+  async function handleAddSchedule() {
+    if (!schedForm.staffEmail || !schedForm.staffName) return;
+    await upsertSchedule(schedForm);
+    setSchedForm({ staffEmail: "", staffName: "", dayOfWeek: "Monday", startTime: "09:00", endTime: "17:00", location: "", notes: "" });
+    setAddingSched(false);
+  }
+
+  const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
   return (
-    <div className="space-y-6 p-6">
-      {/* ── Header ─────────────────────────────────────────────────────── */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl border border-border bg-gradient-to-r from-violet-900/50 to-slate-900/40 p-6"
-      >
-        <div className="flex items-center gap-3">
-          <div className="rounded-xl bg-violet-600/20 p-3 border border-violet-500/30">
-            <UserCog className="h-6 w-6 text-violet-300" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-extrabold tracking-tight text-text">Personnel</h1>
-            <p className="text-sm text-muted mt-0.5">
-              {EMPLOYEES.filter((e) => e.status !== "Departed").length} active staff · {CASE_MANAGERS.length} case managers
-            </p>
-          </div>
-          <div className="ml-auto flex items-center gap-1.5 rounded-full bg-violet-500/10 px-3 py-1 border border-violet-500/20">
-            <Users className="h-3.5 w-3.5 text-violet-400" />
-            <span className="text-xs font-semibold text-violet-300">{EMPLOYEES.length} Total</span>
-          </div>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+            <UserCog className="w-5 h-5 text-violet-500" /> Personnel Management
+          </h1>
+          <p className="text-slate-500 text-sm mt-0.5">Staff directory, roles, and schedules</p>
         </div>
-      </motion.div>
+      </div>
 
-      {/* ── Tab switcher ────────────────────────────────────────────────── */}
-      <motion.div
-        initial={{ opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.05 }}
-        className="flex gap-1 rounded-xl border border-border bg-panel p-1 w-fit"
-      >
-        {[
-          { key: "directory", label: "Directory",          icon: Users },
-          { key: "caseload",  label: "Caseload Analytics",  icon: BarChart2 },
-          { key: "schedule",  label: "Work Schedule",       icon: CalendarDays },
-        ].map(({ key, label, icon: Icon }) => (
+      {/* Staff Directory */}
+      <div className="bg-white rounded-xl border border-slate-200">
+        <div className="p-4 border-b border-slate-100 flex items-center justify-between gap-3">
+          <div className="relative flex-1 max-w-xs">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search staff…"
+              className="pl-9 pr-3 py-1.5 text-sm border border-slate-200 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-violet-400"
+            />
+          </div>
           <button
-            key={key}
-            onClick={() => setTab(key as "directory" | "caseload" | "schedule")}
-            className={cn(
-              "flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition",
-              tab === key
-                ? "bg-violet-600/30 text-violet-200 border border-violet-500/30"
-                : "text-muted hover:text-text"
-            )}
+            onClick={() => setAddingMember((v) => !v)}
+            className="flex items-center gap-2 px-3 py-1.5 bg-violet-600 text-white text-sm rounded-lg hover:bg-violet-700 transition"
           >
-            <Icon className="h-4 w-4" />
-            {label}
+            <Plus className="w-4 h-4" /> Add Staff
           </button>
-        ))}
-      </motion.div>
+        </div>
 
-      {/* ══════════════════════════════════════════════════════════════════
-          DIRECTORY TAB
-      ══════════════════════════════════════════════════════════════════ */}
-      {tab === "directory" && (
-        <>
-          {/* Filters */}
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.08 }}
-            className="flex flex-wrap gap-3"
-          >
-            <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted" />
-              <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search name, role, email…"
-                className="w-full rounded-lg border border-border bg-panel pl-9 pr-4 py-2.5 text-sm text-text placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-violet-500/40"
-              />
+        {addingMember && (
+          <div className="p-4 border-b border-slate-100 bg-violet-50 flex flex-wrap gap-3 items-end">
+            <div className="flex flex-col gap-1">
+              <label className="text-xs text-slate-600 font-medium">Member ID</label>
+              <input value={newMember.memberId} onChange={(e) => setNewMember((s) => ({ ...s, memberId: e.target.value }))}
+                title="Member ID" placeholder="e.g., ORG-001"
+                className="px-3 py-1.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400 w-36" />
             </div>
-            <div className="relative">
-              <select
-                value={dept}
-                onChange={(e) => setDept(e.target.value as Department)}
-                className="appearance-none rounded-lg border border-border bg-panel pl-3 pr-8 py-2.5 text-sm text-text focus:outline-none focus:ring-1 focus:ring-violet-500/40 cursor-pointer"
-              >
-                {DEPARTMENTS.map((d) => <option key={d}>{d}</option>)}
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted" />
+            <div className="flex flex-col gap-1">
+              <label className="text-xs text-slate-600 font-medium">Name</label>
+              <input value={newMember.name} onChange={(e) => setNewMember((s) => ({ ...s, name: e.target.value }))}
+                title="Staff member name" placeholder="Full name"
+                className="px-3 py-1.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400 w-44" />
             </div>
-            <div className="relative">
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value as "All" | EmpStatus)}
-                className="appearance-none rounded-lg border border-border bg-panel pl-3 pr-8 py-2.5 text-sm text-text focus:outline-none focus:ring-1 focus:ring-violet-500/40 cursor-pointer"
-              >
-                {["All", "Active", "On Leave", "Departed"].map((s) => <option key={s}>{s}</option>)}
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted" />
+            <div className="flex flex-col gap-1">
+              <label className="text-xs text-slate-600 font-medium">Role / Title</label>
+              <input value={newMember.role} onChange={(e) => setNewMember((s) => ({ ...s, role: e.target.value }))}
+                title="Role or title" placeholder="e.g., Case Manager"
+                className="px-3 py-1.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400 w-44" />
             </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.12 }}
-            className="rounded-2xl border border-border bg-panel overflow-hidden"
-          >
-            <table className="w-full text-left text-sm">
-              <thead>
-                <tr className="border-b border-border bg-white/[0.02]">
-                  <th className="px-5 py-3.5 font-semibold text-muted">Employee</th>
-                  <th className="px-5 py-3.5 font-semibold text-muted hidden md:table-cell">Department</th>
-                  <th className="px-5 py-3.5 font-semibold text-muted hidden lg:table-cell">Start Date</th>
-                  <th className="px-5 py-3.5 font-semibold text-muted">Status</th>
-                  <th className="px-5 py-3.5 font-semibold text-muted text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredEmployees.length === 0 ? (
-                  <tr>
-                    <td colSpan={5} className="px-5 py-10 text-center text-muted text-sm">No employees match your filters.</td>
-                  </tr>
-                ) : (
-                  filteredEmployees.map((emp, i) => (
-                    <motion.tr
-                      key={emp.id}
-                      initial={{ opacity: 0, x: -8 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.04 }}
-                      className="border-b border-border/50 hover:bg-white/[0.02] transition-colors"
-                    >
-                      <td className="px-5 py-4">
-                        <div className="flex items-center gap-3">
-                          <Avatar name={emp.name} />
-                          <div>
-                            <p className="font-semibold text-text">{emp.name}</p>
-                            <p className="text-xs text-muted">{emp.role}</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-5 py-4 text-muted hidden md:table-cell">{emp.department}</td>
-                      <td className="px-5 py-4 text-muted hidden lg:table-cell">{emp.startDate}</td>
-                      <td className="px-5 py-4">
-                        <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-semibold", EMP_STATUS_COLOR[emp.status])}>
-                          {emp.status}
-                        </span>
-                      </td>
-                      <td className="px-5 py-4 text-right">
-                        <button className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-white/[0.04] px-3 py-1.5 text-xs font-semibold text-muted hover:text-text hover:border-violet-500/40 transition">
-                          <Eye className="h-3.5 w-3.5" />
-                          View
-                        </button>
-                      </td>
-                    </motion.tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-            <div className="px-5 py-3 border-t border-border/50 text-xs text-muted">
-              Showing {filteredEmployees.length} of {EMPLOYEES.length} employees
-            </div>
-          </motion.div>
-        </>
-      )}
-
-      {/* ══════════════════════════════════════════════════════════════════
-          CASELOAD ANALYTICS TAB
-      ══════════════════════════════════════════════════════════════════ */}
-      {tab === "caseload" && (
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.06 }}
-          className="space-y-6"
-        >
-          {/* Summary KPIs */}
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-            <KpiCard label="Total Clients"    value={totalClients} sub="across all managers"   color="border-border bg-panel" />
-            <KpiCard label="Active"           value={totalActive}  sub="currently enrolled"    color="border-emerald-700/40 bg-emerald-900/10" />
-            <KpiCard label="Crisis Flags"     value={totalCrisis}  sub="need immediate action" color="border-rose-700/40 bg-rose-900/10" />
-            <KpiCard label="Avg Caseload"     value={avgCaseload}  sub="clients per manager"   color="border-sky-700/40 bg-sky-900/10" />
+            <button onClick={handleAddMember}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-violet-600 text-white text-sm rounded-lg hover:bg-violet-700 transition">
+              <Save className="w-4 h-4" /> Save
+            </button>
           </div>
+        )}
 
-          {/* Per-manager cards */}
-          <div className="grid gap-4 md:grid-cols-2">
-            {caseloadByManager.map((cm, i) => {
-              const maxBar = Math.max(...caseloadByManager.map((m) => m.total), 1);
-              return (
-                <motion.div
-                  key={cm.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.08 + i * 0.06 }}
-                  className="rounded-2xl border border-border bg-panel p-5 space-y-4"
-                >
-                  {/* Manager header */}
-                  <div className="flex items-center gap-3">
-                    <Avatar name={cm.name} size={10} />
-                    <div className="flex-1">
-                      <p className="font-bold text-text">{cm.name}</p>
-                      <p className="text-xs text-muted">{cm.title}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-extrabold text-text">{cm.total}</p>
-                      <p className="text-xs text-muted">clients</p>
-                    </div>
-                  </div>
-
-                  {/* Caseload bar */}
-                  <div>
-                    <div className="mb-1 flex items-center justify-between text-xs text-muted">
-                      <span>Caseload share</span>
-                      <span>{Math.round((cm.total / (totalClients || 1)) * 100)}%</span>
-                    </div>
-                    <div className="h-2 w-full rounded-full bg-white/5">
-                      <div
-                        className="h-2 rounded-full bg-gradient-to-r from-violet-500 to-sky-400 transition-all"
-                        style={{ width: `${(cm.total / maxBar) * 100}%` }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Status breakdown */}
-                  <div className="flex gap-3">
-                    {[
-                      { label: "Active",   count: cm.active,   color: "text-emerald-300" },
-                      { label: "Inactive", count: cm.inactive, color: "text-slate-400" },
-                      { label: "Crisis",   count: cm.crisis,   color: "text-rose-300" },
-                    ].map(({ label, count, color }) => (
-                      <div key={label} className="flex-1 rounded-lg border border-border bg-white/[0.03] p-2 text-center">
-                        <p className={cn("text-lg font-extrabold", color)}>{count}</p>
-                        <p className="text-[10px] font-semibold text-muted uppercase tracking-widest">{label}</p>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Programs */}
-                  <div>
-                    <p className="mb-1.5 text-xs font-semibold text-muted uppercase tracking-widest">Programs</p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {cm.programs.map((p) => (
-                        <span key={p} className="rounded-full bg-sky-500/10 border border-sky-500/20 px-2 py-0.5 text-[11px] font-semibold text-sky-300">
-                          {p}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Client list */}
-                  <div>
-                    <p className="mb-2 text-xs font-semibold text-muted uppercase tracking-widest">Assigned Clients</p>
-                    <div className="space-y-1.5">
-                      {cm.clients.map((client) => (
-                        <div key={client.clientId} className="flex items-center justify-between rounded-lg border border-border/60 bg-white/[0.02] px-3 py-2">
-                          <div>
-                            <p className="text-sm font-semibold text-text">{client.clientName}</p>
-                            <p className="text-[11px] text-muted">{client.program}</p>
-                          </div>
-                          <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-bold", CLIENT_STATUS_COLOR[client.clientStatus])}>
-                            {client.clientStatus}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-
-          {/* Assignment overview table */}
-          <div className="rounded-2xl border border-border bg-panel overflow-hidden">
-            <div className="px-5 py-4 border-b border-border flex items-center gap-2">
-              <ClipboardList className="h-4 w-4 text-violet-400" />
-              <h2 className="font-bold text-text">All Assignments</h2>
-              <span className="ml-auto text-xs text-muted">{CASELOAD.length} total</span>
-            </div>
-            <table className="w-full text-left text-sm">
-              <thead>
-                <tr className="border-b border-border bg-white/[0.02]">
-                  <th className="px-5 py-3 font-semibold text-muted">Client</th>
-                  <th className="px-5 py-3 font-semibold text-muted hidden md:table-cell">Case Manager</th>
-                  <th className="px-5 py-3 font-semibold text-muted hidden lg:table-cell">Program</th>
-                  <th className="px-5 py-3 font-semibold text-muted">Status</th>
-                  <th className="px-5 py-3 font-semibold text-muted hidden xl:table-cell">Assigned</th>
-                </tr>
-              </thead>
-              <tbody>
-                {CASELOAD.map((c, i) => (
-                  <motion.tr
-                    key={c.clientId}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: i * 0.03 }}
-                    className="border-b border-border/50 hover:bg-white/[0.02] transition-colors"
-                  >
-                    <td className="px-5 py-3 font-semibold text-text">{c.clientName}</td>
-                    <td className="px-5 py-3 text-muted hidden md:table-cell">{c.managerName}</td>
-                    <td className="px-5 py-3 text-muted hidden lg:table-cell">{c.program}</td>
-                    <td className="px-5 py-3">
-                      <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-semibold", CLIENT_STATUS_COLOR[c.clientStatus])}>
-                        {c.clientStatus}
+        <table className="w-full text-sm">
+          <thead className="bg-slate-50 border-b border-slate-100">
+            <tr>
+              <th className="text-left px-4 py-2.5 text-xs font-semibold text-slate-500 uppercase tracking-wide">Name</th>
+              <th className="text-left px-4 py-2.5 text-xs font-semibold text-slate-500 uppercase tracking-wide">Role</th>
+              <th className="text-left px-4 py-2.5 text-xs font-semibold text-slate-500 uppercase tracking-wide">Member ID</th>
+              <th className="px-4 py-2.5 text-xs font-semibold text-slate-500 uppercase tracking-wide">Schedule Entries</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.length === 0 ? (
+              <tr><td colSpan={4} className="text-center text-slate-400 py-8 text-sm">No staff members yet.</td></tr>
+            ) : (
+              filtered.map((m) => {
+                const memberSchedules = schedules.filter((s) => s.staffName === m.name);
+                return (
+                  <tr key={m._id} className="border-b border-slate-50 hover:bg-slate-50/50">
+                    <td className="px-4 py-3 font-medium text-slate-800">{m.name}</td>
+                    <td className="px-4 py-3 text-slate-600">{m.role}</td>
+                    <td className="px-4 py-3 text-slate-400 font-mono text-xs">{m.memberId}</td>
+                    <td className="px-4 py-3 text-center">
+                      <span className="text-xs bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full font-semibold">
+                        {memberSchedules.length}
                       </span>
                     </td>
-                    <td className="px-5 py-3 text-muted hidden xl:table-cell">{c.assignedDate}</td>
-                  </motion.tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </motion.div>
-      )}
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
+        </table>
+      </div>
 
-      {/* ── Work Schedule tab ─────────────────────────────────────────────── */}
-      {tab === "schedule" && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.05 }}
-          className="space-y-5"
-        >
-          {/* KPI strip */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {/* Staff Schedules */}
+      <div className="bg-white rounded-xl border border-slate-200">
+        <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-slate-700">Staff Schedules</h2>
+          <button onClick={() => setAddingSched((v) => !v)}
+            className="flex items-center gap-2 px-3 py-1.5 bg-violet-600 text-white text-sm rounded-lg hover:bg-violet-700 transition">
+            <Plus className="w-4 h-4" /> Add Entry
+          </button>
+        </div>
+
+        {addingSched && (
+          <div className="p-4 border-b border-slate-100 bg-violet-50 flex flex-wrap gap-3 items-end">
             {[
-              { label: "On-Site Today",    value: SCHEDULES.filter(s => s.mon === "Morning" || s.mon === "Afternoon").length, color: "text-violet-300" },
-              { label: "Remote Today",     value: SCHEDULES.filter(s => s.mon === "Remote").length,                           color: "text-teal-300"   },
-              { label: "Off Today",        value: SCHEDULES.filter(s => s.mon === "Off").length,                              color: "text-slate-400"  },
-              { label: "Avg Weekly Hours", value: Math.round(SCHEDULES.reduce((a, s) => a + s.weeklyHours, 0) / Math.max(1, SCHEDULES.filter(s => s.weeklyHours > 0).length)) + "h", color: "text-sky-300" },
-            ].map(kpi => (
-              <div key={kpi.label} className="rounded-xl border border-border bg-panel p-4">
-                <p className={`text-2xl font-extrabold ${kpi.color}`}>{kpi.value}</p>
-                <p className="text-xs text-muted mt-0.5">{kpi.label}</p>
+              { key: "staffEmail", label: "Staff Email", w: "w-44" },
+              { key: "staffName", label: "Staff Name", w: "w-36" },
+              { key: "location", label: "Location", w: "w-36" },
+              { key: "notes", label: "Notes", w: "w-40" },
+            ].map(({ key, label, w }) => (
+              <div key={key} className="flex flex-col gap-1">
+                <label className="text-xs text-slate-600 font-medium">{label}</label>
+                <input value={(schedForm as Record<string, string>)[key]}
+                  onChange={(e) => setSchedForm((s) => ({ ...s, [key]: e.target.value }))}
+                  title={label} placeholder={label}
+                  className={`px-3 py-1.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400 ${w}`} />
               </div>
             ))}
-          </div>
-
-          {/* Schedule grid */}
-          <div className="rounded-xl border border-border bg-panel overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="px-5 py-3 text-left text-xs font-semibold text-muted">Employee</th>
-                  {DAYS.map(d => (
-                    <th key={d.key} className="px-4 py-3 text-center text-xs font-semibold text-muted">{d.label}</th>
-                  ))}
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-muted">Hrs/Wk</th>
-                  <th className="px-5 py-3 text-left text-xs font-semibold text-muted hidden lg:table-cell">Notes</th>
-                </tr>
-              </thead>
-              <tbody>
-                {SCHEDULES.map((sched, i) => {
-                  const emp = EMPLOYEES.find(e => e.id === sched.empId);
-                  if (!emp) return null;
-                  return (
-                    <motion.tr
-                      key={sched.empId}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: i * 0.03 }}
-                      className="border-b border-border/50 last:border-0 hover:bg-white/[0.02] transition"
-                    >
-                      <td className="px-5 py-3">
-                        <div className="font-semibold text-text">{emp.name}</div>
-                        <div className="text-xs text-muted">{emp.role}</div>
-                      </td>
-                      {DAYS.map(d => (
-                        <td key={d.key} className="px-4 py-3 text-center">
-                          <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-semibold border", SHIFT_STYLE[sched[d.key]])}>
-                            {sched[d.key]}
-                          </span>
-                        </td>
-                      ))}
-                      <td className="px-4 py-3 text-center text-sm font-semibold text-text">{sched.weeklyHours}h</td>
-                      <td className="px-5 py-3 text-xs text-muted hidden lg:table-cell">{sched.notes ?? "—"}</td>
-                    </motion.tr>
-                  );
-                })}
-              </tbody>
-              <tfoot>
-                <tr className="bg-white/[0.02] border-t border-border">
-                  <td className="px-5 py-2 text-xs font-semibold text-muted">Coverage</td>
-                  {DAYS.map(d => {
-                    const count = SCHEDULES.filter(s => s[d.key] !== "Off").length;
-                    return (
-                      <td key={d.key} className="px-4 py-2 text-center">
-                        <span className="text-xs font-bold text-violet-300">{count}/{SCHEDULES.length}</span>
-                      </td>
-                    );
-                  })}
-                  <td colSpan={2} />
-                </tr>
-              </tfoot>
-            </table>
-          </div>
-
-          {/* Legend */}
-          <div className="flex flex-wrap gap-3 text-xs">
-            {(Object.entries(SHIFT_STYLE) as [Shift, string][]).map(([shift, cls]) => (
-              <span key={shift} className={cn("rounded-full px-3 py-1 border font-semibold", cls)}>{shift}</span>
+            <div className="flex flex-col gap-1">
+              <label className="text-xs text-slate-600 font-medium">Day</label>
+              <select value={schedForm.dayOfWeek} onChange={(e) => setSchedForm((s) => ({ ...s, dayOfWeek: e.target.value }))}              title="Day of week"                className="px-3 py-1.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400">
+                {DAYS.map((d) => <option key={d}>{d}</option>)}
+              </select>
+            </div>
+            {["startTime", "endTime"].map((k) => (
+              <div key={k} className="flex flex-col gap-1">
+                <label className="text-xs text-slate-600 font-medium">{k === "startTime" ? "Start" : "End"}</label>
+                <input type="time" value={(schedForm as Record<string, string>)[k]}
+                  onChange={(e) => setSchedForm((s) => ({ ...s, [k]: e.target.value }))}
+                  title={k === "startTime" ? "Start time" : "End time"}
+                  className="px-3 py-1.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400 w-28" />
+              </div>
             ))}
+            <button onClick={handleAddSchedule}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-violet-600 text-white text-sm rounded-lg hover:bg-violet-700 transition">
+              <Save className="w-4 h-4" /> Save
+            </button>
           </div>
-        </motion.div>
-      )}
+        )}
+
+        <table className="w-full text-sm">
+          <thead className="bg-slate-50 border-b border-slate-100">
+            <tr>
+              {["Staff", "Day", "Hours", "Location", "Notes", ""].map((h) => (
+                <th key={h} className="text-left px-4 py-2.5 text-xs font-semibold text-slate-500 uppercase tracking-wide">{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {schedules.length === 0 ? (
+              <tr><td colSpan={6} className="text-center text-slate-400 py-8 text-sm">No schedule entries yet.</td></tr>
+            ) : (
+              schedules.map((s) => (
+                <tr key={s._id} className="border-b border-slate-50 hover:bg-slate-50/50">
+                  <td className="px-4 py-3 font-medium text-slate-800">{s.staffName}</td>
+                  <td className="px-4 py-3 text-slate-600">{s.dayOfWeek}</td>
+                  <td className="px-4 py-3 text-slate-600">{s.startTime} – {s.endTime}</td>
+                  <td className="px-4 py-3 text-slate-500">{s.location ?? "—"}</td>
+                  <td className="px-4 py-3 text-slate-400 text-xs">{s.notes ?? "—"}</td>
+                  <td className="px-4 py-3">
+                    <button onClick={() => deleteSchedule({ id: s._id as Id<"staffSchedules"> })}
+                      title="Delete schedule entry"
+                      className="text-slate-300 hover:text-red-400 transition">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

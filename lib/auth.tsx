@@ -17,7 +17,11 @@ export type User = {
   email: string;
   name: string;
   avatar?: string;
-  role: "enterprise_admin" | "enterprise_viewer" | string;
+  username?: string;
+  firstLogin?: boolean;
+  mustChangePassword?: boolean;
+  sessionVersion?: number;
+  role: "enterprise_admin" | "enterprise_viewer" | "client" | string;
   provider?: "google" | "azure-ad" | string;
 };
 
@@ -46,6 +50,10 @@ function AuthContextProvider({ children }: { children: ReactNode }) {
         id: (session.user as Session["user"] & { id?: string }).id ?? session.user.email ?? "",
         email: session.user.email ?? "",
         name: session.user.name ?? "",
+        username: (session.user as Session["user"] & { username?: string }).username ?? undefined,
+        firstLogin: (session.user as Session["user"] & { firstLogin?: boolean }).firstLogin ?? undefined,
+        mustChangePassword: (session.user as Session["user"] & { mustChangePassword?: boolean }).mustChangePassword ?? undefined,
+        sessionVersion: (session.user as Session["user"] & { sessionVersion?: number }).sessionVersion ?? undefined,
         avatar: session.user.image ?? undefined,
         role: ((session.user as Session["user"] & { role?: string }).role as User["role"]) ?? "enterprise_viewer",
         provider: (session.user as Session["user"] & { provider?: string }).provider ?? undefined,

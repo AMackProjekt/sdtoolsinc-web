@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { GlowCard } from "@/components/ui/GlowCard";
+import { MessagingWidget } from "@/components/ui/MessagingWidget";
 import {
   Newspaper,
   Edit3,
@@ -57,6 +58,8 @@ export default function NewsDashboardPage() {
         <h1 className="text-2xl font-extrabold tracking-tight text-slate-50">News &amp; Media</h1>
         <p className="mt-1 text-sm text-slate-400">Manage articles, announcements, and media content.</p>
       </div>
+
+      <MessagingWidget className="max-w-4xl" />
 
       {/* KPIs */}
       <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">

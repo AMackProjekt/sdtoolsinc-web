@@ -4,7 +4,7 @@ import { encryptText, decryptText } from "@/lib/chat-crypto";
 export interface ThreadMessage {
   id: string;
   from: string;
-  role: "staff" | "participant" | "admin";
+  role: "staff" | "participant" | "admin" | "client";
   text: string;
   ts: string;
   encrypted: boolean;
@@ -19,7 +19,7 @@ export interface ThreadMessage {
 interface StoredMessage {
   id: string;
   from: string;
-  role: "staff" | "participant" | "admin";
+  role: "staff" | "participant" | "admin" | "client";
   textEncrypted: string;
   ts: string;
   fileAttachment?: ThreadMessage["fileAttachment"];

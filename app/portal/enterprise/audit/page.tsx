@@ -1,222 +1,78 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/lib/auth";
-import { GlowCard } from "@/components/ui/GlowCard";
-import { cn } from "@/lib/cn";
-import { ShieldCheck, AlertTriangle, Info, Download, Search, Filter } from "lucide-react";
-import { motion } from "framer-motion";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { ShieldCheck, ScrollText, Clock3, ArrowRight, RefreshCw } from "lucide-react";
+import { fetchEnterpriseControlCenter, type EnterpriseControlCenterResponse } from "@/lib/enterprise-control-client";
 
-type Severity = "info" | "warning" | "error";
+export default function EnterpriseAuditPage() {
+  const [data, setData] = useState<EnterpriseControlCenterResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState("");
 
-interface AuditLog {
-  id: string;
-  timestamp: string;
-  user: string;
-  action: string;
-  resource: string;
-  ip: string;
-  severity: Severity;
-}
-
-
-const SEV_STYLES: Record<Severity, string> = {
-  info:    "bg-sky-900/40 text-sky-400 border-sky-700/40",
-  warning: "bg-amber-900/40 text-amber-400 border-amber-700/40",
-  error:   "bg-rose-900/40 text-rose-400 border-rose-700/40",
-};
-
-const SEV_ICON: Record<Severity, React.ReactNode> = {
-  info:    <Info size={11} />,
-  warning: <AlertTriangle size={11} />,
-  error:   <AlertTriangle size={11} />,
-};
-
-export default function AuditPage() {
-  const { isAuthenticated } = useAuth();
-  const router = useRouter();
-
-  const [query, setQuery] = useState("");
-  const [severityFilter, setSeverityFilter] = useState<"all" | Severity>("all");
-  const [dateFrom, setDateFrom] = useState("");
-  const [dateTo, setDateTo] = useState("");
-  const [logs, setLogs] = useState<AuditLog[]>([]);
-  const [loadingData, setLoadingData] = useState(true);
+  async function load() {
+    setLoading(true);
+    setMessage("");
+    try {
+      setData(await fetchEnterpriseControlCenter());
+    } catch {
+      setMessage("Failed to load governance status.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
-    if (!isAuthenticated) router.replace("/portal/enterprise/auth");
-  }, [isAuthenticated, router]);
+    void load();
+  }, []);
 
-  useEffect(() => {
-    if (!isAuthenticated) return;
-    fetch("/api/enterprise/audit?limit=50")
-      .then((r) => r.json())
-      .then((data) => { if (data.logs) setLogs(data.logs as AuditLog[]); })
-      .catch(() => {})
-      .finally(() => setLoadingData(false));
-  }, [isAuthenticated]);
+  if (loading || !data) {
+    return <div className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-500">Loading audit and governance...</div>;
+  }
 
-  const filtered = useMemo(() => {
-    return logs.filter((log) => {
-      const matchQ = !query || log.user.includes(query) || log.action.includes(query.toUpperCase()) || log.resource.includes(query);
-      const matchSev = severityFilter === "all" || log.severity === severityFilter;
-      const matchFrom = !dateFrom || log.timestamp >= dateFrom;
-      const matchTo = !dateTo || log.timestamp <= dateTo + " 23:59:59";
-      return matchQ && matchSev && matchFrom && matchTo;
-    });
-  }, [query, severityFilter, dateFrom, dateTo, logs]);
-
-  if (!isAuthenticated) return null;
-
-  const handleExport = () => {
-    const header = "ID,Timestamp,User,Action,Resource,IP,Severity";
-    const rows = filtered.map((l) => `${l.id},${l.timestamp},${l.user},${l.action},${l.resource},${l.ip},${l.severity}`);
-    const csv = [header, ...rows].join("\n");
-    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
-    const a = document.createElement("a");
-    a.href = url; a.download = "audit-log.csv"; a.click();
-    URL.revokeObjectURL(url);
-  };
+  const checks = data.compliance.checks;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      className="space-y-8"
-    >
-      {/* Header */}
-      <div className="flex items-start justify-between flex-wrap gap-3">
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-extrabold tracking-tight text-white">
-            <ShieldCheck size={22} className="text-cyan-400" /> Audit & Governance
-          </h1>
-          <p className="mt-1 text-sm text-slate-400">Full activity log for compliance, security review, and incident investigation</p>
+          <h1 className="text-2xl font-bold text-slate-800">Audit and Governance</h1>
+          <p className="mt-1 text-sm text-slate-500">Governance posture, compliance controls, and audit policy oversight.</p>
         </div>
-        <button
-          onClick={handleExport}
-          className="flex items-center gap-2 rounded-xl bg-cyan-900/40 border border-cyan-700/40 px-4 py-2.5 text-sm font-semibold text-cyan-400 hover:bg-cyan-900/60 transition"
-        >
-          <Download size={15} /> Export CSV
+        <button type="button" onClick={() => void load()} className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50">
+          <RefreshCw className="h-4 w-4" /> Refresh
         </button>
       </div>
 
-      {/* Filters */}
-      <GlowCard className="bg-slate-900 border-slate-800 p-4">
-        <div className="flex flex-wrap gap-3 items-center">
-          <div className="relative flex-1 min-w-[180px]">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search user, action, resource…"
-              className="w-full rounded-xl border border-slate-700 bg-slate-950 pl-9 pr-4 py-2.5 text-sm text-white outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition"
-            />
-          </div>
-          <div className="flex items-center gap-2">
-            <Filter size={13} className="text-slate-500" />
-            <select
-              value={severityFilter}
-              onChange={(e) => setSeverityFilter(e.target.value as "all" | Severity)}
-              className="rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-white outline-none focus:border-cyan-500/50 cursor-pointer"
-            >
-              <option value="all">All levels</option>
-              <option value="info">Info</option>
-              <option value="warning">Warning</option>
-              <option value="error">Error</option>
-            </select>
-          </div>
-          <input
-            type="date"
-            value={dateFrom}
-            onChange={(e) => setDateFrom(e.target.value)}
-            className="rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-white outline-none focus:border-cyan-500/50"
-          />
-          <span className="text-slate-600 text-sm">—</span>
-          <input
-            type="date"
-            value={dateTo}
-            onChange={(e) => setDateTo(e.target.value)}
-            className="rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-white outline-none focus:border-cyan-500/50"
-          />
-          <span className="text-xs text-slate-500">{filtered.length} of {logs.length} entries</span>
-        </div>
-      </GlowCard>
+      <div className="grid gap-4 md:grid-cols-4">
+        <div className="rounded-xl border border-slate-200 bg-white p-4"><p className="text-xs uppercase tracking-wide text-slate-500">Compliance State</p><p className="mt-2 text-lg font-semibold text-slate-800">{data.compliance.overall}</p></div>
+        <div className="rounded-xl border border-slate-200 bg-white p-4"><p className="text-xs uppercase tracking-wide text-slate-500">Audit PHI Reads</p><p className="mt-2 text-lg font-semibold text-slate-800">{data.settings.audit_all_reads ? "Enabled" : "Disabled"}</p></div>
+        <div className="rounded-xl border border-slate-200 bg-white p-4"><p className="text-xs uppercase tracking-wide text-slate-500">Retention Policy</p><p className="mt-2 text-lg font-semibold text-slate-800">{data.organization.dataRetentionDays}</p></div>
+        <div className="rounded-xl border border-slate-200 bg-white p-4"><p className="text-xs uppercase tracking-wide text-slate-500">Secure Transport</p><p className="mt-2 text-lg font-semibold text-slate-800">{data.security.secure_transport ? "Enforced" : "At risk"}</p></div>
+      </div>
 
-      {/* Log table */}
-      <GlowCard className="bg-slate-900 border-slate-800 p-0 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead>
-              <tr className="border-b border-slate-800 bg-slate-950/60">
-                {["Severity", "Timestamp", "User", "Action", "Resource", "IP"].map((h) => (
-                  <th key={h} className="px-4 py-3 text-xs font-semibold uppercase tracking-widest text-slate-500">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {loadingData ? (
-                [1, 2, 3, 4].map((n) => (
-                  <tr key={n}>
-                    <td colSpan={6}>
-                      <div className="h-8 animate-pulse rounded-lg bg-slate-800/50 mx-4 my-1" />
-                    </td>
-                  </tr>
-                ))
-              ) : filtered.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-sm text-slate-500">
-                    No log entries match your filters
-                  </td>
-                </tr>
-              ) : (
-                filtered.map((log) => (
-                  <tr key={log.id} className="border-b border-slate-800/60 hover:bg-slate-800/30 transition">
-                    <td className="px-4 py-3">
-                      <span className={cn("inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold", SEV_STYLES[log.severity])}>
-                        {SEV_ICON[log.severity]} {log.severity}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-slate-400 text-xs font-mono whitespace-nowrap">{log.timestamp}</td>
-                    <td className="px-4 py-3 text-slate-300 text-xs">{log.user}</td>
-                    <td className="px-4 py-3 font-mono text-cyan-300 text-xs">{log.action}</td>
-                    <td className="px-4 py-3 text-slate-400 text-xs max-w-[180px] truncate">{log.resource}</td>
-                    <td className="px-4 py-3 text-slate-500 text-xs font-mono">{log.ip}</td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </GlowCard>
-
-      {/* Compliance status cards */}
-      <div>
-        <h2 className="mb-4 text-sm font-bold uppercase tracking-widest text-slate-400">Compliance Status</h2>
-        <div className="grid gap-4 sm:grid-cols-3">
-          {[
-            { name: "HIPAA", score: 98, status: "Compliant",     color: "emerald" },
-            { name: "SOC 2",  score: 94, status: "Compliant",     color: "emerald" },
-            { name: "GDPR",   score: 71, status: "In Progress",   color: "amber"   },
-          ].map(({ name, score, status, color }) => (
-            <GlowCard key={name} className="bg-slate-900 border-slate-800 p-5 text-center">
-              <div className={cn("mb-2 text-3xl font-extrabold", color === "emerald" ? "text-emerald-400" : "text-amber-400")}>
-                {score}%
-              </div>
-              <p className="font-bold text-white">{name}</p>
-              <span className={cn(
-                "mt-2 inline-block rounded-full border px-3 py-0.5 text-xs font-semibold",
-                color === "emerald"
-                  ? "bg-emerald-900/40 text-emerald-400 border-emerald-700/40"
-                  : "bg-amber-900/40 text-amber-400 border-amber-700/40"
-              )}>
-                {status}
-              </span>
-            </GlowCard>
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className="rounded-xl border border-slate-200 bg-white p-5 space-y-3">
+          <h2 className="inline-flex items-center gap-2 text-sm font-semibold text-slate-700"><ShieldCheck className="h-4 w-4 text-cyan-600" /> Governance Controls</h2>
+          {Object.entries(checks).map(([key, value]) => (
+            <div key={key} className="flex items-center justify-between rounded-lg border border-slate-100 p-3">
+              <span className="text-sm text-slate-700">{key}</span>
+              <span className={`text-xs font-semibold ${value ? "text-emerald-700" : "text-rose-700"}`}>{value ? "Pass" : "Attention"}</span>
+            </div>
           ))}
         </div>
+
+        <div className="rounded-xl border border-slate-200 bg-white p-5 space-y-4">
+          <h2 className="inline-flex items-center gap-2 text-sm font-semibold text-slate-700"><ScrollText className="h-4 w-4 text-cyan-600" /> Audit Trail Access</h2>
+          <p className="text-sm text-slate-600">The detailed event stream remains available in the managed Admin audit workspace. This enterprise page governs posture and policy while linking directly into the underlying operational trail.</p>
+          <Link href="/portal/admin/audit" className="inline-flex items-center gap-2 rounded-lg bg-cyan-600 px-3 py-2 text-sm text-white hover:bg-cyan-700">
+            Open Admin Audit Stream <ArrowRight className="h-4 w-4" />
+          </Link>
+          <div className="rounded-lg bg-slate-50 p-3 text-xs text-slate-600 inline-flex items-center gap-2"><Clock3 className="h-4 w-4 text-cyan-600" /> Governance policy is live now; detailed event inspection remains available through the operational audit console.</div>
+        </div>
       </div>
-    </motion.div>
+
+      <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs text-slate-600">{message || "Audit and governance workspace is online."}</div>
+    </div>
   );
 }

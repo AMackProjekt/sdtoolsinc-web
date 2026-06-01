@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { motion } from "framer-motion";
 import { GlowCard } from "@/components/ui/GlowCard";
+import { MessagingWidget } from "@/components/ui/MessagingWidget";
 import { AgentMonitor } from "@/components/ui/AgentMonitor";
 import {
   Users,
@@ -178,6 +179,8 @@ export default function AdminDashboardPage() {
         <div className="flex items-center justify-center py-24 text-muted">Loading dashboard…</div>
       ) : (
         <>
+          <MessagingWidget className="max-w-4xl" />
+
           {/* KPI Grid */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}

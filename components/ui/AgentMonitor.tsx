@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
+import { shouldShowAgents } from "@/lib/agents/visibility";
 import { motion, AnimatePresence } from "framer-motion";
 import { Bot, ChevronDown, ChevronUp, Power, RefreshCw } from "lucide-react";
 import { GlowCard } from "@/components/ui/GlowCard";
@@ -130,6 +132,9 @@ const STATUS_CONFIG = {
 };
 
 export function AgentMonitor() {
+  const pathname = usePathname() ?? "";
+  if (!shouldShowAgents(pathname)) return null;
+
   const [agents, setAgents] = useState<Agent[]>(INITIAL_AGENTS);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);

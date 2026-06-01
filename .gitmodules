@@ -1,0 +1,3 @@
+[submodule "projekt-enterprise"]
+	path = projekt-enterprise
+	url = https://github.com/AMackProjekt/projekt-enterprise.git

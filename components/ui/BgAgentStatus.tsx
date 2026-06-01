@@ -10,6 +10,7 @@
 
 import { useState } from "react";
 import { usePathname } from "next/navigation";
+import { shouldShowAgents } from "@/lib/agents/visibility";
 import { motion, AnimatePresence } from "framer-motion";
 import { Shield, ChevronDown, ChevronUp, Activity, Lock, RefreshCw, AlertTriangle } from "lucide-react";
 import { useBgAgents } from "@/lib/agents/use-bg-agents";
@@ -50,12 +51,9 @@ const THREAT_COLORS: Record<string, string> = {
 };
 
 export function BgAgentStatus() {
-  const pathname = usePathname();
-  const isProtectedRoute =
-    pathname.startsWith("/portal") ||
-    pathname.startsWith("/demo") ||
-    pathname.startsWith("/dashboard");
+  const pathname = usePathname() ?? "";
   const { state } = useBgAgents();
+  const isProtectedRoute = shouldShowAgents(pathname);
   const [open, setOpen] = useState(false);
   const color = systemColor(state);
   const bg = systemBg(state);

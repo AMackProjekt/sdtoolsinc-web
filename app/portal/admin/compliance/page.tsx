@@ -1,194 +1,152 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { ShieldCheck, ShieldAlert, ShieldX, Search } from "lucide-react";
-import { cn } from "@/lib/cn";
+import { useEffect, useState } from "react";
+import { ShieldCheck, ShieldAlert, ShieldOff, RefreshCw, CheckCircle2, XCircle, AlertCircle } from "lucide-react";
+import type { ComplianceStatus } from "@/app/api/admin/compliance/route";
 
-type ComplianceStatus = "Compliant" | "Due Soon" | "Overdue";
-
-interface ComplianceRecord {
-  id: string;
-  name: string;
-  role: string;
-  certification: string;
-  completedDate: string | null;
-  dueDate: string;
-  status: ComplianceStatus;
+function CheckRow({ label, ok, detail }: { label: string; ok: boolean; detail?: string }) {
+  return (
+    <div className="flex items-start gap-3 py-3 border-b border-slate-50 last:border-0">
+      {ok ? (
+        <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
+      ) : (
+        <XCircle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
+      )}
+      <div>
+        <p className="text-sm font-medium text-slate-700">{label}</p>
+        {detail && <p className="text-xs text-slate-400 mt-0.5">{detail}</p>}
+      </div>
+      <span className={`ml-auto text-xs font-semibold px-2 py-0.5 rounded-full ${ok ? "bg-emerald-100 text-emerald-700" : "bg-rose-100 text-rose-600"}`}>
+        {ok ? "Pass" : "Fail"}
+      </span>
+    </div>
+  );
 }
 
-const RECORDS: ComplianceRecord[] = [
-  { id: "1",  name: "Aaliyah Torres",  role: "Case Manager II",       certification: "Mandated Reporter Training",    completedDate: "2025-11-10", dueDate: "2026-11-10", status: "Compliant" },
-  { id: "2",  name: "Aaliyah Torres",  role: "Case Manager II",       certification: "HIPAA Refresher",               completedDate: "2026-01-05", dueDate: "2027-01-05", status: "Compliant" },
-  { id: "3",  name: "Marcus Chen",     role: "Systems Administrator", certification: "Cybersecurity Awareness",        completedDate: "2025-09-20", dueDate: "2026-05-20", status: "Due Soon" },
-  { id: "4",  name: "Destiny Brown",   role: "Program Coordinator",   certification: "First Aid / CPR",               completedDate: "2024-04-01", dueDate: "2026-04-01", status: "Overdue" },
-  { id: "5",  name: "Jordan Williams", role: "Outreach Specialist",   certification: "Trauma-Informed Care",          completedDate: "2026-02-14", dueDate: "2027-02-14", status: "Compliant" },
-  { id: "6",  name: "Elijah Roberts",  role: "Executive Assistant",   certification: "Data Privacy & Compliance",     completedDate: null,         dueDate: "2026-04-15", status: "Overdue" },
-  { id: "7",  name: "Simone Hayward",  role: "Case Manager I",        certification: "Mandated Reporter Training",    completedDate: "2025-12-03", dueDate: "2026-12-03", status: "Compliant" },
-  { id: "8",  name: "Derek Okafor",    role: "IT Support Specialist", certification: "Cybersecurity Awareness",        completedDate: "2026-03-01", dueDate: "2027-03-01", status: "Compliant" },
-  { id: "9",  name: "Naomi Luckett",   role: "Outreach Lead",         certification: "First Aid / CPR",               completedDate: "2026-01-18", dueDate: "2028-01-18", status: "Compliant" },
-  { id: "10", name: "Tyrese Fountain", role: "Program Director",      certification: "HIPAA Refresher",               completedDate: "2025-08-22", dueDate: "2026-05-01", status: "Due Soon" },
-];
+export default function AdminCompliancePage() {
+  const [status, setStatus] = useState<ComplianceStatus | null>(null);
+  const [loading, setLoading] = useState(true);
 
-const STATUS_STYLE: Record<ComplianceStatus, { badge: string; icon: typeof ShieldCheck }> = {
-  "Compliant": { badge: "bg-green-500/20 text-green-300",  icon: ShieldCheck },
-  "Due Soon":  { badge: "bg-yellow-500/20 text-yellow-300", icon: ShieldAlert },
-  "Overdue":   { badge: "bg-red-500/20 text-red-300",       icon: ShieldX },
-};
+  async function load() {
+    setLoading(true);
+    const r = await fetch("/api/admin/compliance");
+    if (r.ok) setStatus(await r.json());
+    setLoading(false);
+  }
 
-const KPI_CARDS = [
-  { label: "Total Requirements", value: RECORDS.length,                                         color: "text-text",         bg: "bg-white/[0.04]",       border: "border-border" },
-  { label: "Compliant",          value: RECORDS.filter(r => r.status === "Compliant").length,   color: "text-green-400",    bg: "bg-green-500/10",       border: "border-green-500/20" },
-  { label: "Due Soon",           value: RECORDS.filter(r => r.status === "Due Soon").length,    color: "text-yellow-400",   bg: "bg-yellow-500/10",      border: "border-yellow-500/20" },
-  { label: "Overdue",            value: RECORDS.filter(r => r.status === "Overdue").length,     color: "text-red-400",      bg: "bg-red-500/10",         border: "border-red-500/20" },
-];
+  useEffect(() => { load(); }, []);
 
-export default function CompliancePage() {
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"All" | ComplianceStatus>("All");
-
-  const filtered = RECORDS.filter((r) => {
-    const matchSearch =
-      r.name.toLowerCase().includes(search.toLowerCase()) ||
-      r.certification.toLowerCase().includes(search.toLowerCase()) ||
-      r.role.toLowerCase().includes(search.toLowerCase());
-    const matchStatus = statusFilter === "All" || r.status === statusFilter;
-    return matchSearch && matchStatus;
-  });
+  const overall = status?.overall ?? "unknown";
 
   return (
-    <div className="space-y-6 p-6">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl border border-border bg-gradient-to-r from-emerald-900/50 to-slate-900/40 p-6"
-      >
-        <div className="flex items-center gap-3">
-          <div className="rounded-xl bg-emerald-600/20 p-3 border border-emerald-500/30">
-            <ShieldCheck className="h-6 w-6 text-emerald-300" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-extrabold tracking-tight text-text">Compliance Tracker</h1>
-            <p className="text-sm text-muted mt-0.5">Staff certification & training requirements</p>
-          </div>
-          <div className="ml-auto flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-3 py-1 border border-emerald-500/20">
-            <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
-            <span className="text-xs font-semibold text-emerald-300">
-              {Math.round((RECORDS.filter(r => r.status === "Compliant").length / RECORDS.length) * 100)}% Compliant
-            </span>
-          </div>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+            <ShieldCheck className="w-5 h-5 text-violet-500" /> Compliance Center
+          </h1>
+          <p className="text-slate-500 text-sm mt-0.5">HIPAA, BAA, PHI workflow, and encryption posture</p>
         </div>
-      </motion.div>
-
-      {/* KPI Cards */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        {KPI_CARDS.map((k, i) => (
-          <motion.div
-            key={k.label}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.06 }}
-            className={cn("rounded-xl border p-4", k.bg, k.border)}
-          >
-            <p className="text-xs font-semibold uppercase tracking-widest text-muted">{k.label}</p>
-            <p className={cn("mt-2 text-3xl font-extrabold tracking-tight", k.color)}>{k.value}</p>
-          </motion.div>
-        ))}
+        <button onClick={load} disabled={loading}
+          className="flex items-center gap-2 px-3 py-1.5 text-sm border border-slate-200 rounded-lg hover:bg-slate-50 transition">
+          <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} /> Refresh
+        </button>
       </div>
 
-      {/* Filters */}
-      <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.12 }}
-        className="flex flex-wrap gap-3"
-      >
-        <div className="relative flex-1 min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted" />
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search name, certification…"
-            className="w-full rounded-lg border border-border bg-panel pl-9 pr-4 py-2.5 text-sm text-text placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-emerald-500/40"
+      {/* Overall badge */}
+      <div className={`rounded-xl p-5 flex items-center gap-4 border ${
+        overall === "approved" ? "bg-emerald-50 border-emerald-200" :
+        overall === "pending" ? "bg-amber-50 border-amber-200" :
+        "bg-rose-50 border-rose-200"
+      }`}>
+        {overall === "approved" ? <ShieldCheck className="w-8 h-8 text-emerald-500" /> :
+         overall === "pending" ? <ShieldAlert className="w-8 h-8 text-amber-500" /> :
+         <ShieldOff className="w-8 h-8 text-rose-500" />}
+        <div>
+          <p className={`text-lg font-bold ${
+            overall === "approved" ? "text-emerald-700" :
+            overall === "pending" ? "text-amber-700" : "text-rose-700"
+          }`}>
+            Overall Status: {overall.charAt(0).toUpperCase() + overall.slice(1)}
+          </p>
+          <p className="text-sm text-slate-500 mt-0.5">
+            {overall === "approved"
+              ? "All compliance checks pass. System is operating within HIPAA-safe parameters."
+              : overall === "pending"
+              ? "Some checks are pending or require attention. Review items below."
+              : "Critical compliance issues detected. Immediate action required."}
+          </p>
+        </div>
+      </div>
+
+      {/* Checks */}
+      {status ? (
+        <div className="bg-white rounded-xl border border-slate-200 p-5">
+          <h2 className="text-sm font-semibold text-slate-700 mb-2">HIPAA Compliance Checks</h2>
+          <CheckRow
+            label="PHI Workflow Approved"
+            ok={status.checks.phi_workflow_approved}
+            detail="Protected Health Information access is governed by approved workflows."
+          />
+          <CheckRow
+            label="Business Associate Agreement (BAA)"
+            ok={status.checks.baa_confirmed}
+            detail="A signed BAA with all relevant vendors must be on file."
+          />
+          <CheckRow
+            label="Encryption Key Configured"
+            ok={status.checks.encryption_key_configured}
+            detail="AES-256 encryption keys are present and active for data at rest."
+          />
+          <CheckRow
+            label="Auth Secret Configured"
+            ok={status.checks.auth_secret_configured}
+            detail="NEXTAUTH_SECRET / AUTH_SECRET must be set for session security."
+          />
+          <CheckRow
+            label="Google OAuth Configured"
+            ok={status.checks.google_oauth_configured}
+            detail="Set AUTH_GOOGLE_ID/AUTH_GOOGLE_SECRET or GOOGLE_CLIENT_ID/GOOGLE_CLIENT_SECRET."
+          />
+          <CheckRow
+            label="KV Store Configured"
+            ok={status.checks.kv_store_configured}
+            detail="Vercel KV (Redis) is required for secure data caching."
           />
         </div>
-        <div className="flex gap-2">
-          {(["All", "Compliant", "Due Soon", "Overdue"] as const).map((s) => (
-            <button
-              key={s}
-              onClick={() => setStatusFilter(s)}
-              className={cn(
-                "rounded-lg border px-3 py-2 text-xs font-semibold transition",
-                statusFilter === s
-                  ? "bg-emerald-600/20 border-emerald-500/40 text-emerald-300"
-                  : "border-border bg-panel text-muted hover:text-text"
-              )}
-            >
-              {s}
-            </button>
-          ))}
+      ) : loading ? (
+        <div className="bg-white rounded-xl border border-slate-200 p-10 text-center text-slate-400 text-sm">
+          Loading compliance status…
         </div>
-      </motion.div>
+      ) : (
+        <div className="bg-white rounded-xl border border-slate-200 p-10 text-center text-slate-400 text-sm">
+          <AlertCircle className="w-8 h-8 mx-auto mb-2 opacity-30" />
+          Could not load compliance status.
+        </div>
+      )}
 
-      {/* Table */}
-      <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.18 }}
-        className="rounded-2xl border border-border bg-panel overflow-hidden"
-      >
-        <table className="w-full text-left text-sm">
-          <thead>
-            <tr className="border-b border-border bg-white/[0.02]">
-              <th className="px-5 py-3.5 font-semibold text-muted">Staff Member</th>
-              <th className="px-5 py-3.5 font-semibold text-muted hidden md:table-cell">Certification</th>
-              <th className="px-5 py-3.5 font-semibold text-muted hidden lg:table-cell">Completed</th>
-              <th className="px-5 py-3.5 font-semibold text-muted hidden lg:table-cell">Due Date</th>
-              <th className="px-5 py-3.5 font-semibold text-muted">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="px-5 py-10 text-center text-muted text-sm">No records match your filters.</td>
-              </tr>
-            ) : (
-              filtered.map((rec, i) => {
-                const { badge, icon: Icon } = STATUS_STYLE[rec.status];
-                return (
-                  <motion.tr
-                    key={rec.id}
-                    initial={{ opacity: 0, x: -8 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.03 }}
-                    className="border-b border-border/50 hover:bg-white/[0.02] transition-colors"
-                  >
-                    <td className="px-5 py-4">
-                      <p className="font-semibold text-text">{rec.name}</p>
-                      <p className="text-xs text-muted">{rec.role}</p>
-                    </td>
-                    <td className="px-5 py-4 text-muted hidden md:table-cell">{rec.certification}</td>
-                    <td className="px-5 py-4 text-muted hidden lg:table-cell">
-                      {rec.completedDate ?? <span className="text-red-400/80">—</span>}
-                    </td>
-                    <td className="px-5 py-4 text-muted hidden lg:table-cell">{rec.dueDate}</td>
-                    <td className="px-5 py-4">
-                      <span className={cn("inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold", badge)}>
-                        <Icon className="h-3.5 w-3.5" />
-                        {rec.status}
-                      </span>
-                    </td>
-                  </motion.tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
-        <div className="px-5 py-3 border-t border-border/50 text-xs text-muted">
-          Showing {filtered.length} of {RECORDS.length} records
-        </div>
-      </motion.div>
+      {/* HIPAA reference */}
+      <div className="bg-slate-50 border border-slate-200 rounded-xl p-5">
+        <h2 className="text-sm font-semibold text-slate-700 mb-3">Regulatory References</h2>
+        <ul className="space-y-2 text-sm text-slate-600">
+          <li className="flex items-start gap-2">
+            <CheckCircle2 className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+            <span><strong>45 CFR §164.312</strong> — Technical safeguards: access controls, audit controls, integrity, transmission security.</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <CheckCircle2 className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+            <span><strong>45 CFR §164.308</strong> — Administrative safeguards: security management, training, contingency planning.</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <CheckCircle2 className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+            <span><strong>45 CFR §164.502</strong> — Uses and disclosures of PHI — minimum necessary standard.</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <CheckCircle2 className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+            <span><strong>BAA Requirements</strong> — Business Associates must contractually agree to protect PHI per §164.504(e).</span>
+          </li>
+        </ul>
+      </div>
     </div>
   );
 }

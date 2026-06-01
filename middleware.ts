@@ -10,9 +10,13 @@ const PORTAL_AUTH_ROUTES: Record<string, string> = {
   "/portal/hr": "/portal/hr/auth",
   "/portal/news": "/portal/news/auth",
   "/portal/enterprise": "/portal/enterprise/auth",
+  "/portal/client": "/portal/client/auth",
 };
 const ENTERPRISE_PREFIX = "/portal/enterprise";
 const ENTERPRISE_AUTH_PAGE = "/portal/enterprise/auth";
+const CLIENT_PREFIX = "/portal/client";
+const CLIENT_AUTH_PAGE = "/portal/client/auth";
+const CLIENT_CHANGE_PASSWORD_PAGE = "/portal/client/change-password";
 
 const ENTERPRISE_DOMAINS = (process.env.ENTERPRISE_ALLOWED_DOMAINS ?? "sdtoolsinc.org,sdtoolsinc.com")
   .split(",")
@@ -54,6 +58,43 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  if (pathname.startsWith(CLIENT_PREFIX)) {
+    const isClient = token.role === "client";
+    const needsPasswordChange = token.firstLogin === true || token.mustChangePassword === true;
+    if (!isClient) {
+      const url = request.nextUrl.clone();
+      url.pathname = CLIENT_AUTH_PAGE;
+      url.searchParams.set("error", "Unauthorized");
+      return NextResponse.redirect(url);
+    }
+
+    if (needsPasswordChange && pathname !== CLIENT_CHANGE_PASSWORD_PAGE && pathname !== CLIENT_AUTH_PAGE) {
+      const url = request.nextUrl.clone();
+      url.pathname = CLIENT_CHANGE_PASSWORD_PAGE;
+      return NextResponse.redirect(url);
+    }
+  }
+
+  if (pathname.startsWith("/api/client")) {
+    if (!token) {
+      return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
+    }
+    const isClient = token.role === "client";
+    const needsPasswordChange = token.firstLogin === true || token.mustChangePassword === true;
+    if (!isClient) {
+      return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
+    }
+    if (needsPasswordChange && pathname !== "/api/client/change-password") {
+      return NextResponse.json(
+        {
+          error: "INITIAL_PASSWORD_CHANGE_REQUIRED",
+          message: "Access denied. You must update your temporary credentials to access the portal.",
+        },
+        { status: 403 }
+      );
+    }
+  }
+
   // Enterprise routes also require an allowed organization domain (skip in development/localhost).
   if (pathname.startsWith(ENTERPRISE_PREFIX)) {
     const isDevelopment = request.nextUrl.hostname === "localhost" || request.nextUrl.hostname === "127.0.0.1";
@@ -78,6 +119,8 @@ export const config = {
     "/portal/hr/:path*",
     "/portal/news/:path*",
     "/portal/enterprise/:path*",
+    "/portal/client/:path*",
+    "/api/client/:path*",
   ],
   // /portal and /demo routes are intentionally excluded from middleware protection.
 };

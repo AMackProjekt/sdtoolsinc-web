@@ -28,7 +28,7 @@ interface Thread {
 interface ThreadMessage {
   id: string;
   from: string;
-  role: "staff" | "participant" | "admin";
+  role: "staff" | "participant" | "admin" | "client";
   text: string;
   ts: string;
   encrypted: boolean;
@@ -105,6 +105,17 @@ const ROLE_THEME = {
     footer: "border-teal-900/30",
     selected: "bg-teal-500/15",
   },
+  client: {
+    fab: "bg-teal-600 hover:bg-teal-500",
+    header: "bg-teal-900/30 border-teal-900/40",
+    panel: "border-teal-900/40",
+    dot: "text-teal-500",
+    input: "focus:border-teal-700/50",
+    send: "bg-teal-600 hover:bg-teal-500",
+    icon: "text-teal-400",
+    footer: "border-teal-900/30",
+    selected: "bg-teal-500/15",
+  },
 } as const;
 
 export function InternalChat({
@@ -112,7 +123,7 @@ export function InternalChat({
   role,
 }: {
   currentUser: string;
-  role: "staff" | "participant" | "admin";
+  role: "staff" | "participant" | "admin" | "client";
 }) {
   const [open, setOpen] = useState(false);
   const [minimized, setMinimized] = useState(false);
@@ -155,7 +166,9 @@ export function InternalChat({
   }
 
   function contactLabel(thread: Thread) {
-    return role === "participant" ? thread.staffName : thread.participantName;
+    return role === "participant" || role === "client"
+      ? thread.staffName
+      : thread.participantName;
   }
 
   function isThreadUnread(thread: Thread): boolean {
@@ -194,7 +207,7 @@ export function InternalChat({
 
   const loadThreads = useCallback(async () => {
     const url =
-      role === "participant"
+      role === "participant" || role === "client"
         ? `/api/portal/chat/threads?participantName=${encodeURIComponent(currentUser)}`
         : "/api/portal/chat/threads";
 

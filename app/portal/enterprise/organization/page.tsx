@@ -1,309 +1,148 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/lib/auth";
-import { GlowCard } from "@/components/ui/GlowCard";
-import { cn } from "@/lib/cn";
-import { Building2, Save, Check } from "lucide-react";
-import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { Building2, Palette, Save, RefreshCw, ShieldCheck, LayoutDashboard } from "lucide-react";
+import type { EnterpriseSettings } from "@/lib/enterprise-settings";
+import {
+  fetchEnterpriseControlCenter,
+  saveEnterpriseSettings,
+  type EnterpriseControlCenterResponse,
+} from "@/lib/enterprise-control-client";
 
-const TIMEZONES = [
-  "America/New_York",
-  "America/Chicago",
-  "America/Denver",
-  "America/Los_Angeles",
-  "America/Anchorage",
-  "Pacific/Honolulu",
-];
+export default function EnterpriseOrganizationPage() {
+  const [data, setData] = useState<EnterpriseControlCenterResponse | null>(null);
+  const [settings, setSettings] = useState<EnterpriseSettings | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState("");
 
-const RETENTION_OPTIONS = [
-  { label: "30 days",  value: "30" },
-  { label: "60 days",  value: "60" },
-  { label: "90 days",  value: "90" },
-  { label: "1 year",   value: "365" },
-  { label: "Indefinite", value: "0" },
-];
-
-type Theme = "dark-slate" | "light" | "high-contrast";
-
-interface OrgSettings {
-  orgName: string;
-  subdomain: string;
-  contactEmail: string;
-  address: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  timezone: string;
-  dataRetention: string;
-  theme: Theme;
-  mfaRequired: boolean;
-  sessionTimeout: string;
-  publicDirectory: boolean;
-}
-
-const DEFAULT: OrgSettings = {
-  orgName: "",
-  subdomain: "",
-  contactEmail: "",
-  address: "",
-  city: "",
-  state: "",
-  zipCode: "",
-  timezone: "America/Los_Angeles",
-  dataRetention: "90",
-  theme: "dark-slate",
-  mfaRequired: true,
-  sessionTimeout: "60",
-  publicDirectory: false,
-};
-
-export default function OrganizationPage() {
-  const { isAuthenticated } = useAuth();
-  const router = useRouter();
-
-  const [settings, setSettings] = useState<OrgSettings>(DEFAULT);
-  const [saved, setSaved] = useState(false);
-  const [dirty, setDirty] = useState(false);
+  async function load() {
+    setLoading(true);
+    setMessage("");
+    try {
+      const payload = await fetchEnterpriseControlCenter();
+      setData(payload);
+      setSettings(payload.settings);
+    } catch {
+      setMessage("Failed to load organization and tenant settings.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
-    if (!isAuthenticated) { router.replace("/portal/enterprise/auth"); return; }
-    fetch("/api/enterprise/org")
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.settings) {
-          const s = data.settings;
-          setSettings((prev) => ({
-            ...prev,
-            ...(s.org_name !== undefined && { orgName: s.org_name }),
-            ...(s.domain !== undefined && { subdomain: s.domain }),
-            ...(s.mfa_required !== undefined && { mfaRequired: s.mfa_required }),
-            ...(s.session_timeout_minutes !== undefined && {
-              sessionTimeout: String(s.session_timeout_minutes),
-            }),
-          }));
-        }
-      })
-      .catch(() => {});
-  }, [isAuthenticated, router]);
+    void load();
+  }, []);
 
-  if (!isAuthenticated) return null;
+  async function save() {
+    if (!settings) return;
+    setSaving(true);
+    try {
+      await saveEnterpriseSettings(settings);
+      setMessage("Organization policy saved.");
+      await load();
+    } catch {
+      setMessage("Failed to save organization policy.");
+    } finally {
+      setSaving(false);
+    }
+  }
 
-  const update = <K extends keyof OrgSettings>(key: K, value: OrgSettings[K]) => {
-    setSettings((prev) => ({ ...prev, [key]: value }));
-    setDirty(true);
-    setSaved(false);
-  };
+  if (loading || !data || !settings) {
+    return <div className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-500">Loading organization and tenant settings...</div>;
+  }
 
-  const handleSave = (e: React.FormEvent) => {
-    e.preventDefault();
-    fetch("/api/enterprise/org", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        org_name: settings.orgName,
-        domain: settings.subdomain,
-        mfa_required: settings.mfaRequired,
-        session_timeout_minutes: parseInt(settings.sessionTimeout, 10) || 60,
-      }),
-    }).catch(() => {});
-    setSaved(true);
-    setDirty(false);
-    setTimeout(() => setSaved(false), 3000);
-  };
+  const organization = data.organization;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      className="space-y-8"
-    >
-      {/* Header */}
-      <div className="flex items-start justify-between">
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-extrabold tracking-tight text-white">
-            <Building2 size={22} className="text-cyan-400" /> Organization Settings
-          </h1>
-          <p className="mt-1 text-sm text-slate-400">
-            Configure your tenant identity, branding, security, and data policies
-          </p>
+          <h1 className="text-2xl font-bold text-slate-800">Organization and Tenant</h1>
+          <p className="mt-1 text-sm text-slate-500">Tenant identity, branding defaults, retention policy, and portal behavior.</p>
         </div>
-        {dirty && (
-          <span className="rounded-full bg-amber-900/40 border border-amber-700/40 px-3 py-1 text-xs font-semibold text-amber-300">
-            Unsaved changes
-          </span>
-        )}
-      </div>
-
-      <form onSubmit={handleSave} className="space-y-6">
-        {/* Organization Identity */}
-        <GlowCard className="bg-slate-900 border-slate-800 p-6 space-y-5">
-          <h2 className="text-sm font-semibold uppercase tracking-widest text-slate-400">Organization Identity</h2>
-
-          <div className="grid gap-5 sm:grid-cols-2">
-            <div>
-              <label className="mb-1.5 block text-xs font-semibold text-slate-400">Organization Name</label>
-              <input
-                value={settings.orgName}
-                onChange={(e) => update("orgName", e.target.value)}
-                className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-sm text-white outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition"
-              />
-            </div>
-            <div>
-              <label className="mb-1.5 block text-xs font-semibold text-slate-400">Subdomain</label>
-              <div className="flex items-center rounded-xl border border-slate-700 bg-slate-950 overflow-hidden">
-                <span className="px-3 text-sm text-slate-600 border-r border-slate-700 py-2.5">sdtools.org/</span>
-                <input
-                  value={settings.subdomain}
-                  onChange={(e) => update("subdomain", e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
-                  className="flex-1 bg-transparent px-3 py-2.5 text-sm text-white outline-none"
-                />
-              </div>
-            </div>
-            <div>
-              <label className="mb-1.5 block text-xs font-semibold text-slate-400">Contact Email</label>
-              <input
-                type="email"
-                value={settings.contactEmail}
-                onChange={(e) => update("contactEmail", e.target.value)}
-                className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-sm text-white outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition"
-              />
-            </div>
-            <div>
-              <label className="mb-1.5 block text-xs font-semibold text-slate-400">Timezone</label>
-              <select
-                value={settings.timezone}
-                onChange={(e) => update("timezone", e.target.value)}
-                className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-sm text-white outline-none focus:border-cyan-500/50 cursor-pointer"
-              >
-                {TIMEZONES.map((tz) => <option key={tz}>{tz}</option>)}
-              </select>
-            </div>
-          </div>
-
-          <div>
-            <label className="mb-1.5 block text-xs font-semibold text-slate-400">Street Address</label>
-            <input
-              value={settings.address}
-              onChange={(e) => update("address", e.target.value)}
-              className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-sm text-white outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition"
-            />
-          </div>
-          <div className="grid grid-cols-3 gap-4">
-            {(["city", "state", "zipCode"] as const).map((field) => (
-              <div key={field}>
-                <label className="mb-1.5 block text-xs font-semibold capitalize text-slate-400">
-                  {field === "zipCode" ? "ZIP Code" : field.charAt(0).toUpperCase() + field.slice(1)}
-                </label>
-                <input
-                  value={settings[field]}
-                  onChange={(e) => update(field, e.target.value)}
-                  className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-sm text-white outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition"
-                />
-              </div>
-            ))}
-          </div>
-        </GlowCard>
-
-        {/* Theme */}
-        <GlowCard className="bg-slate-900 border-slate-800 p-6 space-y-4">
-          <h2 className="text-sm font-semibold uppercase tracking-widest text-slate-400">Portal Theme</h2>
-          <div className="flex gap-3 flex-wrap">
-            {([
-              { value: "dark-slate",     label: "Dark Slate",     bg: "bg-slate-950", border: "border-slate-700" },
-              { value: "light",          label: "Light",          bg: "bg-white",     border: "border-slate-300" },
-              { value: "high-contrast",  label: "High Contrast",  bg: "bg-black",     border: "border-white" },
-            ] as const).map(({ value, label, bg, border }) => (
-              <button
-                key={value}
-                type="button"
-                onClick={() => update("theme", value)}
-                className={cn(
-                  "flex flex-col items-center gap-2 rounded-xl border-2 px-5 py-3 text-xs font-semibold transition",
-                  settings.theme === value
-                    ? "border-cyan-500 text-cyan-300"
-                    : "border-slate-700 text-slate-400 hover:border-slate-600"
-                )}
-              >
-                <div className={cn("h-8 w-12 rounded-lg border", bg, border)} />
-                {label}
-              </button>
-            ))}
-          </div>
-        </GlowCard>
-
-        {/* Security & Data */}
-        <GlowCard className="bg-slate-900 border-slate-800 p-6 space-y-5">
-          <h2 className="text-sm font-semibold uppercase tracking-widest text-slate-400">Security & Data Policies</h2>
-
-          <div className="grid gap-5 sm:grid-cols-2">
-            <div>
-              <label className="mb-1.5 block text-xs font-semibold text-slate-400">Data Retention Period</label>
-              <select
-                value={settings.dataRetention}
-                onChange={(e) => update("dataRetention", e.target.value)}
-                className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-sm text-white outline-none focus:border-cyan-500/50 cursor-pointer"
-              >
-                {RETENTION_OPTIONS.map(({ label, value }) => <option key={value} value={value}>{label}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="mb-1.5 block text-xs font-semibold text-slate-400">Session Timeout (minutes)</label>
-              <input
-                type="number"
-                min={15}
-                max={480}
-                value={settings.sessionTimeout}
-                onChange={(e) => update("sessionTimeout", e.target.value)}
-                className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-sm text-white outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition"
-              />
-            </div>
-          </div>
-
-          {/* Toggles */}
-          {([
-            { key: "mfaRequired",      label: "Require MFA for all portal users",         desc: "Users must set up multi-factor authentication" },
-            { key: "publicDirectory",  label: "Enable public participant directory",        desc: "Allow participants to search for peers by name" },
-          ] as const).map(({ key, label, desc }) => (
-            <div key={key} className="flex items-start justify-between gap-4 rounded-xl border border-slate-800 bg-slate-950/50 px-4 py-3">
-              <div>
-                <p className="text-sm font-semibold text-slate-200">{label}</p>
-                <p className="text-xs text-slate-500">{desc}</p>
-              </div>
-              <button
-                type="button"
-                onClick={() => update(key, !settings[key])}
-                className={cn(
-                  "relative h-6 w-11 shrink-0 rounded-full transition",
-                  settings[key] ? "bg-cyan-600" : "bg-slate-700"
-                )}
-              >
-                <span className={cn(
-                  "absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all",
-                  settings[key] ? "left-5" : "left-0.5"
-                )} />
-              </button>
-            </div>
-          ))}
-        </GlowCard>
-
-        {/* Save */}
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            className={cn(
-              "flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold transition",
-              saved
-                ? "bg-emerald-700 text-white"
-                : "bg-cyan-600 text-white hover:bg-cyan-500"
-            )}
-          >
-            {saved ? <><Check size={16} /> Saved!</> : <><Save size={16} /> Save Settings</>}
+        <div className="flex items-center gap-2">
+          <button type="button" onClick={() => void load()} className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50">
+            <RefreshCw className="h-4 w-4" /> Refresh
+          </button>
+          <button type="button" onClick={() => void save()} disabled={saving} className="inline-flex items-center gap-2 rounded-lg bg-cyan-600 px-3 py-2 text-sm text-white hover:bg-cyan-700 disabled:opacity-60">
+            <Save className="h-4 w-4" /> {saving ? "Saving..." : "Save"}
           </button>
         </div>
-      </form>
-    </motion.div>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-3">
+        <div className="rounded-xl border border-slate-200 bg-white p-4">
+          <p className="text-xs uppercase tracking-wide text-slate-500">Organization</p>
+          <p className="mt-2 text-lg font-semibold text-slate-800">{organization.name}</p>
+          <p className="text-sm text-slate-500">{organization.shortName} · {organization.programType}</p>
+        </div>
+        <div className="rounded-xl border border-slate-200 bg-white p-4">
+          <p className="text-xs uppercase tracking-wide text-slate-500">Platform Brand</p>
+          <p className="mt-2 text-lg font-semibold text-slate-800">{organization.productName}</p>
+          <p className="text-sm text-slate-500">Domain: {organization.domain}</p>
+        </div>
+        <div className="rounded-xl border border-slate-200 bg-white p-4">
+          <p className="text-xs uppercase tracking-wide text-slate-500">Support Email</p>
+          <p className="mt-2 text-lg font-semibold text-slate-800">{organization.supportEmail}</p>
+          <p className="text-sm text-slate-500">From: {organization.fromEmail}</p>
+        </div>
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className="rounded-xl border border-slate-200 bg-white p-5 space-y-4">
+          <h2 className="inline-flex items-center gap-2 text-sm font-semibold text-slate-700"><Palette className="h-4 w-4 text-cyan-600" /> Workspace Presentation</h2>
+          <label className="block rounded-lg border border-slate-100 p-3">
+            <p className="text-sm font-medium text-slate-800">Portal Theme</p>
+            <select value={settings.portal_theme} onChange={(e) => setSettings({ ...settings, portal_theme: e.target.value as EnterpriseSettings["portal_theme"] })} className="mt-3 rounded-lg border border-slate-200 px-3 py-2 text-sm">
+              {(["Dark Slate", "Light", "High Contrast"] as const).map((value) => <option key={value} value={value}>{value}</option>)}
+            </select>
+          </label>
+          <label className="block rounded-lg border border-slate-100 p-3">
+            <p className="text-sm font-medium text-slate-800">Records Per Page</p>
+            <select value={settings.records_per_page} onChange={(e) => setSettings({ ...settings, records_per_page: e.target.value as EnterpriseSettings["records_per_page"] })} className="mt-3 rounded-lg border border-slate-200 px-3 py-2 text-sm">
+              {(["10", "25", "50", "100"] as const).map((value) => <option key={value} value={value}>{value}</option>)}
+            </select>
+          </label>
+          <label className="flex items-center justify-between gap-4 rounded-lg border border-slate-100 p-3">
+            <div>
+              <p className="text-sm font-medium text-slate-800 inline-flex items-center gap-2"><LayoutDashboard className="h-4 w-4 text-cyan-600" /> Show Onboarding</p>
+              <p className="text-xs text-slate-500">Re-enable welcome and guided tour flows for new sessions.</p>
+            </div>
+            <input type="checkbox" checked={settings.show_onboarding} onChange={(e) => setSettings({ ...settings, show_onboarding: e.target.checked })} className="h-4 w-4" />
+          </label>
+        </div>
+
+        <div className="rounded-xl border border-slate-200 bg-white p-5 space-y-4">
+          <h2 className="inline-flex items-center gap-2 text-sm font-semibold text-slate-700"><ShieldCheck className="h-4 w-4 text-cyan-600" /> Tenant Governance</h2>
+          <label className="block rounded-lg border border-slate-100 p-3">
+            <p className="text-sm font-medium text-slate-800">Data Retention</p>
+            <select value={settings.data_retention_days} onChange={(e) => setSettings({ ...settings, data_retention_days: e.target.value as EnterpriseSettings["data_retention_days"] })} className="mt-3 rounded-lg border border-slate-200 px-3 py-2 text-sm">
+              {(["90", "180", "365", "730", "Never"] as const).map((value) => <option key={value} value={value}>{value}</option>)}
+            </select>
+          </label>
+          <div className="rounded-lg bg-slate-50 p-3 text-sm text-slate-600">
+            <p className="font-medium text-slate-800 inline-flex items-center gap-2"><Building2 className="h-4 w-4 text-cyan-600" /> Environment-managed tenant identity</p>
+            <p className="mt-2 text-xs text-slate-500">Brand name, domain, program type, support addresses, HMIS URL, Google Site URL, and Microsoft 365 connector posture remain environment-backed so deployments stay tenant-isolated.</p>
+          </div>
+          <div className="grid gap-3 md:grid-cols-3">
+            <div className="rounded-lg border border-slate-100 p-3">
+              <p className="text-xs uppercase tracking-wide text-slate-500">HMIS Link</p>
+              <p className="mt-2 text-sm font-medium text-slate-800">{organization.hmisConfigured ? "Configured" : "Missing"}</p>
+            </div>
+            <div className="rounded-lg border border-slate-100 p-3">
+              <p className="text-xs uppercase tracking-wide text-slate-500">Google Site</p>
+              <p className="mt-2 text-sm font-medium text-slate-800">{organization.googleSiteConfigured ? "Configured" : "Missing"}</p>
+            </div>
+            <div className="rounded-lg border border-slate-100 p-3">
+              <p className="text-xs uppercase tracking-wide text-slate-500">Microsoft 365</p>
+              <p className="mt-2 text-sm font-medium text-slate-800">{data.integrations.microsoft365 ? "Configured" : "Missing"}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs text-slate-600">{message || "Organization and tenant governance is online."}</div>
+    </div>
   );
 }

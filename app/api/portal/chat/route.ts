@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 export interface ChatMessage {
   id: string;
   from: string;
-  role: "staff" | "participant" | "admin";
+  role: "staff" | "participant" | "admin" | "client";
   text: string;
   ts: string;
 }
