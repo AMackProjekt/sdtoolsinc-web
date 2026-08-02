@@ -96,6 +96,9 @@ function helpOutput() {
 }
 
 async function executeQueryCommand(raw: string): Promise<string> {
+  type ParticipantRow = { slot: string; name: string; status: string; environment: string };
+  type CaseNoteRow = { date?: string; clientName: string; type: string; summary: string };
+  type DocumentRow = { date?: string; client: string; name: string; type: string };
   const parsed = parseCommand(raw);
   const convex = getConvexClient();
 
@@ -104,7 +107,7 @@ async function executeQueryCommand(raw: string): Promise<string> {
   }
 
   if (parsed.name === 'get-clients') {
-    const all = await convex.query(api.functions.listParticipants, {});
+    const all = await convex.query(api.functions.listParticipants, {}) as ParticipantRow[];
     const nameFilter = (parsed.flags.name ?? '').toLowerCase();
     const slotFilter = (parsed.flags.slot ?? '').toLowerCase();
     const statusFilter = (parsed.flags.status ?? '').toLowerCase();
@@ -143,7 +146,7 @@ async function executeQueryCommand(raw: string): Promise<string> {
     if (!term) {
       return 'Usage: Find-Client <text>';
     }
-    const all = await convex.query(api.functions.listParticipants, {});
+    const all = await convex.query(api.functions.listParticipants, {}) as ParticipantRow[];
     const matches = all
       .filter((item) =>
         item.name.toLowerCase().includes(term) ||
@@ -169,7 +172,7 @@ async function executeQueryCommand(raw: string): Promise<string> {
       return 'Usage: Get-Client -Slot <slot>';
     }
 
-    const all = await convex.query(api.functions.listParticipants, {});
+    const all = await convex.query(api.functions.listParticipants, {}) as ParticipantRow[];
     const item = all.find((entry) => entry.slot.toLowerCase() === slotQuery.toLowerCase());
     if (!item) {
       return `Participant not found for slot: ${slotQuery}`;
@@ -186,7 +189,7 @@ async function executeQueryCommand(raw: string): Promise<string> {
   if (parsed.name === 'get-casenotes') {
     const clientFilter = (parsed.flags.client ?? '').toLowerCase();
     const top = toInt(parsed.flags.top, 10);
-    const notes = await convex.query(api.functions.listCaseNotes, {});
+    const notes = await convex.query(api.functions.listCaseNotes, {}) as CaseNoteRow[];
 
     const filtered = notes
       .filter((note) => !clientFilter || note.clientName.toLowerCase().includes(clientFilter))
@@ -214,7 +217,7 @@ async function executeQueryCommand(raw: string): Promise<string> {
   if (parsed.name === 'get-documents') {
     const clientFilter = (parsed.flags.client ?? '').toLowerCase();
     const top = toInt(parsed.flags.top, 10);
-    const docs = await convex.query(api.functions.listDocuments, {});
+    const docs = await convex.query(api.functions.listDocuments, {}) as DocumentRow[];
 
     const filtered = docs
       .filter((doc) => !clientFilter || doc.client.toLowerCase().includes(clientFilter))
@@ -241,9 +244,9 @@ async function executeQueryCommand(raw: string): Promise<string> {
 
   if (parsed.name === 'get-stats') {
     const [participants, notes, docs] = await Promise.all([
-      convex.query(api.functions.listParticipants, {}),
-      convex.query(api.functions.listCaseNotes, {}),
-      convex.query(api.functions.listDocuments, {}),
+      convex.query(api.functions.listParticipants, {}) as Promise<ParticipantRow[]>,
+      convex.query(api.functions.listCaseNotes, {}) as Promise<CaseNoteRow[]>,
+      convex.query(api.functions.listDocuments, {}) as Promise<DocumentRow[]>,
     ]);
 
     const active = participants.filter((entry) => entry.status.toLowerCase().includes('active')).length;

@@ -40,7 +40,16 @@ export async function GET(req: NextRequest) {
   const convex = getClient();
   const data = await convex.query(api.functions.exportCaseload, {});
 
-  const { participants, demographics, caseNotes, documents, smartGoals, requests, housingMatches } = data;
+  type ExportRow = Record<string, unknown>;
+  const { participants, demographics, caseNotes, documents, smartGoals, requests, housingMatches } = data as {
+    participants: Array<ExportRow & { slot: string; name: string; status: string; environment: string }>;
+    demographics: Array<ExportRow & { slot: string }>;
+    caseNotes: Array<ExportRow & { clientName: string; date?: string; type?: string; staff?: string }>;
+    documents: Array<ExportRow & { client: string }>;
+    smartGoals: Array<ExportRow & { client: string; status: string }>;
+    requests: Array<ExportRow & { client: string; status: string }>;
+    housingMatches: Array<ExportRow & { clientSlot: string; unitAddress?: string; status?: string; matchedDate?: string }>;
+  };
 
   // Index by slot
   const demoBySlot = Object.fromEntries(demographics.map((d) => [d.slot, d]));

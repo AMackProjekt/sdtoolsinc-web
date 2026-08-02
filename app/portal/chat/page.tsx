@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { Suspense, useEffect, useRef, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   ShieldCheck,
@@ -88,7 +88,7 @@ const ROLE_AVATAR: Record<"staff" | "participant" | "admin", string> = {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export default function ChatPage() {
+function ChatPageContent() {
   const { user, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
 
@@ -635,5 +635,19 @@ export default function ChatPage() {
         </main>
       </div>
     </div>
+  );
+}
+
+export default function ChatPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex h-screen items-center justify-center bg-bg">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-brand border-t-transparent" />
+        </div>
+      }
+    >
+      <ChatPageContent />
+    </Suspense>
   );
 }

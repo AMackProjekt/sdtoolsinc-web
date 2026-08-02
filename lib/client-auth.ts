@@ -1,19 +1,19 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth-options";
+import { auth } from "@/auth";
 import { findClientUserByUsername } from "@/lib/client-users";
 
 export async function requireClientSession(request: Request, options?: { allowPendingPasswordChange?: boolean }) {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
   if (!session?.user?.role || session.user.role !== "client") {
     return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
   }
 
-  if (!session.user.username) {
+  const sessionUser = session.user as typeof session.user & { username?: string };
+  if (!sessionUser.username) {
     return NextResponse.json({ error: "INVALID_SESSION" }, { status: 401 });
   }
 
-  const user = await findClientUserByUsername(session.user.username);
+  const user = await findClientUserByUsername(sessionUser.username);
   if (!user) {
     return NextResponse.json({ error: "USER_NOT_FOUND" }, { status: 401 });
   }

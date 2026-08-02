@@ -47,12 +47,20 @@ function isOrgEmail(email: string) {
 const SCRYPT_KEYLEN = 64;
 const SCRYPT_PARAMS = { N: 16384, r: 8, p: 1 };
 
+async function scryptBuffer(password: string, salt: string): Promise<Buffer> {
+  const crypto = await import("crypto");
+  return new Promise((resolve, reject) => {
+    crypto.scrypt(password, salt, SCRYPT_KEYLEN, SCRYPT_PARAMS, (error, derivedKey) => {
+      if (error) reject(error);
+      else resolve(derivedKey);
+    });
+  });
+}
+
 async function hashPasswordAsync(password: string): Promise<string> {
   const crypto = await import("crypto");
-  const util = await import("util");
-  const scryptAsync = util.promisify(crypto.scrypt);
   const salt = crypto.randomBytes(32).toString("hex");
-  const hash = (await scryptAsync(password, salt, SCRYPT_KEYLEN, SCRYPT_PARAMS)) as Buffer;
+  const hash = await scryptBuffer(password, salt);
   return `scrypt$${salt}$${hash.toString("hex")}`;
 }
 
@@ -69,9 +77,7 @@ async function verifyPassword(password: string, stored: string): Promise<boolean
     if (parts.length !== 3) return false;
     const [, saltHex, hashHex] = parts;
     try {
-      const util = await import("util");
-      const scryptAsync = util.promisify(crypto.scrypt);
-      const hash = (await scryptAsync(password, saltHex, SCRYPT_KEYLEN, SCRYPT_PARAMS)) as Buffer;
+      const hash = await scryptBuffer(password, saltHex);
       const storedHash = Buffer.from(hashHex, "hex");
       if (hash.length !== storedHash.length) return false;
       return crypto.timingSafeEqual(hash, storedHash);
