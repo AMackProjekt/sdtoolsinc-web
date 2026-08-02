@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
 import { Button } from "./Button";
 
 export function CookieConsent() {
@@ -96,6 +95,7 @@ export function CookieConsent() {
                   <button
                     onClick={() => setShowDetails(false)}
                     className="text-muted hover:text-text"
+                    aria-label="Close cookie preferences"
                   >
                     <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -132,6 +132,7 @@ export function CookieConsent() {
                           checked={preferences.analytics}
                           onChange={(e) => setPreferences({ ...preferences, analytics: e.target.checked })}
                           className="sr-only peer"
+                          aria-label="Enable analytics cookies"
                         />
                         <div className="w-11 h-6 bg-panel border border-border rounded-full peer peer-checked:bg-brand transition-colors"></div>
                         <div className="absolute left-1 top-1 bg-text w-4 h-4 rounded-full transition-transform peer-checked:translate-x-5"></div>
@@ -154,6 +155,7 @@ export function CookieConsent() {
                           checked={preferences.marketing}
                           onChange={(e) => setPreferences({ ...preferences, marketing: e.target.checked })}
                           className="sr-only peer"
+                          aria-label="Enable marketing cookies"
                         />
                         <div className="w-11 h-6 bg-panel border border-border rounded-full peer peer-checked:bg-brand transition-colors"></div>
                         <div className="absolute left-1 top-1 bg-text w-4 h-4 rounded-full transition-transform peer-checked:translate-x-5"></div>
@@ -176,6 +178,7 @@ export function CookieConsent() {
                           checked={preferences.functional}
                           onChange={(e) => setPreferences({ ...preferences, functional: e.target.checked })}
                           className="sr-only peer"
+                          aria-label="Enable functional cookies"
                         />
                         <div className="w-11 h-6 bg-panel border border-border rounded-full peer peer-checked:bg-brand transition-colors"></div>
                         <div className="absolute left-1 top-1 bg-text w-4 h-4 rounded-full transition-transform peer-checked:translate-x-5"></div>
@@ -185,9 +188,9 @@ export function CookieConsent() {
                 </div>
 
                 <div className="flex items-center justify-between pt-4 border-t border-border">
-                  <Link href="/portal/enterprise/legal#privacy" className="text-xs text-brand hover:text-brand2 underline">
+                  <a href="#" className="text-xs text-brand hover:text-brand2 underline">
                     Privacy Policy
-                  </Link>
+                  </a>
                   <div className="flex items-center gap-3">
                     <button
                       onClick={declineAll}

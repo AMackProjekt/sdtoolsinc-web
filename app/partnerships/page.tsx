@@ -3,7 +3,6 @@ import { GlowCard } from "@/components/ui/GlowCard";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ChatBot } from "@/components/ui/ChatBot";
 import { CookieConsent } from "@/components/ui/CookieConsent";
-import Link from "next/link";
 
 export default function PartnershipsPage() {
   return (
@@ -17,17 +16,16 @@ export default function PartnershipsPage() {
         <SectionHeading
           eyebrow="Collaboration"
           title="In Partnership"
-          subtitle="Together, we&apos;re building a stronger community through strategic partnerships and collaborative support networks."
+          subtitle="Together, we're building a stronger community through strategic partnerships and collaborative support networks."
         />
       </section>
 
       {/* Partnership Organizations */}
       <section className="mx-auto max-w-container px-7 pb-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {[
-            { name: "Partner 1", logo: "/partnerships/amp-logo.jpg" },
-            { name: "Partner 2", logo: "/partnerships/img-4264.jpg" },
-            { name: "Partner 3", logo: "/partnerships/partner-3.png" },
+            { name: "MPH", logo: "/partnerships/mph-logo.png" },
+            { name: "AMP", logo: "/partnerships/amp-logo.jpeg" },
           ].map((partner) => (
             <GlowCard key={partner.name} className="p-8 flex items-center justify-center">
               <img
@@ -48,21 +46,14 @@ export default function PartnershipsPage() {
           subtitle="Connecting individuals with experienced mentors who provide guidance, support, and real-world insights for personal and professional growth."
         />
 
-        <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[
-            { name: "Mentor Organization 1", logo: "/partnerships/img-0055.png" },
-            { name: "Mentor Organization 2", logo: "/partnerships/img-4264.jpg" },
-            { name: "Mentor Organization 3", logo: "/partnerships/partner-3.png" },
-            { name: "Mentor Organization 4", logo: "/partnerships/amp-logo.jpg" },
-          ].map((mentor) => (
-            <GlowCard key={mentor.name} className="p-6 flex items-center justify-center">
-              <img
-                src={mentor.logo}
-                alt={mentor.name}
-                className="max-h-20 w-auto object-contain"
-              />
-            </GlowCard>
-          ))}
+        <div className="mt-10 flex justify-center">
+          <GlowCard className="p-8 flex items-center justify-center max-w-md w-full">
+            <img
+              src="/partnerships/kingme-logo.png"
+              alt="Mentorship Program"
+              className="max-h-32 w-auto object-contain"
+            />
+          </GlowCard>
         </div>
       </section>
 
@@ -120,6 +111,17 @@ export default function PartnershipsPage() {
                 <p className="mt-2 text-sm text-muted leading-relaxed">
                   Open source development and version control platform powering our digital infrastructure.
                 </p>
+                <a
+                  href="https://github.com/AMackProjekt"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-brand hover:text-brand2 transition-colors"
+                >
+                  Visit our GitHub
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
               </div>
               <div className="text-xs text-muted/60 font-mono">
                 <div>Secure Repository</div>
@@ -139,11 +141,11 @@ export default function PartnershipsPage() {
             If you share our mission and want to make a difference, let&apos;s connect.
           </p>
           <div className="mt-8">
-            <Link href="/#contact">
+            <a href="/#contact">
               <button className="inline-flex items-center justify-center rounded-md px-6 py-3 text-sm font-semibold bg-gradient-to-br from-brand to-brand2 text-[#02131a] hover:shadow-glow transition-shadow">
                 Get in Touch
               </button>
-            </Link>
+            </a>
           </div>
         </GlowCard>
       </section>

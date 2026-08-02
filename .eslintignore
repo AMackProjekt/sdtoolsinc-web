@@ -1,0 +1,9 @@
+node_modules/
+.next/
+out/
+api/
+data-factory/
+portal-app/
+apps/
+automation/
+*.config.js

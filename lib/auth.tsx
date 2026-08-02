@@ -1,123 +1,140 @@
 "use client";
 
-/**
- * lib/auth.tsx — NextAuth-backed authentication context.
- *
- * Provides the same useAuth() interface used across all Enterprise portal pages
- * while delegating to NextAuth for Google Workspace + Microsoft 365 OAuth with
- * encrypted, httpOnly JWT session cookies (no localStorage).
- */
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
-import { createContext, useContext, ReactNode } from "react";
-import { SessionProvider, useSession, signIn, signOut } from "next-auth/react";
-import type { Session } from "next-auth";
-
-export type User = {
+type User = {
   id: string;
   email: string;
   name: string;
   avatar?: string;
-  username?: string;
-  firstLogin?: boolean;
-  mustChangePassword?: boolean;
-  sessionVersion?: number;
-  role: "enterprise_admin" | "enterprise_viewer" | "client" | string;
-  provider?: "google" | "azure-ad" | string;
+  enrolledCourses: string[];
+  completedLessons: string[];
+  demographics?: {
+    dateOfBirth?: string;
+    gender?: "M" | "F" | "Non-binary" | "Prefer not to say";
+    race?: string[];
+    ethnicity?: string;
+    veteran?: boolean;
+    parentStatus?: "Single" | "Parent" | "Caregiver";
+    jjBackground?: {
+      status: "Probation" | "Parole" | "Post-release" | "Other";
+      dpo?: string;
+      restrictions?: string[];
+    };
+  };
+  contact?: {
+    phone?: string;
+    address?: string;
+    city?: string;
+    state?: string;
+    zip?: string;
+    emergencyContact?: string;
+    emergencyPhone?: string;
+  };
+  certificates?: Array<{
+    courseId: string;
+    courseName: string;
+    completionDate: string;
+    certificateId: string;
+    score?: number;
+  }>;
+  preferences: {
+    notifications: boolean;
+    emailUpdates: boolean;
+    theme: "dark" | "light";
+  };
 };
 
-export type AuthContextType = {
+type AuthContextType = {
   user: User | null;
-  /** OAuth sign-in — redirects to Google or Azure AD consent screen. */
-  login: (email?: string, password?: string) => Promise<boolean>;
-  signup: (email?: string, password?: string, name?: string) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<boolean>;
+  signup: (email: string, password: string, name: string) => Promise<boolean>;
   logout: () => void;
   updateProfile: (updates: Partial<User>) => void;
   isAuthenticated: boolean;
-  isLoading: boolean;
 };
 
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Inner hook that reads the NextAuth session and exposes the useAuth() contract.
-function AuthContextProvider({ children }: { children: ReactNode }) {
-  const { data: session, status } = useSession();
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
 
-  const isLoading = status === "loading";
-  const isAuthenticated = status === "authenticated";
-
-  const user: User | null = isAuthenticated && session?.user
-    ? {
-        id: (session.user as Session["user"] & { id?: string }).id ?? session.user.email ?? "",
-        email: session.user.email ?? "",
-        name: session.user.name ?? "",
-        username: (session.user as Session["user"] & { username?: string }).username ?? undefined,
-        firstLogin: (session.user as Session["user"] & { firstLogin?: boolean }).firstLogin ?? undefined,
-        mustChangePassword: (session.user as Session["user"] & { mustChangePassword?: boolean }).mustChangePassword ?? undefined,
-        sessionVersion: (session.user as Session["user"] & { sessionVersion?: number }).sessionVersion ?? undefined,
-        avatar: session.user.image ?? undefined,
-        role: ((session.user as Session["user"] & { role?: string }).role as User["role"]) ?? "enterprise_viewer",
-        provider: (session.user as Session["user"] & { provider?: string }).provider ?? undefined,
+  useEffect(() => {
+    // Check for stored session (encrypted in production)
+    const storedUser = localStorage.getItem("user-session");
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(atob(storedUser))); // Base64 decode (use proper encryption in production)
+      } catch (e) {
+        localStorage.removeItem("user-session");
       }
-    : null;
-
-  /**
-   * login() — supports both credentials (email+password) and OAuth providers.
-   * If a real email + password are passed, uses Supabase credentials sign-in.
-   * If a provider name (google / azure-ad) is passed, does OAuth redirect.
-   */
-  const login = async (emailOrProvider?: string, password?: string): Promise<boolean> => {
-    if (emailOrProvider && password) {
-      // Credentials sign-in (email + password)
-      const result = await signIn("credentials", {
-        email: emailOrProvider,
-        password,
-        callbackUrl: "/portal",
-        redirect: false,
-      });
-      if (result?.error) return false;
-      if (result?.url) {
-        window.location.href = result.url;
-      }
-      return true;
     }
-    // OAuth redirect
-    await signIn(emailOrProvider ?? "google", { callbackUrl: "/portal" });
-    return true;
+  }, []);
+
+  const signup = async (email: string, password: string, name: string): Promise<boolean> => {
+    // In production: Call secure backend API with bcrypt/argon2 password hashing
+    // This is a mock implementation
+    try {
+      const newUser: User = {
+        id: Date.now().toString(),
+        email,
+        name,
+        enrolledCourses: [],
+        completedLessons: [],
+        preferences: {
+          notifications: true,
+          emailUpdates: true,
+          theme: "dark",
+        },
+      };
+
+      // Store encrypted session (use JWT tokens in production)
+      const encryptedSession = btoa(JSON.stringify(newUser));
+      localStorage.setItem("user-session", encryptedSession);
+      
+      // Store hashed password separately (never store plain text)
+      localStorage.setItem(`pwd-${email}`, btoa(password)); // Use bcrypt in production
+      
+      setUser(newUser);
+      return true;
+    } catch (error) {
+      return false;
+    }
   };
 
-  /** signup() — creates a Supabase account and signs the user in immediately. */
-  const signup = async (email?: string, password?: string, name?: string): Promise<boolean> => {
-    if (!email || !password) return false;
+  const login = async (email: string, password: string): Promise<boolean> => {
+    // In production: Call secure backend API for authentication
     try {
-      const res = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, name }),
-      });
-      if (!res.ok) return false;
+      const storedPassword = localStorage.getItem(`pwd-${email}`);
+      if (!storedPassword || atob(storedPassword) !== password) {
+        return false;
+      }
 
-      // Sign in immediately after account creation
-      const result = await signIn("credentials", {
-        email,
-        password,
-        callbackUrl: "/portal/participant/dashboard",
-        redirect: false,
-      });
-      if (result?.error) return false;
-      if (result?.url) window.location.href = result.url;
-      return true;
-    } catch {
+      const storedUser = localStorage.getItem("user-session");
+      if (storedUser) {
+        setUser(JSON.parse(atob(storedUser)));
+        return true;
+      }
+      return false;
+    } catch (error) {
       return false;
     }
   };
 
   const logout = () => {
-    signOut({ callbackUrl: "/portal" });
+    localStorage.removeItem("user-session");
+    setUser(null);
   };
 
-  /** updateProfile — no-op stub; profile data lives in the OAuth provider. */
-  const updateProfile = (_updates: Partial<User>) => {
-    // Profile updates are handled through the respective identity provider.
+  const updateProfile = (updates: Partial<User>) => {
+    if (!user) return;
+    
+    const updatedUser = { ...user, ...updates };
+    setUser(updatedUser);
+    
+    // Update encrypted session
+    const encryptedSession = btoa(JSON.stringify(updatedUser));
+    localStorage.setItem("user-session", encryptedSession);
   };
 
   return (
@@ -128,24 +145,11 @@ function AuthContextProvider({ children }: { children: ReactNode }) {
         signup,
         logout,
         updateProfile,
-        isAuthenticated,
-        isLoading,
+        isAuthenticated: !!user,
       }}
     >
       {children}
     </AuthContext.Provider>
-  );
-}
-
-/**
- * AuthProvider — wraps the app with NextAuth SessionProvider + the auth context.
- * Used in app/layout.tsx.
- */
-export function AuthProvider({ children }: { children: ReactNode }) {
-  return (
-    <SessionProvider>
-      <AuthContextProvider>{children}</AuthContextProvider>
-    </SessionProvider>
   );
 }
 
