@@ -1,354 +1,312 @@
-import Link from "next/link";
-import Image from "next/image";
-import {
-  ShieldCheck,
-  Users,
-  FileText,
-  MessageSquare,
-  CalendarDays,
-  BarChart3,
-  Gem,
-  WifiOff,
-  ArrowRight,
-  Building2,
-} from "lucide-react";
+"use client";
 
-const FEATURES = [
-  {
-    icon: ShieldCheck,
-    label: "HIPAA Compliant",
-    front: "Security & compliance foundation",
-    back: "Encrypts PHI, enforces access controls, and supports approved workflow governance.",
-  },
-  {
-    icon: Users,
-    label: "Caseload Management",
-    front: "Client lifecycle command center",
-    back: "Tracks roster, demographics, housing placements, and case status in one timeline.",
-  },
-  {
-    icon: FileText,
-    label: "Secure Documents",
-    front: "Protected records vault",
-    back: "Stores and shares participant documents with role-gated permissions and audit visibility.",
-  },
-  {
-    icon: MessageSquare,
-    label: "Google Chat Built-In",
-    front: "Real-time communication layer",
-    back: "Routes updates and support messages through integrated Google Workspace channels.",
-  },
-  {
-    icon: CalendarDays,
-    label: "Scheduling & Calendar",
-    front: "Appointment coordination hub",
-    back: "Plans visits, team coverage, and client appointments with shared scheduling context.",
-  },
-  {
-    icon: BarChart3,
-    label: "Demographics & Analytics",
-    front: "Live KPI intelligence",
-    back: "Surfaces trends across population, housing, employment, and service outcomes.",
-  },
-  {
-    icon: Gem,
-    label: "Champion Admin",
-    front: "Leadership oversight console",
-    back: "Provides audit, compliance, staffing, and integration visibility for supervisors.",
-  },
-  {
-    icon: WifiOff,
-    label: "Offline Access",
-    front: "Continuity without internet",
-    back: "Keeps participant workflows usable offline after initial authenticated session.",
-  },
-];
+import { Navbar } from "@/components/ui/Navbar";
+import { GlowCard } from "@/components/ui/GlowCard";
+import { Button } from "@/components/ui/Button";
+import { DashboardSection } from "@/components/ui/DashboardSection";
+import { SectionHeading } from "@/components/ui/SectionHeading";
+import { InteractiveTiles } from "@/components/ui/InteractiveTiles";
+import { ChatBot } from "@/components/ui/ChatBot";
+import { CookieConsent } from "@/components/ui/CookieConsent";
 
-const ENTERPRISE_SUITES = [
-  {
-    title: "Executive Command",
-    desc: "Board-ready scorecards, portfolio risk, and operating cadence across Google Workspace and Microsoft 365.",
-  },
-  {
-    title: "HR Operations",
-    desc: "People ops, policy acknowledgements, lifecycle workflows, and workforce planning under one governed workspace.",
-  },
-  {
-    title: "News & Media Kit",
-    desc: "Press assets, approved messaging, campaign briefs, and launch-ready materials for your communications team.",
-  },
-];
+export default function Page() {
+  const AMZN_URL = "https://www.amazon.com/Navigating-Spiritual-Warfare-UNDERSTANDING-OVERCOMING-ebook/dp/B0CW1JNJBZ";
 
-export default function Home() {
+  const handleAmazonClick = () => {
+    // Helper to open link exactly once
+    let opened = false;
+    const openLink = () => {
+      if (opened) return;
+      opened = true;
+      try {
+        window.open(AMZN_URL, "_blank", "noopener,noreferrer");
+      } catch (e) {
+        window.location.href = AMZN_URL;
+      }
+    };
+
+    try {
+      // GA4: use select_content with event_callback to ensure analytics is sent
+      if (typeof (window as any).gtag === "function") {
+        (window as any).gtag("event", "select_content", {
+          content_type: "outbound",
+          item_id: AMZN_URL,
+          method: "button",
+          event_callback: openLink,
+        });
+
+        // Fallback: open after 500ms if callback doesn't fire
+        setTimeout(openLink, 500);
+      } else {
+        // If no gtag, open immediately
+        openLink();
+      }
+
+      // dataLayer (GTM) push for compatibility
+      if (Array.isArray((window as any).dataLayer)) {
+        (window as any).dataLayer.push({
+          event: "outbound_click",
+          label: "view_on_amazon",
+          url: AMZN_URL,
+        });
+      }
+
+      // Application Insights
+      const ai = (window as any).appInsights;
+      if (ai && typeof ai.trackEvent === "function") {
+        ai.trackEvent({ name: "ViewOnAmazonClick" }, { url: AMZN_URL });
+      }
+    } catch (e) {
+      // swallow analytics errors and ensure link opens
+      openLink();
+    }
+  };
   return (
-    <div className="min-h-screen bg-slate-950 text-white flex flex-col">
+    <main id="top" className="min-h-screen bg-bg">
+      {/* Background glow */}
+      <div className="pointer-events-none fixed inset-0 -z-10 bg-dash-glow" />
 
-      {/* ── Nav ── */}
-      <nav className="flex items-center justify-between px-6 md:px-12 h-16 border-b border-slate-800/60 shrink-0">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-teal-500 flex items-center justify-center shadow-lg shadow-teal-900/40">
-            <span className="text-teal-950 font-black text-[10px] tracking-tight">CF</span>
-          </div>
-          <span className="font-bold text-white text-sm leading-none">CaseFlow Operations</span>
+      <Navbar />
+
+      {/* HERO */}
+      <section className="mx-auto max-w-container px-7 pt-24 pb-16 text-center">
+        <h1 className="h1">
+          Empowering Individuals.
+          <br />
+          <span className="bg-gradient-to-r from-brand to-brand2 bg-clip-text text-transparent">
+            Unlocking Potential.
+          </span>
+        </h1>
+
+        <p className="mx-auto mt-6 max-w-[760px] p-lead">
+          At T.O.O.L.S Inc, we provide support and opportunities for individuals looking to start over. 
+          Through comprehensive programs and lived experience, we help people unlock their full potential.
+        </p>
+
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+          <Button variant="primary">Get Started</Button>
+          <Button variant="ghost">View Platform</Button>
         </div>
-        <div className="flex items-center gap-3">
-          <Link href="/login/client" className="text-slate-400 hover:text-white text-sm font-medium transition-colors">
-            Participant Sign In
-          </Link>
-          <Link
-            href="/login/staff"
-            className="bg-teal-500 hover:bg-teal-400 text-teal-950 font-bold text-sm px-4 py-2 rounded-lg transition-colors"
-          >
-            Staff Sign In
-          </Link>
-        </div>
-      </nav>
 
-      {/* ── Hero ── */}
-      <section className="flex-1 flex flex-col items-center justify-center text-center px-6 py-24 relative overflow-hidden">
-        {/* Background glow */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-teal-500/10 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute top-1/3 left-1/3 w-[400px] h-[300px] bg-violet-600/8 rounded-full blur-[100px] pointer-events-none" />
-
-        <div className="relative z-10 max-w-4xl mx-auto">
-          <div className="inline-flex items-center gap-2 bg-teal-950 border border-teal-800/60 text-teal-400 text-xs font-bold px-4 py-2 rounded-full mb-8 tracking-widest uppercase">
-            <ShieldCheck className="w-3 h-3" />
-            HIPAA-Compliant Case Management Platform
-          </div>
-
-          <h1 className="text-5xl md:text-7xl font-black leading-[1.05] tracking-tight mb-6">
-            <span className="text-white">Case Management</span>
-            <br />
-            <span className="bg-gradient-to-r from-teal-400 to-teal-300 bg-clip-text text-transparent">
-              Built to Serve
-            </span>
-          </h1>
-
-          <p className="text-slate-400 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-12">
-            One secure platform connecting case managers, participants, and supervisors —
-            with real-time data, offline access, and Google &amp; Microsoft integrations.
-          </p>
-
-          {/* Portal entry cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto mb-10">
-            {/* Client */}
-            <Link
-              href="/login/client"
-              className="group flex flex-col items-center gap-3 bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-teal-700/60 rounded-2xl p-6 transition-all duration-200"
-            >
-              <div className="w-12 h-12 rounded-xl bg-teal-500/15 border border-teal-500/20 flex items-center justify-center group-hover:bg-teal-500/25 transition-colors">
-                <Users className="w-6 h-6 text-teal-400" />
-              </div>
-              <div>
-                <div className="font-bold text-white text-sm mb-1">Participant Portal</div>
-                <div className="text-slate-500 text-xs leading-snug">Goals, messages &amp; profile access</div>
-              </div>
-              <div className="flex items-center gap-1 text-teal-400 text-xs font-semibold mt-auto group-hover:gap-2 transition-all">
-                Sign in <ArrowRight className="w-3 h-3" />
-              </div>
-            </Link>
-
-            {/* Staff */}
-            <Link
-              href="/login/staff"
-              className="group flex flex-col items-center gap-3 bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-600 rounded-2xl p-6 transition-all duration-200"
-            >
-              <div className="w-12 h-12 rounded-xl bg-slate-700/50 border border-slate-700 flex items-center justify-center group-hover:bg-slate-700 transition-colors">
-                <FileText className="w-6 h-6 text-slate-300" />
-              </div>
-              <div>
-                <div className="font-bold text-white text-sm mb-1">Staff Portal</div>
-                <div className="text-slate-500 text-xs leading-snug">Caseload, notes &amp; documents</div>
-              </div>
-              <div className="flex items-center gap-1 text-slate-400 text-xs font-semibold mt-auto group-hover:gap-2 group-hover:text-slate-300 transition-all">
-                Sign in <ArrowRight className="w-3 h-3" />
-              </div>
-            </Link>
-
-            {/* Admin */}
-            <Link
-              href="/login/admin"
-              className="group flex flex-col items-center gap-3 bg-slate-900 hover:bg-violet-950/80 border border-slate-800 hover:border-violet-700/60 rounded-2xl p-6 transition-all duration-200"
-            >
-              <div className="w-12 h-12 rounded-xl bg-violet-600/15 border border-violet-600/20 flex items-center justify-center group-hover:bg-violet-600/25 transition-colors">
-                <Gem className="w-6 h-6 text-violet-400" />
-              </div>
-              <div>
-                <div className="font-bold text-white text-sm mb-1">Admin Portal</div>
-                <div className="text-slate-500 text-xs leading-snug">Full oversight &amp; audit access</div>
-              </div>
-              <div className="flex items-center gap-1 text-violet-400 text-xs font-semibold mt-auto group-hover:gap-2 transition-all">
-                Sign in <ArrowRight className="w-3 h-3" />
-              </div>
-            </Link>
-          </div>
-
-          <p className="text-slate-600 text-xs">
-            New participant?{" "}
-            <Link href="/request-access" className="text-teal-500 hover:text-teal-400 font-semibold transition-colors">
-              Request access →
-            </Link>
-          </p>
+        {/* KPI band */}
+        <div className="mt-14 grid grid-cols-1 gap-4 md:grid-cols-4">
+          {[
+            ["Support", "Comprehensive Programs"],
+            ["Growth", "Job Readiness Training"],
+            ["Empathy", "Lived Experience Team"],
+            ["Access", "Continued Education"]
+          ].map(([v, t]) => (
+            <GlowCard key={t} className="p-5 text-left">
+              <div className="text-2xl font-extrabold tracking-tight">{v}</div>
+              <div className="mt-2 text-sm text-muted">{t}</div>
+            </GlowCard>
+          ))}
         </div>
       </section>
 
-      {/* ── Features ── */}
-      <section className="px-6 md:px-12 py-20 border-t border-slate-800/60">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-2xl md:text-3xl font-bold text-white text-center mb-3">
-            Everything your team needs
-          </h2>
-          <p className="text-slate-500 text-center text-sm mb-12 max-w-xl mx-auto">
-            Built for the real-world demands of housing-focused case management organizations.
-          </p>
+      {/* FEATURES */}
+      <section id="platform" className="mx-auto max-w-container px-7 pt-8 pb-20">
+        <SectionHeading
+          eyebrow="How We Help"
+          title="Comprehensive Support Programs"
+          subtitle="We recognize and address the diverse challenges individuals face, providing the tools and support necessary to unlock their full potential."
+        />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {FEATURES.map((f) => (
-              <div
-                key={f.label}
-                tabIndex={0}
-                className="group [perspective:1200px] outline-none"
-              >
-                <div className="relative h-48 w-full rounded-2xl transition-transform duration-500 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] group-focus:[transform:rotateY(180deg)]">
-                  <div className="absolute inset-0 rounded-2xl border border-slate-800 bg-slate-900 p-5 [backface-visibility:hidden]">
-                    <div className="w-9 h-9 rounded-xl bg-slate-800 flex items-center justify-center mb-3">
-                      <f.icon className="w-4 h-4 text-teal-400" />
-                    </div>
-                    <div className="flex items-start justify-between gap-2 mb-3">
-                      <div className="font-semibold text-white text-sm">{f.label}</div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-teal-400">Front</span>
-                    </div>
-                    <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-2">
-                      <div className="text-[10px] uppercase tracking-wider text-slate-500">Quick Preview</div>
-                      <div className="text-xs text-slate-300 mt-1 leading-relaxed">{f.front}</div>
-                    </div>
-                  </div>
-
-                  <div className="absolute inset-0 rounded-2xl border border-teal-700/40 bg-slate-900 p-5 [transform:rotateY(180deg)] [backface-visibility:hidden]">
-                    <div className="w-9 h-9 rounded-xl bg-teal-500/15 border border-teal-500/20 flex items-center justify-center mb-3">
-                      <f.icon className="w-4 h-4 text-teal-300" />
-                    </div>
-                    <div className="flex items-start justify-between gap-2 mb-3">
-                      <div className="font-semibold text-white text-sm">{f.label}</div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-teal-300">Back</span>
-                    </div>
-                    <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-2">
-                      <div className="text-[10px] uppercase tracking-wider text-slate-500">What It Does</div>
-                      <div className="text-xs text-slate-300 mt-1 leading-relaxed">{f.back}</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+        <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {[
+            ["Job Readiness", "Professional development programs including resume building, mock interviews, and career planning to prepare for success."],
+            ["Continued Education", "Access to educational resources and training programs that open doors to new opportunities and skill development."],
+            ["Lived Experience", "Our team shares lived experiences with the challenges our clients face, creating genuine understanding and effective support."],
+            ["Personal Growth", "Holistic programs addressing both immediate needs and long-term goals for sustainable personal and professional growth."]
+          ].map(([h, p]) => (
+            <GlowCard key={h}>
+              <div className="text-lg font-extrabold tracking-tight">{h}</div>
+              <div className="mt-2 text-sm text-muted leading-relaxed">{p}</div>
+            </GlowCard>
+          ))}
         </div>
       </section>
 
-      <section className="px-6 md:px-12 py-20 border-t border-slate-800/60 bg-slate-950/60">
-        <div className="max-w-6xl mx-auto">
-          <div className="max-w-2xl mb-10">
-            <div className="inline-flex items-center gap-2 bg-cyan-950 border border-cyan-800/60 text-cyan-400 text-xs font-bold px-4 py-2 rounded-full mb-5 tracking-widest uppercase">
-              <Building2 className="w-3 h-3" /> Enterprise Edition
+      {/* INTERACTIVE TILES */}
+      <InteractiveTiles />
+
+      {/* FOUNDER STORY */}
+      <section className="mx-auto max-w-container px-7 py-20">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 items-center">
+          <div>
+            <div className="text-xs font-semibold tracking-[0.18em] text-brand2 uppercase">
+              Leadership
             </div>
-            <h2 className="text-2xl md:text-4xl font-black text-white tracking-tight">Executive, HR, and media operations in the same control plane.</h2>
-            <p className="text-slate-400 text-sm md:text-base mt-4 leading-relaxed">
-              CaseFlow now extends beyond service delivery with enterprise-grade suites for executive leadership, HR operations, and newsroom readiness.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {ENTERPRISE_SUITES.map((suite) => (
-              <div key={suite.title} className="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 hover:border-cyan-700/50 transition-colors">
-                <p className="text-xs font-bold tracking-[0.24em] uppercase text-cyan-400">{suite.title}</p>
-                <p className="mt-4 text-sm leading-relaxed text-slate-400">{suite.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Footer ── */}
-      <footer className="border-t border-slate-800/60 px-6 md:px-12 py-10">
-        <div className="max-w-6xl mx-auto">
-          {/* Top row */}
-          <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-8 mb-8">
-            {/* Org brand */}
-            <div>
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-8 h-8 rounded-lg bg-teal-500 flex items-center justify-center">
-                  <span className="text-teal-950 font-black text-[10px]">CF</span>
-                </div>
-                <span className="font-bold text-white text-sm">A MackProjekt</span>
-              </div>
-              <p className="text-slate-500 text-xs max-w-xs leading-relaxed">
-                A MackProjekt builds intelligent tools for social services.
+            <h2 className="h2 mt-4">
+              Donyale &quot;DThree&quot; Mack
+            </h2>
+            <div className="mt-2 text-lg font-semibold text-muted">
+              Owner/Founder
+            </div>
+            
+            <div className="mt-6 space-y-4 text-text/90 leading-relaxed">
+              <p>
+                A compassionate advocate and the driving force behind T.O.O.L.S Inc, Donyale Mack is dedicated to 
+                providing support and opportunities to those seeking a second chance in life.
+              </p>
+              <p>
+                Born out of lived experience and personal challenges, Donyale&apos;s journey is marked by resilience, 
+                overcoming adversity, and an unwavering passion to help others facing similar struggles.
+              </p>
+              <p className="text-brand font-semibold">
+                &quot;Every individual deserves the opportunity to unlock their full potential.&quot;
               </p>
             </div>
-
-            {/* Links */}
-            <div className="grid grid-cols-2 gap-x-16 gap-y-2 text-xs">
-              <div className="space-y-2">
-                <div className="text-slate-600 font-bold uppercase tracking-widest text-[10px] mb-2">Enterprise Portals</div>
-                <Link href="/login/client" className="block text-slate-400 hover:text-white transition-colors">Participant Portal</Link>
-                <Link href="/login/staff" className="block text-slate-400 hover:text-white transition-colors">Staff Portal</Link>
-                <Link href="/login/admin" className="block text-slate-400 hover:text-white transition-colors">Admin Portal</Link>
-                <Link href="/request-access" className="block text-slate-400 hover:text-white transition-colors">Request Access</Link>
-              </div>
-              <div className="space-y-2">
-                <div className="text-slate-600 font-bold uppercase tracking-widest text-[10px] mb-2">Legal</div>
-                <Link href="/legal/terms" className="block text-slate-400 hover:text-white transition-colors">Terms of Use</Link>
-                <Link href="/legal/privacy" className="block text-slate-400 hover:text-white transition-colors">Privacy Policy</Link>
-                <Link href="/legal/cookies" className="block text-slate-400 hover:text-white transition-colors">Cookie Policy</Link>
-                <Link href="/api/health" className="block text-slate-400 hover:text-white transition-colors">System Status</Link>
-              </div>
-            </div>
           </div>
-
-          {/* Divider */}
-          <div className="border-t border-slate-800/60 pt-8">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-              {/* Copyright */}
-              <div className="text-xs text-slate-600 text-center md:text-left leading-relaxed">
-                <p>© {new Date().getFullYear()} T.O.O.LS INC. All rights reserved.</p>
-                <p className="mt-1">
-                  This platform is intended for authorized users only. Unauthorized access is prohibited and may be subject to legal action.
-                  All user activity is logged and audited.
+          
+          <GlowCard className="p-8 lg:p-10">
+            <div className="space-y-6">
+              <div>
+                <div className="text-sm font-semibold text-brand2 uppercase tracking-wider">Mission</div>
+                <p className="mt-2 text-text/90">
+                  Creating pathways for individuals to transform their lives through empathy, 
+                  understanding, and comprehensive support programs.
                 </p>
               </div>
-
-              {/* AMP branding */}
-              <div className="flex items-center gap-3 shrink-0">
-                <span className="text-slate-600 text-[10px] font-semibold uppercase tracking-widest">Powered By</span>
-                <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 px-3 py-2 rounded-xl">
-                  <Image
-                    src="/amp-logo.jpeg"
-                    alt="A MackProjekt"
-                    width={24}
-                    height={24}
-                    className="rounded-md object-cover"
-                  />
-                  <span className="text-slate-300 font-bold text-xs tracking-wide">A MackProjekt</span>
-                </div>
+              <div>
+                <div className="text-sm font-semibold text-brand2 uppercase tracking-wider">Vision</div>
+                <p className="mt-2 text-text/90">
+                  Building a community where lived experience becomes the foundation for 
+                  genuine connection and lasting change.
+                </p>
+              </div>
+              <div>
+                <div className="text-sm font-semibold text-brand2 uppercase tracking-wider">Approach</div>
+                <p className="mt-2 text-text/90">
+                  Combining personal understanding with professional expertise to provide 
+                  support that goes beyond sympathy to true empowerment.
+                </p>
               </div>
             </div>
+          </GlowCard>
+        </div>
+      </section>
 
-            {/* Legal notice */}
-            <p className="mt-6 text-[10px] text-slate-700 text-center leading-relaxed max-w-4xl mx-auto">
-              CaseFlow Operations is a proprietary platform developed by Donyale Mack/A MackProjekt. Use of this platform constitutes
-              acceptance of the Terms of Use and Privacy Policy. This system processes Protected Health Information (PHI) in accordance with
-              HIPAA (45 CFR Parts 160 and 164). Unauthorized disclosure of PHI may result in civil and criminal penalties. All data is
-              encrypted in transit and at rest. This platform uses cookies essential to site security and session management. By continuing
-              to use this platform you consent to our Cookie Policy.
+      {/* DASHBOARD */}
+      <DashboardSection />
+
+      {/* BOOK / SUPPORT SECTION */}
+      <section className="mx-auto max-w-container px-7 py-20">
+        <GlowCard className="p-10 text-center">
+          <div className="text-xs font-semibold tracking-[0.18em] text-brand2 uppercase">
+            Support Our Mission
+          </div>
+          <h2 className="h2 mt-4">
+            Go Check It Out
+          </h2>
+          <div className="mt-2 text-lg font-semibold text-brand">
+            Available Now On Amazon Platform
+          </div>
+          
+          <div className="mx-auto mt-6 max-w-[680px] space-y-4 text-text/90 leading-relaxed">
+            <p>
+              A portion of the proceeds go to helping program participants with immediate needs such as 
+              but not limited to: bus/transit passes, gas cards, work boots and clothing for work.
             </p>
-            <p className="mt-3 text-[10px] text-slate-800 text-center leading-relaxed max-w-3xl mx-auto border border-slate-800 rounded-xl px-4 py-2">
-              This platform — including its design, architecture, source code, workflows, and all associated intellectual property — was
-              conceived, designed, and built solely by <span className="text-slate-500 font-bold">A MackProjekt</span>.
-              Deployed by T.O.O.LS INC. No license, assignment, or transfer of ownership is granted or implied. All rights reserved.
+            <p className="text-base font-semibold text-brand2">
+              We appreciate Your Support
             </p>
           </div>
+
+          <div className="mt-8 grid gap-8 lg:grid-cols-[220px_minmax(0,1fr)] items-center group">
+            <div className="mx-auto max-w-[220px] overflow-hidden rounded-3xl border border-border bg-[#07090f] shadow-glow aspect-[3/4] transition duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_30px_70px_-24px_rgba(56,189,248,0.55)]">
+              <img
+                src="/images/Book.jpg"
+                alt="Navigating Spiritual Warfare book cover"
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <div className="space-y-4 text-left">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand2">
+                Featured Release
+              </p>
+              <p className="text-text/85 leading-relaxed">
+                Grab the book on Amazon to support the mission and help fund vital resources for people rebuilding their lives.
+              </p>
+              <div className="inline-flex max-w-[20rem] items-center gap-2 rounded-full border border-brand2/30 bg-brand2/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-brand2 transition duration-300 ease-out group-hover:scale-[1.02] group-hover:border-brand2 group-hover:bg-brand2/15">
+                <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-brand2/20 text-[0.65rem] leading-none transition duration-300 ease-out group-hover:bg-brand2/30">
+                  💛
+                </span>
+                <span className="whitespace-normal text-[0.7rem] leading-tight">
+                  Portion of proceeds support participants
+                </span>
+              </div>
+              <Button variant="primary" onClick={handleAmazonClick}>View on Amazon</Button>
+              <div className="text-sm text-muted">
+                <strong className="text-text">Donyale Mack</strong>
+                <div className="mt-1">CEO/Author</div>
+              </div>
+            </div>
+          </div>
+        </GlowCard>
+      </section>
+
+      {/* INTEREST FORM */}
+      <section id="contact" className="mx-auto max-w-container px-7 py-20">
+        <div className="text-center mb-10">
+          <div className="text-xs font-semibold tracking-[0.18em] text-brand2 uppercase">
+            Get Started
+          </div>
+          <h2 className="h2 mt-4">
+            Ready to Start Your Journey?
+          </h2>
+          <p className="mx-auto mt-4 max-w-[680px] text-muted">
+            Let us know how we can support you. Fill out the form below and we&apos;ll respond within 48 hours.
+          </p>
         </div>
-      </footer>
-    </div>
+
+        <GlowCard className="p-8">
+          <iframe
+            src="https://forms.cloud.microsoft/r/G0kkRW4F7q"
+            width="100%"
+            height="800"
+            frameBorder="0"
+            marginHeight={0}
+            marginWidth={0}
+            className="rounded-lg"
+          >
+            Loading…
+          </iframe>
+        </GlowCard>
+      </section>
+
+      {/* FOOTER CTA */}
+      <section className="mx-auto max-w-container px-7 py-16 text-center">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-8">
+          <a href="#top">
+            <Button variant="primary">Back to Top</Button>
+          </a>
+
+          <div className="flex flex-col items-center gap-3">
+            <div className="text-sm font-semibold text-text">Submit Referral</div>
+            <div className="rounded-xl bg-panel border border-border p-4 shadow-glow">
+              <div className="rounded-lg bg-white p-3">
+                <img
+                  src="/referral-qr.png"
+                  alt="Scan to Submit Referral"
+                  className="h-32 w-32 object-contain"
+                />
+              </div>
+            </div>
+            <p className="text-xs text-muted">Scan to access referral form</p>
+          </div>
+        </div>
+
+        <div className="mt-10 text-xs text-muted">
+          © {new Date().getFullYear()} T.O.O.L.S Inc · Empowering individuals To Step Into Their Purpose
+        </div>
+      </section>
+
+      {/* ChatBot */}
+      <ChatBot />
+      
+      {/* Cookie Consent */}
+      <CookieConsent />
+    </main>
   );
 }
-

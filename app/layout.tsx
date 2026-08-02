@@ -7,10 +7,12 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'CaseFlow Operations',
-  description: 'Modern case management platform',
+  title: 'T.O.O.L.S Inc - Empowering Individuals To Step Into Their Purpose',
+  description: 'Together Overcoming Obstacles and Limitations',
   manifest: '/manifest.json',
   icons: {
+    icon: '/logos/main-logo.png',
+    shortcut: '/logos/main-logo.png',
     apple: '/icons/icon-192.png',
   },
 };
