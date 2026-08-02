@@ -6,7 +6,7 @@ import { api } from '@/convex/_generated/api';
 import { Home, Plus, Save, Search } from "lucide-react";
 import type { Id, Doc } from '@/convex/_generated/dataModel';
 
-const STATUS_COLORS = {
+const STATUS_COLORS: Record<string, string> = {
   pending: "bg-amber-100 text-amber-700",
   active: "bg-emerald-100 text-emerald-700",
   exited: "bg-slate-100 text-slate-500",

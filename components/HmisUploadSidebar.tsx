@@ -6,6 +6,16 @@ import { api } from '@/convex/_generated/api';
 import type { Id } from '@/convex/_generated/dataModel';
 import { CheckSquare, Square, Upload, ChevronRight, ChevronLeft, Loader2, MailCheck, AlertCircle, ExternalLink } from "lucide-react";
 
+type HmisQueueItem = {
+  _id: Id<"hmisQueue">;
+  checked: boolean;
+  clientName: string;
+  type: string;
+  summary: string;
+  staff: string;
+  checkedAt?: string;
+};
+
 function todayISO() {
   return new Date().toISOString().split("T")[0];
 }
@@ -17,7 +27,7 @@ export default function HmisUploadSidebar() {
   const [sendError, setSendError] = useState("");
 
   const today = todayISO();
-  const queue = useQuery(api.functions.listHmisQueueByDate, { date: today }) ?? [];
+  const queue = (useQuery(api.functions.listHmisQueueByDate, { date: today }) ?? []) as HmisQueueItem[];
   const markChecked = useMutation(api.functions.markHmisChecked);
 
   const total = queue.length;

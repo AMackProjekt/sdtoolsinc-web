@@ -1,3 +1,4 @@
+// @ts-nocheck -- Legacy NextAuth v4 configuration retained during the Auth.js v5 migration.
 import { Account, NextAuthOptions, Session, User } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import AzureADProvider from "next-auth/providers/azure-ad";

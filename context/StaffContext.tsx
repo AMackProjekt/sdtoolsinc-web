@@ -143,7 +143,11 @@ export function StaffProvider({ children }: { children: React.ReactNode }) {
   const _shoutOuts = useQuery(api.functions.listShoutOuts) ?? [];
   const _smartGoals = useQuery(api.functions.listSmartGoals) ?? [];
   const _requests = useQuery(api.functions.listRequests) ?? [];
-  const _teamMembers = useQuery(api.functions.listTeamMembers) ?? [];
+  const _teamMembers = (useQuery(api.functions.listTeamMembers) ?? []) as Array<{
+    _id: Id<"teamMembers">;
+    name: string;
+    role: string;
+  }>;
 
   // Cast Convex doc types to interface types (_id / _creationTime added by Convex automatically)
   const participants = _participants as unknown as Participant[];
