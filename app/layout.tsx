@@ -115,17 +115,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="font-sans text-text antialiased">
-<<<<<<< HEAD
+        <WebVitals />
         <PrivacyBanner />
         {children}
         <Footer />
-=======
-        <WebVitals />
-        <AuthProvider>
-          {children}
-          <Footer />
-        </AuthProvider>
->>>>>>> origin/copilot/optimize-website-performance
       </body>
     </html>
   );

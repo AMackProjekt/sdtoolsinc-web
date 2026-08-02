@@ -21,10 +21,6 @@
       "allowedRoles": ["anonymous"]
     }
   ],
-  "navigationFallback": {
-    "rewrite": "/index.html",
-    "exclude": ["/images/*", "/css/*", "/js/*", "/api/*", "/videos/*", "/*.webp", "/*.png", "/*.jpg", "/*.jpeg"]
-  },
   "responseOverrides": {
     "401": {
       "redirect": "/auth/login",
@@ -58,8 +54,5 @@
     ".mp4": "video/mp4",
     ".woff2": "font/woff2",
     ".woff": "font/woff"
-  },
-  "platform": {
-    "apiRuntime": "node:18"
   }
 }

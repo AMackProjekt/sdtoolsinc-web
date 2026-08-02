@@ -2,8 +2,13 @@
 
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import { Suspense } from "react";
 
 export default function CheckEmailPage() {
+  return <Suspense fallback={<main className="min-h-screen bg-bg" />}><CheckEmailContent /></Suspense>;
+}
+
+function CheckEmailContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const email = searchParams.get("email") || "your email";
