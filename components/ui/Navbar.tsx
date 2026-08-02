@@ -1,128 +1,128 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Button } from "./Button";
-import { Mail, Phone, ChevronDown } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export function Navbar() {
-  const [orgName, setOrgName] = useState("T.O.O.LS Inc");
-  const [contactOpen, setContactOpen] = useState(false);
-  const contactRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
-
-  useEffect(() => {
-    fetch("/api/enterprise/org")
-      .then((r) => r.json())
-      .then((d) => { if (d.settings?.org_name) setOrgName(d.settings.org_name); })
-      .catch(() => {});
-  }, []);
-
-  // Close dropdown on outside click
-  useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (contactRef.current && !contactRef.current.contains(e.target as Node)) {
-        setContactOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, []);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-bg/70 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-container items-center justify-between px-7 py-4">
-        <motion.button
-          type="button"
-          onClick={() => router.push("/")}
+      <div className="mx-auto flex max-w-container items-center justify-between px-4 sm:px-7 py-4">
+        <motion.a
+          href="/"
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35 }}
-          className="flex items-center gap-3"
+          className="flex items-center gap-2 sm:gap-3"
         >
           <img
             src="/logos/main-logo.png"
-            alt={`${orgName} Logo`}
-            className="h-10 w-auto object-contain"
+            alt="T.O.O.LS Inc Logo"
+            className="h-8 sm:h-10 w-auto object-contain"
           />
-          <span className="font-extrabold tracking-tight text-text">
-            {orgName}
+          <span className="text-sm sm:text-base font-extrabold tracking-tight text-text">
+            T.O.O.LS Inc
           </span>
-        </motion.button>
+        </motion.a>
 
-        <nav className="hidden items-center gap-6 md:flex">
-          <Link className="text-sm font-medium text-muted hover:text-text" href="/#platform">Programs</Link>
-          <Link className="text-sm font-medium text-muted hover:text-text" href="/#dashboard">Impact</Link>
-          <Link className="text-sm font-medium text-muted hover:text-text" href="/partnerships">Partnerships</Link>
-          <Link className="text-sm font-medium text-muted hover:text-text" href="/referral">Referral</Link>
-
-          {/* Contact dropdown */}
-          <div ref={contactRef} className="relative">
-            <button
-              onClick={() => setContactOpen((o) => !o)}
-              className="flex items-center gap-1 text-sm font-medium text-muted hover:text-text transition"
-            >
-              Contact
-              <ChevronDown className={`h-3.5 w-3.5 transition-transform ${contactOpen ? "rotate-180" : ""}`} />
-            </button>
-
-            <AnimatePresence>
-              {contactOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 6 }}
-                  transition={{ duration: 0.18 }}
-                  className="absolute right-0 top-full mt-3 w-72 rounded-xl border border-border bg-panel/95 backdrop-blur-xl p-4 shadow-xl z-50"
-                >
-                  {/* Technical Support */}
-                  <div className="mb-4">
-                    <p className="text-[10px] font-semibold uppercase tracking-widest text-muted mb-2">Technical Help</p>
-                    <a
-                      href="mailto:support@sdtoolsinc.org"
-                      className="flex items-center gap-2 text-sm text-text hover:text-brand transition"
-                      onClick={() => setContactOpen(false)}
-                    >
-                      <Mail className="h-4 w-4 text-brand shrink-0" />
-                      support@sdtoolsinc.org
-                    </a>
-                  </div>
-
-                  <div className="border-t border-border pt-4">
-                    <p className="text-[10px] font-semibold uppercase tracking-widest text-muted mb-2">Direct Contact</p>
-                    <p className="text-sm font-semibold text-text mb-1">
-                      Donyale <span className="text-brand">&quot;DThree&quot;</span> Mack
-                    </p>
-                    <a
-                      href="mailto:dmack@sdtoolsinc.org"
-                      className="flex items-center gap-2 text-sm text-muted hover:text-text transition mb-1"
-                      onClick={() => setContactOpen(false)}
-                    >
-                      <Mail className="h-3.5 w-3.5 shrink-0" />
-                      dmack@sdtoolsinc.org
-                    </a>
-                    <a
-                      href="tel:6193507638"
-                      className="flex items-center gap-2 text-sm text-muted hover:text-text transition"
-                      onClick={() => setContactOpen(false)}
-                    >
-                      <Phone className="h-3.5 w-3.5 shrink-0" />
-                      (619) 350-7638
-                    </a>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+        {/* Desktop Navigation */}
+        <nav className="hidden lg:flex items-center gap-6">
+          <a className="text-sm font-medium text-brand hover:text-brand2 transition" href="/first-steps">New to Reentry?</a>
+          <a className="text-sm font-medium text-muted hover:text-text transition" href="/#platform">Programs</a>
+          <a className="text-sm font-medium text-muted hover:text-text transition" href="/resources">Success Tools</a>
+          <a className="text-sm font-medium text-muted hover:text-text transition" href="/reentry">Reentry</a>
+          <a className="text-sm font-medium text-muted hover:text-text transition" href="/#dashboard">Impact</a>
+          <a className="text-sm font-medium text-muted hover:text-text transition" href="/partnerships">Partnerships</a>
+          <a className="text-sm font-medium text-muted hover:text-text transition" href="/referral">Referral & Contact</a>
+          <a className="text-sm font-medium text-muted hover:text-text transition" href="/demos">Demos</a>
+          <a className="text-sm font-medium text-brand hover:text-brand2 transition flex items-center gap-2" href="/portal/portals">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+            </svg>
+            My Portals
+          </a>
+          
+          {/* Newsletter Signup */}
+          <a 
+            href="mailto:news@sdtoolsinc.org?subject=Subscribe%20to%20Newsletter"
+            className="text-sm font-medium text-muted hover:text-text transition flex items-center gap-1"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+            Newsletter
+          </a>
         </nav>
 
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" className="hidden sm:inline-flex" onClick={() => router.push("/portal")}>Portal</Button>
-          <Button variant="primary" onClick={() => window.location.href = "mailto:support@sdtoolsinc.org"}>Get Support</Button>
-        </div>
+        {/* Mobile Menu Button */}
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="lg:hidden p-2 text-text hover:text-brand transition"
+          aria-label="Toggle menu"
+        >
+          {mobileMenuOpen ? (
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          ) : (
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          )}
+        </button>
       </div>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          className="lg:hidden border-t border-border bg-bg/95 backdrop-blur-xl"
+        >
+          <nav className="flex flex-col px-4 py-4 space-y-3">
+              <a className="text-sm font-semibold text-brand hover:text-brand2 transition py-3 flex items-center gap-2" href="/first-steps" onClick={() => setMobileMenuOpen(false)}>
+                🆕 New to Reentry?
+              </a>
+              <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/#platform" onClick={() => setMobileMenuOpen(false)}>Programs</a>
+            <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/resources" onClick={() => setMobileMenuOpen(false)}>Success Tools</a>
+              <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/reentry" onClick={() => setMobileMenuOpen(false)}>Reentry</a>
+            <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/#dashboard" onClick={() => setMobileMenuOpen(false)}>Impact</a>
+            <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/partnerships" onClick={() => setMobileMenuOpen(false)}>Partnerships</a>
+            <a className="text-sm font-medium text-muted hover:text-text transition py-2" href="/referral" onClick={() => setMobileMenuOpen(false)}>Referral & Contact</a>
+            
+            {/* My Portals - Prominent Link */}
+            <div className="pt-3 border-t border-border">
+              <a 
+                href="/portal/portals"
+                className="flex items-center gap-2 px-2 py-3 text-sm font-semibold text-brand hover:text-brand2 transition"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+                My Portals
+              </a>
+            </div>
+            
+            {/* Newsletter Signup */}
+            <div className="pt-2 border-t border-border">
+              <a 
+                href="mailto:news@sdtoolsinc.org?subject=Subscribe%20to%20Newsletter" 
+                className="flex items-center gap-2 px-2 py-3 text-sm font-medium text-muted hover:text-text transition"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+                Subscribe to Newsletter
+              </a>
+            </div>
+          </nav>
+        </motion.div>
+      )}
     </header>
   );
 }

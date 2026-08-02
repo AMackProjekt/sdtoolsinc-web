@@ -37,7 +37,10 @@
   ],
   "exclude": [
     "node_modules",
-    "sdtoolsinc-web",
-    ".github"
+    "api",
+    "data-factory",
+    "portal-app",
+    "apps",
+    "automation"
   ]
 }
