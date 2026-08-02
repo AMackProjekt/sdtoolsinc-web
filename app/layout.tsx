@@ -6,9 +6,9 @@ import { WebVitals } from "@/components/WebVitals";
 export const metadata = {
   metadataBase: new URL('https://sdtoolsinc.org'),
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.ico',
-    apple: '/apple-touch-icon.png',
+    icon: '/favicon.ico?v=20260209',
+    shortcut: '/favicon.ico?v=20260209',
+    apple: '/apple-touch-icon.png?v=20260209',
   },
   title: {
     default: 'T.O.O.L.S. Inc. | Reentry Support & Workforce Development in San Diego, CA',
