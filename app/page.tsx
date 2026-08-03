@@ -197,36 +197,55 @@ export default function Page() {
 
       {/* BOOK / SUPPORT SECTION */}
       <section className="mx-auto max-w-container px-7 py-20">
-        <GlowCard className="p-10 text-center">
-          <div className="text-xs font-semibold tracking-[0.18em] text-brand2 uppercase">
-            Support Our Mission
-          </div>
-          <h2 className="h2 mt-4">
-            Go Check It Out
-          </h2>
-          <div className="mt-2 text-lg font-semibold text-brand">
-            Available Now On Amazon Platform
-          </div>
-          
-          <div className="mx-auto mt-6 max-w-[680px] space-y-4 text-text/90 leading-relaxed">
-            <p>
-              A portion of the proceeds go to helping program participants with immediate needs such as 
-              but not limited to: bus/transit passes, gas cards, work boots and clothing for work.
-            </p>
-            <p className="text-base font-semibold text-brand2">
-              We appreciate Your Support
-            </p>
-          </div>
-
-          <div className="mt-8">
-            <a href="https://www.amazon.com/Navigating-Spiritual-Warfare-UNDERSTANDING-OVERCOMING/dp/B0CX5JB7BL" target="_blank" rel="noopener noreferrer">
-              <Button variant="primary">View on Amazon</Button>
+        <GlowCard className="p-6 sm:p-10">
+          <div className="grid items-center gap-10 md:grid-cols-[minmax(220px,320px)_1fr] md:text-left">
+            <a
+              href="https://www.amazon.com/Navigating-Spiritual-Warfare-UNDERSTANDING-OVERCOMING/dp/B0CX5JB7BL"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group mx-auto block w-full max-w-[290px]"
+              aria-label="View Navigating Spiritual Warfare by Donyale Mack on Amazon"
+            >
+              <img
+                src="/images/navigating-spiritual-warfare-book-cover.png"
+                alt="Cover of Navigating Spiritual Warfare by Donyale Mack"
+                width="367"
+                height="547"
+                loading="lazy"
+                className="h-auto w-full rounded-lg shadow-[0_24px_60px_rgba(0,0,0,.45)] ring-1 ring-white/10 transition duration-300 group-hover:-translate-y-1 group-hover:shadow-glow"
+              />
             </a>
-          </div>
 
-          <div className="mt-6 text-sm text-muted">
-            <strong className="text-text">Donyale Mack</strong>
-            <div className="mt-1">CEO/Author</div>
+            <div className="text-center md:text-left">
+              <div className="text-xs font-semibold tracking-[0.18em] text-brand2 uppercase">
+                Support Our Mission
+              </div>
+              <h2 className="h2 mt-4">Navigating Spiritual Warfare</h2>
+              <div className="mt-2 text-lg font-semibold text-brand">
+                Available now on Amazon
+              </div>
+
+              <div className="mt-6 max-w-[680px] space-y-4 text-text/90 leading-relaxed">
+                <p>
+                  A portion of the proceeds helps program participants with immediate needs, including
+                  bus and transit passes, gas cards, work boots, and clothing for work.
+                </p>
+                <p className="text-base font-semibold text-brand2">
+                  We appreciate your support.
+                </p>
+              </div>
+
+              <div className="mt-8">
+                <a href="https://www.amazon.com/Navigating-Spiritual-Warfare-UNDERSTANDING-OVERCOMING/dp/B0CX5JB7BL" target="_blank" rel="noopener noreferrer">
+                  <Button variant="primary">View Book on Amazon</Button>
+                </a>
+              </div>
+
+              <div className="mt-6 text-sm text-muted">
+                <strong className="text-text">Donyale Mack</strong>
+                <div className="mt-1">CEO &amp; Author</div>
+              </div>
+            </div>
           </div>
         </GlowCard>
       </section>
