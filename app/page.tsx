@@ -197,6 +197,11 @@ export default function Page() {
 
       {/* BOOK / SUPPORT SECTION */}
       <section className="mx-auto max-w-container px-7 py-20">
+        <SectionHeading
+          eyebrow="Books by Donyale Mack"
+          title="Knowledge for the Journey"
+          subtitle="Books created to strengthen, prepare, and inspire people moving toward purpose."
+        />
         <GlowCard className="p-6 sm:p-10">
           <div className="grid items-center gap-10 md:grid-cols-[minmax(220px,320px)_1fr] md:text-left">
             <a
@@ -241,6 +246,38 @@ export default function Page() {
                 </a>
               </div>
 
+              <div className="mt-6 text-sm text-muted">
+                <strong className="text-text">Donyale Mack</strong>
+                <div className="mt-1">CEO &amp; Author</div>
+              </div>
+            </div>
+          </div>
+        </GlowCard>
+
+        <GlowCard className="mt-6 p-6 sm:p-10">
+          <div className="grid items-center gap-10 md:grid-cols-[minmax(220px,320px)_1fr] md:text-left">
+            <div className="mx-auto w-full max-w-[290px]">
+              <img
+                src="/images/alphakode-book-cover.png"
+                alt="Cover of AlphaKode by Donyale Mack"
+                width="1024"
+                height="1536"
+                loading="lazy"
+                className="h-auto w-full rounded-lg shadow-[0_24px_60px_rgba(0,0,0,.45)] ring-1 ring-white/10"
+              />
+            </div>
+
+            <div className="text-center md:text-left">
+              <div className="text-xs font-semibold tracking-[0.18em] text-brand2 uppercase">
+                Coming Soon
+              </div>
+              <h2 className="h2 mt-4">AlphaKode</h2>
+              <div className="mt-2 text-lg font-semibold text-brand">
+                Unlock the code. Step into purpose.
+              </div>
+              <p className="mt-6 max-w-[680px] text-text/90 leading-relaxed">
+                A forthcoming book from Donyale Mack exploring transformation, identity, and the principles that help us overcome limitations and move forward with intention.
+              </p>
               <div className="mt-6 text-sm text-muted">
                 <strong className="text-text">Donyale Mack</strong>
                 <div className="mt-1">CEO &amp; Author</div>
