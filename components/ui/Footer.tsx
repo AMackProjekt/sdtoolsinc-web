@@ -131,6 +131,18 @@ export function Footer() {
           >
             © {new Date().getFullYear()} T.O.O.L.S Inc. All rights reserved.
           </motion.p>
+          <motion.a
+            href="https://mackprojekt.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+            className="text-xs font-semibold tracking-[0.14em] text-brand2 hover:text-brand transition-colors"
+          >
+            Powered By A MackProjekt
+          </motion.a>
         </div>
       </div>
 
