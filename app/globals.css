@@ -10,6 +10,10 @@ html, body {
   height: 100%;
 }
 
+html {
+  background-color: #06070b;
+}
+
 body {
   background: #06070b;
 }
