@@ -105,7 +105,7 @@ export function Certificate({
 
           {/* Signature Line */}
           <div className="text-center mt-8 pt-4 border-t border-brand/30 w-full max-w-2xl">
-            <p className="text-xs text-muted">T.O.O.L.S Inc - Together Overcoming Obstacles and Limitations</p>
+            <p className="text-xs text-muted">T.O.O.L.S Inc - Together Overcoming Obstacles &amp; Limitations</p>
           </div>
         </div>
       </div>

@@ -168,7 +168,7 @@ export default function PrivacyPolicyPage() {
               If you have questions about this Privacy Policy or our data practices:
             </p>
             <div className="bg-panel rounded-lg p-4 space-y-1 text-muted">
-              <p><strong>T.O.O.L.S. Inc. (Together Overcoming Obstacles and Limitations)</strong></p>
+              <p><strong>T.O.O.L.S. Inc. (Together Overcoming Obstacles &amp; Limitations)</strong></p>
               <p><strong>Email:</strong> info@sdtoolsinc.org</p>
               <p><strong>Phone:</strong> (619) 350-7638</p>
               <p><strong>Website:</strong> www.sdtoolsinc.org</p>

@@ -42,7 +42,7 @@ export default function Page() {
         </h1>
 
         <p className="mx-auto mt-4 sm:mt-6 max-w-[760px] p-lead px-4">
-          At T.O.O.L.S. Inc. (Transitions, Opportunities, Outcomes, Livelihood, and Success), we provide reentry support and opportunities for individuals looking to start over.
+          At T.O.O.L.S. Inc. (Together Overcoming Obstacles &amp; Limitations), we provide reentry support and opportunities for individuals looking to start over.
           Through comprehensive programs and lived experience, we help people unlock their full potential.
         </p>
 
@@ -151,7 +151,7 @@ export default function Page() {
             
             <div className="mt-6 space-y-4 text-text/90 leading-relaxed">
               <p>
-                A compassionate advocate and the driving force behind T.O.O.L.S. Inc. (Transitions, Opportunities, Outcomes, Livelihood, and Success), Donyale Mack is dedicated to
+                A compassionate advocate and the driving force behind T.O.O.L.S. Inc. (Together Overcoming Obstacles &amp; Limitations), Donyale Mack is dedicated to
                 providing reentry support and opportunities to those seeking a second chance in life.
               </p>
               <p>
