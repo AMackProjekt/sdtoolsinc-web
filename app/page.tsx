@@ -258,7 +258,7 @@ export default function Page() {
           <div className="grid items-center gap-10 md:grid-cols-[minmax(220px,320px)_1fr] md:text-left">
             <div className="mx-auto w-full max-w-[290px]">
               <img
-                src="/images/alphakode-cover-v1.jpg"
+                src="/images/alphakode-kdp-final-preview.png"
                 alt="Cover of AlphaKode by Donyale Mack"
                 width="1024"
                 height="1536"
