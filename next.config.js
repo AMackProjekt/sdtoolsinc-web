@@ -6,8 +6,7 @@ const withBundleAnalyzer = bundleAnalyzer({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Azure Static Web Apps packages the hybrid Next.js output itself.
-  // Leaving standalone disabled ensures .next/static is deployed with the app.
+  output: 'standalone',
   images: { 
     unoptimized: true,
     formats: ['image/avif', 'image/webp'],
