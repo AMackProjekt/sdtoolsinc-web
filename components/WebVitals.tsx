@@ -15,9 +15,14 @@ export function WebVitals() {
       });
     }
     
-    // In production, you could send this to an analytics service
-    // Example: window.gtag?.('event', metric.name, { value: metric.value });
-    // Example: fetch('/api/analytics', { method: 'POST', body: JSON.stringify(metric) });
+    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+      window.gtag('event', metric.name, {
+        value: Math.round(metric.name === 'CLS' ? metric.value * 1000 : metric.value),
+        metric_id: metric.id,
+        metric_rating: metric.rating,
+        non_interaction: true,
+      });
+    }
   });
 
   return null;

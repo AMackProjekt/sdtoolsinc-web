@@ -2,6 +2,7 @@ import "./globals.css";
 import { Footer } from "@/components/ui/Footer";
 import { PrivacyBanner } from "@/components/ui/PrivacyBanner";
 import { WebVitals } from "@/components/WebVitals";
+import { InteractionAnalytics } from "@/components/InteractionAnalytics";
 
 export const metadata = {
   metadataBase: new URL('https://sdtoolsinc.org'),
@@ -15,6 +16,7 @@ export const metadata = {
     template: '%s | T.O.O.L.S. Inc.'
   },
   description: 'T.O.O.L.S. Inc. provides reentry support, workforce development, and wraparound services for justice-involved individuals in San Diego, California.',
+  alternates: { canonical: 'https://sdtoolsinc.org/' },
   keywords: ['reentry programs San Diego', 'reentry services San Diego', 'justice involved support', 'workforce development', 'second chance employment resources', 'case management', 'wraparound services', 'formerly incarcerated support services', 'social services organization'],
   authors: [{ name: 'T.O.O.L.S Inc' }],
   openGraph: {
@@ -116,6 +118,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="font-sans text-text antialiased">
         <WebVitals />
+        <InteractionAnalytics />
         <PrivacyBanner />
         {children}
         <Footer />
