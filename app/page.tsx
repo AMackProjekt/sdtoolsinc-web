@@ -1,411 +1,93 @@
-import dynamic from "next/dynamic";
-import { Navbar } from "@/components/ui/Navbar";
-import { GlowCard } from "@/components/ui/GlowCard";
-import { Button } from "@/components/ui/Button";
-import { SectionHeading } from "@/components/ui/SectionHeading";
-import { FirstStepsChecklist } from "@/components/ui/FirstStepsChecklist";
-import { SecondChanceEmployers } from "@/components/ui/SecondChanceEmployers";
+import { MackAiNavigator } from "@/components/ui/MackAiNavigator";
 
-// Lazy load heavy components for performance
-const DashboardSection = dynamic(() => import("@/components/ui/DashboardSection").then(mod => ({ default: mod.DashboardSection })), {
-  loading: () => <div className="mx-auto max-w-container px-7 py-20 text-center"><div className="text-muted">Loading dashboard...</div></div>,
-});
-
-const InteractiveTiles = dynamic(() => import("@/components/ui/InteractiveTiles").then(mod => ({ default: mod.InteractiveTiles })), {
-  loading: () => <div className="mx-auto max-w-container px-7 py-16"><div className="text-muted text-center">Loading...</div></div>,
-});
-
-const ChatBot = dynamic(() => import("@/components/ui/ChatBot").then(mod => ({ default: mod.ChatBot })), {
-  loading: () => null,
-});
-
-const CookieConsent = dynamic(() => import("@/components/ui/CookieConsent").then(mod => ({ default: mod.CookieConsent })), {
-  loading: () => null,
-});
+const steps = [
+  { icon: "▣", label: "California identification", detail: "Start a DMV ID application and ask an eligible service provider about no-fee or reduced-fee options." },
+  { icon: "◈", label: "Food & essentials", detail: "Apply for CalFresh. Ask whether you qualify for expedited processing." },
+  { icon: "◉", label: "Phone & communication", detail: "Explore California LifeLine and accessible communication options." },
+  { icon: "⌁", label: "Transportation", detail: "Get a PRONTO transit card and identify routes to appointments." },
+  { icon: "⌂", label: "Housing & stability", detail: "Contact 2-1-1 San Diego for shelter referrals and basic-needs resources." },
+  { icon: "↗", label: "Work & opportunity", detail: "Build a resume, explore fair-chance employers and attend readiness workshops." }
+];
+const offerings = [
+  { label: "Krucial 72-Hour Plan", description: "Six immediate priorities to begin your stabilization journey.", tag: "FIRST STEPS", href: "#first-steps", color: "from-blue-600 to-blue-900" },
+  { label: "DocuReady Track A", description: "Support for reentry and justice-involved community members.", tag: "REENTRY", href: "/referral", color: "from-amber-600 to-orange-900" },
+  { label: "DocuReady Track B", description: "Community support for individuals who need a fresh start.", tag: "COMMUNITY", href: "/interest", color: "from-indigo-600 to-violet-900" },
+  { label: "Workshops & Resume", description: "Career readiness, communication, digital literacy, and financial basics.", tag: "EDUCATION", href: "/programs", color: "from-emerald-600 to-teal-900" }
+];
 
 export default function Page() {
-  return (
-    <main className="min-h-screen bg-bg">
-      {/* Background glow */}
-      <div className="pointer-events-none fixed inset-0 -z-10 bg-dash-glow" />
+  return <main className="min-h-screen bg-[#060D1A] text-slate-100">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-[#060D1A]/95 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-5 py-4">
+        <a href="/" className="flex items-center gap-3" aria-label="T.O.O.L.S. Inc. home"><img src="/icons/tools-crest.svg" alt="" className="h-12 w-12 rounded-xl border border-amber-400/30" /><span><strong className="block text-lg font-extrabold tracking-tight text-white">T.O.O.L.S. INC.</strong><small className="block text-[10px] font-semibold text-amber-300">Together Overcoming Obstacles &amp; Limitations</small></span></a>
+        <nav aria-label="Primary" className="flex flex-wrap items-center gap-3 text-xs font-semibold text-slate-200 sm:text-sm">
+          <a className="hover:text-amber-300" href="#first-steps">72-Hour Plan</a>
+          <a className="hover:text-amber-300" href="#programs">Programs</a>
+          <a className="hover:text-amber-300" href="#mackai">MackAI</a>
+          <a className="hover:text-amber-300" href="#contact">Contact</a>
+          <a className="rounded-xl bg-amber-400 px-4 py-2 font-extrabold text-[#060D1A] hover:bg-amber-300" href="/interest">Get Started</a>
+        </nav>
+      </div>
+    </header>
 
-      <Navbar />
-
-      {/* HERO */}
-      <section className="mx-auto max-w-container px-4 sm:px-7 pt-16 sm:pt-24 pb-12 sm:pb-16 text-center">
-        <h1 className="h1">
-          Empowering Individuals.
-          <br />
-          <span className="bg-gradient-to-r from-brand to-brand2 bg-clip-text text-transparent">
-            Unlocking Potential.
-          </span>
-        </h1>
-
-        <p className="mx-auto mt-4 sm:mt-6 max-w-[760px] p-lead px-4">
-          At T.O.O.L.S. Inc. (Together Overcoming Obstacles &amp; Limitations), we provide reentry support and opportunities for individuals looking to start over.
-          Through comprehensive programs and lived experience, we help people unlock their full potential.
-        </p>
-
-        <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 px-4">
-          <Button variant="primary" href="/interest">Get Started</Button>
-          <Button variant="ghost" href="/demos">View Platform Demo</Button>
+    <section className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_75%_20%,rgba(14,165,233,.19),transparent_43%),linear-gradient(120deg,#060D1A,#0B172A,#132440)]">
+      <div className="mx-auto grid max-w-7xl items-center gap-9 px-5 py-16 lg:grid-cols-12 lg:py-24">
+        <div className="space-y-6 lg:col-span-7">
+          <p className="inline-flex rounded-full border border-amber-400/30 bg-white/5 px-3 py-2 text-[11px] font-bold uppercase tracking-[.18em] text-amber-300">San Diego · Reentry · Community · Opportunity</p>
+          <h1 className="max-w-[750px] text-5xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-7xl">Your Past Doesn’t <span className="text-amber-400">Define Your Future.</span></h1>
+          <p className="max-w-xl text-base leading-relaxed text-slate-200 sm:text-lg">A second chance is a new beginning. T.O.O.L.S. Inc. supports justice-involved individuals and community members with immediate essentials, access to resources, and pathways to education and employment.</p>
+          <div className="flex flex-wrap gap-3"><a className="rounded-xl bg-amber-400 px-6 py-3 font-extrabold text-[#060D1A] hover:bg-amber-300" href="/interest">Get Started Today</a><a className="rounded-xl border border-white/25 bg-white/10 px-6 py-3 font-semibold text-white hover:bg-white/20" href="#contact">Contact &amp; Crisis Guide</a></div>
+          <p className="text-sm font-medium text-slate-300">Track A: Justice-Involved &amp; Reentry · Track B: Community Services</p>
         </div>
+        <div className="lg:col-span-5"><MackAiNavigator /></div>
+      </div>
+    </section>
 
-        {/* Portal Sign In Links */}
-        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 text-sm text-muted">
-          <span className="text-xs uppercase tracking-wider">Already have access?</span>
-          <div className="flex gap-3">
-            <a 
-              href="https://toolsinc-client-portal.azurestaticapps.net" 
-              className="text-brand hover:text-brand2 transition-colors font-medium"
-            >
-              Client Portal Sign In →
-            </a>
-            <span className="text-border">|</span>
-            <a 
-              href="https://toolsinc-casemgr-portal.azurestaticapps.net" 
-              className="text-brand hover:text-brand2 transition-colors font-medium"
-            >
-              Case Manager Sign In →
-            </a>
-          </div>
+    <section id="programs" className="bg-[#0B172A] px-5 py-14">
+      <div className="mx-auto max-w-7xl">
+        <p className="text-xs font-extrabold uppercase tracking-[.2em] text-amber-400">Stabilization &amp; opportunity</p>
+        <h2 className="mt-3 text-3xl font-extrabold text-white sm:text-4xl">Start where you are. Move forward with support.</h2>
+        <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {offerings.map(item => <a href={item.href} key={item.label} className={`group flex min-h-52 flex-col rounded-2xl border border-white/15 bg-gradient-to-br ${item.color} p-5 transition hover:-translate-y-1 hover:border-amber-300/70`}>
+            <span className="text-[11px] font-extrabold tracking-[.15em] text-white/75">{item.tag}</span>
+            <strong className="mt-6 text-lg font-extrabold text-white">{item.label}</strong>
+            <span className="mt-2 text-sm leading-relaxed text-white/85">{item.description}</span>
+            <span className="mt-auto pt-4 text-sm font-bold text-white">Explore →</span>
+          </a>)}
         </div>
+        <p className="mt-4 text-xs leading-relaxed text-slate-400">DocuReady intake is currently routed to existing T.O.O.L.S. Inc. forms. Secure cloud intake, approvals, and client records are not enabled on this public homepage.</p>
+      </div>
+    </section>
 
-        {/* KPI band */}
-        <div className="mt-10 sm:mt-14 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-          {[
-            ["Case Mgmnt", "Wrap Around Services"],
-            ["Growth", "Job Readiness Training"],
-            ["Resources", "Lived Experience Team"],
-            ["Access", "Continued Education"]
-          ].map(([v, t]) => (
-            <GlowCard key={t} className="p-4 sm:p-5 text-left">
-              <div className="text-xl sm:text-2xl font-extrabold tracking-tight">{v}</div>
-              <div className="mt-2 text-xs sm:text-sm text-muted">{t}</div>
-            </GlowCard>
-          ))}
+    <section id="first-steps" className="bg-[#F1F5F9] px-5 py-16 text-slate-900">
+      <div className="mx-auto max-w-7xl">
+        <p className="text-xs font-extrabold uppercase tracking-[.18em] text-blue-800">Krucial 72-Hour Stabilization Plan</p>
+        <h2 className="mt-3 text-3xl font-extrabold text-[#0B172A] sm:text-4xl">Six first steps toward stability</h2>
+        <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-600">Use this checklist to identify your next actions. A T.O.O.L.S. advocate can help you navigate eligibility and referrals. Information and availability vary.</p>
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {steps.map((step,i) => <article className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" key={step.label}>
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#132440] text-xl font-bold text-amber-300">{step.icon}</span>
+            <p className="mt-4 text-xs font-bold uppercase tracking-widest text-sky-700">Step {i+1}</p>
+            <h3 className="mt-1 text-lg font-extrabold text-[#0B172A]">{step.label}</h3>
+            <p className="mt-2 text-sm leading-relaxed text-slate-600">{step.detail}</p>
+          </article>)}
         </div>
-      </section>
+        <div className="mt-7 flex flex-wrap gap-3"><a className="rounded-xl bg-[#0B172A] px-6 py-3 text-sm font-bold text-white hover:bg-[#132440]" href="/interest">Request Help With Your Plan</a><a className="rounded-xl border border-slate-300 bg-white px-6 py-3 text-sm font-bold text-slate-800 hover:bg-slate-50" href="/referral">Submit Referral</a></div>
+      </div>
+    </section>
 
-      {/* FEATURES */}
-      <section id="platform" className="mx-auto max-w-container px-4 sm:px-7 pt-8 pb-16 sm:pb-20">
-        <SectionHeading
-          eyebrow="How We Help"
-          title="Comprehensive Support Programs"
-          subtitle="We recognize and address the diverse challenges individuals face, providing the tools and support necessary to unlock their full potential."
-        />
-
-        <div className="mt-8 sm:mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          {[
-            ["Job Readiness", "Professional development programs including resume building, mock interviews, and career planning to prepare for success."],
-            ["Continued Education", "Access to educational resources and training programs that open doors to new opportunities and skill development."],
-            ["Lived Experience", "Our team shares lived experiences with the challenges our clients face, creating genuine understanding and effective support."],
-            ["Personal Growth", "Holistic programs addressing both immediate needs and long-term goals for sustainable personal and professional growth."]
-          ].map(([h, p]) => (
-            <GlowCard key={h} className="p-4 sm:p-5">
-              <div className="text-base sm:text-lg font-extrabold tracking-tight">{h}</div>
-              <div className="mt-2 text-xs sm:text-sm text-muted leading-relaxed">{p}</div>
-            </GlowCard>
-          ))}
+    <section id="contact" className="bg-[#060D1A] px-5 py-16">
+      <div className="mx-auto max-w-7xl">
+        <p className="text-xs font-extrabold uppercase tracking-[.18em] text-amber-400">Who to call and when</p>
+        <h2 className="mt-3 text-3xl font-extrabold text-white sm:text-4xl">Direct program support and 24/7 resources</h2>
+        <div className="mt-7 grid gap-4 md:grid-cols-3">
+          <article className="rounded-2xl border border-amber-400/40 bg-[#132440] p-6"><p className="text-xs font-bold uppercase text-amber-300">T.O.O.L.S. Inc. Program &amp; Intake</p><a className="mt-4 block text-2xl font-extrabold text-white" href="tel:16193507638">(619) 350-7638</a><p className="mt-2 text-sm text-slate-300">Monday–Friday, 9 a.m.–5 p.m. · Program referrals and community partnerships</p></article>
+          <article className="rounded-2xl border border-sky-400/40 bg-[#132440] p-6"><p className="text-xs font-bold uppercase text-sky-300">Shelter, food &amp; resources</p><a className="mt-4 block text-2xl font-extrabold text-white" href="tel:211">Dial 2-1-1</a><p className="mt-2 text-sm text-slate-300">Independent San Diego resource navigation · Available 24/7</p></article>
+          <article className="rounded-2xl border border-rose-400/40 bg-[#132440] p-6"><p className="text-xs font-bold uppercase text-rose-300">Mental health crisis support</p><a className="mt-4 block text-2xl font-extrabold text-white" href="tel:988">Call or text 9-8-8</a><p className="mt-2 text-sm text-slate-300">Confidential crisis support · Available 24/7. For immediate danger, call 9-1-1.</p></article>
         </div>
-      </section>
-
-      {/* REENTRY SERVICE PROVIDER HIGHLIGHT */}
-      <section className="mx-auto max-w-container px-4 sm:px-7 py-12 sm:py-20">
-        <GlowCard className="p-6 sm:p-10 text-center overflow-hidden relative">
-          <div className="absolute inset-0 bg-gradient-to-br from-brand/10 via-transparent to-brand2/10" />
-          <div className="relative">
-            <div className="text-xs font-semibold tracking-[0.18em] text-brand2 uppercase">
-              Justice-Involved Support
-            </div>
-            <h2 className="h2 mt-4 mb-3 sm:mb-4">
-              Reentry Service Provider
-            </h2>
-            <p className="text-sm sm:text-base text-muted max-w-2xl mx-auto mb-6 sm:mb-8 leading-relaxed px-4">
-              Supporting individuals returning to society after incarceration with comprehensive reentry 
-              services, employment assistance, housing support, and a pathway to successful reintegration.
-            </p>
-            <Button variant="primary" href="/reentry">
-              Learn More About Reentry Services
-            </Button>
-          </div>
-        </GlowCard>
-      </section>
-
-      {/* INTERACTIVE TILES */}
-      <InteractiveTiles />
-
-      {/* FOUNDER STORY */}
-      <section className="mx-auto max-w-container px-7 py-20">
-        <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 items-center">
-          <div>
-            <div className="text-xs font-semibold tracking-[0.18em] text-brand2 uppercase">
-              About Us
-            </div>
-            <h2 className="h2 mt-4">
-              Together Overcoming Obstacles and Limitations
-            </h2>
-            <div className="mt-2 text-lg font-semibold text-muted">
-              Leadership: Donyale &quot;DThree&quot; Mack
-            </div>
-            
-            <div className="mt-6 space-y-4 text-text/90 leading-relaxed">
-              <p>
-                A compassionate advocate and the driving force behind T.O.O.L.S. Inc. (Together Overcoming Obstacles &amp; Limitations), Donyale Mack is dedicated to
-                providing reentry support and opportunities to those seeking a second chance in life.
-              </p>
-              <p>
-                Born out of lived experience and personal challenges, Donyale&apos;s journey is marked by resilience, 
-                overcoming adversity, and an unwavering passion to help others facing similar struggles.
-              </p>
-              <p className="text-brand font-semibold">
-                &quot;Every individual deserves the opportunity to unlock their full potential.&quot;
-              </p>
-            </div>
-          </div>
-          
-          <GlowCard className="p-8 lg:p-10">
-            <div className="space-y-6">
-              <div>
-                <div className="text-sm font-semibold text-brand2 uppercase tracking-wider">Mission</div>
-                <p className="mt-2 text-text/90">
-                  Creating pathways for individuals to transform their lives through empathy, 
-                  understanding, and comprehensive support programs.
-                </p>
-              </div>
-              <div>
-                <div className="text-sm font-semibold text-brand2 uppercase tracking-wider">Vision</div>
-                <p className="mt-2 text-text/90">
-                  Building a community where lived experience becomes the foundation for 
-                  genuine connection and lasting change.
-                </p>
-              </div>
-              <div>
-                <div className="text-sm font-semibold text-brand2 uppercase tracking-wider">Approach</div>
-                <p className="mt-2 text-text/90">
-                  Combining personal understanding with professional expertise to provide 
-                  support that goes beyond sympathy to true empowerment.
-                </p>
-              </div>
-            </div>
-          </GlowCard>
-        </div>
-      </section>
-
-      {/* DASHBOARD */}
-      <DashboardSection />
-
-      {/* BOOK / SUPPORT SECTION */}
-      <section className="mx-auto max-w-container px-7 py-20">
-        <SectionHeading
-          eyebrow="Books by Donyale Mack"
-          title="Knowledge for the Journey"
-          subtitle="Books created to strengthen, prepare, and inspire people moving toward purpose."
-        />
-        <GlowCard className="p-6 sm:p-10">
-          <div className="grid items-center gap-10 md:grid-cols-[minmax(220px,320px)_1fr] md:text-left">
-            <a
-              href="https://www.amazon.com/Navigating-Spiritual-Warfare-UNDERSTANDING-OVERCOMING/dp/B0CX5JB7BL"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group mx-auto block w-full max-w-[290px]"
-              aria-label="View Navigating Spiritual Warfare by Donyale Mack on Amazon"
-            >
-              <img
-                src="/images/navigating-spiritual-warfare-book-cover.png"
-                alt="Cover of Navigating Spiritual Warfare by Donyale Mack"
-                width="367"
-                height="547"
-                loading="lazy"
-                className="h-auto w-full rounded-lg shadow-[0_24px_60px_rgba(0,0,0,.45)] ring-1 ring-white/10 transition duration-300 group-hover:-translate-y-1 group-hover:shadow-glow"
-              />
-            </a>
-
-            <div className="text-center md:text-left">
-              <div className="text-xs font-semibold tracking-[0.18em] text-brand2 uppercase">
-                Support Our Mission
-              </div>
-              <h2 className="h2 mt-4">Navigating Spiritual Warfare</h2>
-              <div className="mt-2 text-lg font-semibold text-brand">
-                Available now on Amazon
-              </div>
-
-              <div className="mt-6 max-w-[680px] space-y-4 text-text/90 leading-relaxed">
-                <p>
-                  A portion of the proceeds helps program participants with immediate needs, including
-                  bus and transit passes, gas cards, work boots, and clothing for work.
-                </p>
-                <p className="text-base font-semibold text-brand2">
-                  We appreciate your support.
-                </p>
-              </div>
-
-              <div className="mt-8">
-                <a href="https://www.amazon.com/Navigating-Spiritual-Warfare-UNDERSTANDING-OVERCOMING/dp/B0CX5JB7BL" target="_blank" rel="noopener noreferrer">
-                  <Button variant="primary">View Book on Amazon</Button>
-                </a>
-              </div>
-
-              <div className="mt-6 text-sm text-muted">
-                <strong className="text-text">Donyale Mack</strong>
-                <div className="mt-1">CEO &amp; Author</div>
-              </div>
-            </div>
-          </div>
-        </GlowCard>
-
-        <GlowCard className="mt-6 p-6 sm:p-10">
-          <div className="grid items-center gap-10 md:grid-cols-[minmax(220px,320px)_1fr] md:text-left">
-            <div className="mx-auto w-full max-w-[290px]">
-              <img
-                src="/images/alphakode-kdp-final-preview.png"
-                alt="Cover of AlphaKode by Donyale Mack"
-                width="1024"
-                height="1536"
-                loading="lazy"
-                className="h-auto w-full rounded-lg shadow-[0_24px_60px_rgba(0,0,0,.45)] ring-1 ring-white/10"
-              />
-            </div>
-
-            <div className="text-center md:text-left">
-              <div className="text-xs font-semibold tracking-[0.18em] text-brand2 uppercase">
-                Coming Soon
-              </div>
-              <h2 className="h2 mt-4">AlphaKode</h2>
-              <div className="mt-2 text-lg font-semibold text-brand">
-                Unlock the code. Step into purpose.
-              </div>
-              <p className="mt-6 max-w-[680px] text-text/90 leading-relaxed">
-                A forthcoming book from Donyale Mack exploring transformation, identity, and the principles that help us overcome limitations and move forward with intention.
-              </p>
-              <div className="mt-6 text-sm text-muted">
-                <strong className="text-text">Donyale Mack</strong>
-                <div className="mt-1">CEO &amp; Author</div>
-              </div>
-            </div>
-          </div>
-        </GlowCard>
-      </section>
-
-      {/* INTEREST FORM */}
-      <section id="contact" className="mx-auto max-w-container px-7 py-20">
-        <div className="text-center mb-10">
-          <div className="text-xs font-semibold tracking-[0.18em] text-brand2 uppercase">
-            Get Started
-          </div>
-          <h2 className="h2 mt-4">
-            Ready to Start Your Journey?
-          </h2>
-          <p className="mx-auto mt-4 max-w-[680px] text-muted">
-            Let us know how we can support you. Fill out the form below and we&apos;ll respond within 48 hours.
-          </p>
-        </div>
-
-        <GlowCard className="p-8">
-          <iframe
-            src="https://forms.cloud.microsoft/r/G0kkRW4F7q"
-            width="100%"
-            height="800"
-            frameBorder="0"
-            marginHeight={0}
-            marginWidth={0}
-            title="T.O.O.L.S Inc Interest Form"
-            className="rounded-lg"
-          >
-            Loading…
-          </iframe>
-        </GlowCard>
-
-        {/* Contact Information */}
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <GlowCard className="p-6 text-center">
-            <div className="text-2xl mb-3">📧</div>
-            <div className="text-sm font-semibold text-brand2 uppercase tracking-wider mb-2">
-              For More Information
-            </div>
-            <a href="mailto:info@sdtoolsinc.org" className="text-text hover:text-brand transition-colors">
-              info@sdtoolsinc.org
-            </a>
-          </GlowCard>
-
-          <GlowCard className="p-6 text-center">
-            <div className="text-2xl mb-3">📰</div>
-            <div className="text-sm font-semibold text-brand2 uppercase tracking-wider mb-2">
-              Subscribe to Newsletter
-            </div>
-            <a href="mailto:news@sdtoolsinc.org" className="text-text hover:text-brand transition-colors">
-              news@sdtoolsinc.org
-            </a>
-          </GlowCard>
-
-          <GlowCard className="p-6 text-center">
-            <div className="text-2xl mb-3">🤝</div>
-            <div className="text-sm font-semibold text-brand2 uppercase tracking-wider mb-2">
-              Partnership
-            </div>
-            <a href="mailto:partner@sdtoolsinc.org" className="text-text hover:text-brand transition-colors">
-              partner@sdtoolsinc.org
-            </a>
-          </GlowCard>
-        </div>
-
-        {/* Founder Contact */}
-        <div className="mt-12">
-          <GlowCard className="p-8 max-w-2xl mx-auto">
-            <div id="founder-contact" className="text-center">
-              <div className="text-xs font-semibold tracking-[0.18em] text-brand2 uppercase mb-4">
-                Leadership
-              </div>
-              <h3 className="text-2xl font-extrabold tracking-tight text-text mb-2">
-                Founder & CEO
-              </h3>
-              <p className="text-lg font-semibold text-text mb-1">Mack</p>
-              <p className="text-sm text-muted mb-6">
-                Founder & Chief Executive Officer, T.O.O.L.S Inc
-              </p>
-              
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-sm">
-                <div className="flex items-center gap-2">
-                  <span className="text-muted">📞</span>
-                  <a 
-                    href="tel:+16193507638" 
-                    className="text-text hover:text-brand transition-colors font-medium"
-                  >
-                    +1 (619) 350-7638
-                  </a>
-                </div>
-                <span className="hidden sm:block text-border">|</span>
-                <div className="flex items-center gap-2">
-                  <span className="text-muted">✉️</span>
-                  <a 
-                    href="mailto:dmack@sdtoolsinc.org" 
-                    className="text-text hover:text-brand transition-colors font-medium"
-                  >
-                    dmack@sdtoolsinc.org
-                  </a>
-                </div>
-              </div>
-            </div>
-          </GlowCard>
-        </div>
-      </section>
-
-      {/* FOOTER CTA */}
-      <section className="mx-auto max-w-container px-7 py-16 text-center">
-        <a href="#">
-          <Button variant="primary">Back to Top</Button>
-        </a>
-
-        <div className="mt-10 text-xs text-muted">
-          © {new Date().getFullYear()} T.O.O.L.S Inc · Empowering individuals To Step Inito Their Purpose
-        </div>
-      </section>
-
-      {/* ChatBot */}
-      <ChatBot />
-      
-      {/* Cookie Consent */}
-      <CookieConsent />
-    </main>
-  );
+        <div className="mt-8 flex flex-wrap gap-4 text-sm"><a className="text-sky-300 underline" href="/partnerships">Partnerships</a><a className="text-sky-300 underline" href="mailto:info@sdtoolsinc.org">info@sdtoolsinc.org</a><a className="text-sky-300 underline" href="https://toolsinc-client-portal.azurestaticapps.net">Existing client portal</a></div>
+      </div>
+    </section>
+    <div className="border-t border-white/10 bg-[#090D14] px-5 py-6 text-center text-xs text-slate-400">© 2026 T.O.O.L.S. Inc. · Technology powered by independent partner <a href="https://mackprojekt.com" className="font-bold text-sky-300">A MackProjekt</a>.</div>
+  </main>;
 }
