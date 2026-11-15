@@ -12,7 +12,7 @@ const offerings = [
   { label: "Krucial 72-Hour Plan", description: "Six immediate priorities to begin your stabilization journey.", tag: "FIRST STEPS", href: "#first-steps", color: "from-blue-600 to-blue-900" },
   { label: "DocuReady Track A", description: "Support for reentry and justice-involved community members.", tag: "REENTRY", href: "/referral", color: "from-amber-600 to-orange-900" },
   { label: "DocuReady Track B", description: "Community support for individuals who need a fresh start.", tag: "COMMUNITY", href: "/interest", color: "from-indigo-600 to-violet-900" },
-  { label: "Workshops & Resume", description: "Career readiness, communication, digital literacy, and financial basics.", tag: "EDUCATION", href: "/programs", color: "from-emerald-600 to-teal-900" }
+  { label: "Workshops & Resume", description: "Career readiness, communication, digital literacy, and financial basics.", tag: "EDUCATION", href: "/interest", color: "from-emerald-600 to-teal-900" }
 ];
 
 export default function Page() {
