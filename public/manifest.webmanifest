@@ -1,0 +1,19 @@
+{
+  "name": "T.O.O.L.S. Inc. | Reentry & Community Hub",
+  "short_name": "T.O.O.L.S. Inc.",
+  "description": "San Diego stabilization essentials, Krucial 72-Hour tracker, DocuReady Track A & B intake, workshops, and MackAI.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#060D1A",
+  "theme_color": "#0B172A",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/tools-crest.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
