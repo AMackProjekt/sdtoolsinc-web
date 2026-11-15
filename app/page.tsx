@@ -25,7 +25,7 @@ export default function Page() {
           <a className="hover:text-amber-300" href="#programs">Programs</a>
           <a className="hover:text-amber-300" href="#mackai">MackAI</a>
           <a className="hover:text-amber-300" href="#contact">Contact</a>
-          <a className="rounded-xl border border-sky-400/50 bg-sky-400/15 px-4 py-2 font-extrabold text-sky-200 hover:bg-sky-400/25" href="/portal/portals">Portals</a><a className="rounded-xl bg-amber-400 px-4 py-2 font-extrabold text-[#060D1A] hover:bg-amber-300" href="/interest">Get Started</a>
+          <a className="rounded-xl border border-sky-400/50 bg-sky-400/15 px-4 py-2 font-extrabold text-sky-200 hover:bg-sky-400/25" href="https://sdtoolsinc.com">Portals</a><a className="rounded-xl bg-amber-400 px-4 py-2 font-extrabold text-[#060D1A] hover:bg-amber-300" href="/interest">Get Started</a>
         </nav>
       </div>
     </header>
@@ -85,7 +85,7 @@ export default function Page() {
           <article className="rounded-2xl border border-sky-400/40 bg-[#132440] p-6"><p className="text-xs font-bold uppercase text-sky-300">Shelter, food &amp; resources</p><a className="mt-4 block text-2xl font-extrabold text-white" href="tel:211">Dial 2-1-1</a><p className="mt-2 text-sm text-slate-300">Independent San Diego resource navigation · Available 24/7</p></article>
           <article className="rounded-2xl border border-rose-400/40 bg-[#132440] p-6"><p className="text-xs font-bold uppercase text-rose-300">Mental health crisis support</p><a className="mt-4 block text-2xl font-extrabold text-white" href="tel:988">Call or text 9-8-8</a><p className="mt-2 text-sm text-slate-300">Confidential crisis support · Available 24/7. For immediate danger, call 9-1-1.</p></article>
         </div>
-        <div className="mt-8 flex flex-wrap gap-4 text-sm"><a className="text-sky-300 underline" href="/partnerships">Partnerships</a><a className="text-sky-300 underline" href="mailto:info@sdtoolsinc.org">info@sdtoolsinc.org</a><a className="text-sky-300 underline" href="/portal/portals">Portals</a></div>
+        <div className="mt-8 flex flex-wrap gap-4 text-sm"><a className="text-sky-300 underline" href="/partnerships">Partnerships</a><a className="text-sky-300 underline" href="mailto:info@sdtoolsinc.org">info@sdtoolsinc.org</a><a className="text-sky-300 underline" href="https://sdtoolsinc.com">Portals</a></div>
       </div>
     </section>
     <div className="border-t border-white/10 bg-[#090D14] px-5 py-6 text-center text-xs text-slate-400">© 2026 T.O.O.L.S. Inc. · Technology powered by independent partner <a href="https://mackprojekt.com" className="font-bold text-sky-300">A MackProjekt</a>.</div>
