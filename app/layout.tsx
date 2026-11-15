@@ -6,9 +6,10 @@ import { InteractionAnalytics } from "@/components/InteractionAnalytics";
 
 export const metadata = {
   metadataBase: new URL('https://sdtoolsinc.org'),
+  manifest: '/manifest.webmanifest',
   icons: {
-    icon: '/favicon.ico?v=20260209',
-    shortcut: '/favicon.ico?v=20260209',
+    icon: '/icons/tools-crest.svg',
+    shortcut: '/icons/tools-crest.svg',
     apple: '/apple-touch-icon.png?v=20260209',
   },
   title: {
