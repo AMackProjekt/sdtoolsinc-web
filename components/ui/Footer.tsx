@@ -70,7 +70,7 @@ export function Footer() {
             className="flex items-center gap-6"
           >
             <motion.a
-              href="https://www.instagram.com/sd_t.o.o.ls_inc"
+              href="https://www.instagram.com/sd_t.o.o.ls_inc/"
               target="_blank"
               rel="noopener noreferrer"
               whileHover={{ y: -2, scale: 1.1 }}
@@ -87,7 +87,7 @@ export function Footer() {
             </motion.a>
 
             <motion.a
-              href="https://www.facebook.com/TOOLsInc"
+              href="https://www.facebook.com/people/TOOLs-Inc/61556483926772/"
               target="_blank"
               rel="noopener noreferrer"
               whileHover={{ y: -2, scale: 1.1 }}
@@ -103,22 +103,7 @@ export function Footer() {
               </div>
             </motion.a>
 
-            <motion.a
-              href="https://www.tiktok.com/@toolsinc"
-              target="_blank"
-              rel="noopener noreferrer"
-              whileHover={{ y: -2, scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              className="group relative"
-              aria-label="Follow us on TikTok"
-            >
-              <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-[#00f2ea] to-[#ff0050] opacity-0 group-hover:opacity-100 blur-lg transition-opacity duration-300" />
-              <div className="relative flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-panel/80 backdrop-blur-sm transition-all duration-300 group-hover:border-[#00f2ea]">
-                <svg className="h-5 w-5 text-muted group-hover:text-text transition-colors" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
-                </svg>
-              </div>
-            </motion.a>
+
           </motion.div>
 
           {/* Copyright */}
