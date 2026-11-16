@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Compass, FileCheck2, Handshake, Home, LayoutGrid, Mail, Phone, Shield, Sparkles, CalendarDays, HeartHandshake, ChartNoAxesColumnIncreasing, X } from "lucide-react";
 
@@ -39,4 +39,18 @@ export function AnimatedList(){
  return <div className="grid gap-3 sm:grid-cols-2">{updates.map((item,i)=><motion.a key={item.title} href={item.href} initial={{opacity:0,translateY:20}} whileInView={{opacity:1,translateY:0}} viewport={{once:true,amount:.1}} transition={{duration:.3,delay:i*.09}} className="group flex items-start gap-3 rounded-xl border border-white/10 bg-white/5 p-4 transition hover:border-amber-300/40 hover:bg-white/10"><span className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-amber-400/20 text-amber-200">{i+1}</span><span><strong className="block text-sm text-white">{item.title}</strong><span className="mt-1 block text-xs text-slate-300">{item.detail}</span></span><span className="ml-auto text-amber-300 transition group-hover:translate-x-1">→</span></motion.a>)}</div>;
 }
 const dock=[{href:"#home",label:"Home",icon:Home},{href:"#first-steps",label:"72-Hour Plan",icon:Shield},{href:"#programs",label:"Programs",icon:LayoutGrid},{href:"#impact",label:"Our Impact",icon:ChartNoAxesColumnIncreasing},{href:"#events",label:"Events",icon:CalendarDays},{href:"#mackai",label:"MackAI",icon:Sparkles},{href:"#contact",label:"Contact",icon:Mail},{href:"/partnerships",label:"Partner",icon:HeartHandshake},{href:"https://sdtoolsinc.com",label:"Portals",icon:Compass}];
-export function FloatingDock(){return <nav aria-label="Floating quick navigation" className="pointer-events-none fixed inset-x-0 bottom-3 z-[75] flex justify-center px-2"><div className="pointer-events-auto flex max-w-full items-center gap-2 overflow-x-auto rounded-2xl border border-sky-300/25 bg-[#081222]/95 p-2.5 shadow-[0_8px_40px_rgba(0,0,0,.5)] backdrop-blur-xl">{dock.map(({href,label,icon:Icon})=><motion.a key={label} href={href} title={label} aria-label={label} whileHover={{scale:1.2,y:-6}} whileTap={{scale:.95}} className="flex h-14 min-w-12 items-center justify-center rounded-xl border border-transparent px-3 text-sky-200 transition hover:border-amber-300/40 hover:bg-[#132440] hover:text-amber-300"><Icon size={24}/></motion.a>)}</div></nav>}
+export function FloatingDock() {
+ const [footerVisible,setFooterVisible]=useState(false);
+ useEffect(()=>{
+  const footer=document.querySelector(".mack-footer");
+  if(!footer)return;
+  const observer=new IntersectionObserver(([entry])=>setFooterVisible(entry.isIntersecting),{threshold:0,rootMargin:"0px 0px 95px 0px"});
+  observer.observe(footer);
+  return ()=>observer.disconnect();
+ },[]);
+ return <nav aria-label="Floating quick navigation" aria-hidden={footerVisible} className={`pointer-events-none fixed inset-x-0 bottom-3 z-[75] flex justify-center px-2 transition-opacity duration-300 ${footerVisible?"opacity-0 invisible":"opacity-100 visible"}`}>
+  <div className="pointer-events-auto flex max-w-full items-center gap-2 overflow-x-auto rounded-2xl border border-white/25 bg-slate-100/10 p-2 shadow-[0_8px_32px_rgba(0,0,0,.12)] backdrop-blur-md supports-[backdrop-filter]:bg-white/10">
+   {dock.map(({href,label,icon:Icon})=><motion.a key={label} href={href} title={label} aria-label={label} tabIndex={footerVisible?-1:0} whileHover={{scale:1.12,y:-3}} whileTap={{scale:.95}} className="flex h-14 min-w-12 items-center justify-center rounded-xl border border-white/15 bg-slate-950/25 px-3 text-white drop-shadow-sm transition hover:border-amber-300/60 hover:bg-sky-400/25 hover:text-amber-200"><Icon size={24}/></motion.a>)}
+  </div>
+ </nav>;
+}
