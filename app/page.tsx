@@ -1,5 +1,6 @@
 import { MackAiNavigator } from "@/components/ui/MackAiNavigator";
 import { ElectrifiedMackProjektFooter } from "@/components/ui/ElectrifiedMackProjektFooter";
+import { Topography, SplitFlap, FallingText } from "@/components/ui/ReactBitsEffects";
 
 const steps = [
   { icon: "▣", label: "California identification", detail: "Start a DMV ID application and ask an eligible service provider about no-fee or reduced-fee options." },
@@ -32,6 +33,8 @@ export default function Page() {
     </header>
 
     <section className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_75%_20%,rgba(14,165,233,.19),transparent_43%),linear-gradient(120deg,#060D1A,#0B172A,#132440)]">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-30" style={{backgroundImage:"linear-gradient(90deg,#060D1A 4%,rgba(6,13,26,.55) 65%,#060D1A),url('/images/san-diego-skyline.jpg')"}} />
+      <Topography className="opacity-55 mix-blend-screen" />
       <div className="mx-auto grid max-w-7xl items-center gap-9 px-5 py-16 lg:grid-cols-12 lg:py-24">
         <div className="space-y-6 lg:col-span-7">
           <p className="inline-flex rounded-full border border-amber-400/30 bg-white/5 px-3 py-2 text-[11px] font-bold uppercase tracking-[.18em] text-amber-300">San Diego · Reentry · Community · Opportunity</p>
@@ -39,8 +42,18 @@ export default function Page() {
           <p className="max-w-xl text-base leading-relaxed text-slate-200 sm:text-lg">A second chance is a new beginning. T.O.O.L.S. Inc. supports justice-involved individuals and community members with immediate essentials, access to resources, and pathways to education and employment.</p>
           <div className="flex flex-wrap gap-3"><a className="rounded-xl bg-amber-400 px-6 py-3 font-extrabold text-[#060D1A] hover:bg-amber-300" href="/interest">Get Started Today</a><a className="rounded-xl border border-white/25 bg-white/10 px-6 py-3 font-semibold text-white hover:bg-white/20" href="#contact">Contact &amp; Crisis Guide</a></div>
           <p className="text-sm font-medium text-slate-300">Track A: Justice-Involved &amp; Reentry · Track B: Community Services</p>
+          <div className="flex flex-wrap items-center gap-4 pt-2"><span className="text-[11px] font-extrabold uppercase tracking-[.16em] text-sky-200">Building</span><SplitFlap /></div>
         </div>
         <div className="lg:col-span-5"><MackAiNavigator /></div>
+      </div>
+    </section>
+
+    <section aria-label="Interactive message" className="relative overflow-hidden border-b border-sky-500/10 bg-[#060D1A] px-5 py-5">
+      <div className="relative mx-auto max-w-7xl">
+        <p className="text-center text-[10px] font-bold uppercase tracking-widest text-sky-300/75">Interact with the words</p>
+        <div style={{ height: "150px", position: "relative" }}>
+          <FallingText text="Some sentences are built to last. This one falls apart on contact." highlightWords={["falls", "apart"]} trigger="hover" fontSize="clamp(1rem, 2.4vw, 2rem)" gravity={1} restoreDelay={2} />
+        </div>
       </div>
     </section>
 
