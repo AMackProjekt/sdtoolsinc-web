@@ -134,6 +134,26 @@ export default function Page() {
       </div>
     </section>
 
+    <section id="partners" aria-label="Technology partners and BBB standing" className="border-y border-slate-300 bg-[#E5EAF0] px-5 py-7 text-[#0B172A]">
+      <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-5 lg:flex-row lg:items-center">
+        <div><p className="text-[11px] font-extrabold uppercase tracking-[.14em] text-sky-800">Affiliations &amp; business standing</p><h2 className="mt-1 text-xl font-extrabold">Technology Partners &amp; BBB Standing</h2></div>
+        <div className="grid w-full flex-1 gap-3 sm:grid-cols-3 lg:max-w-4xl">
+          <div className="flex items-center gap-3 rounded-xl border border-slate-300 bg-white px-4 py-3">
+            <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-xl font-black text-blue-600">G</span>
+            <div><strong className="block text-sm font-extrabold">Google Cloud Partner Network</strong><p className="text-xs text-slate-600">Cloud &amp; Gemini AI ecosystem</p></div>
+          </div>
+          <div className="flex items-center gap-3 rounded-xl border border-slate-300 bg-white px-4 py-3">
+            <span aria-hidden="true" className="grid h-9 w-9 shrink-0 grid-cols-2 gap-[2px]"><span className="bg-red-500"/><span className="bg-emerald-500"/><span className="bg-blue-500"/><span className="bg-amber-400"/></span>
+            <div><strong className="block text-sm font-extrabold">Microsoft</strong><p className="text-xs text-slate-600">Technology Partner</p></div>
+          </div>
+          <div className="flex items-center gap-3 rounded-xl border border-slate-300 bg-white px-4 py-3">
+            <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-sky-950 text-sm font-black text-white">BBB</span>
+            <div><strong className="block text-sm font-extrabold">Better Business Bureau</strong><p className="text-xs text-slate-600">BBB Business Standing</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section id="contact" className="bg-[#060D1A] px-5 py-16">
       <div className="mx-auto max-w-7xl">
         <p className="text-xs font-extrabold uppercase tracking-[.18em] text-amber-400">Who to call and when</p>
