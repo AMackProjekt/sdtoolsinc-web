@@ -1,5 +1,5 @@
 import "./globals.css";
-import { Footer } from "@/components/ui/Footer";
+import { RouteFooter } from "@/components/ui/RouteFooter";
 import { PrivacyBanner } from "@/components/ui/PrivacyBanner";
 import { WebVitals } from "@/components/WebVitals";
 import { InteractionAnalytics } from "@/components/InteractionAnalytics";
@@ -122,7 +122,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <InteractionAnalytics />
         <PrivacyBanner />
         {children}
-        <Footer />
+        <RouteFooter />
       </body>
     </html>
   );
