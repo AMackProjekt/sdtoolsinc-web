@@ -40,17 +40,28 @@ export function AnimatedList(){
 }
 const dock=[{href:"#home",label:"Home",icon:Home},{href:"#first-steps",label:"72-Hour Plan",icon:Shield},{href:"#programs",label:"Programs",icon:LayoutGrid},{href:"#impact",label:"Our Impact",icon:ChartNoAxesColumnIncreasing},{href:"#events",label:"Events",icon:CalendarDays},{href:"#mackai",label:"MackAI",icon:Sparkles},{href:"#contact",label:"Contact",icon:Mail},{href:"/partnerships",label:"Partner",icon:HeartHandshake},{href:"https://sdtoolsinc.com",label:"Portals",icon:Compass}];
 export function FloatingDock() {
- const [footerVisible,setFooterVisible]=useState(false);
+ const [lift,setLift]=useState(12);
  useEffect(()=>{
-  const footer=document.querySelector(".mack-footer");
+  const footer=document.querySelector<HTMLElement>(".mack-footer");
   if(!footer)return;
-  const observer=new IntersectionObserver(([entry])=>setFooterVisible(entry.isIntersecting),{threshold:0,rootMargin:"0px 0px 95px 0px"});
-  observer.observe(footer);
-  return ()=>observer.disconnect();
+  let raf=0;
+  const update=()=>{
+   cancelAnimationFrame(raf);
+   raf=requestAnimationFrame(()=>{
+    const rect=footer.getBoundingClientRect();
+    // Keep the dock above the footer instead of hiding it.
+    const overlap=Math.max(0,window.innerHeight-rect.top);
+    setLift(Math.max(12,Math.round(overlap+12)));
+   });
+  };
+  window.addEventListener("scroll",update,{passive:true});
+  window.addEventListener("resize",update);
+  update();
+  return ()=>{cancelAnimationFrame(raf);window.removeEventListener("scroll",update);window.removeEventListener("resize",update);};
  },[]);
- return <nav aria-label="Floating quick navigation" aria-hidden={footerVisible} className={`pointer-events-none fixed inset-x-0 bottom-3 z-[75] flex justify-center px-2 transition-opacity duration-300 ${footerVisible?"opacity-0 invisible":"opacity-100 visible"}`}>
-  <div className="pointer-events-auto flex max-w-full items-center gap-2 overflow-x-auto rounded-2xl border border-white/25 bg-slate-100/10 p-2 shadow-[0_8px_32px_rgba(0,0,0,.12)] backdrop-blur-md supports-[backdrop-filter]:bg-white/10">
-   {dock.map(({href,label,icon:Icon})=><motion.a key={label} href={href} title={label} aria-label={label} tabIndex={footerVisible?-1:0} whileHover={{scale:1.12,y:-3}} whileTap={{scale:.95}} className="flex h-14 min-w-12 items-center justify-center rounded-xl border border-white/15 bg-slate-950/25 px-3 text-white drop-shadow-sm transition hover:border-amber-300/60 hover:bg-sky-400/25 hover:text-amber-200"><Icon size={24}/></motion.a>)}
+ return <nav aria-label="Floating quick navigation" className="pointer-events-none fixed inset-x-0 z-[75] flex justify-center px-2 transition-[bottom] duration-150 ease-out" style={{bottom:lift}}>
+  <div className="pointer-events-auto flex max-w-[calc(100vw-1rem)] items-center gap-1 overflow-x-auto rounded-2xl border border-white/40 bg-white/15 p-1.5 shadow-[0_6px_30px_rgba(0,0,0,.2)] backdrop-blur-lg sm:gap-2 sm:p-2">
+   {dock.map(({href,label,icon:Icon})=><motion.a key={label} href={href} title={label} aria-label={label} whileHover={{scale:1.12,y:-3}} whileTap={{scale:.95}} className="flex h-11 min-w-11 shrink-0 items-center justify-center rounded-xl border border-white/20 bg-slate-900/45 px-2.5 text-white transition hover:border-amber-300/60 hover:bg-sky-400/30 hover:text-amber-200 sm:h-13 sm:min-w-12"><Icon size={21}/></motion.a>)}
   </div>
  </nav>;
 }
