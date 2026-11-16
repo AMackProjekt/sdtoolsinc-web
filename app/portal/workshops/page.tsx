@@ -12,6 +12,7 @@ export default function ClientWorkshopsPage() {
   const {user,profile,isAuthenticated,isLoading}=useAuth();
   const [completed,setCompleted]=useState<number[]>([]);
   const [loaded,setLoaded]=useState(false);
+  const [accepted,setAccepted]=useState(false);
   const [availability,setAvailability]=useState<"online"|"offline">("offline");
 
   const request=useCallback(async (method:"GET"|"POST",body?:object) => {
@@ -34,15 +35,27 @@ export default function ClientWorkshopsPage() {
   useEffect(()=>{
     if(isLoading || !user || profile?.role!=="client")return;
     let cancelled=false;
-    request("GET").then(result=>{
+    (async()=>{
+      const {data:{session}}=await supabase.auth.getSession();
+      if(!session?.access_token)return false;
+      const res=await fetch("/api/portal/eligibility",{headers:{Authorization:"Bearer "+session.access_token},cache:"no-store"});
+      return res.ok && (await res.json()).accepted===true;
+    })().then(approved=>{
+      if(cancelled)return;
+      setAccepted(approved);
+      if(!approved){setLoaded(true);return;}
+      request("GET").then(result=>{
       if(!cancelled){setCompleted(result.completed ?? []);setAvailability("online");setLoaded(true);}
-    }).catch(()=>{if(!cancelled){setAvailability("offline");setLoaded(true);}});
+      }).catch(()=>{if(!cancelled){setAvailability("offline");setLoaded(true);}});
+    }).catch(()=>{if(!cancelled){setAccepted(false);setLoaded(true);}});
     return ()=>{cancelled=true;};
   },[isLoading,user,profile?.role,request]);
 
   if(isLoading || !user)return <main className="min-h-screen bg-[#060D1A] p-10 text-white">Verifying client access…</main>;
   if(profile?.role!=="client")return <main className="min-h-screen bg-[#060D1A] p-10 text-white"><h1 className="text-2xl font-bold">Client role required</h1><p className="mt-3">Your account is not authorized to use this workshop progress portal.</p><Link href="/portal/portals" className="mt-5 inline-block text-sky-300 underline">Return to portals</Link></main>;
   if(!loaded)return <main className="min-h-screen bg-[#060D1A] p-10 text-white">Loading authorized workshop progress…</main>;
+
+  if(!accepted)return <main className="min-h-screen bg-[#060D1A] p-10 text-white"><h1 className="text-2xl font-extrabold">Program acceptance required</h1><p className="mt-3 max-w-xl text-slate-200">Submitting the DocuReady intake or creating a sign-in does not grant portal access. Your application must be accepted by authorized staff before the workshops and resume features are unlocked.</p><Link href="/#docuready" className="mt-5 inline-block text-amber-300 underline">Return to DocuReady PrePlan and Intake</Link></main>;
 
   const save=async (moduleId:number,answers:number[]):Promise<number[]>=>{
     const result=await request("POST",{moduleId,answers});
