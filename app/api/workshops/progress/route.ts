@@ -99,7 +99,8 @@ export async function POST(request:NextRequest) {
     const module=WORKSHOP_MODULES.find(m=>m.num===id);
     if (!module || !Array.isArray(body.answers) || body.answers.length!==3 ||
       !body.answers.every(n=>Number.isInteger(n)&&n>=0&&n<=2)) return response({error:"Invalid quiz submission."},400);
-    const score=module.quiz.reduce((acc,q,i)=>acc+(q.answer===body.answers[i]?1:0),0);
+    const validatedAnswers = body.answers as number[]; // validated as three integer choices above
+    const score=module.quiz.reduce((acc,q,i)=>acc+(q.answer===validatedAnswers[i]?1:0),0);
     if(score!==3)return response({passed:false,score,completed:false},200);
     const token=await googleAccessToken(cfg.account);
     const existing=await recordedModules(cfg,userId,token);
