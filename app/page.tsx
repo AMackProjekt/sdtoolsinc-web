@@ -1,6 +1,7 @@
 import { MackAiNavigator } from "@/components/ui/MackAiNavigator";
 import { ElectrifiedMackProjektFooter } from "@/components/ui/ElectrifiedMackProjektFooter";
 import { Topography, SplitFlap, FallingText } from "@/components/ui/ReactBitsEffects";
+import { CardNav, GooeyNav, AnimatedList, FloatingDock } from "@/components/ui/CommunityNavEffects";
 
 const steps = [
   { icon: "▣", label: "California identification", detail: "Start a DMV ID application and ask an eligible service provider about no-fee or reduced-fee options." },
@@ -22,17 +23,16 @@ export default function Page() {
     <header className="sticky top-0 z-50 border-b border-white/10 bg-[#060D1A]/95 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-5 py-4">
         <a href="/" className="flex items-center gap-3" aria-label="T.O.O.L.S. Inc. home"><img src="/icons/tools-crest.svg" alt="" className="h-12 w-12 rounded-xl border border-amber-400/30" /><span><strong className="block text-lg font-extrabold tracking-tight text-white">T.O.O.L.S. INC.</strong><small className="block text-[10px] font-semibold text-amber-300">Together Overcoming Obstacles &amp; Limitations</small></span></a>
-        <nav aria-label="Primary" className="flex flex-wrap items-center gap-3 text-xs font-semibold text-slate-200 sm:text-sm">
-          <a className="hover:text-amber-300" href="#first-steps">72-Hour Plan</a>
-          <a className="hover:text-amber-300" href="#programs">Programs</a>
-          <a className="hover:text-amber-300" href="#mackai">MackAI</a>
-          <a className="hover:text-amber-300" href="#contact">Contact</a>
-          <a className="rounded-xl border border-sky-400/50 bg-sky-400/15 px-4 py-2 font-extrabold text-sky-200 hover:bg-sky-400/25" href="https://sdtoolsinc.com">Portals</a><a className="rounded-xl bg-amber-400 px-4 py-2 font-extrabold text-[#060D1A] hover:bg-amber-300" href="/interest">Get Started</a>
-        </nav>
+        <div className="flex flex-wrap items-center gap-2">
+          <CardNav />
+          <GooeyNav />
+          <a className="rounded-xl border border-sky-400/50 bg-sky-400/15 px-4 py-2 font-extrabold text-sky-200 hover:bg-sky-400/25" href="https://sdtoolsinc.com">Portals</a>
+          <a className="rounded-xl bg-amber-400 px-4 py-2 font-extrabold text-[#060D1A] hover:bg-amber-300" href="/interest">Get Started</a>
+        </div>
       </div>
     </header>
 
-    <section className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_75%_20%,rgba(14,165,233,.19),transparent_43%),linear-gradient(120deg,#060D1A,#0B172A,#132440)]">
+    <section id="home" className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_75%_20%,rgba(14,165,233,.19),transparent_43%),linear-gradient(120deg,#060D1A,#0B172A,#132440)]">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-30" style={{backgroundImage:"linear-gradient(90deg,#060D1A 4%,rgba(6,13,26,.55) 65%,#060D1A),url('/images/san-diego-skyline.jpg')"}} />
       <Topography className="opacity-55 mix-blend-screen" />
       <div className="mx-auto grid max-w-7xl items-center gap-9 px-5 py-16 lg:grid-cols-12 lg:py-24">
@@ -57,6 +57,14 @@ export default function Page() {
       </div>
     </section>
 
+    <section id="mission" className="border-b border-white/10 bg-[#0B172A] px-5 py-12">
+      <div className="mx-auto max-w-7xl">
+        <p className="text-xs font-bold uppercase tracking-[.17em] text-amber-400">Our approach</p>
+        <h2 className="mt-2 text-2xl font-extrabold text-white">Empowering Individuals. Unlocking Potential.</h2>
+        <p className="mt-3 max-w-4xl text-sm leading-relaxed text-slate-300">T.O.O.L.S. Inc. helps individuals facing barriers access stabilization resources, practical guidance, and opportunities to build confidence and readiness. We serve justice-involved individuals and members of the wider community.</p>
+        <div className="mt-6"><AnimatedList /></div>
+      </div>
+    </section>
     <section id="programs" className="bg-[#0B172A] px-5 py-14">
       <div className="mx-auto max-w-7xl">
         <p className="text-xs font-extrabold uppercase tracking-[.2em] text-amber-400">Stabilization &amp; opportunity</p>
@@ -102,6 +110,13 @@ export default function Page() {
         <div className="mt-8 flex flex-wrap gap-4 text-sm"><a className="text-sky-300 underline" href="/partnerships">Partnerships</a><a className="text-sky-300 underline" href="mailto:info@sdtoolsinc.org">info@sdtoolsinc.org</a><a className="text-sky-300 underline" href="https://sdtoolsinc.com">Portals</a></div>
       </div>
     </section>
+    <nav aria-label="Website policies" className="flex flex-wrap justify-center gap-x-6 gap-y-2 border-t border-white/10 bg-[#090D14] px-5 py-5 text-xs text-slate-300">
+      <a className="hover:text-amber-200" href="/privacy">Privacy Policy</a>
+      <a className="hover:text-amber-200" href="/terms">Terms of Use</a>
+      <a className="hover:text-amber-200" href="/accessibility">Accessibility</a>
+      <a className="hover:text-amber-200" href="/legal">Legal & Service Notices</a>
+    </nav>
     <ElectrifiedMackProjektFooter />
+    <FloatingDock />
   </main>;
 }
