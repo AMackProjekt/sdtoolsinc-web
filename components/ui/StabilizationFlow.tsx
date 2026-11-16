@@ -41,7 +41,7 @@ export function StabilizationFlow() {
     {[
      {n:1,name:"Krucial 72-Hr Tracker",detail:"Milestones and track selection"},
      {n:2,name:"DocuReady Intake Review",detail:"Protected submission and staff review"},
-     {n:3,name:"Client Portal",detail:"Workshops, resume and approved access"}
+     {n:3,name:"Client Portal (Workshops & Resume)",detail:"Four workshops and protected client access"}
     ].map(item=><button key={item.n} type="button" onClick={()=>setStage(item.n as 1|2|3)} aria-current={stage===item.n?"step":undefined} className={`rounded-xl px-4 py-3 text-left transition ${stage===item.n?"bg-[#101F34] text-white":"bg-slate-100 hover:bg-slate-200"}`}><span className="block text-sm font-extrabold">{item.n}. {item.name}</span><span className={`mt-1 block text-xs ${stage===item.n?"text-amber-200":"text-slate-600"}`}>{item.detail}</span></button>)}
    </div>
    {stage===1?<div className="mt-6 rounded-2xl border border-slate-300 bg-white p-5 shadow-sm sm:p-7">
