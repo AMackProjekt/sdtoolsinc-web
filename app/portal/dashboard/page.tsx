@@ -114,6 +114,14 @@ export default function DashboardPage() {
             </GlowCard>
           </div>
 
+          <div onClick={() => router.push("/portal/workshops")} className="cursor-pointer">
+            <GlowCard className="p-6 h-full">
+              <div className="text-4xl mb-4">🎓</div>
+              <h3 className="text-lg font-extrabold tracking-tight text-text">DocuReady Work-Readiness Workshops</h3>
+              <p className="mt-2 text-sm text-muted">Four guided lessons, action worksheets and scored quizzes. Cloud sync activates after secured backend verification.</p>
+            </GlowCard>
+          </div>
+
           <div onClick={() => router.push("/portal/profile")} className="cursor-pointer">
             <GlowCard className="p-6 h-full">
               <div className="text-4xl mb-4">👤</div>
