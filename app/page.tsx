@@ -3,6 +3,7 @@ import { ElectrifiedMackProjektFooter } from "@/components/ui/ElectrifiedMackPro
 import { CardNav, GooeyNav, AnimatedList, FloatingDock } from "@/components/ui/CommunityNavEffects";
 import { StabilizationFlow } from "@/components/ui/StabilizationFlow";
 import { SocialShare } from "@/components/ui/SocialShare";
+import { SanDiegoSkyline } from "@/components/ui/SanDiegoSkyline";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = { alternates: { canonical: "https://sdtoolsinc.org/" } };
@@ -30,8 +31,8 @@ export default function Page() {
     </header>
 
     <section id="home" className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_75%_20%,rgba(14,165,233,.19),transparent_43%),linear-gradient(120deg,#060D1A,#0B172A,#132440)]">
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-95" style={{backgroundImage:"linear-gradient(90deg,rgba(6,13,26,.68) 0%,rgba(6,13,26,.18) 48%,rgba(6,13,26,.22) 100%),url('https://upload.wikimedia.org/wikipedia/commons/b/bb/San_Diego_skyline_at_dusk_from_Coronado_2015.jpg')"}} />
-      <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-9 px-5 py-16 lg:grid-cols-12 lg:py-24">
+      <SanDiegoSkyline />
+      <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-9 px-5 pb-16 pt-24 lg:grid-cols-12 lg:pb-24 lg:pt-28">
         <div className="space-y-6 rounded-2xl bg-[#071120]/25 p-3 shadow-[0_0_24px_rgba(0,0,0,.10)] lg:col-span-7">
           <p className="inline-flex rounded-full border border-amber-400/30 bg-white/5 px-3 py-2 text-[11px] font-bold uppercase tracking-[.18em] text-amber-300">San Diego · Justice-Involved · Displaced Veterans · Community</p>
           <h1 className="max-w-[750px] text-5xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-7xl">Your Past Doesn’t <span className="text-amber-400">Define Your Future.</span></h1>
