@@ -1,77 +1,40 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useState } from "react";
+
+const key = "toolsinc_analytics_consent_v1";
 
 export function PrivacyBanner() {
-  const [isVisible, setIsVisible] = useState(false);
-  const [isDismissed, setIsDismissed] = useState(false);
-
+  const [choice, setChoice] = useState<"granted" | "denied" | null>("denied");
+  const [ready, setReady] = useState(false);
+  const [visible, setVisible] = useState(false);
   useEffect(() => {
-    // Check if user has already dismissed
-    const dismissed = localStorage.getItem("privacyBannerDismissed");
-    if (!dismissed) {
-      setIsVisible(true);
-    } else {
-      setIsDismissed(true);
-    }
+    try {
+      const existing = localStorage.getItem(key);
+      setChoice(existing === "granted" ? "granted" : existing === "denied" ? "denied" : null);
+      setVisible(existing !== "granted" && existing !== "denied");
+    } catch { setVisible(true); setChoice(null); }
+    setReady(true);
   }, []);
-
-  const handleDismiss = () => {
-    localStorage.setItem("privacyBannerDismissed", "true");
-    setIsVisible(false);
-    setIsDismissed(true);
+  const save = (value: "granted" | "denied") => {
+    try { localStorage.setItem(key, value); } catch {}
+    setChoice(value);
+    setVisible(false);
+    window.dispatchEvent(new Event("toolsinc:analytics-consent"));
   };
-
-  if (isDismissed) return null;
-
-  return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.div
-          initial={{ y: -100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: -100, opacity: 0 }}
-          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed top-0 left-0 right-0 z-[100] bg-gradient-to-r from-brand/95 to-brand2/95 backdrop-blur-xl border-b border-white/20 shadow-2xl"
-        >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <div className="flex items-start gap-3 flex-1">
-                <div className="text-2xl flex-shrink-0">🔒</div>
-                <div className="flex-1">
-                  <h3 className="text-sm sm:text-base font-bold text-white mb-1">
-                    Your Privacy is Protected
-                  </h3>
-                  <p className="text-xs sm:text-sm text-white/90 leading-relaxed">
-                    <span className="font-semibold">🛡️ Encrypted:</span> All data transmitted via SSL/TLS encryption. 
-                    <span className="mx-2">•</span>
-                    <span className="font-semibold">🤐 Confidential:</span> We do NOT share your information with law enforcement without your explicit written consent.
-                    <span className="mx-2">•</span>
-                    <span className="font-semibold">✓ Your Control:</span> Request data deletion anytime.
-                  </p>
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-2 w-full sm:w-auto">
-                <a
-                  href="/privacy-policy"
-                  className="text-xs sm:text-sm text-white hover:text-white/80 underline transition-colors whitespace-nowrap"
-                >
-                  Privacy Policy
-                </a>
-                <button
-                  onClick={handleDismiss}
-                  className="px-3 sm:px-4 py-2 bg-white/20 hover:bg-white/30 text-white text-xs sm:text-sm font-semibold rounded-lg transition-all whitespace-nowrap"
-                  aria-label="Dismiss privacy banner"
-                >
-                  Got it
-                </button>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
+  if (!ready) return null;
+  return <>
+    {visible && <aside aria-label="Analytics privacy preferences" role="dialog" aria-modal="false" className="fixed bottom-3 left-3 right-3 z-[150] mx-auto max-w-2xl rounded-2xl border border-sky-300/30 bg-[#0B172A] p-4 text-slate-100 shadow-2xl sm:p-5">
+      <h2 className="text-base font-extrabold text-white">Analytics preferences</h2>
+      <p className="mt-2 text-sm leading-relaxed text-slate-200">
+        We use optional Google Analytics to understand website visits and improve access to services. We do not send client intake details to Google Analytics. You can decline without losing access.
+      </p>
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        <button onClick={()=>save("denied")} className="rounded-lg border border-white/35 px-4 py-2 text-sm font-bold hover:bg-white/10">Decline analytics</button>
+        <button onClick={()=>save("granted")} className="rounded-lg bg-amber-400 px-4 py-2 text-sm font-bold text-[#0B172A] hover:bg-amber-300">Allow analytics</button>
+        <a href="/privacy-policy" className="px-2 text-xs text-sky-200 underline">Privacy policy</a>
+      </div>
+    </aside>}
+    <button type="button" onClick={()=>setVisible(true)} className="sr-only focus:not-sr-only focus:fixed focus:bottom-20 focus:left-4 focus:z-[160] focus:rounded-md focus:bg-slate-950 focus:p-3 focus:text-white">Change analytics preferences{choice ? ` (currently ${choice})` : ""}</button>
+  </>;
 }
