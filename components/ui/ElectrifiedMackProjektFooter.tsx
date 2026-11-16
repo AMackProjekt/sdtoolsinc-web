@@ -25,6 +25,9 @@ export function ElectrifiedMackProjektFooter() {
     <footer className="mack-footer relative isolate overflow-hidden border-t border-sky-400/15 bg-[#090D14] px-5 py-5 text-center text-slate-300">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-30 [background-image:linear-gradient(to_right,rgba(125,211,252,.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(125,211,252,.10)_1px,transparent_1px)] [background-size:46px_46px]" />
       <div className="relative mx-auto max-w-5xl">
+        <a href="https://mackprojekt.com" aria-label="Visit A MackProjekt" className="mx-auto mb-2 block w-fit rounded-xl p-1 transition hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-400">
+          <img src="/partnerships/amp-logo.jpeg" alt="A MackProjekt logo" className="mx-auto h-12 w-auto max-w-[140px] object-contain drop-shadow-[0_0_16px_rgba(56,189,248,.30)]" />
+        </a>
         <p className="mb-1 text-[10px] font-bold uppercase tracking-[.24em] text-amber-300">Empowering Individuals. Unlocking Potential.</p>
         <div className="relative mx-auto flex max-w-full items-center justify-center overflow-visible py-2">
           <svg aria-hidden="true" viewBox="0 0 1000 110" preserveAspectRatio="none" className="pointer-events-none absolute inset-0 h-full w-full overflow-visible">
