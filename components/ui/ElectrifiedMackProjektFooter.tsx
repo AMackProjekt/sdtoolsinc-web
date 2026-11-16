@@ -1,8 +1,8 @@
 "use client";
 
-import { PhysicsFallingText } from "@/components/ui/PhysicsFallingText";
+import FallingText from "@/components/ui/ReactBitsFallingText";
 
-/** Compact official MackProjekt credit with interactive Matter.js physics. */
+/** Official MackProjekt footer credit using React Bits FallingText and Matter.js. */
 export function ElectrifiedMackProjektFooter() {
   return (
     <footer className="mack-footer relative isolate overflow-hidden border-t border-sky-400/15 bg-[#090D14] px-5 py-5 text-center text-slate-300">
@@ -22,8 +22,8 @@ export function ElectrifiedMackProjektFooter() {
             <path className="electric-branch" d="M335 40 L305 20 L290 28 M550 100 L576 124 L593 119 M706 49 L724 21 L743 32 M883 58 L912 33" stroke="#7dd3fc" strokeWidth="2" fill="none" strokeLinecap="round" />
           </svg>
           <div className="relative z-10 w-full max-w-[760px] rounded-xl border border-sky-300/10 bg-[#090D14]/65 px-1 py-1">
-            <PhysicsFallingText text="POWERED BY A MACKPROJEKT" highlightWords={["MACKPROJEKT"]} trigger="hover" split="letters" gravity={1} bounciness={0.2} scatter={0.5} stagger={0.03} cursorPush={0.5} mouseConstraintStiffness={0.2} restoreDelay={2} />
-            <p className="pointer-events-none -mt-3 pb-1 text-[9px] font-bold uppercase tracking-[.22em] text-sky-300/70">Hover, drag or tap the letters</p>
+            <div className="h-28 w-full sm:h-32"><FallingText text="POWERED BY A MACKPROJEKT" highlightWords={["MACKPROJEKT"]} highlightClass="font-black" trigger="hover" variant="text" split="letters" gravity={1} bounciness={0.2} scatter={0.5} stagger={0.03} order="random" cursorPush={0.5} mouseConstraintStiffness={0.2} restoreDelay={2} accentColor="#38bdf8" fontSize="clamp(1rem,3.3vw,1.5rem)" draggable wireframes={false} className="font-black tracking-[.055em] text-sky-200" /></div>
+            <p className="pointer-events-none -mt-3 pb-1 text-[9px] font-bold uppercase tracking-[.22em] text-sky-300/70">Hover to scatter, then drag the letters</p>
           </div>
         </div>
         <div className="mx-auto mt-2 h-px w-full max-w-lg bg-gradient-to-r from-transparent via-sky-500/45 to-transparent" />
