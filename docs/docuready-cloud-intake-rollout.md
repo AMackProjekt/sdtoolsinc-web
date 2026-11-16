@@ -70,3 +70,21 @@ Source: owner-supplied **Architecture of the DocuReady Flow** (November 2026). T
 5. Release behind an explicit feature flag, monitor access and errors; only then enable live intakes.
 
 Do **not** deploy the user-supplied sample Worker verbatim to production.
+
+## November 16 owner-supplied auto-configured Worker review
+
+The pasted `worker_auto_configured.js` includes production-looking `PHI_ENCRYPTION_KEY`, `JWT_SECRET`, and `DIRECTOR_PIN` values. **Do not deploy or reuse these values.** They appeared in chat/plaintext, so generate fresh secrets locally or in the Cloudflare secret manager before release; do not commit, email, or paste replacement secret values into project discussions. Any already-installed copies must be rotated.
+
+Cloudflare check: the deployed `tools-inc-backend-api` currently has **only** `GEMINI_API_KEY`; none of the new intake, director, JWT, Google service account or Sheets configuration is present. The Worker was **not changed** as part of this review.
+
+The pasted Worker cannot be promoted to production because:
+- `encryptField()` stores personal information in cleartext when the key is absent or malformed;
+- director case enumeration and approval require only a static PIN, without verified staff identity or rate limits;
+- short client access codes and 7-day bearer sessions are inadequately protected against theft and guessing;
+- client access codes and client names appear in calendar event descriptions;
+- Sheets appends, updates, and auto-schema calls do not consistently check HTTP failures, allowing false confirmations;
+- `/health` exposes configuration flags, and unrecognized cross-origin requests are not rejected;
+- auto-creating Sheets tabs on the first client submission mutates production storage in the intake request path;
+- the scripts may expose confidential data before consent, retention, and processing agreements are confirmed.
+
+**Safer next move:** configure a separate staging Worker and a synthetic test sheet, verify Cloudflare Access identity and roles, generate replacement secrets inside a secret manager, and exercise integration tests before enabling any live intake. The existing public landing page, MackAI integration, and protected `.com` portals remain unchanged. Do not paste sensitive Google service-account JSON into chat.
