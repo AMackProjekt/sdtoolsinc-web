@@ -15,7 +15,7 @@ const navItems = [
 const navCards=[
  {heading:"About Us", icon:Compass, links:[{label:"Mission & Vision",href:"#mission"},{label:"Resources",href:"#first-steps"}]},
  {heading:"Programs", icon:FileCheck2, links:[{label:"DocuReady PrePlan and Intake",href:"#docuready"},{label:"Track A / Track B",href:"#docuready"},{label:"Workshops & Resume",href:"#programs"}]},
- {heading:"Connect", icon:Handshake, links:[{label:"Partners",href:"/partnerships"},{label:"Contact",href:"#contact"},{label:"Portals",href:"https://sdtoolsinc.com"}]},
+ {heading:"Connect", icon:Handshake, links:[{label:"Partners",href:"/partnerships"},{label:"Contact",href:"#contact"},{label:"Portals",href:"/portal/access"}]},
 ];
 export function CardNav() {
  const [open,setOpen]=useState(false);
@@ -41,7 +41,7 @@ const updates=[
 export function AnimatedList(){
  return <div className="grid gap-3 sm:grid-cols-2">{updates.map((item,i)=><motion.a key={item.title} href={item.href} initial={{opacity:0,translateY:20}} whileInView={{opacity:1,translateY:0}} viewport={{once:true,amount:.1}} transition={{duration:.3,delay:i*.09}} className="group flex items-start gap-3 rounded-xl border border-white/10 bg-white/5 p-4 transition hover:border-amber-300/40 hover:bg-white/10"><span className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-amber-400/20 text-amber-200">{i+1}</span><span><strong className="block text-sm text-white">{item.title}</strong><span className="mt-1 block text-xs text-slate-300">{item.detail}</span></span><span className="ml-auto text-amber-300 transition group-hover:translate-x-1">→</span></motion.a>)}</div>;
 }
-const dock=[{href:"#home",label:"Home",icon:Home},{href:"#docuready",label:"DocuReady",icon:FileCheck2},{href:"#programs",label:"Programs",icon:LayoutGrid},{href:"#impact",label:"Our Impact",icon:ChartNoAxesColumnIncreasing},{href:"#events",label:"Events",icon:CalendarDays},{href:"#mackai",label:"MackAI",icon:Sparkles},{href:"#contact",label:"Contact",icon:Mail},{href:"/partnerships",label:"Partner",icon:HeartHandshake},{href:"https://sdtoolsinc.com",label:"Portals",icon:Compass}];
+const dock=[{href:"#home",label:"Home",icon:Home},{href:"#docuready",label:"DocuReady",icon:FileCheck2},{href:"#programs",label:"Programs",icon:LayoutGrid},{href:"#impact",label:"Our Impact",icon:ChartNoAxesColumnIncreasing},{href:"#events",label:"Events",icon:CalendarDays},{href:"#mackai",label:"MackAI",icon:Sparkles},{href:"#contact",label:"Contact",icon:Mail},{href:"/partnerships",label:"Partner",icon:HeartHandshake},{href:"/portal/access",label:"Portals",icon:Compass}];
 export function FloatingDock() {
  const [lift,setLift]=useState(12);
  useEffect(()=>{
