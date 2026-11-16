@@ -21,7 +21,7 @@ export function StabilizationFlow() {
  const [stage,setStage]=useState<1|2|3>(1);
  const [loaded,setLoaded]=useState(false);
  useEffect(()=>{
-  try {const raw=window.localStorage.getItem(storageKey);if(raw){const value=JSON.parse(raw);if(value.track==="A"||value.track==="B")setTrack(value.track);if(Array.isArray(value.done))setDone(value.done.filter((n:unknown)=>Number.isInteger(n)&&Number(n)>=0&&Number(n)<6));}}catch{}
+  try {const raw=window.localStorage.getItem(storageKey);if(raw){const value=JSON.parse(raw);if(value.track==="A"||value.track==="B")setTrack(value.track);if(Array.isArray(value.done))setDone(value.done.filter((n:unknown): n is number => typeof n === "number" && Number.isInteger(n) && n >= 0 && n < 6));}}catch{}
   setLoaded(true);
  },[]);
  useEffect(()=>{if(!loaded)return;try{window.localStorage.setItem(storageKey,JSON.stringify({track,done}));}catch{}},[done,track,loaded]);
