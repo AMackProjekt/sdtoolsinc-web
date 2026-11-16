@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { ArrowRight, CheckCircle2, LockKeyhole, RotateCcw } from "lucide-react";
 import { toPublicProgress } from "@/lib/docuready/flow";
-import { WorkshopAcademy } from "@/components/ui/WorkshopAcademy";
+
 
 const milestones = [
  {icon:"🪪",name:"Get Your California ID",detail:"Gather identification documents and check DMV or authorized agency options for available fee reductions.",tips:["Check whether you have an existing state ID","Collect birth certificate or other accepted identity proof","For Track A, ask your authorized reentry professional about supporting documentation"]},
@@ -28,6 +28,17 @@ export function StabilizationFlow() {
  },[]);
  useEffect(()=>{if(!loaded)return;try{window.localStorage.setItem(storageKey,JSON.stringify({track,done}));}catch{}},[done,track,loaded]);
  const toggle=(i:number)=>setDone(curr=>curr.includes(i)?curr.filter(n=>n!==i):[...curr,i]);
+ const saveChecklist=()=>{
+  const lines=["T.O.O.L.S. Inc. — DocuReady 72-Hour PrePlan","Track "+track,"",...milestones.map((m,i)=>(done.includes(i)?"[x] ":"[ ] ")+m.name+" — "+m.detail),"","Continue the same DocuReady intake session to reuse these selections.","Enrollment and portal access require written staff acceptance."];
+  const url=URL.createObjectURL(new Blob([lines.join("\n")],{type:"text/plain;charset=utf-8"}));
+  const a=document.createElement("a");a.href=url;a.download="DocuReady_72_Hour_Checklist_Track_"+track+".txt";document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+ };
+ const printChecklist=()=>{
+  const win=window.open("","_blank","width=740,height=900");if(!win)return;
+  const entries=milestones.map((m,i)=>"<li>"+(done.includes(i)?"&#9745; ":"&#9744; ")+m.name+"</li>").join("");
+  win.document.write('<!doctype html><html><head><title>DocuReady 72-Hour Checklist</title><style>body{font:16px Arial;padding:40px;color:#0b172a}li{margin:16px 0}</style></head><body><h1>T.O.O.L.S. Inc. | DocuReady PrePlan</h1><p>Track '+track+'</p><ol>'+entries+'</ol><p>For personal use. Portal access requires staff acceptance.</p></body></html>');
+  win.document.close();win.focus();win.print();
+ };
  const percent=Math.round(done.length/milestones.length*100);
  const draft=toPublicProgress(track,done);
  return <section id="docuready" className="scroll-mt-20 bg-[#EDF2F7] px-5 py-14 text-[#101F34]">
@@ -49,15 +60,15 @@ export function StabilizationFlow() {
     <div role="progressbar" aria-label="Milestone progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={percent} className="mt-5 h-2.5 overflow-hidden rounded-full bg-slate-200"><div className="h-full rounded-full bg-amber-500 transition-all" style={{width:`${percent}%`}}/></div>
     <fieldset className="mt-5"><legend className="text-sm font-extrabold">Service Track</legend><div className="mt-2 flex flex-wrap gap-2">{(["A","B"] as Track[]).map(t=><label key={t} className={`flex cursor-pointer items-center gap-2 rounded-xl border px-4 py-3 text-sm font-bold ${track===t?"border-amber-500 bg-amber-100":"border-slate-300 bg-white"}`}><input type="radio" name="track" value={t} checked={track===t} onChange={()=>setTrack(t)} className="accent-amber-600"/>Track {t} — {t==="A"?"Justice-Involved / Reentry":"Displaced Veterans / Community Support"}</label>)}</div></fieldset>
     <div className="mt-6 grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]"><div className="space-y-2">{milestones.map((m,i)=><button key={m.name} onClick={()=>setActive(i)} aria-pressed={active===i} className={`flex w-full items-center gap-3 rounded-xl border p-3 text-left ${active===i?"border-amber-400 bg-amber-50":"border-slate-200 hover:bg-slate-50"}`}><span className="text-xl">{m.icon}</span><span className="flex-1 text-sm font-bold">Step {i+1}. {m.name}</span>{done.includes(i)?<CheckCircle2 size={20} className="text-emerald-600"/>:<span className="text-xs text-slate-400">View</span>}</button>)}</div><article className="rounded-2xl border border-slate-200 bg-[#F4F7FB] p-5"><p className="text-xs font-bold uppercase tracking-wide text-blue-700">Step {active+1} of 6</p><h4 className="mt-2 text-xl font-extrabold">{milestones[active].icon} {milestones[active].name}</h4><p className="mt-3 text-sm text-slate-700">{milestones[active].detail}</p><ul className="mt-4 space-y-2">{milestones[active].tips.map(t=><li key={t} className="flex gap-2 text-sm text-slate-700"><span aria-hidden="true" className="font-black text-amber-600">•</span>{t}</li>)}</ul><button onClick={()=>toggle(active)} className="mt-6 rounded-xl bg-[#101F34] px-4 py-3 text-sm font-bold text-white hover:bg-[#1D416B]">{done.includes(active)?"Mark as not completed":"Mark this step complete"}</button></article></div>
-    <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-5"><button onClick={()=>{setDone([]);setActive(0)}} className="inline-flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-slate-950"><RotateCcw size={15}/> Reset progress</button><button onClick={()=>setStage(2)} className="inline-flex items-center gap-2 rounded-xl bg-amber-400 px-5 py-3 text-sm font-extrabold text-[#101F34] hover:bg-amber-300">Next: DocuReady Intake <ArrowRight size={17}/></button></div>
+    <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-5"><div className="flex flex-wrap gap-2"><button type="button" onClick={saveChecklist} className="rounded-lg border border-blue-300 bg-blue-50 px-3 py-2 text-sm font-bold text-blue-900">Save checklist</button><button type="button" onClick={printChecklist} className="rounded-lg border border-blue-300 bg-blue-50 px-3 py-2 text-sm font-bold text-blue-900">Print / Save as PDF</button></div><button onClick={()=>{setDone([]);setActive(0)}} className="inline-flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-slate-950"><RotateCcw size={15}/> Reset progress</button><button onClick={()=>setStage(2)} className="inline-flex items-center gap-2 rounded-xl bg-amber-400 px-5 py-3 text-sm font-extrabold text-[#101F34] hover:bg-amber-300">Next: DocuReady Intake <ArrowRight size={17}/></button></div>
    </div>:<div className="mt-6 rounded-2xl border border-slate-300 bg-white p-7">
     <div className="flex items-center gap-3"><LockKeyhole size={28} className="text-blue-800"/><div><h3 className="text-xl font-extrabold">{stage===2?"DocuReady PrePlan and Intake — Track "+track+" Review":"Approved Client Portal Access"}</h3><p className="mt-1 text-sm text-slate-600">{stage===2?"The next step is a secure identity-verified intake and staff approval.":"After approval, authorized clients can access workshops and resume services."}</p></div></div>
     {stage===2?<div className="mt-5 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-slate-800"><strong>Secure integration pending.</strong> The public site will not collect legal names, birth dates, phone numbers, release/DPO records, or private case notes until authenticated intake and protected storage have been verified. Selected track and checklist progress stay on this device only; they are not sent to the .COM API.</div>:<div className="mt-5 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-slate-800">Client workshops, resume tools, and individual access are available only through your organization's approved portal process. No public PIN or access-code bypass is provided.</div>}
-    {stage===3 && <div className="mt-6 space-y-4">
-      <a href="/portal/workshops" className="inline-flex items-center gap-2 rounded-xl bg-emerald-700 px-5 py-3 text-sm font-extrabold text-white hover:bg-emerald-600"><LockKeyhole size={17}/> Sign in to save official workshop progress <ArrowRight size={16}/></a>
-      <WorkshopAcademy mode="public" />
+    {stage===3 && <div className="mt-6 rounded-xl border border-amber-300 bg-amber-50 p-5">
+     <p className="text-sm font-extrabold text-amber-950">Client workshops, resume tools, and portal access are restricted until intake acceptance.</p>
+     <p className="mt-2 text-sm text-slate-800">Complete the PrePlan and remaining secure intake first. Submission creates a pending application, not an approved account. Staff will notify accepted participants how to activate access.</p>
     </div>}
-    <div className="mt-5 flex flex-wrap gap-3"><a href="https://sdtoolsinc.com" className="inline-flex items-center gap-2 rounded-xl bg-[#101F34] px-5 py-3 text-sm font-bold text-white">Continue to protected Portals <ArrowRight size={16}/></a><button onClick={()=>setStage(stage===2?1:2)} className="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-bold">{stage===2?"Back to tracker":"Back to intake overview"}</button></div>
+    <div className="mt-5 flex flex-wrap gap-3"><button type="button" onClick={()=>setStage(2)} className="inline-flex items-center gap-2 rounded-xl bg-[#101F34] px-5 py-3 text-sm font-bold text-white">Return to intake review <ArrowRight size={16}/></button><button onClick={()=>setStage(stage===2?1:2)} className="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-bold">{stage===2?"Back to tracker":"Back to intake overview"}</button></div>
    </div>}
    <div aria-live="polite" className="mt-5 rounded-xl border border-slate-300 bg-white/80 p-4 text-xs text-slate-700">
     <strong className="block text-sm text-slate-900">Intake prepopulation preview — not submitted</strong>
