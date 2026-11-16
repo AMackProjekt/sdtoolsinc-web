@@ -35,8 +35,10 @@ async function currentClient(request:NextRequest, config:NonNullable<ReturnType<
   const {data:profile,error:profileError}=await supabase
     .from("profiles").select("role").eq("id",data.user.id).single();
   if (profileError || profile?.role!=="client") return null;
-  // Require independently approved enrolled records before enabling
-  // DOCUREADY_WORKSHOP_SYNC_ENABLED, not merely self-registered accounts.
+  const {data:approved,error:approvalError}=await supabase.from("program_enrollments")
+    .select("status,approved_at").eq("user_id",data.user.id)
+    .eq("status","accepted").not("approved_at","is",null).limit(1).maybeSingle();
+  if(approvalError || !approved)return null;
   return data.user.id;
 }
 
