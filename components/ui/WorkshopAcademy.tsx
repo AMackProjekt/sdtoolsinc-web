@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { WORKSHOP_MODULES, type WorkshopModule } from "@/lib/workshops/modules";
+import { ProgramRoadmap } from "@/components/ui/ProgramRoadmap";
 import { ArrowRight, CheckCircle2, Download, LockKeyhole, PlayCircle, RefreshCw } from "lucide-react";
 
 type Panel = "lesson" | "quiz" | null;
@@ -48,7 +49,7 @@ export function WorkshopAcademy({ mode = "public", onProgressChange, initialComp
     if (mode !== "client" || !onProgressChange) {
       setSync("idle");
       setSyncMessage(mode === "public"
-        ? "Practice completed on this page only. Sign in to the authorized client portal for a persistent completion record."
+        ? "Introductory quiz passed on this page only. Sign in to the authorized client portal for a persistent completion record."
         : "Cloud progress sync is not configured yet. No completion record has been saved.");
       return;
     }
@@ -81,10 +82,10 @@ export function WorkshopAcademy({ mode = "public", onProgressChange, initialComp
     <header className="flex flex-wrap items-start justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-5">
       <div>
         <p className="text-xs font-extrabold uppercase tracking-widest text-blue-800">T.O.O.L.S. Inc. Work-Readiness Academy</p>
-        <h3 className="mt-2 text-xl font-extrabold text-slate-950">Four interactive workshop modules</h3>
+        <h3 className="mt-2 text-xl font-extrabold text-slate-950">Four introductory modules · Full 30/60/90-day program below</h3>
         <p className="mt-2 max-w-3xl text-sm text-slate-700">Open a chapter-based lesson, download its action worksheet, and score 3/3 on the completion quiz. These are interactive text lessons; recorded video media have not yet been supplied.</p>
       </div>
-      <div className="rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-extrabold text-slate-900" aria-live="polite">{count} / 4 completed</div>
+      <div className="rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-extrabold text-slate-900" aria-live="polite">{count} / 4 intro quizzes passed</div>
     </header>
     {mode === "public" && <div className="flex gap-2 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-950"><LockKeyhole className="shrink-0" size={19}/><p><strong>Public learning preview.</strong> Quiz results stay in this browser session only; this page does not enroll anyone or write to Google Sheets. Only authenticated, approved clients can save official workshop progress in the protected portal.</p></div>}
     {WORKSHOP_MODULES.map(module => {
@@ -102,7 +103,7 @@ export function WorkshopAcademy({ mode = "public", onProgressChange, initialComp
             <p className="mt-1 text-sm text-slate-600">{module.subtitle}</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            {isComplete && <span className="inline-flex items-center gap-1 rounded-lg bg-emerald-100 px-2.5 py-2 text-xs font-bold text-emerald-900"><CheckCircle2 size={16}/> Quiz passed</span>}
+            {isComplete && <span className="inline-flex items-center gap-1 rounded-lg bg-emerald-100 px-2.5 py-2 text-xs font-bold text-emerald-900"><CheckCircle2 size={16}/> Intro quiz passed</span>}
             <button type="button" onClick={() => setPanels(p => ({...p,[module.num]:p[module.num]==="lesson"?null:"lesson"}))} aria-expanded={panel==="lesson"} className="inline-flex items-center gap-1 rounded-lg bg-blue-100 px-3 py-2 text-xs font-bold text-blue-950 hover:bg-blue-200"><PlayCircle size={16}/> Lesson</button>
             <button type="button" onClick={()=>worksheetDownload(module)} className="inline-flex items-center gap-1 rounded-lg bg-amber-100 px-3 py-2 text-xs font-bold text-amber-950 hover:bg-amber-200"><Download size={16}/> Worksheet</button>
             <button type="button" onClick={()=>setPanels(p=>({...p,[module.num]:p[module.num]==="quiz"?null:"quiz"}))} aria-expanded={panel==="quiz"} className="rounded-lg bg-indigo-100 px-3 py-2 text-xs font-bold text-indigo-950 hover:bg-indigo-200">Quiz</button>
@@ -116,7 +117,7 @@ export function WorkshopAcademy({ mode = "public", onProgressChange, initialComp
           <div className="flex flex-wrap gap-2"><button type="button" onClick={()=>worksheetDownload(module)} className="rounded-lg bg-amber-400 px-4 py-2 text-xs font-bold text-slate-950">Download worksheet</button><button type="button" onClick={()=>setPanels(p=>({...p,[module.num]:"quiz"}))} className="inline-flex items-center gap-1 rounded-lg bg-emerald-500 px-4 py-2 text-xs font-bold text-slate-950">Take quiz <ArrowRight size={15}/></button></div>
         </div>}
         {panel==="quiz" && <div className="space-y-4 border-t border-slate-200 bg-slate-50 p-5">
-          <p className="text-xs font-bold uppercase tracking-wider text-indigo-900">Completion quiz · Pass all 3 questions</p>
+          <p className="text-xs font-bold uppercase tracking-wider text-indigo-900">Introductory knowledge check · Pass all 3 questions</p>
           {module.quiz.map((question,index)=><fieldset key={index} className="rounded-xl border border-slate-200 bg-white p-4"><legend className="px-1 text-sm font-extrabold text-slate-950">{index+1}. {question.q}</legend><div className="mt-2 space-y-2">{question.options.map((option,optionIndex)=><label key={option} className="flex cursor-pointer items-start gap-2 text-sm text-slate-800"><input className="mt-1 accent-indigo-600" type="radio" name={`module-${module.num}-question-${index}`} checked={selected[index]===optionIndex} onChange={()=>{setAnswers(a=>({...a,[module.num]:{...(a[module.num]??{}),[index]:optionIndex}}));setResults(r=>{const next={...r};delete next[module.num];return next})}}/><span>{option}</span></label>)}</div>
             {result && <p className={`mt-3 text-xs font-semibold ${result.answers[index]===question.answer?"text-emerald-800":"text-rose-700"}`}>{result.answers[index]===question.answer?"Correct. ":"Review: "}{question.explanation}</p>}
           </fieldset>)}
@@ -125,6 +126,7 @@ export function WorkshopAcademy({ mode = "public", onProgressChange, initialComp
         </div>}
       </article>;
     })}
+    <ProgramRoadmap />
     {syncMessage && <div role="status" aria-live="polite" className={`rounded-xl border p-4 text-sm ${sync==="error"?"border-rose-300 bg-rose-50 text-rose-900":sync==="saved"?"border-emerald-300 bg-emerald-50 text-emerald-900":"border-slate-300 bg-white text-slate-800"}`}>{syncMessage}</div>}
   </section>;
 }
