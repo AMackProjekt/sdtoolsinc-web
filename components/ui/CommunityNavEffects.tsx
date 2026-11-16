@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import GlassSurface from "@/components/ui/ReactBitsGlassSurface";
 import { ChevronDown, Compass, FileCheck2, Handshake, Home, LayoutGrid, Mail, Phone, Shield, Sparkles, CalendarDays, HeartHandshake, ChartNoAxesColumnIncreasing, X } from "lucide-react";
 
 const navItems = [
@@ -60,8 +61,12 @@ export function FloatingDock() {
   return ()=>{cancelAnimationFrame(raf);window.removeEventListener("scroll",update);window.removeEventListener("resize",update);};
  },[]);
  return <nav aria-label="Floating quick navigation" className="pointer-events-none fixed inset-x-0 z-[75] flex justify-center px-2 transition-[bottom] duration-150 ease-out" style={{bottom:lift}}>
-  <div className="pointer-events-auto flex max-w-[calc(100vw-1rem)] items-center gap-1 overflow-x-auto rounded-2xl border border-white/40 bg-white/15 p-1.5 shadow-[0_6px_30px_rgba(0,0,0,.2)] backdrop-blur-lg sm:gap-2 sm:p-2">
-   {dock.map(({href,label,icon:Icon})=><motion.a key={label} href={href} title={label} aria-label={label} whileHover={{scale:1.12,y:-3}} whileTap={{scale:.95}} className="flex h-11 min-w-11 shrink-0 items-center justify-center rounded-xl border border-white/20 bg-slate-900/45 px-2.5 text-white transition hover:border-amber-300/60 hover:bg-sky-400/30 hover:text-amber-200 sm:h-13 sm:min-w-12"><Icon size={21}/></motion.a>)}
+  <div className="pointer-events-auto w-[min(600px,calc(100vw-16px))]">
+   <GlassSurface width="100%" height={64} borderRadius={22} borderWidth={0.06} brightness={58} opacity={0.86} blur={12} displace={0.3} backgroundOpacity={0.12} saturation={1.3} distortionScale={-90} redOffset={2} greenOffset={6} blueOffset={12} refraction renderer="auto" mixBlendMode="normal" className="border border-white/25 shadow-[0_12px_32px_rgba(0,0,0,.24)]">
+    <div className="flex w-full min-w-0 items-center gap-1 overflow-x-auto overscroll-x-contain px-1 py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:justify-center sm:gap-2">
+     {dock.map(({href,label,icon:Icon})=><motion.a key={label} href={href} title={label} aria-label={label} whileHover={{scale:1.12,y:-3}} whileTap={{scale:.95}} className="flex h-11 min-w-11 shrink-0 items-center justify-center rounded-xl border border-white/20 bg-slate-950/50 px-2.5 text-white transition hover:border-amber-300/60 hover:bg-sky-400/30 hover:text-amber-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-200"><Icon size={21}/></motion.a>)}
+    </div>
+   </GlassSurface>
   </div>
  </nav>;
 }
