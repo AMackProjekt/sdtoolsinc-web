@@ -36,3 +36,36 @@ Public previews do not transmit personal information or award enrollment/complet
 - Actual approval check, retention policy, rate limits, and integration tests pass before activation.
 
 **Current state:** Curriculum/frontend and a gated backend implementation are committed. No live Google Sheets write, consent compliance, or recording-based lesson is confirmed yet.
+
+
+## Extended program structure: 30 / 60 / 90 / completion / mentorship
+
+The four quizzes are **introductory knowledge checks**, not the complete program. The curriculum extension in `lib/workshops/program-roadmap.ts`, displayed through `components/ui/ProgramRoadmap.tsx`, adds a proposed individualized five-stage sequence:
+
+| Stage | Curriculum focus | Required review |
+|---|---|---|
+| Days 1–30 (weeks 1–4) | Stabilization, digital literacy, benefits/budgeting, strengths assessment | 30-day action plan, practice work and staff review |
+| Days 31–60 (weeks 5–8) | Resume, job search, fair-chance interview preparation, workplace communication | Resume, opportunity tracker, mock interview and 60-day review |
+| Days 61–90 (weeks 9–12) | Pathway mapping, workplace scenarios, career portfolio, capstone presentation | Applied skills demonstration and 90-day staff review |
+| Program completion | Portfolio review, competency evidence, individualized support plan | Staff-authenticated rubric and decision before any credential |
+| Optional mentorship (months 4–6) | Matching, goal-setting, professional development, continued connection | Consent, matched availability, periodic mentorship review |
+
+Each week includes learning objectives, action assignments, and evidence requirements. Action plans can be downloaded as editable plain-text templates from the site.
+
+### Recommended staff graduation rubric (proposed)
+Rate five competencies on a transparent 0–3 scale, with accessible alternatives:
+1. Digital contact and appointment reliability
+2. Financial/resource navigation and practical planning
+3. Resume/job or educational pathway readiness
+4. Workplace communication and problem-solving
+5. Capstone and individualized transition plan
+
+Scale: 0 = not assessed; 1 = beginning; 2 = demonstrated with support; 3 = demonstrated independently. A graduation decision requires staff review of evidence and individualized circumstances. **Do not use an arbitrary automated score as an eligibility decision.** Accommodations, limited device access, unstable housing, disabilities and interrupted attendance require reasonable alternatives; achieving employment or housing is not mandatory for graduation.
+
+**Never award a certificate, change client status to completed, or assign a mentor based on four quiz passes, unchecked actions, elapsed time, or a frontend click.** Mentor participation is opt-in and contingent on availability.
+
+### Implementation boundaries
+- Public roadmap selection is a presentation control, not a certified record. No private participant information is collected by roadmap actions.
+- Client quiz sync remains feature-gated and must not be misrepresented as signed-off phase progress.
+- Server-side verified director/case-manager review, program enrollment dates, completion evidence, staff audit trail, mentor matching and consent data models remain follow-on requirements.
+- Lessons are still chapter-based text presentations until videos are produced.
