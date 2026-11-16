@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ArrowRight, CheckCircle2, LockKeyhole, RotateCcw } from "lucide-react";
+import { toPublicProgress } from "@/lib/docuready/flow";
 
 const milestones = [
  {icon:"🪪",name:"Get Your California ID",detail:"Gather identification documents and check DMV or authorized agency options for available fee reductions.",tips:["Check whether you have an existing state ID","Collect birth certificate or other accepted identity proof","For Track A, ask your authorized reentry professional about supporting documentation"]},
@@ -27,6 +28,7 @@ export function StabilizationFlow() {
  useEffect(()=>{if(!loaded)return;try{window.localStorage.setItem(storageKey,JSON.stringify({track,done}));}catch{}},[done,track,loaded]);
  const toggle=(i:number)=>setDone(curr=>curr.includes(i)?curr.filter(n=>n!==i):[...curr,i]);
  const percent=Math.round(done.length/milestones.length*100);
+ const draft=toPublicProgress(track,done);
  return <section id="first-steps" className="scroll-mt-20 bg-[#EDF2F7] px-5 py-14 text-[#101F34]">
   <div className="mx-auto max-w-7xl">
    <span className="rounded-full bg-[#101F34] px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-amber-300">Full-stack .ORG ↔ .COM hub</span>
@@ -52,6 +54,12 @@ export function StabilizationFlow() {
     {stage===2?<div className="mt-5 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-slate-800"><strong>Secure integration pending.</strong> The public site will not collect legal names, birth dates, phone numbers, release/DPO records, or private case notes until authenticated intake and protected storage have been verified. Selected track and checklist progress stay on this device only; they are not sent to the .COM API.</div>:<div className="mt-5 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-slate-800">Client workshops, resume tools, and individual access are available only through your organization's approved portal process. No public PIN or access-code bypass is provided.</div>}
     <div className="mt-5 flex flex-wrap gap-3"><a href="https://sdtoolsinc.com" className="inline-flex items-center gap-2 rounded-xl bg-[#101F34] px-5 py-3 text-sm font-bold text-white">Continue to protected Portals <ArrowRight size={16}/></a><button onClick={()=>setStage(stage===2?1:2)} className="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-bold">{stage===2?"Back to tracker":"Back to intake overview"}</button></div>
    </div>}
+   <div aria-live="polite" className="mt-5 rounded-xl border border-slate-300 bg-white/80 p-4 text-xs text-slate-700">
+    <strong className="block text-sm text-slate-900">Intake prepopulation preview — not submitted</strong>
+    <span className="mt-1 block">Selected pathway: {draft.track} · Completed steps: {draft.completedMilestones.length} of 6</span>
+    <span className="mt-1 block">Milestones for the eventual protected intake: {draft.completedMilestones.length ? draft.completedMilestones.map(step=>step.replace(/_/g," ").toLowerCase()).join(", ") : "None selected yet"}</span>
+    <p className="mt-2 text-slate-600">This preview shows only non-sensitive checklist selections. Client identity fields will be entered in the authorized secure intake experience.</p>
+   </div>
    <p className="mt-4 text-xs text-slate-600">This tracker is a planning tool, not proof of enrollment, eligibility, approval, or service delivery. Clear your progress on shared devices. Old referral pages remain available separately but are not part of this homepage flow.</p>
   </div>
  </section>;
