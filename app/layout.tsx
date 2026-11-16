@@ -82,7 +82,10 @@ const organizationSchema = {
     "Essential service navigation",
     "DocuReady PrePlan and Intake Track A and Track B",
   ],
-  sameAs: ["https://www.instagram.com/sd_t.o.o.ls_inc"],
+  sameAs: [
+    "https://www.instagram.com/sd_t.o.o.ls_inc/",
+    "https://www.facebook.com/people/TOOLs-Inc/61556483926772/",
+  ],
 };
 
 const webSiteSchema = {
