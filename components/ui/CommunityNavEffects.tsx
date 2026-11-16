@@ -2,18 +2,19 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import GlassSurface from "@/components/ui/ReactBitsGlassSurface";
+import ReactBitsGooeyNav from "@/components/ui/ReactBitsGooeyNav";
 import { ChevronDown, Compass, FileCheck2, Handshake, Home, LayoutGrid, Mail, Phone, Shield, Sparkles, CalendarDays, HeartHandshake, ChartNoAxesColumnIncreasing, X } from "lucide-react";
 
 const navItems = [
   {label:"Home", href:"#home"},
-  {label:"72-Hour Plan", href:"#first-steps"},
+  {label:"DocuReady", href:"#docuready"},
   {label:"Programs", href:"#programs"},
   {label:"MackAI", href:"#mackai"},
   {label:"Contact", href:"#contact"},
 ];
 const navCards=[
  {heading:"About Us", icon:Compass, links:[{label:"Mission & Vision",href:"#mission"},{label:"Resources",href:"#first-steps"}]},
- {heading:"Programs", icon:FileCheck2, links:[{label:"Krucial 72-Hour Plan",href:"#first-steps"},{label:"DocuReady Track A & B",href:"#programs"},{label:"Workshops & Resume",href:"#programs"}]},
+ {heading:"Programs", icon:FileCheck2, links:[{label:"DocuReady PrePlan and Intake",href:"#docuready"},{label:"Track A / Track B",href:"#docuready"},{label:"Workshops & Resume",href:"#programs"}]},
  {heading:"Connect", icon:Handshake, links:[{label:"Partners",href:"/partnerships"},{label:"Contact",href:"#contact"},{label:"Portals",href:"https://sdtoolsinc.com"}]},
 ];
 export function CardNav() {
@@ -27,19 +28,20 @@ export function CardNav() {
  </div>;
 }
 export function GooeyNav() {
- const [selected,setSelected]=useState("Home");
- return <nav aria-label="Section navigation" className="flex flex-wrap items-center gap-1 rounded-full border border-white/10 bg-[#132440]/80 p-1">{navItems.map(item=><a key={item.label} href={item.href} onClick={()=>setSelected(item.label)} className={`relative isolate whitespace-nowrap rounded-full px-3 py-2 text-xs font-bold ${selected===item.label?"text-[#07101d]":"text-slate-200 hover:text-amber-200"}`}>{selected===item.label&&<motion.span layoutId="tools-gooey-nav-blob" className="absolute inset-0 -z-10 rounded-full bg-amber-400" transition={{type:"spring",stiffness:350,damping:26}}/>}{item.label}</a>)}</nav>;
+ return <div aria-label="Section navigation" className="max-w-full overflow-x-auto rounded-full [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+  <ReactBitsGooeyNav items={navItems} initialActiveIndex={0} theme="dark" color="#FBBF24" activeTextColor="#07101d" size="sm" frame animationTime={470} particleCount={12} gooeyness={1} hoverEffect />
+ </div>;
 }
 const updates=[
  {title:"Stabilization essentials",detail:"Identification, food, communication, and housing guidance",href:"#first-steps"},
- {title:"DocuReady pathways",detail:"Separate Track A reentry and Track B community support",href:"#programs"},
+ {title:"DocuReady PrePlan and Intake",detail:"Track A reentry and Track B community support",href:"#docuready"},
  {title:"Employment preparation",detail:"Workshop information and resume readiness",href:"#programs"},
  {title:"Contact & referrals",detail:"Speak with the T.O.O.L.S. team about support",href:"#contact"},
 ];
 export function AnimatedList(){
  return <div className="grid gap-3 sm:grid-cols-2">{updates.map((item,i)=><motion.a key={item.title} href={item.href} initial={{opacity:0,translateY:20}} whileInView={{opacity:1,translateY:0}} viewport={{once:true,amount:.1}} transition={{duration:.3,delay:i*.09}} className="group flex items-start gap-3 rounded-xl border border-white/10 bg-white/5 p-4 transition hover:border-amber-300/40 hover:bg-white/10"><span className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-amber-400/20 text-amber-200">{i+1}</span><span><strong className="block text-sm text-white">{item.title}</strong><span className="mt-1 block text-xs text-slate-300">{item.detail}</span></span><span className="ml-auto text-amber-300 transition group-hover:translate-x-1">→</span></motion.a>)}</div>;
 }
-const dock=[{href:"#home",label:"Home",icon:Home},{href:"#first-steps",label:"72-Hour Plan",icon:Shield},{href:"#programs",label:"Programs",icon:LayoutGrid},{href:"#impact",label:"Our Impact",icon:ChartNoAxesColumnIncreasing},{href:"#events",label:"Events",icon:CalendarDays},{href:"#mackai",label:"MackAI",icon:Sparkles},{href:"#contact",label:"Contact",icon:Mail},{href:"/partnerships",label:"Partner",icon:HeartHandshake},{href:"https://sdtoolsinc.com",label:"Portals",icon:Compass}];
+const dock=[{href:"#home",label:"Home",icon:Home},{href:"#docuready",label:"DocuReady",icon:FileCheck2},{href:"#programs",label:"Programs",icon:LayoutGrid},{href:"#impact",label:"Our Impact",icon:ChartNoAxesColumnIncreasing},{href:"#events",label:"Events",icon:CalendarDays},{href:"#mackai",label:"MackAI",icon:Sparkles},{href:"#contact",label:"Contact",icon:Mail},{href:"/partnerships",label:"Partner",icon:HeartHandshake},{href:"https://sdtoolsinc.com",label:"Portals",icon:Compass}];
 export function FloatingDock() {
  const [lift,setLift]=useState(12);
  useEffect(()=>{
