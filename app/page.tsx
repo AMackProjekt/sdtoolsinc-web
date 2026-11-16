@@ -1,6 +1,5 @@
 import { MackAiNavigator } from "@/components/ui/MackAiNavigator";
 import { ElectrifiedMackProjektFooter } from "@/components/ui/ElectrifiedMackProjektFooter";
-import { Topography, SplitFlap, FallingText } from "@/components/ui/ReactBitsEffects";
 import { CardNav, GooeyNav, AnimatedList, FloatingDock } from "@/components/ui/CommunityNavEffects";
 
 const steps = [
@@ -34,7 +33,6 @@ export default function Page() {
 
     <section id="home" className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_75%_20%,rgba(14,165,233,.19),transparent_43%),linear-gradient(120deg,#060D1A,#0B172A,#132440)]">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-55" style={{backgroundImage:"linear-gradient(90deg,#060D1A 4%,rgba(6,13,26,.55) 65%,#060D1A),url('https://upload.wikimedia.org/wikipedia/commons/b/bb/San_Diego_skyline_at_dusk_from_Coronado_2015.jpg')"}} />
-      <Topography className="opacity-55 mix-blend-screen" />
       <div className="mx-auto grid max-w-7xl items-center gap-9 px-5 py-16 lg:grid-cols-12 lg:py-24">
         <div className="space-y-6 lg:col-span-7">
           <p className="inline-flex rounded-full border border-amber-400/30 bg-white/5 px-3 py-2 text-[11px] font-bold uppercase tracking-[.18em] text-amber-300">San Diego · Reentry · Community · Opportunity</p>
@@ -42,18 +40,24 @@ export default function Page() {
           <p className="max-w-xl text-base leading-relaxed text-slate-200 sm:text-lg">A second chance is a new beginning. T.O.O.L.S. Inc. supports justice-involved individuals and community members with immediate essentials, access to resources, and pathways to education and employment.</p>
           <div className="flex flex-wrap gap-3"><a className="rounded-xl bg-amber-400 px-6 py-3 font-extrabold text-[#060D1A] hover:bg-amber-300" href="/interest">Get Started Today</a><a className="rounded-xl border border-white/25 bg-white/10 px-6 py-3 font-semibold text-white hover:bg-white/20" href="#contact">Contact &amp; Crisis Guide</a></div>
           <p className="text-sm font-medium text-slate-300">Track A: Justice-Involved &amp; Reentry · Track B: Community Services</p>
-          <div className="flex flex-wrap items-center gap-4 pt-2"><span className="text-[11px] font-extrabold uppercase tracking-[.16em] text-sky-200">Building</span><SplitFlap /></div>
         </div>
-        <div className="lg:col-span-5"><MackAiNavigator /></div>
+        <div id="mackai" className="lg:col-span-5"><MackAiNavigator /></div>
       </div>
     </section>
 
-    <section aria-label="Interactive message" className="relative overflow-hidden border-b border-sky-500/10 bg-[#060D1A] px-5 py-5">
-      <div className="relative mx-auto max-w-7xl">
-        <p className="text-center text-[10px] font-bold uppercase tracking-widest text-sky-300/75">Interact with the words</p>
-        <div style={{ height: "150px", position: "relative" }}>
-          <FallingText text="Some sentences are built to last. This one falls apart on contact." highlightWords={["falls", "apart"]} trigger="hover" fontSize="clamp(1rem, 2.4vw, 2rem)" gravity={1} restoreDelay={2} />
-        </div>
+    <section aria-label="Primary services" className="relative z-10 border-b border-white/10 bg-[#0B172A] px-5 py-5">
+      <div className="mx-auto grid max-w-7xl gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        {[
+          {icon:"👥",title:"Reentry Support",detail:"Guidance, navigation & case management",href:"/referral",tone:"from-[#173D71] to-[#0D233E]"},
+          {icon:"💼",title:"Workforce Development",detail:"Training, job readiness & employment preparation",href:"#programs",tone:"from-[#14534D] to-[#0B242D]"},
+          {icon:"🏠",title:"Stabilization Resources",detail:"Housing, transportation, ID, and essential services",href:"#first-steps",tone:"from-[#402A76] to-[#1B213E]"},
+          {icon:"🤝",title:"Partner With Us",detail:"Employers, organizations & community collaboration",href:"/partnerships",tone:"from-[#754019] to-[#24222B]"},
+          {icon:"♡",title:"Support Our Mission",detail:"Donate, volunteer or sponsor a program",href:"#contact",tone:"from-[#742A48] to-[#27182B]"}
+        ].map(item=><a href={item.href} key={item.title} className={`group flex min-h-32 items-center gap-3 rounded-xl border border-white/15 bg-gradient-to-br p-4 transition-colors hover:border-amber-300/65 ${item.tone}`}>
+          <span aria-hidden="true" className="text-2xl">{item.icon}</span>
+          <span className="min-w-0 flex-1"><strong className="block text-sm font-extrabold text-white">{item.title}</strong><span className="mt-1 block text-xs leading-relaxed text-slate-200">{item.detail}</span></span>
+          <span aria-hidden="true" className="text-xl text-slate-200">›</span>
+        </a>)}
       </div>
     </section>
 
@@ -81,6 +85,16 @@ export default function Page() {
       </div>
     </section>
 
+    <section id="impact" className="border-t border-white/10 bg-[#081323] px-5 py-14">
+      <div className="mx-auto max-w-7xl">
+        <p className="text-xs font-extrabold uppercase tracking-[.18em] text-amber-400">Community progress</p>
+        <h2 className="mt-2 text-3xl font-extrabold text-white">📊 Our Impact in San Diego</h2>
+        <div className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {["Individuals Served","Job Placements","Training Completions","Community Partners"].map(label=><div key={label} className="rounded-2xl border border-white/10 bg-[#132440] p-5 text-center"><div className="text-4xl font-black text-sky-200">—</div><div className="mt-2 text-sm font-bold text-white">{label}</div></div>)}
+        </div>
+        <p className="mt-4 text-sm text-slate-400">Figures appear after verification. No unverified results are published.</p>
+      </div>
+    </section>
     <section id="first-steps" className="bg-[#F1F5F9] px-5 py-16 text-slate-900">
       <div className="mx-auto max-w-7xl">
         <p className="text-xs font-extrabold uppercase tracking-[.18em] text-blue-800">Krucial 72-Hour Stabilization Plan</p>
@@ -98,6 +112,28 @@ export default function Page() {
       </div>
     </section>
 
+    <section id="events" className="border-t border-white/10 bg-[#0B172A] px-5 py-14">
+      <div className="mx-auto grid max-w-7xl gap-5 lg:grid-cols-2">
+        <article className="rounded-2xl border border-sky-300/15 bg-[#132440] p-6">
+          <p className="text-xs font-extrabold uppercase tracking-widest text-sky-300">Community voice</p>
+          <h2 className="mt-2 text-2xl font-extrabold text-white">✦ Participant Success Story</h2>
+          <blockquote className="mt-5 border-l-2 border-amber-400 pl-4 text-lg italic leading-relaxed text-slate-200">“Share a verified participant success story here after obtaining permission.”</blockquote>
+          <p className="mt-4 text-sm text-slate-400">— Participant story — pending approval</p>
+        </article>
+        <article className="rounded-2xl border border-amber-400/15 bg-[#132440] p-6">
+          <p className="text-xs font-extrabold uppercase tracking-widest text-amber-300">Community calendar</p>
+          <h2 className="mt-2 text-2xl font-extrabold text-white">▦ Upcoming Events</h2>
+          <div className="mt-5 space-y-3">
+            {[{title:"Upcoming community event",detail:"Details to be announced"},{title:"Workforce readiness workshop",detail:"Schedule to be confirmed"}].map(event=><div key={event.title} className="flex items-center gap-4 rounded-xl border border-white/10 bg-[#0B172A] p-4">
+              <span className="rounded-lg border border-amber-400/30 bg-amber-400/10 px-3 py-2 text-xs font-extrabold text-amber-200">TBA</span>
+              <div><strong className="block text-sm text-white">{event.title}</strong><span className="mt-1 block text-xs text-slate-400">{event.detail}</span></div>
+            </div>)}
+          </div>
+          <a href="/interest" className="mt-4 inline-block text-sm font-bold text-amber-300 underline-offset-4 hover:underline">Ask about workshops</a>
+        </article>
+      </div>
+    </section>
+
     <section id="contact" className="bg-[#060D1A] px-5 py-16">
       <div className="mx-auto max-w-7xl">
         <p className="text-xs font-extrabold uppercase tracking-[.18em] text-amber-400">Who to call and when</p>
@@ -110,12 +146,6 @@ export default function Page() {
         <div className="mt-8 flex flex-wrap gap-4 text-sm"><a className="text-sky-300 underline" href="/partnerships">Partnerships</a><a className="text-sky-300 underline" href="mailto:info@sdtoolsinc.org">info@sdtoolsinc.org</a><a className="text-sky-300 underline" href="https://sdtoolsinc.com">Portals</a></div>
       </div>
     </section>
-    <nav aria-label="Website policies" className="flex flex-wrap justify-center gap-x-6 gap-y-2 border-t border-white/10 bg-[#090D14] px-5 py-5 text-xs text-slate-300">
-      <a className="hover:text-amber-200" href="/privacy">Privacy Policy</a>
-      <a className="hover:text-amber-200" href="/terms">Terms of Use</a>
-      <a className="hover:text-amber-200" href="/accessibility">Accessibility</a>
-      <a className="hover:text-amber-200" href="/legal">Legal & Service Notices</a>
-    </nav>
     <ElectrifiedMackProjektFooter />
     <FloatingDock />
   </main>;
