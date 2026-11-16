@@ -1,4 +1,5 @@
 import { MackAiNavigator } from "@/components/ui/MackAiNavigator";
+import { ElectrifiedMackProjektFooter } from "@/components/ui/ElectrifiedMackProjektFooter";
 
 const steps = [
   { icon: "▣", label: "California identification", detail: "Start a DMV ID application and ask an eligible service provider about no-fee or reduced-fee options." },
@@ -88,6 +89,6 @@ export default function Page() {
         <div className="mt-8 flex flex-wrap gap-4 text-sm"><a className="text-sky-300 underline" href="/partnerships">Partnerships</a><a className="text-sky-300 underline" href="mailto:info@sdtoolsinc.org">info@sdtoolsinc.org</a><a className="text-sky-300 underline" href="https://sdtoolsinc.com">Portals</a></div>
       </div>
     </section>
-    <div className="border-t border-white/10 bg-[#090D14] px-5 py-6 text-center text-xs text-slate-400">© 2026 T.O.O.L.S. Inc. · Technology powered by independent partner <a href="https://mackprojekt.com" className="font-bold text-sky-300">A MackProjekt</a>.</div>
+    <ElectrifiedMackProjektFooter />
   </main>;
 }
