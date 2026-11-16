@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { ArrowRight, CheckCircle2, LockKeyhole, RotateCcw } from "lucide-react";
 import { toPublicProgress } from "@/lib/docuready/flow";
+import { WorkshopAcademy } from "@/components/ui/WorkshopAcademy";
 
 const milestones = [
  {icon:"🪪",name:"Get Your California ID",detail:"Gather identification documents and check DMV or authorized agency options for available fee reductions.",tips:["Check whether you have an existing state ID","Collect birth certificate or other accepted identity proof","For Track A, ask your authorized reentry professional about supporting documentation"]},
@@ -52,6 +53,7 @@ export function StabilizationFlow() {
    </div>:<div className="mt-6 rounded-2xl border border-slate-300 bg-white p-7">
     <div className="flex items-center gap-3"><LockKeyhole size={28} className="text-blue-800"/><div><h3 className="text-xl font-extrabold">{stage===2?"DocuReady PrePlan and Intake — Track "+track+" Review":"Approved Client Portal Access"}</h3><p className="mt-1 text-sm text-slate-600">{stage===2?"The next step is a secure identity-verified intake and staff approval.":"After approval, authorized clients can access workshops and resume services."}</p></div></div>
     {stage===2?<div className="mt-5 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-slate-800"><strong>Secure integration pending.</strong> The public site will not collect legal names, birth dates, phone numbers, release/DPO records, or private case notes until authenticated intake and protected storage have been verified. Selected track and checklist progress stay on this device only; they are not sent to the .COM API.</div>:<div className="mt-5 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-slate-800">Client workshops, resume tools, and individual access are available only through your organization's approved portal process. No public PIN or access-code bypass is provided.</div>}
+    {stage===3 && <div className="mt-6"><WorkshopAcademy mode="public" /></div>}
     <div className="mt-5 flex flex-wrap gap-3"><a href="https://sdtoolsinc.com" className="inline-flex items-center gap-2 rounded-xl bg-[#101F34] px-5 py-3 text-sm font-bold text-white">Continue to protected Portals <ArrowRight size={16}/></a><button onClick={()=>setStage(stage===2?1:2)} className="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-bold">{stage===2?"Back to tracker":"Back to intake overview"}</button></div>
    </div>}
    <div aria-live="polite" className="mt-5 rounded-xl border border-slate-300 bg-white/80 p-4 text-xs text-slate-700">
