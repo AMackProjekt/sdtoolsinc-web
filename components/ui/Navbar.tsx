@@ -36,7 +36,7 @@ export function Navbar() {
           aria-label="T.O.O.L.S. Inc. home"
         >
           <img
-            src="/logos/main-logo.png"
+            src="/logos/tools-inc-crown-official.svg"
             alt=""
             className="h-9 w-auto object-contain sm:h-10"
           />
