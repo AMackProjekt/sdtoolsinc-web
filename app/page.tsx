@@ -33,7 +33,7 @@ export default function Page() {
     </header>
 
     <section id="home" className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_75%_20%,rgba(14,165,233,.19),transparent_43%),linear-gradient(120deg,#060D1A,#0B172A,#132440)]">
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-30" style={{backgroundImage:"linear-gradient(90deg,#060D1A 4%,rgba(6,13,26,.55) 65%,#060D1A),url('/images/san-diego-skyline.jpg')"}} />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-55" style={{backgroundImage:"linear-gradient(90deg,#060D1A 4%,rgba(6,13,26,.55) 65%,#060D1A),url('https://upload.wikimedia.org/wikipedia/commons/b/bb/San_Diego_skyline_at_dusk_from_Coronado_2015.jpg')"}} />
       <Topography className="opacity-55 mix-blend-screen" />
       <div className="mx-auto grid max-w-7xl items-center gap-9 px-5 py-16 lg:grid-cols-12 lg:py-24">
         <div className="space-y-6 lg:col-span-7">
