@@ -16,12 +16,11 @@ const providers = [
 export function SocialShare() {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
-  const share = async () => {
-    if (typeof navigator !== "undefined" && "share" in navigator) {
-      try { await navigator.share({ title: "T.O.O.L.S. Inc.", text: message, url: homeUrl }); return; }
-      catch (error) { if (error instanceof DOMException && error.name === "AbortError") return; }
-    }
-    setOpen(current => !current);
+  const share = () => setOpen(current => !current);
+  const shareNative = async () => {
+    if (!navigator.share) return;
+    try { await navigator.share({ title: "T.O.O.L.S. Inc.", text: message, url: homeUrl }); setOpen(false); }
+    catch { /* visitor canceled or platform does not support this share */ }
   };
   const copy = async () => {
     try { await navigator.clipboard.writeText(homeUrl); setCopied(true); }
@@ -32,6 +31,7 @@ export function SocialShare() {
     {open && <div role="group" aria-label="Share this website" className="absolute right-0 top-full z-[90] mt-2 w-56 rounded-xl border border-white/20 bg-[#0B172A] p-2 text-sm shadow-2xl">
       <div className="flex items-center justify-between px-2 py-1"><strong className="text-white">Share our mission</strong><button aria-label="Close share menu" onClick={()=>setOpen(false)} className="rounded p-1 text-slate-200 hover:bg-white/10"><X size={16}/></button></div>
       {providers.map(p=><a key={p.name} href={p.href} target={p.name==="Email"?undefined:"_blank"} rel={p.name==="Email"?undefined:"noopener noreferrer"} onClick={()=>setOpen(false)} className="block rounded-lg px-3 py-2 text-slate-100 hover:bg-white/10">{p.name}</a>)}
+      <button type="button" onClick={shareNative} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sky-200 hover:bg-white/10">Share using device</button>
       <button onClick={copy} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-amber-200 hover:bg-white/10">{copied?<Check size={15}/>:<Copy size={15}/>} {copied?"Link copied":"Copy website link"}</button>
     </div>}
   </div>;
