@@ -4,9 +4,9 @@ import { CardNav, GooeyNav, AnimatedList, FloatingDock } from "@/components/ui/C
 import { StabilizationFlow } from "@/components/ui/StabilizationFlow";
 
 const offerings = [
-  { label: "Krucial 72-Hour Plan", description: "Six immediate priorities to begin your stabilization journey.", tag: "FIRST STEPS", href: "#first-steps", color: "from-blue-600 to-blue-900" },
-  { label: "DocuReady Track A", description: "Support for reentry and justice-involved community members.", tag: "REENTRY", href: "#first-steps", color: "from-amber-600 to-orange-900" },
-  { label: "DocuReady Track B", description: "Community support for individuals who need a fresh start.", tag: "COMMUNITY", href: "#first-steps", color: "from-indigo-600 to-violet-900" },
+  { label: "DocuReady PrePlan", description: "Six immediate stabilization priorities before protected Track A or Track B intake.", tag: "FIRST STEPS", href: "#docuready", color: "from-blue-600 to-blue-900" },
+  { label: "DocuReady PrePlan and Intake — Track A", description: "Stabilization planning for justice-involved individuals and people returning to the community.", tag: "REENTRY", href: "#docuready", color: "from-amber-600 to-orange-900" },
+  { label: "DocuReady PrePlan and Intake — Track B", description: "Essential service navigation for displaced veterans and community members.", tag: "COMMUNITY", href: "#docuready", color: "from-indigo-600 to-violet-900" },
   { label: "Workshops & Resume", description: "Career readiness, communication, digital literacy, and financial basics.", tag: "EDUCATION", href: "https://sdtoolsinc.com", color: "from-emerald-600 to-teal-900" }
 ];
 
@@ -14,12 +14,12 @@ export default function Page() {
   return <main className="min-h-screen bg-[#060D1A] text-slate-100">
     <header className="sticky top-0 z-50 border-b border-white/10 bg-[#060D1A]/95 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-5 py-4">
-        <a href="/" className="flex items-center gap-3" aria-label="T.O.O.L.S. Inc. home"><img src="/icons/tools-crest.svg" alt="" className="h-12 w-12 rounded-xl border border-amber-400/30" /><span><strong className="block text-lg font-extrabold tracking-tight text-white">T.O.O.L.S. INC.</strong><small className="block text-[10px] font-semibold text-amber-300">Together Overcoming Obstacles &amp; Limitations</small></span></a>
+        <a href="/" className="flex items-center gap-3" aria-label="T.O.O.L.S. Inc. home"><img src="/logos/tools-inc-crown-official.svg" alt="" className="h-14 w-14 object-contain drop-shadow-[0_0_11px_rgba(251,191,36,.25)]" /><span><strong className="block text-lg font-extrabold tracking-tight text-white">T.O.O.L.S. INC.</strong><small className="block text-[10px] font-semibold text-amber-300">Together Overcoming Obstacles &amp; Limitations</small></span></a>
         <div className="flex flex-wrap items-center gap-2">
           <CardNav />
           <GooeyNav />
           <a className="rounded-xl border border-sky-400/50 bg-sky-400/15 px-4 py-2 font-extrabold text-sky-200 hover:bg-sky-400/25" href="https://sdtoolsinc.com">Portals</a>
-          <a className="rounded-xl bg-amber-400 px-4 py-2 font-extrabold text-[#060D1A] hover:bg-amber-300" href="#first-steps">Get Started</a>
+          <a className="rounded-xl bg-amber-400 px-4 py-2 font-extrabold text-[#060D1A] hover:bg-amber-300" href="#docuready">Get Started</a>
         </div>
       </div>
     </header>
@@ -28,11 +28,11 @@ export default function Page() {
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-95" style={{backgroundImage:"linear-gradient(90deg,rgba(6,13,26,.68) 0%,rgba(6,13,26,.18) 48%,rgba(6,13,26,.22) 100%),url('https://upload.wikimedia.org/wikipedia/commons/b/bb/San_Diego_skyline_at_dusk_from_Coronado_2015.jpg')"}} />
       <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-9 px-5 py-16 lg:grid-cols-12 lg:py-24">
         <div className="space-y-6 rounded-2xl bg-[#071120]/25 p-3 shadow-[0_0_24px_rgba(0,0,0,.10)] lg:col-span-7">
-          <p className="inline-flex rounded-full border border-amber-400/30 bg-white/5 px-3 py-2 text-[11px] font-bold uppercase tracking-[.18em] text-amber-300">San Diego · Reentry · Community · Opportunity</p>
+          <p className="inline-flex rounded-full border border-amber-400/30 bg-white/5 px-3 py-2 text-[11px] font-bold uppercase tracking-[.18em] text-amber-300">San Diego · Justice-Involved · Displaced Veterans · Community</p>
           <h1 className="max-w-[750px] text-5xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-7xl">Your Past Doesn’t <span className="text-amber-400">Define Your Future.</span></h1>
-          <p className="max-w-xl text-base leading-relaxed text-slate-200 sm:text-lg">A second chance is a new beginning. T.O.O.L.S. Inc. supports justice-involved individuals and community members with immediate essentials, access to resources, and pathways to education and employment.</p>
-          <div className="flex flex-wrap gap-3"><a className="rounded-xl bg-amber-400 px-6 py-3 font-extrabold text-[#060D1A] hover:bg-amber-300" href="#first-steps">Get Started Today</a><a className="rounded-xl border border-white/25 bg-white/10 px-6 py-3 font-semibold text-white hover:bg-white/20" href="#contact">Contact &amp; Crisis Guide</a></div>
-          <p className="text-sm font-medium text-slate-300">Track A: Justice-Involved &amp; Reentry · Track B: Community Services</p>
+          <p className="max-w-xl text-base leading-relaxed text-slate-200 sm:text-lg">Providing essential services to assist justice-involved individuals, displaced veterans, and community members in overcoming barriers, accessing vital resources, and building pathways to stability, education, employment, and lasting independence.</p>
+          <div className="flex flex-wrap gap-3"><a className="rounded-xl bg-amber-400 px-6 py-3 font-extrabold text-[#060D1A] hover:bg-amber-300" href="#docuready">Get Started Today</a><a className="rounded-xl border border-white/25 bg-white/10 px-6 py-3 font-semibold text-white hover:bg-white/20" href="#contact">Contact &amp; Crisis Guide</a></div>
+          <p className="text-sm font-medium text-slate-300">DocuReady PrePlan and Intake · Track A: Justice-Involved / Reentry · Track B: Displaced Veterans &amp; Community Support</p>
         </div>
         <div id="mackai" className="lg:col-span-5"><MackAiNavigator /></div>
       </div>
@@ -58,7 +58,7 @@ export default function Page() {
       <div className="mx-auto max-w-7xl">
         <p className="text-xs font-bold uppercase tracking-[.17em] text-amber-400">Our approach</p>
         <h2 className="mt-2 text-2xl font-extrabold text-white">Empowering Individuals. Unlocking Potential.</h2>
-        <p className="mt-3 max-w-4xl text-sm leading-relaxed text-slate-300">T.O.O.L.S. Inc. helps individuals facing barriers access stabilization resources, practical guidance, and opportunities to build confidence and readiness. We serve justice-involved individuals and members of the wider community.</p>
+        <p className="mt-3 max-w-4xl text-sm leading-relaxed text-slate-300">T.O.O.L.S. Inc. helps individuals facing barriers access stabilization resources, practical guidance, and opportunities to build confidence and readiness. We serve justice-involved individuals, displaced veterans, and community members.</p>
         <div className="mt-6"><AnimatedList /></div>
       </div>
     </section>
