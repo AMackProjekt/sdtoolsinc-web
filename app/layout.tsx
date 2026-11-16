@@ -42,9 +42,9 @@ export const metadata: Metadata = {
     title: "T.O.O.L.S. Inc. | Essential Services, Reentry & Community Support",
     description: seoDescription,
     images: [{
-      url: "/logos/tools-inc-crown-official.svg",
-      width: 1010,
-      height: 1041,
+      url: "/seo/tools-social-preview.png",
+      width: 1200,
+      height: 630,
       alt: "T.O.O.L.S. Inc. gold crown and torch over blue emblem",
     }],
   },
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "T.O.O.L.S. Inc. | Essential Services in San Diego",
     description: seoDescription,
-    images: ["/logos/tools-inc-crown-official.svg"],
+    images: ["/seo/tools-social-preview.png"],
   },
 };
 
