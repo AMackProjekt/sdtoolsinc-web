@@ -21,6 +21,8 @@ export function PrivacyBanner() {
     setChoice(value);
     setVisible(false);
     window.dispatchEvent(new Event("toolsinc:analytics-consent"));
+    // Remove loaded analytics immediately when an already-consented visitor opts out.
+    if (value === "denied" && choice === "granted") window.location.reload();
   };
   if (!ready) return null;
   return <>
@@ -35,6 +37,6 @@ export function PrivacyBanner() {
         <a href="/privacy-policy" className="px-2 text-xs text-sky-200 underline">Privacy policy</a>
       </div>
     </aside>}
-    <button type="button" onClick={()=>setVisible(true)} className="sr-only focus:not-sr-only focus:fixed focus:bottom-20 focus:left-4 focus:z-[160] focus:rounded-md focus:bg-slate-950 focus:p-3 focus:text-white">Change analytics preferences{choice ? ` (currently ${choice})` : ""}</button>
+    <button type="button" onClick={()=>setVisible(true)} className="fixed bottom-2 left-2 z-[80] rounded-md border border-white/20 bg-slate-950/85 px-2 py-1 text-[10px] text-slate-200 opacity-60 hover:opacity-100 focus:opacity-100">Change analytics preferences{choice ? ` (currently ${choice})` : ""}</button>
   </>;
 }
