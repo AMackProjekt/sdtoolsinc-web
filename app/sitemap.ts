@@ -1,13 +1,20 @@
-import type { MetadataRoute } from 'next';
+import type { MetadataRoute } from "next";
 
-export const dynamic = 'force-static';
+export const dynamic = "force-static";
 
+/** Sitemap includes public information pages, excluding archived referral and protected portal routes. */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const pages = ['', '/reentry', '/resources', '/first-steps', '/partnerships', '/interest', '/referral', '/demos', '/privacy-policy'];
-  return pages.map((path, index) => ({
-    url: `https://sdtoolsinc.org${path || '/'}`,
-    lastModified: new Date(),
-    changeFrequency: index === 0 ? 'weekly' : 'monthly',
-    priority: index === 0 ? 1 : 0.7,
+  const entries = [
+    { path: "/", priority: 1, changeFrequency: "weekly" as const },
+    { path: "/reentry", priority: 0.85, changeFrequency: "monthly" as const },
+    { path: "/resources", priority: 0.85, changeFrequency: "monthly" as const },
+    { path: "/first-steps", priority: 0.85, changeFrequency: "monthly" as const },
+    { path: "/partnerships", priority: 0.75, changeFrequency: "monthly" as const },
+    { path: "/privacy-policy", priority: 0.4, changeFrequency: "yearly" as const },
+  ];
+  return entries.map(({ path, priority, changeFrequency }) => ({
+    url: `https://sdtoolsinc.org${path}`,
+    priority,
+    changeFrequency,
   }));
 }
