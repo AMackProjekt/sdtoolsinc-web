@@ -25,7 +25,7 @@ export function Footer() {
           >
             <div className="absolute inset-0 blur-2xl bg-brand/30 animate-pulse" />
             <img
-              src="/partnerships/amp-logo.jpeg"
+              src="/brand/mackprojekt-primary.webp"
               alt="A MackProjekt"
               className="relative h-16 w-auto object-contain"
             />
