@@ -28,7 +28,7 @@ type Props = {
   /** Public mode: interactive practice is allowed but nothing is sent to cloud. */
   mode?: "public" | "client";
   /** Server-authenticated client save adapter; never pass a raw access code here. */
-  onProgressChange?: (completed: number[]) => Promise<void>;
+  onProgressChange?: (moduleId: number, answers: number[]) => Promise<number[]>;
   initialCompleted?: number[];
 };
 
@@ -42,7 +42,7 @@ export function WorkshopAcademy({ mode = "public", onProgressChange, initialComp
   const [syncMessage, setSyncMessage] = useState("");
   const count = useMemo(() => new Set(completed).size, [completed]);
 
-  async function passModule(id: number) {
+  async function passModule(id: number, quizAnswers: number[]) {
     const next = [...new Set([...completed, id])].sort();
     setCompleted(next);
     if (mode !== "client" || !onProgressChange) {
@@ -55,7 +55,8 @@ export function WorkshopAcademy({ mode = "public", onProgressChange, initialComp
     setSync("saving");
     setSyncMessage("Saving signed-in workshop progress…");
     try {
-      await onProgressChange(next);
+      const confirmed = await onProgressChange(id, quizAnswers);
+      setCompleted(confirmed);
       setSync("saved");
       setSyncMessage("Workshop progress saved to your authorized client record.");
     } catch {
@@ -73,7 +74,7 @@ export function WorkshopAcademy({ mode = "public", onProgressChange, initialComp
     const score = module.quiz.reduce((total, question, index) => total + (selected[index] === question.answer ? 1 : 0), 0);
     const chosen = module.quiz.map((_, index) => selected[index]);
     setResults(previous => ({ ...previous, [module.num]: { answers: chosen, score } }));
-    if (score === module.quiz.length) void passModule(module.num);
+    if (score === module.quiz.length) void passModule(module.num, chosen);
   }
 
   return <section aria-label="Online Work-Readiness Workshops" className="space-y-5">
