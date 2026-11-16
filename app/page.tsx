@@ -2,6 +2,10 @@ import { MackAiNavigator } from "@/components/ui/MackAiNavigator";
 import { ElectrifiedMackProjektFooter } from "@/components/ui/ElectrifiedMackProjektFooter";
 import { CardNav, GooeyNav, AnimatedList, FloatingDock } from "@/components/ui/CommunityNavEffects";
 import { StabilizationFlow } from "@/components/ui/StabilizationFlow";
+import { SocialShare } from "@/components/ui/SocialShare";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { alternates: { canonical: "https://sdtoolsinc.org/" } };
 
 const offerings = [
   { label: "DocuReady PrePlan", description: "Six immediate stabilization priorities before protected Track A or Track B intake.", tag: "FIRST STEPS", href: "#docuready", color: "from-blue-600 to-blue-900" },
@@ -20,6 +24,7 @@ export default function Page() {
           <GooeyNav />
           <a className="rounded-xl border border-sky-400/50 bg-sky-400/15 px-4 py-2 font-extrabold text-sky-200 hover:bg-sky-400/25" href="https://sdtoolsinc.com">Portals</a>
           <a className="rounded-xl bg-amber-400 px-4 py-2 font-extrabold text-[#060D1A] hover:bg-amber-300" href="#docuready">Get Started</a>
+          <SocialShare />
         </div>
       </div>
     </header>
