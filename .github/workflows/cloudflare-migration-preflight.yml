@@ -1,0 +1,21 @@
+name: Cloudflare migration preflight
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "CLOUDFLARE_MIGRATION.md"
+      - ".github/workflows/cloudflare-migration-preflight.yml"
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - name: Vinext compatibility analysis
+        run: npx --yes vinext check
