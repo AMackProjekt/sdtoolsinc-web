@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import type { PublicKrucialProgress } from "@/lib/docuready/flow";
 import type { IntakeEligibilityAnswers, OptionalAnswer, RequestedService } from "@/lib/intake/assessment";
 import { DEMOGRAPHIC_DECLINE, SERVICE_LABELS } from "@/lib/intake/assessment";
+import { CompletionProgress } from "@/components/ui/CompletionProgress";
 
 const optionalOptions: {value:OptionalAnswer;label:string}[] = [
   {value:"yes",label:"Yes"},{value:"no",label:"No"},
@@ -30,6 +31,20 @@ function YesNo({value,onChange}:{value:OptionalAnswer;onChange:(value:OptionalAn
 export function IntakeEligibilityQuestionnaire({progress}:{progress:PublicKrucialProgress}){
  const [form,setForm]=useState<IntakeEligibilityAnswers>(()=>initial(progress));
  const merged=useMemo(()=>({...form,docuReady:progress}),[form,progress]);
+ // Only essential application items count; optional demographics do not reduce completion.
+ const requiredFields = [
+  Boolean(merged.fullName.trim()),
+  Boolean(merged.email.trim() || merged.phone.trim() || merged.contactPreference==="no_safe_contact"),
+  Boolean(merged.city.trim()),
+  merged.age18OrOlder==="yes" || merged.age18OrOlder==="no",
+  Boolean(merged.situation.housing),
+  Boolean(merged.situation.employment),
+  Boolean(merged.situation.transportation),
+  merged.requestedServices.length>0,
+  Boolean(merged.immediatePriority.trim()),
+  merged.consentToProcessing,
+ ];
+ const answeredCount=requiredFields.filter(Boolean).length;
  const update=(key:keyof IntakeEligibilityAnswers,value:unknown)=>setForm(current=>({...current,[key]:value}));
  const updateSituation=(key:keyof IntakeEligibilityAnswers["situation"],value:string)=>setForm(current=>({...current,situation:{...current.situation,[key]:value}}));
  const updateDemographics=(key:keyof IntakeEligibilityAnswers["demographics"],value:string)=>setForm(current=>({...current,demographics:{...current.demographics,[key]:value}}));
@@ -37,6 +52,7 @@ export function IntakeEligibilityQuestionnaire({progress}:{progress:PublicKrucia
  return <div className="mt-6 rounded-xl border border-slate-300 bg-white p-5 text-[#101F34] sm:p-7">
   <p className="text-xs font-extrabold uppercase tracking-wider text-blue-800">Separate applicant application · draft UI</p>
   <h4 className="mt-2 text-xl font-black">Intake Eligibility Form</h4>
+  <div className="mt-4"><CompletionProgress label="Intake application completion" completed={answeredCount} total={requiredFields.length} note="Calculated from essential answers only. Optional demographics and referral consent are not required. 100% means ready for staff submission review—not submitted or approved."/></div>
   <p className="mt-2 text-sm text-slate-700">DocuReady milestone selections are already populated above. This separate general application asks only for the information needed to consider services. It has not been connected to secure submission yet. Do not enter real personal information until that connection is enabled.</p>
   <fieldset className="mt-6 grid gap-4 md:grid-cols-2">
    <legend className="mb-3 text-base font-extrabold">1. General information</legend>
