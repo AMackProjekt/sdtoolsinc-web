@@ -193,20 +193,11 @@ export function useAuth(): AuthContextType {
 
         const userId = data.user?.id;
         if (userId) {
-          const profile = await getCurrentProfile(userId);
-          const role = (profile as UserProfile | null)?.role;
-
-          if (role === "admin") {
-            router.push("/admin/dashboard");
-          } else if (role === "case_manager") {
-            router.push("/portal/manager/dashboard");
-          } else if (role === "client") {
-            router.push("/portal/client/dashboard");
-          } else {
-            router.push("/portal/dashboard");
-          }
+          // The role-specific paths previously referenced here are not defined in this app.
+          // The existing portal launcher performs the role-specific navigation.
+          router.replace("/portal/portals");
         } else {
-          router.push("/portal/dashboard");
+          router.replace("/portal/portals");
         }
       } catch (error) {
         const message = error instanceof Error ? error.message : "Login failed";
