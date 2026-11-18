@@ -34,7 +34,7 @@ export function IntakeEligibilityQuestionnaire({progress}:{progress:PublicKrucia
  // Only essential application items count; optional demographics do not reduce completion.
  const requiredFields = [
   Boolean(merged.fullName.trim()),
-  Boolean(merged.email.trim() || merged.phone.trim() || merged.contactPreference==="no_safe_contact"),
+  Boolean(merged.email.trim() || merged.phone.trim()),
   Boolean(merged.city.trim()),
   merged.age18OrOlder==="yes" || merged.age18OrOlder==="no",
   Boolean(merged.situation.housing),
