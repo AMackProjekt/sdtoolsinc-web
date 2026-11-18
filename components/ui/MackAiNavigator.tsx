@@ -37,7 +37,7 @@ export function MackAiNavigator() {
   return <section id="mackai" aria-label="MackAI assistant" className="rounded-[26px] border border-sky-400/40 bg-[#0B172A]/95 p-5 shadow-2xl shadow-sky-900/30 sm:p-7">
     <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-4">
       <div><h2 className="text-xl font-extrabold text-white">✦ MackAI</h2><p className="text-xs text-slate-300">San Diego stabilization &amp; resource navigator</p></div>
-      <span className={`rounded-full px-3 py-1 text-[11px] font-semibold ${available === "online" ? "bg-emerald-400/20 text-emerald-200" : available === "offline" ? "bg-amber-400/20 text-amber-200" : "bg-sky-400/20 text-sky-200"}`}>{available === "online" ? "Gemini connected" : available === "offline" ? "Service unavailable" : "Connection pending"}</span>
+      <span className={`rounded-full px-3 py-1 text-[11px] font-semibold ${available === "online" ? "bg-emerald-400/20 text-emerald-200" : available === "offline" ? "bg-amber-400/20 text-amber-200" : "bg-sky-400/20 text-sky-200"}`}>{available === "online" ? "MackAI responding" : available === "offline" ? "Temporarily unavailable" : "Ready to assist"}</span>
     </div>
     <div aria-live="polite" className="mt-4 max-h-72 min-h-44 space-y-3 overflow-auto">
       {messages.map((item, i) => <p key={i} className={`rounded-xl p-3 text-sm leading-relaxed ${item.role === "user" ? "ml-8 bg-sky-500/20 text-white" : "mr-5 bg-white/10 text-slate-100"}`}>{item.content}</p>)}
