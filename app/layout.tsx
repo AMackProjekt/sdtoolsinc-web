@@ -80,7 +80,7 @@ const organizationSchema = {
     "Community stabilization",
     "Workforce readiness",
     "Essential service navigation",
-    "DocuReady PrePlan", "Intake Eligibility Form Track A and Track B",
+    "DocuReady PrePlan Track A and Track B", "Separate Intake Eligibility Form",
   ],
   sameAs: [
     "https://www.instagram.com/sd_t.o.o.ls_inc/",
