@@ -9,9 +9,9 @@ import type { Metadata } from "next";
 export const metadata: Metadata = { alternates: { canonical: "https://sdtoolsinc.org/" } };
 
 const offerings = [
-  { label: "DocuReady PrePlan", description: "Six immediate stabilization priorities before protected Track A or Track B intake.", tag: "FIRST STEPS", href: "#docuready", color: "from-blue-600 to-blue-900" },
-  { label: "DocuReady PrePlan and Intake — Track A", description: "Stabilization planning for justice-involved individuals and people returning to the community.", tag: "REENTRY", href: "#docuready", color: "from-amber-600 to-orange-900" },
-  { label: "DocuReady PrePlan and Intake — Track B", description: "Essential service navigation for displaced veterans and community members.", tag: "COMMUNITY", href: "#docuready", color: "from-indigo-600 to-violet-900" },
+  { label: "DocuReady PrePlan", description: "Six immediate stabilization priorities before the separate Intake Eligibility Form.", tag: "FIRST STEPS", href: "#docuready", color: "from-blue-600 to-blue-900" },
+  { label: "DocuReady — Track A PrePlan", description: "Stabilization planning for justice-involved individuals and people returning to the community.", tag: "REENTRY", href: "#docuready", color: "from-amber-600 to-orange-900" },
+  { label: "DocuReady — Track B PrePlan", description: "Essential service navigation for displaced veterans and community members.", tag: "COMMUNITY", href: "#docuready", color: "from-indigo-600 to-violet-900" },
   { label: "Workshops & Resume", description: "Career readiness, communication, digital literacy, and financial basics.", tag: "EDUCATION", href: "https://sdtoolsinc.com", color: "from-emerald-600 to-teal-900" }
 ];
 
@@ -79,7 +79,7 @@ export default function Page() {
             <span className="mt-auto pt-4 text-sm font-bold text-white">Explore →</span>
           </a>)}
         </div>
-        <p className="mt-4 text-xs leading-relaxed text-slate-400">The new Track A/B pathway starts with the 72-Hour Tracker. Sensitive intake and staff approvals remain in the protected .COM portal; no confidential case data is sent from this homepage.</p>
+        <p className="mt-4 text-xs leading-relaxed text-slate-400">The Track A/B DocuReady pathway starts with the 72-Hour Tracker. The separate Intake Eligibility Form and staff approval remain protected; no confidential case data is sent from this homepage.</p>
       </div>
     </section>
 
@@ -87,7 +87,7 @@ export default function Page() {
       <div className="mx-auto max-w-7xl">
         <p className="text-xs font-extrabold uppercase tracking-[.18em] text-amber-400">See the tools in action</p>
         <h2 className="mt-2 text-3xl font-extrabold text-white">Explore Our Community Portals</h2>
-        <p className="mt-3 max-w-3xl text-slate-300">From the first 72-hour stabilization plan to protected learning and case-management workflows, explore the tools that support each stage. Portal access requires authorization.</p>
+        <p className="mt-3 max-w-3xl text-slate-300">From DocuReady's 72-hour stabilization planning to the separate Intake Eligibility Form and protected learning and case-management workflows, explore the tools that support each stage. Portal access requires authorization.</p>
         <div className="mt-7 grid gap-5 md:grid-cols-3">
           {[
             {name:"Client & Learning Portal",caption:"Course progress, workshops, and career-readiness tools",href:"/portal/access",tone:"border-sky-400/30",accent:"bg-sky-400",tiles:["My Courses","Workshops","Certificates"]},
