@@ -86,12 +86,24 @@ export default function Page() {
 
     <section id="impact" className="border-t border-white/10 bg-[#081323] px-5 py-14">
       <div className="mx-auto max-w-7xl">
-        <p className="text-xs font-extrabold uppercase tracking-[.18em] text-amber-400">Community progress</p>
-        <h2 className="mt-2 text-3xl font-extrabold text-white">📊 Our Impact in San Diego</h2>
-        <div className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {["Individuals Served","Job Placements","Training Completions","Community Partners"].map(label=><div key={label} className="rounded-2xl border border-white/10 bg-[#132440] p-5 text-center"><div className="text-4xl font-black text-sky-200">—</div><div className="mt-2 text-sm font-bold text-white">{label}</div></div>)}
+        <p className="text-xs font-extrabold uppercase tracking-[.18em] text-amber-400">See the tools in action</p>
+        <h2 className="mt-2 text-3xl font-extrabold text-white">Explore Our Community Portals</h2>
+        <p className="mt-3 max-w-3xl text-slate-300">From the first 72-hour stabilization plan to protected learning and case-management workflows, explore the tools that support each stage. Portal access requires authorization.</p>
+        <div className="mt-7 grid gap-5 md:grid-cols-3">
+          {[
+            {name:"Client & Learning Portal",caption:"Course progress, workshops, and career-readiness tools",href:"/portal/access",tone:"border-sky-400/30",accent:"bg-sky-400",tiles:["My Courses","Workshops","Certificates"]},
+            {name:"Case Manager Portal",caption:"Case coordination, service navigation, and outcome tracking",href:"/portal/portals",tone:"border-violet-400/30",accent:"bg-violet-400",tiles:["Case Notes","Follow-ups","Resources"]},
+            {name:"Administration Portal",caption:"Staff controls, access management, and reporting",href:"/portal/portals",tone:"border-amber-400/30",accent:"bg-amber-400",tiles:["Users","Settings","Reports"]}
+          ].map(portal=><a key={portal.name} href={portal.href} className={`group overflow-hidden rounded-2xl border bg-[#111d31] transition-colors hover:border-white/50 ${portal.tone}`}>
+            <div aria-label={portal.name + " illustrative interface preview"} className="m-4 rounded-xl border border-white/10 bg-[#07111f] p-3">
+              <div className="mb-3 flex items-center gap-2 border-b border-white/10 pb-3"><span className={`h-2.5 w-2.5 rounded-full ${portal.accent}`} /><span className="text-[11px] font-bold tracking-wide text-slate-300">T.O.O.L.S. INC. / PORTAL</span></div>
+              <div className="grid grid-cols-3 gap-2">{portal.tiles.map(tile=><div key={tile} className="min-h-20 rounded-lg border border-white/10 bg-white/[.06] p-2"><div className={`mb-4 h-1.5 w-9 rounded-full ${portal.accent}`}/><span className="text-[10px] font-semibold text-slate-200">{tile}</span></div>)}</div>
+              <div className="mt-2 text-[10px] text-slate-500">Illustrative preview · No client data</div>
+            </div>
+            <div className="px-5 pb-5"><h3 className="text-lg font-extrabold text-white">{portal.name}</h3><p className="mt-2 text-sm leading-relaxed text-slate-300">{portal.caption}</p><span className="mt-4 inline-block text-sm font-bold text-amber-300">Explore portal →</span></div>
+          </a>)}
         </div>
-        <p className="mt-4 text-sm text-slate-400">Figures appear after verification. No unverified results are published.</p>
+        <div className="mt-8 flex flex-wrap gap-3"><a href="/links" className="rounded-xl bg-amber-400 px-5 py-3 font-extrabold text-slate-950 hover:bg-amber-300">All Projects & Links</a><a href="/partnerships" className="rounded-xl border border-white/20 px-5 py-3 font-bold text-white hover:bg-white/10">Become a Community Partner</a></div>
       </div>
     </section>
     <StabilizationFlow />
