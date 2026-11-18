@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowRight, ShieldCheck } from "lucide-react";
 
 /**
@@ -10,12 +10,31 @@ import { ArrowRight, ShieldCheck } from "lucide-react";
  */
 export const INTAKE_TRANSITION_NOTICE_VERSION = "2026-11-18-v2";
 
+export interface IntakeAcknowledgmentSignature {
+  fullName: string;
+  signedAt: string;
+  signedDate: string;
+  noticeVersion: string;
+}
+
 export function IntakeTransitionConsent({ onContinue, onBack }: {
-  onContinue: () => void;
+  onContinue: (signature: IntakeAcknowledgmentSignature) => void;
   onBack: () => void;
 }) {
   const [understood, setUnderstood] = useState(false);
   const [accurate, setAccurate] = useState(false);
+  const [fullName, setFullName] = useState("");
+  const [today, setToday] = useState("");
+  useEffect(() => {
+    const date = new Date();
+    setToday(new Intl.DateTimeFormat("en-US", {year:"numeric",month:"long",day:"numeric"}).format(date));
+  }, []);
+  const validSignature = fullName.trim().length >= 3 && fullName.trim().includes(" ");
+  const signAndContinue = () => {
+    if (!understood || !accurate || !validSignature || !today) return;
+    const signedAt = new Date().toISOString();
+    onContinue({fullName:fullName.trim(), signedAt, signedDate:new Intl.DateTimeFormat("en-US", {year:"numeric",month:"long",day:"numeric"}).format(new Date()), noticeVersion:INTAKE_TRANSITION_NOTICE_VERSION});
+  };
   return (
     <section className="mt-5 rounded-2xl border border-blue-200 bg-[#F4F8FC] p-5 sm:p-7"
       aria-labelledby="intake-consent-title">
@@ -93,9 +112,24 @@ export function IntakeTransitionConsent({ onContinue, onBack }: {
           <span>I understand that relevant DocuReady answers will be prefilled where available, and I will have the opportunity to review or correct them.</span>
         </label>
       </fieldset>
+      <div className="mt-5 grid gap-4 rounded-xl border border-slate-300 bg-white p-4 sm:grid-cols-[minmax(0,1fr)_auto]">
+        <label className="block text-sm font-semibold text-slate-900">
+          Client full legal name — electronic signature
+          <input type="text" autoComplete="name" value={fullName} maxLength={120}
+            onChange={e=>setFullName(e.target.value)}
+            placeholder="Type your full legal name"
+            className="mt-2 w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-800" />
+          <span className="mt-1 block text-xs font-normal text-slate-600">By typing your full legal name, you acknowledge the statements checked above. Your signature is not submitted at this step.</span>
+        </label>
+        <div className="text-sm font-semibold text-slate-900">
+          Date of acknowledgment
+          <div className="mt-2 rounded-lg border border-slate-300 bg-slate-50 px-4 py-3 text-slate-800" aria-live="polite">{today || "Loading today's date…"}</div>
+          <span className="mt-1 block text-xs font-normal text-slate-600">Automatically dated when you continue</span>
+        </div>
+      </div>
       <p className="mt-3 text-xs text-slate-600">This acknowledgment only allows you to continue. Your decision about submitting the actual application and any optional referrals will be requested separately.</p>
       <div className="mt-5 flex flex-wrap gap-3">
-        <button type="button" onClick={onContinue} disabled={!understood || !accurate}
+        <button type="button" onClick={signAndContinue} disabled={!understood || !accurate || !validSignature || !today}
           className="inline-flex items-center gap-2 rounded-xl bg-[#101F34] px-5 py-3 text-sm font-bold text-white hover:bg-[#1D416B] disabled:cursor-not-allowed disabled:opacity-45">
           Continue to eligibility review <ArrowRight size={17} />
         </button>
