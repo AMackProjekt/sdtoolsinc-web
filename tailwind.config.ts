@@ -33,8 +33,7 @@ export default {
         accent: "#a78bfa"
       },
       backgroundImage: {
-        "dash-glow":
-          "radial-gradient(900px 400px at 20% -10%, rgba(56,189,248,.16), transparent), radial-gradient(600px 300px at 90% 10%, rgba(167,139,250,.16), transparent), radial-gradient(700px 400px at 50% 100%, rgba(45,212,191,.12), transparent)"
+        "dash-glow": "none"
       }
     }
   },
