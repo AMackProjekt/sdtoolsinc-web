@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     "justice-involved support San Diego", "reentry services San Diego",
     "displaced veteran support San Diego", "veteran housing resources San Diego",
     "essential services San Diego", "community stabilization San Diego",
-    "workforce readiness San Diego", "DocuReady PrePlan and Intake",
+    "workforce readiness San Diego", "DocuReady PrePlan", "Intake Eligibility Form",
   ],
   authors: [{ name: "T.O.O.L.S. Inc." }],
   creator: "T.O.O.L.S. Inc.",
@@ -80,7 +80,7 @@ const organizationSchema = {
     "Community stabilization",
     "Workforce readiness",
     "Essential service navigation",
-    "DocuReady PrePlan and Intake Track A and Track B",
+    "DocuReady PrePlan", "Intake Eligibility Form Track A and Track B",
   ],
   sameAs: [
     "https://www.instagram.com/sd_t.o.o.ls_inc/",
