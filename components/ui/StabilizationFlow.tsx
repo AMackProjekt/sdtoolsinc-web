@@ -5,6 +5,7 @@ import { ArrowRight, CheckCircle2, LockKeyhole, RotateCcw } from "lucide-react";
 import { toPublicProgress } from "@/lib/docuready/flow";
 import { IntakeEligibilityPrefill } from "@/components/ui/IntakeEligibilityPrefill";
 import { IntakeTransitionConsent } from "@/components/ui/IntakeTransitionConsent";
+import type { IntakeAcknowledgmentSignature } from "@/components/ui/IntakeTransitionConsent";
 
 
 const milestones = [
@@ -24,6 +25,7 @@ export function StabilizationFlow() {
  const [active,setActive]=useState(0);
  const [stage,setStage]=useState<1|2|3>(1);
  const [intakeAcknowledged,setIntakeAcknowledged]=useState(false);
+ const [acknowledgmentSignature,setAcknowledgmentSignature]=useState<IntakeAcknowledgmentSignature|null>(null);
  const [loaded,setLoaded]=useState(false);
  useEffect(()=>{
   try {const raw=window.localStorage.getItem(storageKey);if(raw){const value=JSON.parse(raw);if(value.track==="A"||value.track==="B")setTrack(value.track);if(Array.isArray(value.done))setDone(value.done.filter((n:unknown): n is number => typeof n === "number" && Number.isInteger(n) && n >= 0 && n < 6));}}catch{}
@@ -67,7 +69,8 @@ export function StabilizationFlow() {
    </div>:<div className="mt-6 rounded-2xl border border-slate-300 bg-white p-7">
     <div className="flex items-center gap-3"><LockKeyhole size={28} className="text-blue-800"/><div><h3 className="text-xl font-extrabold">{stage===2?"Intake Eligibility Form — Track "+track+" Review":"Approved Client Portal Access"}</h3><p className="mt-1 text-sm text-slate-600">{stage===2?"The next step is the separate Intake Eligibility Form, followed by staff review. Your DocuReady information automatically appears below for review; this page does not submit an application.":"After approval, authorized clients can access workshops and resume services."}</p></div></div>
     {stage===2&&intakeAcknowledged?<div className="mt-5 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-slate-800"><strong>Your privacy and personal information matter.</strong> For your protection, this page does not request your full legal name, date of birth, phone number, correctional or probation records, or confidential case notes. You can choose a program pathway and work through the initial checklist without submitting personal information. Your checklist progress automatically populates the eligibility review below, but is not submitted through this page. When personal details are needed, you will be directed to a protected enrollment process accessible only to authorized personnel. We are committed to treating your information with respect and confidentiality.</div>:<div className="mt-5 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-slate-800">Client workshops, resume tools, and individual access are available only through your organization's approved portal process. No public PIN or access-code bypass is provided.</div>}
-    {stage===2 && !intakeAcknowledged && <IntakeTransitionConsent onContinue={()=>setIntakeAcknowledged(true)} onBack={()=>setStage(1)} />}
+    {stage===2 && !intakeAcknowledged && <IntakeTransitionConsent onContinue={signature=>{setAcknowledgmentSignature(signature);setIntakeAcknowledged(true)}} onBack={()=>setStage(1)} />}
+    {stage===2 && intakeAcknowledged && acknowledgmentSignature && <div className="mt-5 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-slate-900"><strong>Understanding acknowledged</strong><p className="mt-1">Signed by {acknowledgmentSignature.fullName} on {acknowledgmentSignature.signedDate}.</p><p className="mt-1 text-xs text-slate-700">This acknowledgment is held only in this page session and is not yet a filed consent or submitted application.</p></div>}
     {stage===2 && intakeAcknowledged && <IntakeEligibilityPrefill progress={draft} />}
     {stage===3 && <div className="mt-6 rounded-xl border border-amber-300 bg-amber-50 p-5">
      <p className="text-sm font-extrabold text-amber-950">Client workshops, resume tools, and portal access are restricted until intake acceptance.</p>
