@@ -1,0 +1,9 @@
+{
+  "name": "sdtoolsinc-web-ai-gateway",
+  "main": "src/index.js",
+  "compatibility_date": "2026-11-18",
+  "workers_dev": false,
+  "ai": {
+    "binding": "AI"
+  }
+}
