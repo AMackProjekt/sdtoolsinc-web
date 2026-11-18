@@ -1,5 +1,6 @@
 import type { IndividualEligibilityReport } from "@/lib/intake/assessment";
 import { NEED_LABELS, SERVICE_LABELS, needsSummary } from "@/lib/intake/assessment";
+import { matchServices } from "@/lib/intake/service-matcher";
 
 /**
  * Read-only internal report component.
@@ -9,6 +10,7 @@ import { NEED_LABELS, SERVICE_LABELS, needsSummary } from "@/lib/intake/assessme
  */
 export function EligibilityStaffReport({report}:{report:IndividualEligibilityReport}){
  const summary=needsSummary(report);
+ const navigation=matchServices(report.application);
  const {application:a,screening:s}=report;
  return <article className="mx-auto max-w-4xl space-y-6 rounded-xl bg-white p-8 text-slate-950 print:max-w-none print:shadow-none">
   <header className="border-b-2 border-slate-900 pb-5">
@@ -59,6 +61,23 @@ export function EligibilityStaffReport({report}:{report:IndividualEligibilityRep
     <p className="mt-2 text-sm"><strong>Staff narrative:</strong> {s.staffNarrative || "Not entered"}</p>
     {s.documentedRiskLevel && s.documentedRiskLevel!=="not_assessed" && <p className="mt-2 text-sm"><strong>Externally documented assessment:</strong> {s.instrumentName||"Instrument unspecified"} · {s.documentedRiskLevel.replaceAll("_"," ")} · {s.assessmentDate||"Date unspecified"}</p>}
    </> : <p className="mt-4 text-sm font-medium">Awaiting authorized staff review. No needs screening or risk estimate has been performed.</p>}
+  </section>
+  <section className="rounded-xl border border-slate-300 bg-slate-50 p-5">
+   <h2 className="text-lg font-bold">T.O.O.L.S. Service Navigation Recommendations</h2>
+   <p className="mt-2 text-sm">{navigation.overview}</p>
+   {navigation.strengths.length>0 && <p className="mt-3 text-sm"><strong>Reported strengths:</strong> {navigation.strengths.join("; ")}</p>}
+   {navigation.barriers.length>0 && <p className="mt-2 text-sm"><strong>Reported barriers:</strong> {navigation.barriers.join("; ")}</p>}
+   <div className="mt-4 space-y-3">
+    {navigation.matches.map(match=><div key={match.id} className="rounded-lg border border-slate-200 bg-white p-4">
+     <div className="flex flex-wrap items-center justify-between gap-2">
+      <strong className="text-sm">{match.title}</strong>
+      <span className="rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold uppercase">{match.priority}</span>
+     </div>
+     <p className="mt-1 text-xs text-slate-700">{match.rationale}</p>
+     <ul className="mt-2 list-inside list-disc text-xs text-slate-800">{match.suggestedActions.map(action=><li key={action}>{action}</li>)}</ul>
+    </div>)}
+   </div>
+   <p className="mt-4 text-xs text-slate-600">{navigation.caveat}</p>
   </section>
   <section>
    <h2 className="border-b pb-2 text-lg font-bold">Disposition and next steps</h2>
