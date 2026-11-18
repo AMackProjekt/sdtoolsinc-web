@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ArrowRight, ShieldCheck } from "lucide-react";
+import { CompletionProgress } from "@/components/ui/CompletionProgress";
 
 /**
  * Versioned pre-intake notice and acknowledgment. This is an in-memory navigation
@@ -30,6 +31,7 @@ export function IntakeTransitionConsent({ onContinue, onBack }: {
     setToday(new Intl.DateTimeFormat("en-US", {year:"numeric",month:"long",day:"numeric"}).format(date));
   }, []);
   const validSignature = fullName.trim().length >= 3 && fullName.trim().includes(" ");
+  const completedItems = Number(understood)+Number(accurate)+Number(validSignature);
   const signAndContinue = () => {
     if (!understood || !accurate || !validSignature || !today) return;
     const signedAt = new Date().toISOString();
@@ -128,6 +130,7 @@ export function IntakeTransitionConsent({ onContinue, onBack }: {
         </div>
       </div>
       <p className="mt-3 text-xs text-slate-600">This acknowledgment only allows you to continue. Your decision about submitting the actual application and any optional referrals will be requested separately.</p>
+      <div className="mt-5"><CompletionProgress label="Consent & Understanding completion" completed={completedItems} total={3} note="Both acknowledgments and a full-name signature are required to continue."/></div>
       <div className="mt-5 flex flex-wrap gap-3">
         <button type="button" onClick={signAndContinue} disabled={!understood || !accurate || !validSignature || !today}
           className="inline-flex items-center gap-2 rounded-xl bg-[#101F34] px-5 py-3 text-sm font-bold text-white hover:bg-[#1D416B] disabled:cursor-not-allowed disabled:opacity-45">
