@@ -37,7 +37,7 @@ export default function Page() {
           <h1 className="max-w-[750px] text-5xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-7xl">Your Past Doesn’t <span className="text-amber-400">Define Your Future.</span></h1>
           <p className="max-w-xl text-base leading-relaxed text-slate-200 sm:text-lg">Providing essential services to assist justice-involved individuals, displaced veterans, and community members in overcoming barriers, accessing vital resources, and building pathways to stability, education, employment, and lasting independence.</p>
           <div className="flex flex-wrap gap-3"><a className="rounded-xl bg-amber-400 px-6 py-3 font-extrabold text-[#060D1A] hover:bg-amber-300" href="#docuready">Get Started Today</a><a className="rounded-xl border border-white/25 bg-white/10 px-6 py-3 font-semibold text-white hover:bg-white/20" href="#contact">Contact &amp; Crisis Guide</a></div>
-          <p className="text-sm font-medium text-slate-300">DocuReady PrePlan and Intake · Track A: Justice-Involved / Reentry · Track B: Displaced Veterans &amp; Community Support</p>
+          <p className="text-sm font-medium text-slate-300">DocuReady PrePlan · Track A: Justice-Involved / Reentry · Track B: Displaced Veterans &amp; Community Support · Separate Intake Eligibility Form</p>
         </div>
         <div id="mackai" className="lg:col-span-5"><MackAiNavigator /></div>
       </div>
