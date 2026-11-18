@@ -67,3 +67,33 @@ body {
                     linear-gradient(90deg, rgba(56,189,248,0.3) 1px, transparent 1px);
   background-size: 50px 50px;
 }
+
+/* Real San Diego solar and marine-layer exposure, without fake particle/canvas layers. */
+.hero-skyline .skyline-bg {
+  background-image: url("https://upload.wikimedia.org/wikipedia/commons/b/bb/San_Diego_skyline_at_dusk_from_Coronado_2015.jpg");
+  background-size: cover;
+  background-position: center 42%;
+  background-repeat: no-repeat;
+  filter: brightness(calc(1 + var(--sun-elevation, .7) * .08)) contrast(1.04) saturate(1.08);
+  transition: filter 1.2s ease;
+}
+.hero-skyline[data-phase="clear_day"] .skyline-bg {
+  filter: brightness(calc(1 + var(--sun-elevation, .7) * .08)) contrast(1.04) saturate(1.08);
+}
+.hero-skyline[data-phase="overcast_day"] .skyline-bg {
+  filter: brightness(.88) contrast(.95) saturate(.82);
+}
+.hero-skyline[data-phase="golden_hour"] .skyline-bg {
+  filter: brightness(.95) contrast(1.08) saturate(1.22) sepia(.14);
+}
+.hero-skyline[data-phase="night"] .skyline-bg {
+  filter: brightness(.55) contrast(1.15) saturate(.90);
+}
+/* Bounded contrast only behind the headline/text column, not across the skyline. */
+.hero-text-scrim {
+  isolation: isolate;
+  background: linear-gradient(90deg, rgba(5, 12, 25, .9) 0%, rgba(5, 12, 25, .73) 62%, rgba(5, 12, 25, .15) 100%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-skyline .skyline-bg { transition: none; }
+}
