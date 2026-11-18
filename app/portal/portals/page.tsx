@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { motion } from "framer-motion";
 import { GlowCard } from "@/components/ui/GlowCard";
 import { Button } from "@/components/ui/Button";
+import { getAccessiblePortals } from "@/lib/portal-routing";
 
 interface PortalInfo {
   id: string;
@@ -51,7 +52,7 @@ const portals: PortalInfo[] = [
     icon: "👥",
     color: "from-purple-500 to-pink-500",
     url: PORTAL_URLS.casemgr,
-    roles: ["casemgr", "coordinator"]
+    roles: ["case_manager"]
   },
   {
     id: "admin",
@@ -60,7 +61,7 @@ const portals: PortalInfo[] = [
     icon: "⚙️",
     color: "from-amber-500 to-orange-500",
     url: PORTAL_URLS.admin,
-    roles: ["admin", "superadmin"]
+    roles: ["admin"]
   }
 ];
 
@@ -83,6 +84,9 @@ export default function PortalsPage() {
   }
 
   if (!user) return null;
+
+  const permitted = profile && user?.email ? new Set(getAccessiblePortals(profile, user.email).map(item => item.key)) : new Set<string>();
+  const visiblePortals = portals.filter(portal => permitted.has(portal.id));
 
   const handlePortalClick = (portalUrl: string) => {
     window.open(portalUrl, "_blank");
@@ -130,46 +134,16 @@ export default function PortalsPage() {
           </p>
         </motion.div>
 
-        {/* Sign In Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="mb-12"
-        >
-          <GlowCard className="bg-gradient-to-br from-brand/5 to-brand2/5">
-            <div className="text-center mb-6">
-              <h2 className="text-2xl font-extrabold tracking-tight text-text mb-2">🔐 Sign In to Your Portal</h2>
-              <p className="text-sm text-muted">
-                Choose your portal below to access your account
-              </p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
-              <a 
-                href="https://toolsinc-client-portal.azurestaticapps.net"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="glass rounded-lg px-6 py-4 hover:bg-brand/10 transition-all hover:-translate-y-1 hover:shadow-glow"
-              >
-                <div className="font-semibold text-text mb-1">Client Portal</div>
-                <div className="text-xs text-muted">Access your dashboard</div>
-              </a>
-              <a 
-                href="https://toolsinc-casemgr-portal.azurestaticapps.net"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="glass rounded-lg px-6 py-4 hover:bg-brand/10 transition-all hover:-translate-y-1 hover:shadow-glow"
-              >
-                <div className="font-semibold text-text mb-1">Case Manager Portal</div>
-                <div className="text-xs text-muted">Manage your clients</div>
-              </a>
-            </div>
-          </GlowCard>
-        </motion.div>
-
+        <p className="mb-6 rounded-xl border border-sky-400/30 bg-sky-400/10 p-4 text-sm text-sky-100">
+          Your application role determines which portal links appear here. Separate applications may
+          require their own verified session until cross-application single sign-on is configured.
+        </p>
+        {visiblePortals.length === 0 && <p className="mb-6 rounded-xl border border-amber-400/30 bg-amber-400/10 p-4 text-sm text-amber-100">
+          No portal is assigned to this account. Contact an administrator to review your application role.
+        </p>}
         {/* Portal Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-          {portals.map((portal, index) => (
+          {visiblePortals.map((portal, index) => (
             <motion.div
               key={portal.id}
               initial={{ opacity: 0, y: 20 }}
