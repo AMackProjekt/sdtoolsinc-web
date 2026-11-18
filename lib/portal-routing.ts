@@ -13,22 +13,13 @@ export interface PortalConfig {
   description: string;
 }
 
-// Environment-aware portal URLs
-const isDevelopment = process.env.NODE_ENV === 'development';
-
-const PRODUCTION_URLS = {
-  client: "https://toolsinc-client-portal.azurestaticapps.net",
-  casemgr: "https://toolsinc-casemgr-portal.azurestaticapps.net",
-  admin: "https://toolsinc-admin-portal.azurestaticapps.net",
+// Local, same-origin paths keep the authenticated session on this site.
+// Protected routes must still verify roles and enrollment server-side.
+const PORTAL_URLS = {
+  client: "/portal/access",
+  casemgr: "/portal/manager/dashboard",
+  admin: "/admin/dashboard",
 };
-
-const DEVELOPMENT_URLS = {
-  client: "http://localhost:3001",
-  casemgr: "http://localhost:3002",
-  admin: "http://localhost:3003",
-};
-
-const PORTAL_URLS = isDevelopment ? DEVELOPMENT_URLS : PRODUCTION_URLS;
 
 export const PORTAL_CONFIG: Record<string, PortalConfig> = {
   client: {
@@ -63,7 +54,7 @@ export function getPortalUrlForUser(
   const role = profile.role as AuthRole;
 
   // Admin portal - strict email check
-  if (role === "admin" && userEmail === "dmack@sdtoolsinc.org") {
+  if (role === "admin" && userEmail.trim().toLowerCase() === "dmack@sdtoolsinc.org") {
     return {
       portalUrl: PORTAL_CONFIG.admin.portalUrl,
       portalName: PORTAL_CONFIG.admin.portalName,
@@ -71,7 +62,7 @@ export function getPortalUrlForUser(
   }
 
   // Case Manager portal - check email domain
-  if (role === "case_manager" && userEmail.endsWith("@sdtoolsinc.org")) {
+  if (role === "case_manager" && userEmail.trim().toLowerCase().endsWith("@sdtoolsinc.org")) {
     return {
       portalUrl: PORTAL_CONFIG.casemgr.portalUrl,
       portalName: PORTAL_CONFIG.casemgr.portalName,

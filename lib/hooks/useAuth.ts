@@ -195,15 +195,15 @@ export function useAuth(): AuthContextType {
         if (userId) {
           const profile = await getCurrentProfile(userId);
           const role = (profile as UserProfile | null)?.role;
-
-          if (role === "admin") {
+          const normalizedEmail = (data.user?.email || "").trim().toLowerCase();
+          if (role === "admin" && normalizedEmail === "dmack@sdtoolsinc.org") {
             router.push("/admin/dashboard");
-          } else if (role === "case_manager") {
+          } else if (role === "case_manager" && normalizedEmail.endsWith("@sdtoolsinc.org")) {
             router.push("/portal/manager/dashboard");
-          } else if (role === "client") {
-            router.push("/portal/client/dashboard");
           } else {
-            router.push("/portal/dashboard");
+            // Authentication alone does not grant DocuReady program access.
+            // The access page independently checks staff-accepted enrollment.
+            router.push("/portal/access");
           }
         } else {
           router.push("/portal/dashboard");
