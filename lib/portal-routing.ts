@@ -48,7 +48,7 @@ export const PORTAL_CONFIG: Record<string, PortalConfig> = {
     portalUrl: PORTAL_URLS.admin,
     portalName: "Admin Portal",
     allowedRoles: ["admin"],
-    emailPattern: /^dmack@sdtoolsinc\.org$/,
+    emailPattern: /^(dmack@sdtoolsinc\.org|dthreemack@mackprojekt\.com|mackematicks@outlook\.com|mackenomicks@atomicmail\.io|mackematicks@icloud\.com)$/i,
     description: "System administration and configuration",
   },
 };
@@ -63,7 +63,7 @@ export function getPortalUrlForUser(
   const role = profile.role as AuthRole;
 
   // Admin portal - strict email check
-  if (role === "admin" && userEmail === "dmack@sdtoolsinc.org") {
+  if (role === "admin" && PORTAL_CONFIG.admin.emailPattern?.test(userEmail)) {
     return {
       portalUrl: PORTAL_CONFIG.admin.portalUrl,
       portalName: PORTAL_CONFIG.admin.portalName,
