@@ -14,7 +14,7 @@ const navItems = [
 ];
 const navCards=[
  {heading:"About Us", icon:Compass, links:[{label:"Mission & Vision",href:"#mission"},{label:"Resources",href:"#first-steps"}]},
- {heading:"Programs", icon:FileCheck2, links:[{label:"DocuReady PrePlan and Intake",href:"#docuready"},{label:"Track A / Track B",href:"#docuready"},{label:"Workshops & Resume",href:"#programs"}]},
+ {heading:"Programs", icon:FileCheck2, links:[{label:"DocuReady PrePlan",href:"#docuready"},{label:"Track A / Track B",href:"#docuready"},{label:"Workshops & Resume",href:"#programs"}]},
  {heading:"Connect", icon:Handshake, links:[{label:"Partners",href:"/partnerships"},{label:"Contact",href:"#contact"},{label:"Portals",href:"/portal/access"}]},
 ];
 export function CardNav() {
@@ -34,7 +34,7 @@ export function GooeyNav() {
 }
 const updates=[
  {title:"Stabilization essentials",detail:"Identification, food, communication, and housing guidance",href:"#first-steps"},
- {title:"DocuReady PrePlan and Intake",detail:"Track A reentry and Track B community support",href:"#docuready"},
+ {title:"DocuReady PrePlan",detail:"DocuReady planning for Track A reentry and Track B community support",href:"#docuready"},
  {title:"Employment preparation",detail:"Workshop information and resume readiness",href:"#programs"},
  {title:"Contact & referrals",detail:"Speak with the T.O.O.L.S. team about support",href:"#contact"},
 ];
