@@ -26,10 +26,16 @@ export default function IntakeReceivedPage() {
           <p className="text-xs font-extrabold uppercase tracking-wider text-blue-800">Application confirmation information</p>
           <h1 className="text-2xl font-black leading-tight sm:text-3xl">Intake/Eligibility Form Received</h1>
           <p className="text-sm leading-relaxed text-slate-700">{RECEIPT_MESSAGE_TEXT}</p>
+          <section aria-label="Emergency and mental health crisis support" className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm leading-relaxed text-slate-900">
+            <h2 className="font-extrabold">Emergency and Mental Health Crisis Support</h2>
+            <p className="mt-2">If you have an immediate emergency, please <a className="font-bold underline" href="tel:911">call 911</a>.</p>
+            <p className="mt-2">If this is a mental health crisis in San Diego County, <a className="font-bold underline" href="tel:988">call or text 988</a> or call the San Diego Access and Crisis Line at <a className="font-bold underline" href="tel:18887247240">1-888-724-7240</a>. Ask about a Mobile Crisis Response Team (MCRT), if appropriate.</p>
+            <p className="mt-2">For an emergency requiring the Psychiatric Emergency Response Team (PERT), call <a className="font-bold underline" href="tel:911">911</a> and request PERT.</p>
+          </section>
           <div className="rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm leading-relaxed text-blue-950">
             <strong>Important:</strong> This is a standard informational receipt page.
-            Opening this link alone does not verify that an application was received or approved.
-            An official receipt is sent only after a successful, securely saved submission.
+            Opening this link alone does not verify that an application was received, reviewed, or approved.
+            An acknowledgment of submission is sent only after the application is securely saved. An official decision notice is sent only after the Intake/Eligibility Review Board has made a final decision.
           </div>
           <p className="text-xs text-slate-600">Please do not send sensitive personal or case information in a regular email or text message.</p>
           <a href="/" className="inline-flex rounded-xl bg-[#101F34] px-5 py-3 text-sm font-bold text-white hover:bg-[#1D416B]">
