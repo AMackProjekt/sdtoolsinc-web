@@ -42,12 +42,10 @@ export default function AuthPage() {
       >
         <div className="text-center mb-8">
           <h1 className="text-3xl font-extrabold tracking-tight text-text">
-            "Approved Client Sign-In"
+            Approved Client Sign-In
           </h1>
           <p className="mt-2 text-sm text-muted">
-            {isLogin
-              ? "Sign in to access your learning portal"
-              : "Start your journey with T.O.O.L.S Inc"}
+            Sign in after Board approval and activation of your portal account.
           </p>
         </div>
 
