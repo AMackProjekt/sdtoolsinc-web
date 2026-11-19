@@ -1,3 +1,5 @@
+import { isApplicationReference } from "./application-reference";
+
 /**
  * Post-submission receipt contract for T.O.O.L.S. Inc.
  *
@@ -14,6 +16,7 @@ export interface VerifiedReceiptContact {
 }
 export interface ConfirmedIntakeReceipt {
   caseId: string;
+  confirmationNumber: string; // immutable public tracking reference, persisted with the case
   savedAt: string;
   status: "pending_review";
   persisted: true;
@@ -44,7 +47,8 @@ export function prepareIntakeReceipt(
   contact: VerifiedReceiptContact,
 ): IntakeReceiptMessage {
   if (receipt.persisted !== true || receipt.status !== "pending_review" ||
-      !receipt.caseId.trim() || !Number.isFinite(Date.parse(receipt.savedAt))) {
+      !receipt.caseId.trim() || !isApplicationReference(receipt.confirmationNumber) ||
+      !Number.isFinite(Date.parse(receipt.savedAt))) {
     throw new Error("Verified saved intake receipt required");
   }
   if (!contact.verifiedAt || !Number.isFinite(Date.parse(contact.verifiedAt))) {
@@ -85,6 +89,8 @@ export function prepareIntakeReceipt(
         <h1 style="font-size:22px;color:#101f34;">Intake/Eligibility Form Received</h1>
         <p>Thank you for completing the T.O.O.L.S. Inc. Intake/Eligibility Form.</p>
         <p>We have received your application. Please allow <strong>up to 72 hours</strong> for our Intake/Eligibility Review Board to review the information you provided.</p>
+        <p><strong>Confirmation number:</strong> ${receipt.confirmationNumber}</p>
+        <p>Keep this number for future correspondence and tracking. It may become your client ID only if you are approved; it does not provide portal access by itself.</p>
         <p>A board representative will contact you regarding next steps. Submission does not guarantee acceptance into services.</p>
         <p><strong>Emergency assistance:</strong> If you have an immediate emergency, please call <strong>911</strong>. For a mental health crisis in San Diego County, call or text <strong>988</strong> or call <strong>1-888-724-7240</strong> to request crisis support, including MCRT when appropriate. For an emergency requiring PERT, call <strong>911</strong> and request PERT.</p>
         <p style="font-size:12px;color:#516078;">This is an acknowledgment of a saved application, not a final eligibility decision. The Intake/Eligibility Review Board sends a separate decision notice after completing its review.</p>
@@ -95,8 +101,8 @@ export function prepareIntakeReceipt(
         </td></tr></table></body></html>`}
       : {}),
     body: contact.channel === "sms"
-      ? "T.O.O.L.S. Inc.: We received your Intake/Eligibility Form. Please allow up to 72 hours for Board review. This is not an eligibility decision. View the logo, next steps and crisis resources: " + TOOLS_RECEIPT_PAGE_URL + " Reply STOP to opt out of texts."
-      : RECEIPT_MESSAGE_TEXT + "\n\nIf you have an immediate emergency, call 911. For a mental health crisis in San Diego County, call or text 988 or 1-888-724-7240 to request MCRT when appropriate. For an emergency requiring PERT, call 911 and request PERT.\n\nView the branded receipt and logo: " + TOOLS_RECEIPT_PAGE_URL + "\n\nT.O.O.L.S. Inc.\nEmpowering Individuals. Unlocking Potential.",
-    idempotencyKey: "intake-received:" + receipt.caseId + ":" + contact.channel,
+      ? "T.O.O.L.S. Inc.: Intake received. Confirmation #: " + receipt.confirmationNumber + ". Allow up to 72 hours for Board review. This is not approval. Branded receipt and next steps: " + TOOLS_RECEIPT_PAGE_URL + " Reply STOP to opt out of texts."
+      : RECEIPT_MESSAGE_TEXT + "\n\nConfirmation number: " + receipt.confirmationNumber + "\nKeep this number for follow-up; it is not a portal password.\n\nIf you have an immediate emergency, call 911. For a mental health crisis in San Diego County, call or text 988 or 1-888-724-7240 to request MCRT when appropriate. For an emergency requiring PERT, call 911 and request PERT.\n\nView the branded receipt and logo: " + TOOLS_RECEIPT_PAGE_URL + "\n\nT.O.O.L.S. Inc.\nEmpowering Individuals. Unlocking Potential.",
+    idempotencyKey: "intake-received:" + receipt.confirmationNumber + ":" + contact.channel,
   };
 }
