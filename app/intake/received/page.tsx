@@ -33,9 +33,11 @@ export default function IntakeReceivedPage() {
             <p className="mt-2">For an emergency requiring the Psychiatric Emergency Response Team (PERT), call <a className="font-bold underline" href="tel:911">911</a> and request PERT.</p>
           </section>
           <div className="rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm leading-relaxed text-blue-950">
-            <strong>Important:</strong> This is a standard informational receipt page.
-            Opening this link alone does not verify that an application was received, reviewed, or approved.
-            An acknowledgment of submission is sent only after the application is securely saved. An official decision notice is sent only after the Intake/Eligibility Review Board has made a final decision.
+            <strong>Important:</strong> Your Intake/Eligibility Form has been received.
+            This acknowledgment is issued after successful, secure submission. Our Intake/Eligibility Review Board
+            will review your application and contact you regarding next steps within the stated review window.
+            Receipt of an application does not mean that it has been reviewed or approved.
+            A separate official decision notice is sent after the Board reaches a final decision.
           </div>
           <p className="text-xs text-slate-600">Please do not send sensitive personal or case information in a regular email or text message.</p>
           <a href="/" className="inline-flex rounded-xl bg-[#101F34] px-5 py-3 text-sm font-bold text-white hover:bg-[#1D416B]">
