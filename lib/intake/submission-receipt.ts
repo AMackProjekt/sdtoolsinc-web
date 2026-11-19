@@ -29,6 +29,8 @@ export interface IntakeReceiptMessage {
 
 /** Official public brand asset, no personalized tracking parameters. */
 export const TOOLS_RECEIPT_LOGO_URL = "https://www.sdtoolsinc.org/logos/tools-inc-crown-official.svg";
+/** Same branded receipt page for every communication channel. No client-specific query strings. */
+export const TOOLS_RECEIPT_PAGE_URL = "https://www.sdtoolsinc.org/intake/received";
 
 /** Message content intentionally omits name, justice status, housing and other sensitive details. */
 export const RECEIPT_MESSAGE_TEXT =
@@ -89,12 +91,12 @@ export function prepareIntakeReceipt(
         <p style="font-weight:bold;">Empowering Individuals. Unlocking Potential.</p>
         </td></tr>
         <tr><td style="padding:16px 28px;background:#f3f7fb;font-size:12px;text-align:center;color:#516078;">
-        <a href="https://www.sdtoolsinc.org/" style="color:#174e85;">T.O.O.L.S. Inc. website</a>
+        <a href="${TOOLS_RECEIPT_PAGE_URL}" style="color:#174e85;font-weight:bold;">View the branded intake receipt and next steps</a>
         </td></tr></table></body></html>`}
       : {}),
     body: contact.channel === "sms"
-      ? RECEIPT_MESSAGE_TEXT + " T.O.O.L.S. Inc. logo: " + TOOLS_RECEIPT_LOGO_URL + " Reply STOP to opt out of texts."
-      : RECEIPT_MESSAGE_TEXT + "\\n\\nT.O.O.L.S. Inc.\\nEmpowering Individuals. Unlocking Potential.",
+      ? "T.O.O.L.S. Inc.: Your Intake/Eligibility Form has been received. Please allow up to 72 hours for review. Our Intake/Eligibility Review Board will contact you about next steps. View your branded receipt and our logo: " + TOOLS_RECEIPT_PAGE_URL + " Reply STOP to opt out of texts."
+      : RECEIPT_MESSAGE_TEXT + "\n\nView the branded receipt and logo: " + TOOLS_RECEIPT_PAGE_URL + "\n\nT.O.O.L.S. Inc.\nEmpowering Individuals. Unlocking Potential.",
     idempotencyKey: "intake-received:" + receipt.caseId + ":" + contact.channel,
   };
 }
