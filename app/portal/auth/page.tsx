@@ -8,14 +8,12 @@ import { cn } from "@/lib/cn";
 import Link from "next/link";
 
 export default function AuthPage() {
-  const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   
-  const { signInWithPassword, signUp } = useAuth();
+  const { signInWithPassword } = useAuth();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -24,12 +22,8 @@ export default function AuthPage() {
     setLoading(true);
 
     try {
-      if (isLogin) {
-        await signInWithPassword(email, password);
-      } else {
-        await signUp(email, password, name);
-        router.push("/auth/verify-email");
-      }
+      await signInWithPassword(email, password);
+      router.push("/portal/access");
     } catch (err) {
       setError("An error occurred. Please try again.");
     } finally {
@@ -48,7 +42,7 @@ export default function AuthPage() {
       >
         <div className="text-center mb-8">
           <h1 className="text-3xl font-extrabold tracking-tight text-text">
-            {isLogin ? "Welcome Back" : "Create Account"}
+            "Approved Client Sign-In"
           </h1>
           <p className="mt-2 text-sm text-muted">
             {isLogin
@@ -59,22 +53,7 @@ export default function AuthPage() {
 
         <div className="rounded-xl bg-panel border border-border p-8 shadow-glow">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {!isLogin && (
-              <div>
-                <label htmlFor="name" className="block text-sm font-semibold text-text mb-2">
-                  Full Name
-                </label>
-                <input
-                  id="name"
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required={!isLogin}
-                  className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand/50"
-                  placeholder="Enter your name"
-                />
-              </div>
-            )}
+
 
             <div>
               <label htmlFor="email" className="block text-sm font-semibold text-text mb-2">
@@ -105,9 +84,7 @@ export default function AuthPage() {
                 className="w-full rounded-lg bg-bg border border-border px-4 py-3 text-text placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand/50"
                 placeholder="••••••••"
               />
-              {!isLogin && (
-                <p className="mt-1 text-xs text-muted">Must be at least 8 characters</p>
-              )}
+
             </div>
 
             {error && (
@@ -126,11 +103,10 @@ export default function AuthPage() {
                 loading && "opacity-50 cursor-not-allowed"
               )}
             >
-              {loading ? "Please wait..." : isLogin ? "Sign In" : "Create Account"}
+              {loading ? "Please wait..." : "Sign In"}
             </button>
 
-            {isLogin && (
-              <div className="text-center">
+            <div className="text-center">
                 <Link
                   href="/portal/auth/forgot-password"
                   className="text-sm text-brand hover:text-brand2 transition-colors"
@@ -138,22 +114,10 @@ export default function AuthPage() {
                   Forgot password?
                 </Link>
               </div>
-            )}
           </form>
 
-          <div className="mt-6 text-center">
-            <button
-              onClick={() => {
-                setIsLogin(!isLogin);
-                setError("");
-              }}
-              className="text-sm text-brand hover:text-brand2 transition-colors"
-            >
-              {isLogin
-                ? "Don't have an account? Sign up"
-                : "Already have an account? Sign in"}
-            </button>
-          </div>
+          <p className="mt-6 text-center text-sm text-muted">No self-registration is available. After Intake/Eligibility Review Board approval, follow your secure activation invitation to establish your sign-in credentials.</p>
+
 
           <div className="mt-6 pt-6 border-t border-border">
             <div className="flex items-center gap-2 text-xs text-muted">
