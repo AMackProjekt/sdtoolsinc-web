@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 import type { PublicKrucialProgress } from "@/lib/docuready/flow";
+import type { IntakeAcknowledgmentSignature } from "@/components/ui/IntakeTransitionConsent";
+import { DOCUREADY_STEPS } from "@/lib/docuready/flow";
 import type { IntakeEligibilityAnswers, OptionalAnswer, RequestedService } from "@/lib/intake/assessment";
 import { DEMOGRAPHIC_DECLINE, SERVICE_LABELS } from "@/lib/intake/assessment";
 import { CompletionProgress } from "@/components/ui/CompletionProgress";
@@ -28,8 +30,8 @@ function YesNo({value,onChange}:{value:OptionalAnswer;onChange:(value:OptionalAn
   {optionalOptions.map(option=><option key={option.value} value={option.value}>{option.label}</option>)}
  </select>;
 }
-export function IntakeEligibilityQuestionnaire({progress}:{progress:PublicKrucialProgress}){
- const [form,setForm]=useState<IntakeEligibilityAnswers>(()=>initial(progress));
+export function IntakeEligibilityQuestionnaire({progress,signature}:{progress:PublicKrucialProgress;signature:IntakeAcknowledgmentSignature}){
+ const [form,setForm]=useState<IntakeEligibilityAnswers>(()=>({...initial(progress),fullName:signature.fullName}));
  const merged=useMemo(()=>({...form,docuReady:progress}),[form,progress]);
  // Only essential application items count; optional demographics do not reduce completion.
  const requiredFields = [
@@ -53,7 +55,8 @@ export function IntakeEligibilityQuestionnaire({progress}:{progress:PublicKrucia
   <p className="text-xs font-extrabold uppercase tracking-wider text-blue-800">Separate applicant application · draft UI</p>
   <h4 className="mt-2 text-xl font-black">Intake Eligibility Form</h4>
   <div className="mt-4"><CompletionProgress label="Intake application completion" completed={answeredCount} total={requiredFields.length} note="Calculated from essential answers only. Optional demographics and referral consent are not required. 100% means ready for staff submission review—not submitted or approved."/></div>
-  <p className="mt-2 text-sm text-slate-700">DocuReady milestone selections are already populated above. This separate general application asks only for the information needed to consider services. It has not been connected to secure submission yet. Do not enter real personal information until that connection is enabled.</p>
+  <p className="mt-2 text-sm text-slate-700">Your signed name and earlier 72-Hour Action Plan responses were carried forward. Review and correct any information before completing the remaining eligibility questions. Secure submission is not yet enabled; use only test information.</p>
+  <div className="mt-4 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-slate-900"><strong>Previously completed — no need to start over</strong><p className="mt-1">Service track: {progress.track}</p><p className="mt-1">72-Hour tasks marked complete: {progress.completedMilestones.length} of {DOCUREADY_STEPS.length}</p><p className="mt-1 text-xs text-slate-700">{progress.completedMilestones.length?progress.completedMilestones.map(x=>x.replaceAll("_"," ").toLowerCase()).join(" · "):"No tasks marked complete yet"}</p><p className="mt-2 text-xs text-slate-700">Consent acknowledged by {signature.fullName} on {signature.signedDate}. You can correct your name in the form below. Action-plan progress is not proof of DocuReady status or eligibility.</p></div>
   <fieldset className="mt-6 grid gap-4 md:grid-cols-2">
    <legend className="mb-3 text-base font-extrabold">1. General information</legend>
    {([{key:"fullName",label:"Legal name"},{key:"preferredName",label:"Preferred name (optional)"},{key:"email",label:"Email"},{key:"phone",label:"Phone"},{key:"city",label:"City"},{key:"postalCode",label:"ZIP code"}] as const).map(field=>
