@@ -1,135 +1,74 @@
+import type { Metadata } from "next";
 import { Navbar } from "@/components/ui/Navbar";
-import { GlowCard } from "@/components/ui/GlowCard";
-import { Button } from "@/components/ui/Button";
-import Image from "next/image";
+
+const careerForm =
+  "https://docs.google.com/forms/d/e/1FAIpQLSfFz2bgW-UJvBTnYtxgVtlQi0AaAZ_mIfD04Uc6YxnNnnLOgQ/viewform";
+
+export const metadata: Metadata = {
+  title: "Get Started | T.O.O.L.S. Inc.",
+  description: "Choose MasterResumeBuilder V4 career intake or DocuReady stabilization planning with T.O.O.L.S. Inc.",
+  alternates: { canonical: "https://sdtoolsinc.org/get-started" }
+};
 
 export default function InterestPage() {
   return (
-    <main className="min-h-screen bg-bg">
-      {/* Background glow */}
-      <div className="pointer-events-none fixed inset-0 -z-10 bg-dash-glow" />
+    <main className="min-h-screen bg-[#07101F] text-white">
       <Navbar />
-
-      <section className="mx-auto max-w-container px-7 pt-24 pb-16">
-        <div className="text-center">
-          <div className="mb-3 text-xs font-semibold tracking-[0.18em] text-brand2 uppercase">
-            Connect With Us
+      <section className="relative overflow-hidden px-5 py-16 sm:py-24">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_5%,rgba(56,189,248,.17),transparent_48%)]" />
+        <div className="relative mx-auto max-w-6xl">
+          <p className="text-xs font-extrabold uppercase tracking-[.19em] text-amber-400">Empowering Individuals. Unlocking Potential.</p>
+          <h1 className="mt-3 max-w-3xl text-4xl font-black leading-tight sm:text-6xl">Let&apos;s build your next step.</h1>
+          <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-300">
+            Choose the pathway that fits your needs. Career and résumé preparation uses MasterResumeBuilder V4 intake;
+            stabilization planning starts with the DocuReady 72-Hour PrePlan. You should not have to repeat an unrelated form.
+          </p>
+          <div className="mt-9 grid gap-5 md:grid-cols-2">
+            <article className="rounded-3xl border border-amber-400/50 bg-[#152842] p-6 shadow-xl sm:p-9">
+              <span className="text-xs font-black uppercase tracking-widest text-amber-300">Career readiness</span>
+              <h2 className="mt-3 text-2xl font-extrabold">MasterResumeBuilder V4</h2>
+              <p className="mt-3 text-sm leading-relaxed text-slate-200">
+                Start a tailored résumé and job-readiness packet using the current T.O.O.L.S. Inc. career intake process.
+                Submitted information is handled through the existing internal review workflow.
+              </p>
+              <ol className="mt-5 list-decimal space-y-2 pl-5 text-sm text-slate-200">
+                <li>Provide your work, volunteer, or military experience and job goals.</li>
+                <li>The career team reviews generated materials before release.</li>
+                <li>Receive appropriate follow-up through approved channels.</li>
+              </ol>
+              <a href={careerForm} target="_blank" rel="noopener noreferrer"
+                className="mt-7 inline-flex min-h-12 items-center justify-center rounded-xl bg-amber-400 px-6 py-3 text-sm font-extrabold text-[#07101F] hover:bg-amber-300">
+                Start Career Intake →
+              </a>
+              <p className="mt-3 text-xs text-slate-400">The current Google Form requires sign-in. Do not submit confidential case records or identity documents here.</p>
+            </article>
+            <article className="rounded-3xl border border-sky-400/40 bg-[#152842] p-6 shadow-xl sm:p-9">
+              <span className="text-xs font-black uppercase tracking-widest text-sky-300">Stabilization &amp; reentry</span>
+              <h2 className="mt-3 text-2xl font-extrabold">DocuReady: Your First 72 Hours</h2>
+              <p className="mt-3 text-sm leading-relaxed text-slate-200">
+                Build a practical plan for identification, benefits, phone access, transportation, housing, and employment.
+                Choose Track A (reentry) or Track B (displaced veterans and community support).
+              </p>
+              <ol className="mt-5 list-decimal space-y-2 pl-5 text-sm text-slate-200">
+                <li>Choose your pathway and review six priorities.</li>
+                <li>Save or print the milestone checklist.</li>
+                <li>Contact T.O.O.L.S. Inc. for intake and staff follow-up.</li>
+              </ol>
+              <a href="/#docuready"
+                className="mt-7 inline-flex min-h-12 items-center justify-center rounded-xl bg-sky-400 px-6 py-3 text-sm font-extrabold text-[#07101F] hover:bg-sky-300">
+                Build My Stabilization Plan →
+              </a>
+              <p className="mt-3 text-xs text-slate-400">This public pre-plan is not a submitted case application. Protected intake and staff approval are separate.</p>
+            </article>
           </div>
-          <h1 className="h1">Interest Form</h1>
-        </div>
-
-        <div className="mx-auto mt-12 max-w-[900px]">
-          <GlowCard className="p-8 md:p-10">
-            {/* Header Notice */}
-            <div className="mb-8 text-center">
-              <p className="text-lg text-text mb-2">
-                Are you an <span className="font-bold text-brand">organization or program</span> looking to add our portal to your services?
-              </p>
-              <a
-                href="/apps/client-portal/app/program-interest"
-                className="inline-block px-6 py-3 bg-gradient-to-r from-accent to-brand2 text-bg font-semibold rounded-lg hover:opacity-90 transition"
-              >
-                📋 Schedule a Live Demo for Your Program
-              </a>
-              <p className="text-sm text-muted mt-4">
-                Otherwise, continue below to submit an individual interest form
-              </p>
-            </div>
-
-            <div className="border-t border-border my-8"></div>
-
-            {/* Important Notice */}
-            <div className="mb-8 rounded-lg border border-brand/30 bg-brand/5 p-6">
-              <p className="text-sm text-text leading-relaxed">
-                If filling this form out for a loved one, friend or family member please be sure to put all information
-                so that contact can be made. If the individual is currently incarcerated please fill out this form with
-                your contact information and someone will reach out to you within <span className="font-semibold">48 hours</span>.
-              </p>
-              <p className="mt-3 text-sm font-semibold text-brand2">
-                Thank You for Your Support!
-              </p>
-            </div>
-
-            {/* QR Code and Mobile Access - Side by Side */}
-            <div className="mb-8 flex flex-col md:flex-row items-center justify-center gap-8">
-              {/* QR Code - Hidden on mobile */}
-              <div className="flex-shrink-0 hidden md:block">
-                <div className="rounded-xl bg-white p-4 shadow-lg">
-                  <Image
-                    src="/qr-interest-form.webp"
-                    alt="QR Code for Interest Form"
-                    width={192}
-                    height={192}
-                    className="h-48 w-48"
-                    unoptimized
-                  />
-                </div>
-              </div>
-
-              {/* Alternative Text */}
-              <div className="flex items-center">
-                <p className="text-sm text-muted text-center md:text-left">
-                  Scan the QR code or use the form below. Having trouble?{" "}
-                  <a
-                    href="https://forms.cloud.microsoft/r/G0kkRW4F7q"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-brand hover:text-brand2 transition-colors font-semibold underline"
-                  >
-                    Open form in new window
-                  </a>
-                </p>
-              </div>
-            </div>
-
-            {/* Embedded Microsoft Form - Mobile Responsive */}
-            <div className="relative w-full overflow-hidden rounded-lg border border-border/50 bg-panel">
-              <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
-                <iframe
-                  src="https://forms.cloud.microsoft/r/G0kkRW4F7q"
-                  className="absolute top-0 left-0 w-full h-full"
-                  style={{ 
-                    border: "none",
-                    minHeight: "600px"
-                  }}
-                  title="T.O.O.L.S Inc Interest Form"
-                  allowFullScreen
-                />
-              </div>
-            </div>
-
-            {/* Fallback Link */}
-            <div className="mt-6 text-center">
-              <p className="text-xs text-muted mb-3">
-                Form not displaying correctly?
-              </p>
-              <a
-                href="https://forms.cloud.microsoft/r/G0kkRW4F7q"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Button>
-                  Open in New Window
-                </Button>
-              </a>
-            </div>
-          </GlowCard>
-
-          {/* Additional Help */}
-          <div className="mt-8 text-center">
-            <p className="text-sm text-muted">
-              Need immediate assistance? <a href="/#contact" className="text-brand hover:text-brand2 transition-colors">Contact us directly</a>
-            </p>
+          <div className="mt-8 rounded-2xl border border-white/15 bg-white/5 p-5 text-sm text-slate-300">
+            <strong className="text-white">Need help choosing?</strong>{" "}
+            Call <a className="font-bold text-sky-300 underline" href="tel:+16193507638">(619) 350-7638</a>{" "}
+            or <a className="font-bold text-sky-300 underline" href="mailto:info@sdtoolsinc.org">email the team</a>.
+            For community resources call <a className="font-bold text-sky-300 underline" href="tel:211">2-1-1</a>.
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="mx-auto max-w-container px-7 py-8 text-center">
-        <div className="text-xs text-muted">
-          © {new Date().getFullYear()} T.O.O.L.S Inc · Empowering individuals to start over and unlock their full potential
-        </div>
-      </footer>
     </main>
   );
 }
