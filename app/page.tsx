@@ -4,6 +4,7 @@ import { CardNav, GooeyNav, AnimatedList, FloatingDock } from "@/components/ui/C
 import { StabilizationFlow } from "@/components/ui/StabilizationFlow";
 import { SocialShare } from "@/components/ui/SocialShare";
 import { HeroLighting } from "@/components/ui/HeroLighting";
+import { DidYouKnowWidget } from "@/components/ui/DidYouKnowWidget";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = { alternates: { canonical: "https://sdtoolsinc.org/" } };
@@ -67,6 +68,13 @@ export default function Page() {
         <div className="mt-6"><AnimatedList /></div>
       </div>
     </section>
+    <section id="did-you-know" className="border-b border-white/10 bg-[#081323] px-5 py-14">
+      <div className="mx-auto max-w-5xl">
+        <DidYouKnowWidget />
+        <a href="/did-you-know" className="mt-4 inline-flex text-sm font-bold text-amber-300 underline-offset-4 hover:underline">Open the Did You Know? resource page →</a>
+      </div>
+    </section>
+
     <section id="programs" className="bg-[#0B172A] px-5 py-14">
       <div className="mx-auto max-w-7xl">
         <p className="text-xs font-extrabold uppercase tracking-[.2em] text-amber-400">Stabilization &amp; opportunity</p>
