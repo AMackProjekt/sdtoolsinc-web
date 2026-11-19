@@ -38,7 +38,9 @@ export const RECEIPT_MESSAGE_TEXT =
   "We have received your application. Please allow up to 72 hours for our Intake/Eligibility Review Board " +
   "to review the information you provided. A board representative will contact you regarding next steps. " +
   "Submission does not guarantee acceptance into services. " +
-  "If you have an immediate emergency, please contact appropriate emergency services.";
+  "If you have an immediate emergency, please call 911. " +
+  "If this is a mental health crisis in San Diego County, call or text 988 or call the Access and Crisis Line at 1-888-724-7240 to request assistance, including MCRT when appropriate. " +
+  "For an emergency requiring PERT, call 911 and request PERT.";
 
 export function prepareIntakeReceipt(
   receipt: ConfirmedIntakeReceipt,
@@ -87,7 +89,8 @@ export function prepareIntakeReceipt(
         <p>Thank you for completing the T.O.O.L.S. Inc. Intake/Eligibility Form.</p>
         <p>We have received your application. Please allow <strong>up to 72 hours</strong> for our Intake/Eligibility Review Board to review the information you provided.</p>
         <p>A board representative will contact you regarding next steps. Submission does not guarantee acceptance into services.</p>
-        <p>If you have an immediate emergency, please contact appropriate emergency services.</p>
+        <p><strong>Emergency assistance:</strong> If you have an immediate emergency, please call <strong>911</strong>. For a mental health crisis in San Diego County, call or text <strong>988</strong> or call <strong>1-888-724-7240</strong> to request crisis support, including MCRT when appropriate. For an emergency requiring PERT, call <strong>911</strong> and request PERT.</p>
+        <p style="font-size:12px;color:#516078;">This is an acknowledgment of a saved application, not a final eligibility decision. The Intake/Eligibility Review Board sends a separate decision notice after completing its review.</p>
         <p style="font-weight:bold;">Empowering Individuals. Unlocking Potential.</p>
         </td></tr>
         <tr><td style="padding:16px 28px;background:#f3f7fb;font-size:12px;text-align:center;color:#516078;">
@@ -95,7 +98,7 @@ export function prepareIntakeReceipt(
         </td></tr></table></body></html>`}
       : {}),
     body: contact.channel === "sms"
-      ? "T.O.O.L.S. Inc.: Your Intake/Eligibility Form has been received. Please allow up to 72 hours for review. Our Intake/Eligibility Review Board will contact you about next steps. View your branded receipt and our logo: " + TOOLS_RECEIPT_PAGE_URL + " Reply STOP to opt out of texts."
+      ? "T.O.O.L.S. Inc.: We received your Intake/Eligibility Form. Please allow up to 72 hours for Board review. This is not an eligibility decision. View the logo, next steps and crisis resources: " + TOOLS_RECEIPT_PAGE_URL + " Reply STOP to opt out of texts."
       : RECEIPT_MESSAGE_TEXT + "\n\nView the branded receipt and logo: " + TOOLS_RECEIPT_PAGE_URL + "\n\nT.O.O.L.S. Inc.\nEmpowering Individuals. Unlocking Potential.",
     idempotencyKey: "intake-received:" + receipt.caseId + ":" + contact.channel,
   };
