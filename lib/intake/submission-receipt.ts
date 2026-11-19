@@ -37,10 +37,7 @@ export const RECEIPT_MESSAGE_TEXT =
   "Thank you for completing the T.O.O.L.S. Inc. Intake/Eligibility Form. " +
   "We have received your application. Please allow up to 72 hours for our Intake/Eligibility Review Board " +
   "to review the information you provided. A board representative will contact you regarding next steps. " +
-  "Submission does not guarantee acceptance into services. " +
-  "If you have an immediate emergency, please call 911. " +
-  "If this is a mental health crisis in San Diego County, call or text 988 or call the Access and Crisis Line at 1-888-724-7240 to request assistance, including MCRT when appropriate. " +
-  "For an emergency requiring PERT, call 911 and request PERT.";
+  "Submission does not guarantee acceptance into services.";
 
 export function prepareIntakeReceipt(
   receipt: ConfirmedIntakeReceipt,
@@ -99,7 +96,7 @@ export function prepareIntakeReceipt(
       : {}),
     body: contact.channel === "sms"
       ? "T.O.O.L.S. Inc.: We received your Intake/Eligibility Form. Please allow up to 72 hours for Board review. This is not an eligibility decision. View the logo, next steps and crisis resources: " + TOOLS_RECEIPT_PAGE_URL + " Reply STOP to opt out of texts."
-      : RECEIPT_MESSAGE_TEXT + "\n\nView the branded receipt and logo: " + TOOLS_RECEIPT_PAGE_URL + "\n\nT.O.O.L.S. Inc.\nEmpowering Individuals. Unlocking Potential.",
+      : RECEIPT_MESSAGE_TEXT + "\n\nIf you have an immediate emergency, call 911. For a mental health crisis in San Diego County, call or text 988 or 1-888-724-7240 to request MCRT when appropriate. For an emergency requiring PERT, call 911 and request PERT.\n\nView the branded receipt and logo: " + TOOLS_RECEIPT_PAGE_URL + "\n\nT.O.O.L.S. Inc.\nEmpowering Individuals. Unlocking Potential.",
     idempotencyKey: "intake-received:" + receipt.caseId + ":" + contact.channel,
   };
 }
