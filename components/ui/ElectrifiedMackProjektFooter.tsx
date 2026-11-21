@@ -34,6 +34,11 @@ export function ElectrifiedMackProjektFooter() {
           <span>Technology by independent company</span>
           <a href="https://mackprojekt.com" className="font-bold text-sky-300 underline-offset-4 hover:underline">A MackProjekt</a>
         </div>
+        <div className="mt-3 text-center text-[11px] leading-relaxed text-slate-400">
+          <p className="font-bold text-amber-300">A MACK — DONALD TERRY MACK&apos;S LEGACY</p>
+          <p>Established 2023 · Operated by Donyale Mack</p>
+          <p>Proprietary materials — All rights reserved. Intellectual property remains with T.O.O.L.S. Inc. or its respective rights holders.</p>
+        </div>
         <nav aria-label="Follow T.O.O.L.S. Inc. on social media" className="mt-3 flex flex-wrap items-center justify-center gap-3 text-xs font-semibold">
           <a href="https://www.instagram.com/sd_t.o.o.ls_inc/" target="_blank" rel="noopener noreferrer" className="rounded-lg border border-fuchsia-300/30 bg-fuchsia-300/10 px-4 py-2 text-fuchsia-200 transition hover:bg-fuchsia-300/20">Instagram</a>
           <a href="https://www.facebook.com/people/TOOLs-Inc/61556483926772/" target="_blank" rel="noopener noreferrer" className="rounded-lg border border-blue-300/30 bg-blue-300/10 px-4 py-2 text-blue-200 transition hover:bg-blue-300/20">Facebook</a>
