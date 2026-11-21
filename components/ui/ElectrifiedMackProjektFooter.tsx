@@ -5,7 +5,7 @@ import FallingText from "@/components/ui/ReactBitsFallingText";
 /** Official MackProjekt footer credit using React Bits FallingText and Matter.js. */
 export function ElectrifiedMackProjektFooter() {
   return (
-    <footer className="mack-footer relative isolate overflow-hidden border-t border-sky-400/15 bg-[#090D14] px-5 py-5 text-center text-slate-300">
+    <footer data-provenance="tools-legacy-2023" className="mack-footer relative isolate overflow-hidden border-t border-sky-400/15 bg-[#090D14] px-5 py-5 text-center text-slate-300">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-30 [background-image:linear-gradient(to_right,rgba(125,211,252,.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(125,211,252,.10)_1px,transparent_1px)] [background-size:46px_46px]" />
       <div className="relative mx-auto max-w-5xl">
         <p className="mb-1 text-[10px] font-bold uppercase tracking-[.24em] text-amber-300">Empowering Individuals. Unlocking Potential.</p>
@@ -36,7 +36,7 @@ export function ElectrifiedMackProjektFooter() {
         </div>
         <div className="mt-3 text-center text-[11px] leading-relaxed text-slate-400">
           <p className="font-bold text-amber-300">A MACK — DONALD TERRY MACK&apos;S LEGACY</p>
-          <p>Established 2023 · Operated by Donyale Mack</p>
+          <p>Established 2023 · Independent business or DBA · Ownership details maintained in private records</p>
           <p>Proprietary materials — All rights reserved. Intellectual property remains with T.O.O.L.S. Inc. or its respective rights holders.</p>
         </div>
         <nav aria-label="Follow T.O.O.L.S. Inc. on social media" className="mt-3 flex flex-wrap items-center justify-center gap-3 text-xs font-semibold">
