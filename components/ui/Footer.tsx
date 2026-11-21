@@ -116,6 +116,11 @@ export function Footer() {
           >
             © {new Date().getFullYear()} T.O.O.L.S Inc. All rights reserved.
           </motion.p>
+          <div className="max-w-xl text-center text-xs leading-relaxed text-muted">
+            <p className="font-bold">A MACK — DONALD TERRY MACK&apos;S LEGACY</p>
+            <p>Established 2023 · Operated by Donyale Mack</p>
+            <p>Proprietary materials — All rights reserved. Intellectual property belongs to T.O.O.L.S. Inc. or its respective rights holders.</p>
+          </div>
           <motion.a
             href="https://mackprojekt.com"
             target="_blank"
