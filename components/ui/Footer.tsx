@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 export function Footer() {
   return (
-    <footer className="relative mt-20 border-t border-border/50 bg-panel/50 backdrop-blur-xl overflow-hidden">
+    <footer data-provenance="tools-legacy-2023" className="relative mt-20 border-t border-border/50 bg-panel/50 backdrop-blur-xl overflow-hidden">
       {/* Animated background grid */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute inset-0 footer-grid-bg" />
@@ -118,7 +118,7 @@ export function Footer() {
           </motion.p>
           <div className="max-w-xl text-center text-xs leading-relaxed text-muted">
             <p className="font-bold">A MACK — DONALD TERRY MACK&apos;S LEGACY</p>
-            <p>Established 2023 · Operated by Donyale Mack</p>
+            <p>Established 2023 · Independent business or DBA · Ownership details maintained in private records</p>
             <p>Proprietary materials — All rights reserved. Intellectual property belongs to T.O.O.L.S. Inc. or its respective rights holders.</p>
           </div>
           <motion.a
